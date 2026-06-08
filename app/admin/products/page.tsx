@@ -1,4 +1,8 @@
-import { formatPrice, products } from "../../../lib/products";
+import { prisma } from "../../../lib/db";
+
+function formatPrice(value: number) {
+  return `€${value.toFixed(2)}`;
+}
 
 function getMargin(buyPrice: number, sellPrice: number) {
   const profit = sellPrice - buyPrice;
@@ -9,13 +13,23 @@ function getProfit(buyPrice: number, sellPrice: number) {
   return sellPrice - buyPrice;
 }
 
-export default function ProductsPage() {
+export default async function ProductsPage() {
+  const products = await prisma.product.findMany({
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+
   const activeProducts = products.filter((product) => product.active);
+
   const averageMargin =
-    products.reduce(
-      (total, product) => total + getMargin(product.buyPrice, product.sellPrice),
-      0
-    ) / products.length;
+    products.length > 0
+      ? products.reduce(
+          (total, product) =>
+            total + getMargin(product.buyPrice, product.sellPrice),
+          0
+        ) / products.length
+      : 0;
 
   return (
     <main className="min-h-screen bg-[#F6F8FF] text-slate-900">
@@ -26,45 +40,27 @@ export default function ProductsPage() {
           </a>
 
           <nav className="space-y-2">
-            <a
-              className="block rounded-2xl px-5 py-4 text-slate-300 hover:bg-white/10"
-              href="/admin"
-            >
+            <a className="block rounded-2xl px-5 py-4 text-slate-300 hover:bg-white/10" href="/admin">
               Dashboard
             </a>
 
-            <a
-              className="block rounded-2xl bg-blue-600 px-5 py-4 font-semibold"
-              href="/admin/products"
-            >
+            <a className="block rounded-2xl bg-blue-600 px-5 py-4 font-semibold" href="/admin/products">
               Products
             </a>
 
-            <a
-              className="block rounded-2xl px-5 py-4 text-slate-300 hover:bg-white/10"
-              href="/admin/recommendations"
-            >
+            <a className="block rounded-2xl px-5 py-4 text-slate-300 hover:bg-white/10" href="/admin/recommendations">
               Recommendations
             </a>
 
-            <a
-              className="block rounded-2xl px-5 py-4 text-slate-300 hover:bg-white/10"
-              href="/admin/upsells"
-            >
+            <a className="block rounded-2xl px-5 py-4 text-slate-300 hover:bg-white/10" href="/admin/upsells">
               Upsells
             </a>
 
-            <a
-              className="block rounded-2xl px-5 py-4 text-slate-300 hover:bg-white/10"
-              href="/admin/orders"
-            >
+            <a className="block rounded-2xl px-5 py-4 text-slate-300 hover:bg-white/10" href="/admin/orders">
               Orders
             </a>
 
-            <a
-              className="block rounded-2xl px-5 py-4 text-slate-300 hover:bg-white/10"
-              href="/admin/providers"
-            >
+            <a className="block rounded-2xl px-5 py-4 text-slate-300 hover:bg-white/10" href="/admin/providers">
               API Providers
             </a>
           </nav>
@@ -82,7 +78,7 @@ export default function ProductsPage() {
               </h1>
 
               <p className="mt-2 text-slate-600">
-                Manage eSIM packages, pricing, usage classes and provider product IDs.
+                Products are now loaded from the local DALO database.
               </p>
             </div>
 
@@ -91,9 +87,12 @@ export default function ProductsPage() {
                 Import Rate Sheet
               </button>
 
-              <button className="rounded-2xl bg-blue-600 px-6 py-4 font-bold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700">
+              <a
+                href="/admin/products/new"
+                className="rounded-2xl bg-blue-600 px-6 py-4 font-bold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700"
+              >
                 Add Product
-              </button>
+              </a>
             </div>
           </div>
 
@@ -133,35 +132,13 @@ export default function ProductsPage() {
 
           <div className="overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-blue-50">
             <div className="border-b border-slate-100 p-6">
-              <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-                <div>
-                  <h2 className="text-2xl font-bold text-slate-950">
-                    Product Catalog
-                  </h2>
+              <h2 className="text-2xl font-bold text-slate-950">
+                Product Catalog
+              </h2>
 
-                  <p className="mt-1 text-slate-600">
-                    Products are now loaded from the central DALO product file.
-                  </p>
-                </div>
-
-                <div className="flex gap-3">
-                  <button className="rounded-xl bg-slate-100 px-4 py-3 font-semibold text-slate-700">
-                    All
-                  </button>
-
-                  <button className="rounded-xl px-4 py-3 font-semibold text-slate-500 hover:bg-slate-100">
-                    Essential
-                  </button>
-
-                  <button className="rounded-xl px-4 py-3 font-semibold text-slate-500 hover:bg-slate-100">
-                    Everyday
-                  </button>
-
-                  <button className="rounded-xl px-4 py-3 font-semibold text-slate-500 hover:bg-slate-100">
-                    Power
-                  </button>
-                </div>
-              </div>
+              <p className="mt-1 text-slate-600">
+                These products are stored in SQLite via Prisma.
+              </p>
             </div>
 
             <div className="overflow-x-auto">
