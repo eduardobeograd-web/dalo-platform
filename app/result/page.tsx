@@ -2,88 +2,16 @@
 
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
+import {
+  formatPrice,
+  getRecommendedProduct,
+  getUpsellProduct,
+} from "../../lib/products";
 
-type Plan = {
-  name: string;
-  data: string;
-  validity: string;
-  price: string;
-  oldPrice: string;
-  description: string;
-  badge: string;
-  upgrade: string;
-  fit: string;
-  image: string;
-};
-
-function getPlan(country: string, days: string, type: string): Plan {
-  const destination = country || "Europe";
-
-  if (days === "30+") {
-    return {
-      name: `${destination} Long Stay`,
-      data: "20GB",
-      validity: "60 Days",
-      price: "€19.99",
-      oldPrice: "€29.99",
-      description:
-        "Built for longer trips, multi-country travel and travelers who need reliable data for more than a few weeks.",
-      badge: "Best for long trips",
-      upgrade: "Upgrade to 50GB / 90 Days for longer travel freedom",
-      fit: "Long stay travelers",
-      image:
-        "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?q=80&w=1400&auto=format&fit=crop",
-    };
-  }
-
-  if (type === "essential") {
-    return {
-      name: `${destination} Essential`,
-      data: "1GB",
-      validity: "7 Days",
-      price: "€3.55",
-      oldPrice: "€5.99",
-      description:
-        "Perfect for maps, WhatsApp messages, email and light browsing during your trip.",
-      badge: "Best for light use",
-      upgrade: "Upgrade to 3GB for more flexibility",
-      fit: "Maps, messaging and email",
-      image:
-        "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1400&auto=format&fit=crop",
-    };
-  }
-
-  if (type === "power") {
-    return {
-      name: `${destination} Unlimited`,
-      data: "Unlimited",
-      validity: days === "1-3" ? "3 Days" : "15 Days",
-      price: "€14.99",
-      oldPrice: "€24.99",
-      description:
-        "Best for streaming, hotspot, video calls and remote work while traveling.",
-      badge: "Best for heavy use",
-      upgrade: "Upgrade to Unlimited Plus for hotspot priority",
-      fit: "Streaming, hotspot and work",
-      image:
-        "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?q=80&w=1400&auto=format&fit=crop",
-    };
-  }
-
-  return {
-    name: `${destination} Smart`,
-    data: "5GB",
-    validity: "15 Days",
-    price: "€7.99",
-    oldPrice: "€12.99",
-    description:
-      "Perfect for social media, WhatsApp calls, maps and everyday travel.",
-    badge: "Most popular",
-    upgrade: "Upgrade to 10GB for only +€3",
-    fit: "Social media, calls and navigation",
-    image:
-      "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?q=80&w=1400&auto=format&fit=crop",
-  };
+function getFitLabel(type: string) {
+  if (type === "essential") return "Maps, messaging and email";
+  if (type === "power") return "Streaming, hotspot and work";
+  return "Social media, calls and navigation";
 }
 
 export default function ResultPage() {
@@ -93,7 +21,13 @@ export default function ResultPage() {
   const days = params.get("days") || "8-14";
   const type = params.get("type") || "everyday";
 
-  const plan = getPlan(country, days, type);
+  const plan = getRecommendedProduct({
+    country,
+    days,
+    type,
+  });
+
+  const upsell = getUpsellProduct(plan.id);
 
   return (
     <main className="min-h-screen bg-[#F6F8FF] text-slate-900">
@@ -154,7 +88,13 @@ export default function ResultPage() {
             />
 
             <div className="absolute left-6 top-6 rounded-full bg-white/90 px-4 py-2 text-sm font-bold text-blue-700 backdrop-blur">
-              {plan.badge}
+              {plan.usageFit === "essential"
+                ? "Best for light use"
+                : plan.usageFit === "power"
+                ? "Best for heavy use"
+                : plan.usageFit === "long_stay"
+                ? "Best for long trips"
+                : "Most popular"}
             </div>
 
             <div className="absolute bottom-6 left-6 right-6 rounded-[2rem] bg-white/90 p-5 backdrop-blur">
@@ -162,7 +102,7 @@ export default function ResultPage() {
                 Recommended for
               </div>
               <div className="mt-1 text-xl font-bold text-slate-950">
-                {plan.fit}
+                {getFitLabel(type)}
               </div>
             </div>
           </div>
@@ -177,7 +117,7 @@ export default function ResultPage() {
             </h2>
 
             <p className="mt-4 text-3xl font-bold text-blue-600">
-              {plan.data} / {plan.validity}
+              {plan.data} / {plan.validityDays} Days
             </p>
 
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-600">
@@ -196,8 +136,10 @@ export default function ResultPage() {
               </div>
 
               <div className="rounded-2xl bg-slate-50 p-5">
-                <div className="text-sm text-slate-500">SIM Card</div>
-                <div className="mt-1 font-bold">No physical SIM</div>
+                <div className="text-sm text-slate-500">Provider ID</div>
+                <div className="mt-1 break-all font-mono text-xs font-bold">
+                  {plan.providerProductId}
+                </div>
               </div>
 
               <div className="rounded-2xl bg-slate-50 p-5">
@@ -208,11 +150,15 @@ export default function ResultPage() {
 
             <div className="mt-9 flex items-end gap-4">
               <div className="text-5xl font-bold text-slate-950">
-                {plan.price}
+                {formatPrice(plan.sellPrice)}
               </div>
-              <div className="pb-2 text-xl text-slate-400 line-through">
-                {plan.oldPrice}
-              </div>
+
+              {plan.oldPrice && (
+                <div className="pb-2 text-xl text-slate-400 line-through">
+                  {formatPrice(plan.oldPrice)}
+                </div>
+              )}
+
               <div className="mb-1 rounded-full bg-green-100 px-3 py-1 text-sm font-bold text-green-700">
                 Today only
               </div>
@@ -229,34 +175,39 @@ export default function ResultPage() {
         </div>
 
         {/* UPSELL */}
-        <div className="mt-8 grid gap-6 md:grid-cols-[1fr_360px]">
-          <div className="rounded-[2rem] bg-white p-7 shadow-lg shadow-blue-50">
-            <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-              <div>
-                <div className="mb-2 text-sm font-bold uppercase tracking-wide text-blue-600">
-                  Optional upgrade
+        {upsell && (
+          <div className="mt-8 grid gap-6 md:grid-cols-[1fr_360px]">
+            <div className="rounded-[2rem] bg-white p-7 shadow-lg shadow-blue-50">
+              <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <div className="mb-2 text-sm font-bold uppercase tracking-wide text-blue-600">
+                    Optional upgrade
+                  </div>
+                  <h3 className="text-2xl font-bold text-slate-950">
+                    Need more freedom?
+                  </h3>
+                  <p className="mt-2 text-slate-600">
+                    Upgrade to {upsell.name} with {upsell.data} for{" "}
+                    {formatPrice(upsell.sellPrice)}.
+                  </p>
                 </div>
-                <h3 className="text-2xl font-bold text-slate-950">
-                  Need more freedom?
-                </h3>
-                <p className="mt-2 text-slate-600">{plan.upgrade}</p>
-              </div>
 
-              <button className="rounded-xl border border-blue-600 px-6 py-3 font-bold text-blue-600 transition hover:bg-blue-50">
-                Upgrade Plan
-              </button>
+                <button className="rounded-xl border border-blue-600 px-6 py-3 font-bold text-blue-600 transition hover:bg-blue-50">
+                  Upgrade Plan
+                </button>
+              </div>
+            </div>
+
+            <div className="rounded-[2rem] bg-slate-950 p-7 text-white shadow-lg">
+              <div className="text-3xl">✓</div>
+              <h3 className="mt-4 text-xl font-bold">Why this plan?</h3>
+              <p className="mt-2 text-slate-300">
+                It matches your selected destination, travel duration and usage
+                profile.
+              </p>
             </div>
           </div>
-
-          <div className="rounded-[2rem] bg-slate-950 p-7 text-white shadow-lg">
-            <div className="text-3xl">✓</div>
-            <h3 className="mt-4 text-xl font-bold">Why this plan?</h3>
-            <p className="mt-2 text-slate-300">
-              It matches your selected destination, travel duration and usage
-              profile.
-            </p>
-          </div>
-        </div>
+        )}
 
         {/* TRUST */}
         <div className="mt-10 grid gap-6 md:grid-cols-3">

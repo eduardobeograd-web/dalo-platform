@@ -1,47 +1,22 @@
-const products = [
-  {
-    country: "Europe",
-    name: "Europe Essential",
-    data: "1GB",
-    validity: "7 Days",
-    buyPrice: 1.17,
-    sellPrice: 3.55,
-    usage: "Essential",
-    provider: "Wholesale API",
-    wholesaleId: "esim_1GB_7D_EU",
-    status: "Active",
-  },
-  {
-    country: "Europe",
-    name: "Europe Smart",
-    data: "5GB",
-    validity: "15 Days",
-    buyPrice: 3.2,
-    sellPrice: 7.99,
-    usage: "Everyday",
-    provider: "Wholesale API",
-    wholesaleId: "esim_5GB_15D_EU",
-    status: "Active",
-  },
-  {
-    country: "Europe",
-    name: "Europe Unlimited",
-    data: "Unlimited",
-    validity: "15 Days",
-    buyPrice: 8.9,
-    sellPrice: 14.99,
-    usage: "Power User",
-    provider: "Wholesale API",
-    wholesaleId: "esim_UNL_15D_EU",
-    status: "Active",
-  },
-];
+import { formatPrice, products } from "../../../lib/products";
 
-function formatEuro(value: number) {
-  return `€${value.toFixed(2)}`;
+function getMargin(buyPrice: number, sellPrice: number) {
+  const profit = sellPrice - buyPrice;
+  return Math.round((profit / sellPrice) * 100);
+}
+
+function getProfit(buyPrice: number, sellPrice: number) {
+  return sellPrice - buyPrice;
 }
 
 export default function ProductsPage() {
+  const activeProducts = products.filter((product) => product.active);
+  const averageMargin =
+    products.reduce(
+      (total, product) => total + getMargin(product.buyPrice, product.sellPrice),
+      0
+    ) / products.length;
+
   return (
     <main className="min-h-screen bg-[#F6F8FF] text-slate-900">
       <div className="flex min-h-screen">
@@ -57,30 +32,35 @@ export default function ProductsPage() {
             >
               Dashboard
             </a>
+
             <a
               className="block rounded-2xl bg-blue-600 px-5 py-4 font-semibold"
               href="/admin/products"
             >
               Products
             </a>
+
             <a
               className="block rounded-2xl px-5 py-4 text-slate-300 hover:bg-white/10"
               href="/admin/recommendations"
             >
               Recommendations
             </a>
+
             <a
               className="block rounded-2xl px-5 py-4 text-slate-300 hover:bg-white/10"
               href="/admin/upsells"
             >
               Upsells
             </a>
+
             <a
               className="block rounded-2xl px-5 py-4 text-slate-300 hover:bg-white/10"
               href="/admin/orders"
             >
               Orders
             </a>
+
             <a
               className="block rounded-2xl px-5 py-4 text-slate-300 hover:bg-white/10"
               href="/admin/providers"
@@ -96,11 +76,13 @@ export default function ProductsPage() {
               <p className="text-sm font-bold uppercase tracking-wide text-blue-600">
                 DALO Admin
               </p>
+
               <h1 className="mt-2 text-4xl font-bold text-slate-950">
                 Products
               </h1>
+
               <p className="mt-2 text-slate-600">
-                Manage eSIM packages, pricing, usage classes and API product IDs.
+                Manage eSIM packages, pricing, usage classes and provider product IDs.
               </p>
             </div>
 
@@ -127,14 +109,18 @@ export default function ProductsPage() {
               <p className="text-sm font-semibold text-slate-500">
                 Active Products
               </p>
-              <h2 className="mt-3 text-3xl font-bold">3</h2>
+              <h2 className="mt-3 text-3xl font-bold">
+                {activeProducts.length}
+              </h2>
             </div>
 
             <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
               <p className="text-sm font-semibold text-slate-500">
                 Average Margin
               </p>
-              <h2 className="mt-3 text-3xl font-bold">61%</h2>
+              <h2 className="mt-3 text-3xl font-bold">
+                {Math.round(averageMargin)}%
+              </h2>
             </div>
 
             <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
@@ -152,8 +138,9 @@ export default function ProductsPage() {
                   <h2 className="text-2xl font-bold text-slate-950">
                     Product Catalog
                   </h2>
+
                   <p className="mt-1 text-slate-600">
-                    These products will later be imported from your wholesale rate sheet.
+                    Products are now loaded from the central DALO product file.
                   </p>
                 </div>
 
@@ -161,12 +148,15 @@ export default function ProductsPage() {
                   <button className="rounded-xl bg-slate-100 px-4 py-3 font-semibold text-slate-700">
                     All
                   </button>
+
                   <button className="rounded-xl px-4 py-3 font-semibold text-slate-500 hover:bg-slate-100">
                     Essential
                   </button>
+
                   <button className="rounded-xl px-4 py-3 font-semibold text-slate-500 hover:bg-slate-100">
                     Everyday
                   </button>
+
                   <button className="rounded-xl px-4 py-3 font-semibold text-slate-500 hover:bg-slate-100">
                     Power
                   </button>
@@ -175,32 +165,30 @@ export default function ProductsPage() {
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[1100px] text-left">
+              <table className="w-full min-w-[1200px] text-left">
                 <thead className="bg-slate-50 text-sm text-slate-500">
                   <tr>
                     <th className="px-6 py-4 font-semibold">Country</th>
                     <th className="px-6 py-4 font-semibold">Product</th>
                     <th className="px-6 py-4 font-semibold">Data</th>
                     <th className="px-6 py-4 font-semibold">Validity</th>
+                    <th className="px-6 py-4 font-semibold">Plan Type</th>
                     <th className="px-6 py-4 font-semibold">Buy</th>
                     <th className="px-6 py-4 font-semibold">Sell</th>
                     <th className="px-6 py-4 font-semibold">Profit</th>
                     <th className="px-6 py-4 font-semibold">Usage</th>
-                    <th className="px-6 py-4 font-semibold">Wholesale ID</th>
+                    <th className="px-6 py-4 font-semibold">Provider ID</th>
                     <th className="px-6 py-4 font-semibold">Status</th>
                   </tr>
                 </thead>
 
                 <tbody>
                   {products.map((product) => {
-                    const profit = product.sellPrice - product.buyPrice;
-                    const margin = Math.round((profit / product.sellPrice) * 100);
+                    const profit = getProfit(product.buyPrice, product.sellPrice);
+                    const margin = getMargin(product.buyPrice, product.sellPrice);
 
                     return (
-                      <tr
-                        key={product.wholesaleId}
-                        className="border-t border-slate-100"
-                      >
+                      <tr key={product.id} className="border-t border-slate-100">
                         <td className="px-6 py-5 font-semibold">
                           {product.country}
                         </td>
@@ -213,17 +201,28 @@ export default function ProductsPage() {
                         </td>
 
                         <td className="px-6 py-5">{product.data}</td>
-                        <td className="px-6 py-5">{product.validity}</td>
+
                         <td className="px-6 py-5">
-                          {formatEuro(product.buyPrice)}
+                          {product.validityDays} Days
                         </td>
+
+                        <td className="px-6 py-5">
+                          <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-bold text-slate-700">
+                            {product.planType.replaceAll("_", " ")}
+                          </span>
+                        </td>
+
+                        <td className="px-6 py-5">
+                          {formatPrice(product.buyPrice)}
+                        </td>
+
                         <td className="px-6 py-5 font-bold">
-                          {formatEuro(product.sellPrice)}
+                          {formatPrice(product.sellPrice)}
                         </td>
 
                         <td className="px-6 py-5">
                           <div className="font-bold text-green-700">
-                            {formatEuro(profit)}
+                            {formatPrice(profit)}
                           </div>
                           <div className="text-sm text-slate-500">
                             {margin}% margin
@@ -232,17 +231,23 @@ export default function ProductsPage() {
 
                         <td className="px-6 py-5">
                           <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-bold text-blue-700">
-                            {product.usage}
+                            {product.usageFit}
                           </span>
                         </td>
 
                         <td className="px-6 py-5 font-mono text-xs text-slate-500">
-                          {product.wholesaleId}
+                          {product.providerProductId}
                         </td>
 
                         <td className="px-6 py-5">
-                          <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-bold text-green-700">
-                            {product.status}
+                          <span
+                            className={`rounded-full px-3 py-1 text-sm font-bold ${
+                              product.active
+                                ? "bg-green-100 text-green-700"
+                                : "bg-slate-100 text-slate-600"
+                            }`}
+                          >
+                            {product.active ? "Active" : "Paused"}
                           </span>
                         </td>
                       </tr>

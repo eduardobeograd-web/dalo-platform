@@ -1,29 +1,26 @@
-const upsells = [
+import { formatPrice, getUpsellProduct, products } from "../../../lib/products";
+
+const upsellRules = [
   {
-    baseProduct: "Europe Essential",
-    upsellProduct: "Europe Smart 5GB",
+    baseProductId: "europe-essential-1gb-7d",
     trigger: "Result Page",
-    offer: "Upgrade to 5GB for more flexibility",
-    extraRevenue: "+€4.44",
     status: "Active",
   },
   {
-    baseProduct: "Europe Smart",
-    upsellProduct: "Europe Pro 10GB",
+    baseProductId: "europe-smart-5gb-15d",
     trigger: "Result Page",
-    offer: "Upgrade to 10GB for only +€3",
-    extraRevenue: "+€3.00",
     status: "Active",
   },
   {
-    baseProduct: "Europe Unlimited",
-    upsellProduct: "Unlimited Plus",
+    baseProductId: "europe-unlimited-15d",
     trigger: "Checkout",
-    offer: "Priority hotspot and streaming upgrade",
-    extraRevenue: "+€5.00",
     status: "Draft",
   },
 ];
+
+function getProduct(productId: string) {
+  return products.find((product) => product.id === productId);
+}
 
 export default function UpsellsPage() {
   return (
@@ -35,45 +32,27 @@ export default function UpsellsPage() {
           </a>
 
           <nav className="space-y-2">
-            <a
-              className="block rounded-2xl px-5 py-4 text-slate-300 hover:bg-white/10"
-              href="/admin"
-            >
+            <a className="block rounded-2xl px-5 py-4 text-slate-300 hover:bg-white/10" href="/admin">
               Dashboard
             </a>
 
-            <a
-              className="block rounded-2xl px-5 py-4 text-slate-300 hover:bg-white/10"
-              href="/admin/products"
-            >
+            <a className="block rounded-2xl px-5 py-4 text-slate-300 hover:bg-white/10" href="/admin/products">
               Products
             </a>
 
-            <a
-              className="block rounded-2xl px-5 py-4 text-slate-300 hover:bg-white/10"
-              href="/admin/recommendations"
-            >
+            <a className="block rounded-2xl px-5 py-4 text-slate-300 hover:bg-white/10" href="/admin/recommendations">
               Recommendations
             </a>
 
-            <a
-              className="block rounded-2xl bg-blue-600 px-5 py-4 font-semibold"
-              href="/admin/upsells"
-            >
+            <a className="block rounded-2xl bg-blue-600 px-5 py-4 font-semibold" href="/admin/upsells">
               Upsells
             </a>
 
-            <a
-              className="block rounded-2xl px-5 py-4 text-slate-300 hover:bg-white/10"
-              href="/admin/orders"
-            >
+            <a className="block rounded-2xl px-5 py-4 text-slate-300 hover:bg-white/10" href="/admin/orders">
               Orders
             </a>
 
-            <a
-              className="block rounded-2xl px-5 py-4 text-slate-300 hover:bg-white/10"
-              href="/admin/providers"
-            >
+            <a className="block rounded-2xl px-5 py-4 text-slate-300 hover:bg-white/10" href="/admin/providers">
               API Providers
             </a>
           </nav>
@@ -91,7 +70,7 @@ export default function UpsellsPage() {
               </h1>
 
               <p className="mt-2 text-slate-600">
-                Increase average order value with smart upgrades and add-ons.
+                Increase average order value with simple, smart upgrades.
               </p>
             </div>
 
@@ -103,9 +82,25 @@ export default function UpsellsPage() {
           <div className="mb-8 grid gap-6 md:grid-cols-4">
             <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
               <p className="text-sm font-semibold text-slate-500">
+                Upsell Rules
+              </p>
+              <h2 className="mt-3 text-3xl font-bold">{upsellRules.length}</h2>
+            </div>
+
+            <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
+              <p className="text-sm font-semibold text-slate-500">
+                Connected Products
+              </p>
+              <h2 className="mt-3 text-3xl font-bold">{products.length}</h2>
+            </div>
+
+            <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
+              <p className="text-sm font-semibold text-slate-500">
                 Active Upsells
               </p>
-              <h2 className="mt-3 text-3xl font-bold">2</h2>
+              <h2 className="mt-3 text-3xl font-bold">
+                {upsellRules.filter((rule) => rule.status === "Active").length}
+              </h2>
             </div>
 
             <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
@@ -113,20 +108,6 @@ export default function UpsellsPage() {
                 Upsell Revenue
               </p>
               <h2 className="mt-3 text-3xl font-bold">€0</h2>
-            </div>
-
-            <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
-              <p className="text-sm font-semibold text-slate-500">
-                Conversion
-              </p>
-              <h2 className="mt-3 text-3xl font-bold">—</h2>
-            </div>
-
-            <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
-              <p className="text-sm font-semibold text-slate-500">
-                Best Offer
-              </p>
-              <h2 className="mt-3 text-3xl font-bold">—</h2>
             </div>
           </div>
 
@@ -137,64 +118,85 @@ export default function UpsellsPage() {
                   Upsell Rules
                 </h2>
                 <p className="mt-1 text-slate-600">
-                  Decide which upgrade is shown after a recommendation.
+                  These upgrades are generated from the central DALO product file.
                 </p>
               </div>
 
               <div className="overflow-x-auto">
-                <table className="w-full min-w-[900px] text-left">
+                <table className="w-full min-w-[1000px] text-left">
                   <thead className="bg-slate-50 text-sm text-slate-500">
                     <tr>
                       <th className="px-6 py-4 font-semibold">Base Product</th>
+                      <th className="px-6 py-4 font-semibold">Base Plan</th>
                       <th className="px-6 py-4 font-semibold">Upsell Product</th>
+                      <th className="px-6 py-4 font-semibold">Upsell Plan</th>
+                      <th className="px-6 py-4 font-semibold">Price Difference</th>
                       <th className="px-6 py-4 font-semibold">Trigger</th>
-                      <th className="px-6 py-4 font-semibold">Offer Text</th>
-                      <th className="px-6 py-4 font-semibold">Extra Revenue</th>
                       <th className="px-6 py-4 font-semibold">Status</th>
                     </tr>
                   </thead>
 
                   <tbody>
-                    {upsells.map((upsell) => (
-                      <tr
-                        key={`${upsell.baseProduct}-${upsell.upsellProduct}`}
-                        className="border-t border-slate-100"
-                      >
-                        <td className="px-6 py-5 font-semibold">
-                          {upsell.baseProduct}
-                        </td>
+                    {upsellRules.map((rule) => {
+                      const baseProduct = getProduct(rule.baseProductId);
+                      const upsellProduct = getUpsellProduct(rule.baseProductId);
 
-                        <td className="px-6 py-5 font-bold">
-                          {upsell.upsellProduct}
-                        </td>
+                      if (!baseProduct || !upsellProduct) return null;
 
-                        <td className="px-6 py-5">
-                          <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-bold text-blue-700">
-                            {upsell.trigger}
-                          </span>
-                        </td>
+                      const priceDifference =
+                        upsellProduct.sellPrice - baseProduct.sellPrice;
 
-                        <td className="px-6 py-5 text-slate-600">
-                          {upsell.offer}
-                        </td>
+                      return (
+                        <tr
+                          key={`${rule.baseProductId}-${upsellProduct.id}`}
+                          className="border-t border-slate-100"
+                        >
+                          <td className="px-6 py-5">
+                            <div className="font-bold">{baseProduct.name}</div>
+                            <div className="text-sm text-slate-500">
+                              {baseProduct.id}
+                            </div>
+                          </td>
 
-                        <td className="px-6 py-5 font-bold text-green-700">
-                          {upsell.extraRevenue}
-                        </td>
+                          <td className="px-6 py-5">
+                            {baseProduct.data} / {baseProduct.validityDays} Days
+                          </td>
 
-                        <td className="px-6 py-5">
-                          <span
-                            className={`rounded-full px-3 py-1 text-sm font-bold ${
-                              upsell.status === "Active"
-                                ? "bg-green-100 text-green-700"
-                                : "bg-slate-100 text-slate-600"
-                            }`}
-                          >
-                            {upsell.status}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
+                          <td className="px-6 py-5">
+                            <div className="font-bold">{upsellProduct.name}</div>
+                            <div className="text-sm text-slate-500">
+                              {upsellProduct.id}
+                            </div>
+                          </td>
+
+                          <td className="px-6 py-5">
+                            {upsellProduct.data} / {upsellProduct.validityDays} Days
+                          </td>
+
+                          <td className="px-6 py-5 font-bold text-green-700">
+                            +{formatPrice(priceDifference)}
+                          </td>
+
+                          <td className="px-6 py-5">
+                            <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-bold text-blue-700">
+                              {rule.trigger}
+                            </span>
+                          </td>
+
+                          <td className="px-6 py-5">
+                            <span
+                              className={`rounded-full px-3 py-1 text-sm font-bold ${
+                                rule.status === "Active"
+                                  ? "bg-green-100 text-green-700"
+                                  : "bg-slate-100 text-slate-600"
+                              }`}
+                            >
+                              {rule.status}
+                            </span>
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -204,7 +206,7 @@ export default function UpsellsPage() {
               <div className="rounded-[2rem] bg-slate-950 p-8 text-white shadow-xl">
                 <h2 className="text-2xl font-bold">Upsell Preview</h2>
                 <p className="mt-2 text-slate-300">
-                  This is what customers will see after their recommendation.
+                  This is the upgrade style shown after a recommendation.
                 </p>
 
                 <div className="mt-6 rounded-[2rem] bg-white p-6 text-slate-900">
@@ -212,10 +214,10 @@ export default function UpsellsPage() {
                     Need more freedom?
                   </div>
 
-                  <h3 className="text-2xl font-bold">Upgrade to 10GB</h3>
+                  <h3 className="text-2xl font-bold">Upgrade to Europe Pro</h3>
 
                   <p className="mt-3 text-slate-600">
-                    Get more data for streaming, navigation and social media.
+                    Get 10GB for streaming, navigation and social media.
                   </p>
 
                   <div className="mt-6 text-3xl font-bold text-blue-600">
@@ -239,7 +241,7 @@ export default function UpsellsPage() {
                 </p>
 
                 <div className="mt-6 rounded-2xl bg-blue-50 p-5 text-blue-700">
-                  <strong>Rule:</strong> One recommendation, one upgrade, one
+                  <strong>Rule:</strong> one recommendation, one upgrade, one
                   clear purchase path.
                 </div>
               </div>

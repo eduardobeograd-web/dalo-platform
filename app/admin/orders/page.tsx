@@ -1,57 +1,43 @@
+import { formatPrice, products } from "../../../lib/products";
+
 const orders = [
   {
     id: "DALO-1001",
     customer: "customer@example.com",
-    destination: "Spain",
-    product: "Spain Smart",
-    data: "5GB",
-    amount: "€7.99",
-    profit: "€4.79",
+    productId: "europe-smart-5gb-15d",
     payment: "Paid",
     fulfillment: "Delivered",
-    provider: "Wholesale API",
     createdAt: "Today, 14:22",
   },
   {
     id: "DALO-1002",
     customer: "traveler@example.com",
-    destination: "Europe",
-    product: "Europe Unlimited",
-    data: "Unlimited",
-    amount: "€14.99",
-    profit: "€6.09",
+    productId: "europe-unlimited-15d",
     payment: "Paid",
     fulfillment: "Provisioning",
-    provider: "Wholesale API",
     createdAt: "Today, 15:08",
   },
   {
     id: "DALO-1003",
     customer: "demo@example.com",
-    destination: "Italy",
-    product: "Italy Essential",
-    data: "1GB",
-    amount: "€3.55",
-    profit: "€2.38",
+    productId: "europe-essential-1gb-7d",
     payment: "Pending",
     fulfillment: "Waiting",
-    provider: "Wholesale API",
     createdAt: "Today, 15:34",
   },
   {
     id: "DALO-1004",
     customer: "support@example.com",
-    destination: "Japan",
-    product: "Japan Power",
-    data: "10GB",
-    amount: "€12.99",
-    profit: "€5.44",
+    productId: "europe-pro-10gb-30d",
     payment: "Paid",
     fulfillment: "Failed",
-    provider: "Wholesale API",
     createdAt: "Yesterday, 18:12",
   },
 ];
+
+function getProduct(productId: string) {
+  return products.find((product) => product.id === productId);
+}
 
 function StatusBadge({ status }: { status: string }) {
   const styles =
@@ -71,6 +57,23 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 export default function OrdersPage() {
+  const orderRows = orders.map((order) => {
+    const product = getProduct(order.productId);
+
+    return {
+      ...order,
+      product,
+      amount: product?.sellPrice || 0,
+      profit: product ? product.sellPrice - product.buyPrice : 0,
+    };
+  });
+
+  const revenue = orderRows.reduce((total, order) => total + order.amount, 0);
+  const profit = orderRows.reduce((total, order) => total + order.profit, 0);
+  const failedOrders = orderRows.filter(
+    (order) => order.fulfillment === "Failed"
+  ).length;
+
   return (
     <main className="min-h-screen bg-[#F6F8FF] text-slate-900">
       <div className="flex min-h-screen">
@@ -156,24 +159,30 @@ export default function OrdersPage() {
               <p className="text-sm font-semibold text-slate-500">
                 Total Orders
               </p>
-              <h2 className="mt-3 text-3xl font-bold">4</h2>
+              <h2 className="mt-3 text-3xl font-bold">{orderRows.length}</h2>
             </div>
 
             <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
               <p className="text-sm font-semibold text-slate-500">Revenue</p>
-              <h2 className="mt-3 text-3xl font-bold">€39.52</h2>
+              <h2 className="mt-3 text-3xl font-bold">
+                {formatPrice(revenue)}
+              </h2>
             </div>
 
             <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
               <p className="text-sm font-semibold text-slate-500">Profit</p>
-              <h2 className="mt-3 text-3xl font-bold">€18.70</h2>
+              <h2 className="mt-3 text-3xl font-bold">
+                {formatPrice(profit)}
+              </h2>
             </div>
 
             <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
               <p className="text-sm font-semibold text-slate-500">
                 Failed Orders
               </p>
-              <h2 className="mt-3 text-3xl font-bold text-red-600">1</h2>
+              <h2 className="mt-3 text-3xl font-bold text-red-600">
+                {failedOrders}
+              </h2>
             </div>
           </div>
 
@@ -186,7 +195,7 @@ export default function OrdersPage() {
                       Order List
                     </h2>
                     <p className="mt-1 text-slate-600">
-                      Every paid order will trigger the provider API later.
+                      Orders now reference the central DALO product catalog.
                     </p>
                   </div>
 
@@ -205,13 +214,14 @@ export default function OrdersPage() {
               </div>
 
               <div className="overflow-x-auto">
-                <table className="w-full min-w-[1100px] text-left">
+                <table className="w-full min-w-[1150px] text-left">
                   <thead className="bg-slate-50 text-sm text-slate-500">
                     <tr>
                       <th className="px-6 py-4 font-semibold">Order</th>
                       <th className="px-6 py-4 font-semibold">Customer</th>
                       <th className="px-6 py-4 font-semibold">Destination</th>
                       <th className="px-6 py-4 font-semibold">Product</th>
+                      <th className="px-6 py-4 font-semibold">Provider ID</th>
                       <th className="px-6 py-4 font-semibold">Amount</th>
                       <th className="px-6 py-4 font-semibold">Profit</th>
                       <th className="px-6 py-4 font-semibold">Payment</th>
@@ -221,30 +231,42 @@ export default function OrdersPage() {
                   </thead>
 
                   <tbody>
-                    {orders.map((order) => (
+                    {orderRows.map((order) => (
                       <tr key={order.id} className="border-t border-slate-100">
                         <td className="px-6 py-5 font-bold">{order.id}</td>
 
                         <td className="px-6 py-5">
                           <div className="font-semibold">{order.customer}</div>
                           <div className="text-sm text-slate-500">
-                            {order.provider}
+                            {order.product?.provider || "Unknown Provider"}
                           </div>
                         </td>
-
-                        <td className="px-6 py-5">{order.destination}</td>
 
                         <td className="px-6 py-5">
-                          <div className="font-bold">{order.product}</div>
+                          {order.product?.country || "—"}
+                        </td>
+
+                        <td className="px-6 py-5">
+                          <div className="font-bold">
+                            {order.product?.name || "Unknown Product"}
+                          </div>
                           <div className="text-sm text-slate-500">
-                            {order.data}
+                            {order.product
+                              ? `${order.product.data} / ${order.product.validityDays} Days`
+                              : "—"}
                           </div>
                         </td>
 
-                        <td className="px-6 py-5 font-bold">{order.amount}</td>
+                        <td className="px-6 py-5 font-mono text-xs text-slate-500">
+                          {order.product?.providerProductId || "—"}
+                        </td>
+
+                        <td className="px-6 py-5 font-bold">
+                          {formatPrice(order.amount)}
+                        </td>
 
                         <td className="px-6 py-5 font-bold text-green-700">
-                          {order.profit}
+                          {formatPrice(order.profit)}
                         </td>
 
                         <td className="px-6 py-5">
@@ -279,13 +301,22 @@ export default function OrdersPage() {
                   </div>
 
                   <div className="rounded-2xl bg-white/10 p-4">
-                    <div className="text-sm text-slate-400">2. Provider API</div>
+                    <div className="text-sm text-slate-400">2. Product ID</div>
+                    <div className="mt-1 font-bold">
+                      DALO reads providerProductId
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl bg-white/10 p-4">
+                    <div className="text-sm text-slate-400">3. Provider API</div>
                     <div className="mt-1 font-bold">Create eSIM request</div>
                   </div>
 
                   <div className="rounded-2xl bg-white/10 p-4">
-                    <div className="text-sm text-slate-400">3. Delivery</div>
-                    <div className="mt-1 font-bold">QR code sent to customer</div>
+                    <div className="text-sm text-slate-400">4. Delivery</div>
+                    <div className="mt-1 font-bold">
+                      QR code sent to customer
+                    </div>
                   </div>
                 </div>
               </div>
