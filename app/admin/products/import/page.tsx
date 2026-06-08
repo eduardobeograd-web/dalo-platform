@@ -1,3 +1,5 @@
+
+import { analyzeRateSheet } from "./actions";
 export default function ImportProductsPage() {
   return (
     <main className="min-h-screen bg-[#F6F8FF] text-slate-900">
@@ -87,7 +89,7 @@ export default function ImportProductsPage() {
                 Supported format: .xlsx rate sheet from your wholesale provider.
               </p>
 
-              <form className="mt-8 space-y-6">
+              <form action={analyzeRateSheet} className="mt-8 space-y-6">
                 <div className="rounded-[2rem] border-2 border-dashed border-blue-200 bg-blue-50/40 p-10 text-center">
                   <div className="text-5xl">📄</div>
 
@@ -99,15 +101,19 @@ export default function ImportProductsPage() {
                     Or choose the Excel file from your Mac.
                   </p>
 
+                  
+
                   <input
+                     name="file"
                     type="file"
                     accept=".xlsx,.xls"
+                    required
                     className="mt-6 w-full rounded-2xl border border-slate-200 bg-white p-4"
                   />
                 </div>
 
                 <button
-                  type="button"
+                  type="submit"
                   className="w-full rounded-2xl bg-blue-600 p-5 text-lg font-bold text-white shadow-lg shadow-blue-200"
                 >
                   Analyze Rate Sheet
