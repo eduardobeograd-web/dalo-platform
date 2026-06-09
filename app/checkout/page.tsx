@@ -12,11 +12,13 @@ export default async function CheckoutPage({
   searchParams: Promise<{
     productId?: string;
     error?: string;
+    stripe?: string;
   }>;
 }) {
   const params = await searchParams;
   const productId = params.productId;
   const hasError = params.error === "1";
+  const stripeMissing = params.stripe === "missing";
 
   const product = productId
     ? await prisma.product.findUnique({
@@ -97,12 +99,18 @@ export default async function CheckoutPage({
           </h1>
 
           <p className="mt-3 text-slate-600">
-            Enter your email so DALO can deliver your eSIM QR code after payment.
+            Enter your email so DALO can prepare your eSIM order.
           </p>
 
           {hasError && (
             <div className="mt-6 rounded-2xl bg-red-50 p-4 text-sm font-semibold text-red-700">
               Please enter a valid email address and try again.
+            </div>
+          )}
+
+          {stripeMissing && (
+            <div className="mt-6 rounded-2xl bg-yellow-50 p-4 text-sm font-semibold text-yellow-700">
+              Stripe is prepared, but no real Stripe test key is connected yet.
             </div>
           )}
 
@@ -131,15 +139,39 @@ export default async function CheckoutPage({
             </div>
 
             <div className="rounded-2xl bg-blue-50 p-5 text-blue-700">
-              <strong>Next:</strong> This creates a pending order in the DALO
-              database. Stripe payment comes later.
+              <strong>MVP mode:</strong> This creates a pending order in the DALO
+              database. Real Stripe payment will be activated after test keys are
+              added.
             </div>
 
             <button
               type="submit"
               className="w-full rounded-2xl bg-blue-600 p-5 text-lg font-bold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700"
             >
-              Create Order →
+              Create Test Order →
+            </button>
+          </form>
+
+          <form
+            action="/api/stripe/checkout"
+            method="POST"
+            className="mt-4 space-y-4"
+          >
+            <input type="hidden" name="productId" value={product.id} />
+
+            <input
+              name="email"
+              type="email"
+              required
+              placeholder="Stripe test email"
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 outline-none focus:border-blue-500 focus:bg-white"
+            />
+
+            <button
+              type="submit"
+              className="w-full rounded-2xl border border-slate-300 p-5 text-lg font-bold text-slate-700 transition hover:bg-slate-50"
+            >
+              Test Stripe Route →
             </button>
           </form>
         </div>
@@ -191,22 +223,22 @@ export default async function CheckoutPage({
           </div>
 
           <div className="rounded-[2rem] bg-slate-950 p-7 text-white shadow-xl">
-            <h3 className="text-xl font-bold">What happens next?</h3>
+            <h3 className="text-xl font-bold">Checkout Status</h3>
 
             <div className="mt-5 space-y-4">
               <div className="rounded-2xl bg-white/10 p-4">
-                <div className="text-sm text-slate-400">1. Order</div>
-                <div className="font-bold">DALO creates a pending order</div>
+                <div className="text-sm text-slate-400">Local Orders</div>
+                <div className="font-bold">Working</div>
               </div>
 
               <div className="rounded-2xl bg-white/10 p-4">
-                <div className="text-sm text-slate-400">2. Payment</div>
-                <div className="font-bold">Stripe checkout will come later</div>
+                <div className="text-sm text-slate-400">Stripe Route</div>
+                <div className="font-bold">Prepared</div>
               </div>
 
               <div className="rounded-2xl bg-white/10 p-4">
-                <div className="text-sm text-slate-400">3. Delivery</div>
-                <div className="font-bold">QR code sent after payment</div>
+                <div className="text-sm text-slate-400">Real Payments</div>
+                <div className="font-bold">Needs Stripe test key</div>
               </div>
             </div>
           </div>
