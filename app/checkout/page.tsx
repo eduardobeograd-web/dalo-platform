@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { prisma } from "../../lib/db";
+import { createCheckoutOrder } from "./actions";
 
 function formatPrice(value: number) {
   return `€${value.toFixed(2)}`;
@@ -10,10 +11,12 @@ export default async function CheckoutPage({
 }: {
   searchParams: Promise<{
     productId?: string;
+    error?: string;
   }>;
 }) {
   const params = await searchParams;
   const productId = params.productId;
+  const hasError = params.error === "1";
 
   const product = productId
     ? await prisma.product.findUnique({
@@ -97,11 +100,21 @@ export default async function CheckoutPage({
             Enter your email so DALO can deliver your eSIM QR code after payment.
           </p>
 
-          <form className="mt-8 space-y-5">
+          {hasError && (
+            <div className="mt-6 rounded-2xl bg-red-50 p-4 text-sm font-semibold text-red-700">
+              Please enter a valid email address and try again.
+            </div>
+          )}
+
+          <form action={createCheckoutOrder} className="mt-8 space-y-5">
+            <input type="hidden" name="productId" value={product.id} />
+
             <div>
               <label className="mb-2 block font-semibold">Email address</label>
               <input
+                name="email"
                 type="email"
+                required
                 placeholder="you@example.com"
                 className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 outline-none focus:border-blue-500 focus:bg-white"
               />
@@ -110,6 +123,7 @@ export default async function CheckoutPage({
             <div>
               <label className="mb-2 block font-semibold">Full name</label>
               <input
+                name="name"
                 type="text"
                 placeholder="Eduardo"
                 className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 outline-none focus:border-blue-500 focus:bg-white"
@@ -117,15 +131,15 @@ export default async function CheckoutPage({
             </div>
 
             <div className="rounded-2xl bg-blue-50 p-5 text-blue-700">
-              <strong>Next:</strong> This button will later create a Stripe
-              Checkout session. For now this is a checkout preview.
+              <strong>Next:</strong> This creates a pending order in the DALO
+              database. Stripe payment comes later.
             </div>
 
             <button
-              type="button"
+              type="submit"
               className="w-full rounded-2xl bg-blue-600 p-5 text-lg font-bold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700"
             >
-              Continue to Payment →
+              Create Order →
             </button>
           </form>
         </div>
@@ -156,7 +170,9 @@ export default async function CheckoutPage({
               <div className="mt-6 rounded-2xl bg-slate-50 p-5">
                 <div className="flex justify-between">
                   <span className="text-slate-600">Plan</span>
-                  <span className="font-bold">{formatPrice(product.sellPrice)}</span>
+                  <span className="font-bold">
+                    {formatPrice(product.sellPrice)}
+                  </span>
                 </div>
 
                 <div className="mt-3 flex justify-between">
@@ -164,7 +180,7 @@ export default async function CheckoutPage({
                   <span className="font-bold">Instant</span>
                 </div>
 
-                <div className="mt-3 border-t border-slate-200 pt-3 flex justify-between text-xl">
+                <div className="mt-3 flex justify-between border-t border-slate-200 pt-3 text-xl">
                   <span className="font-bold">Total</span>
                   <span className="font-bold text-blue-600">
                     {formatPrice(product.sellPrice)}
@@ -179,18 +195,18 @@ export default async function CheckoutPage({
 
             <div className="mt-5 space-y-4">
               <div className="rounded-2xl bg-white/10 p-4">
-                <div className="text-sm text-slate-400">1. Payment</div>
-                <div className="font-bold">Secure checkout</div>
+                <div className="text-sm text-slate-400">1. Order</div>
+                <div className="font-bold">DALO creates a pending order</div>
               </div>
 
               <div className="rounded-2xl bg-white/10 p-4">
-                <div className="text-sm text-slate-400">2. eSIM</div>
-                <div className="font-bold">DALO orders your eSIM</div>
+                <div className="text-sm text-slate-400">2. Payment</div>
+                <div className="font-bold">Stripe checkout will come later</div>
               </div>
 
               <div className="rounded-2xl bg-white/10 p-4">
                 <div className="text-sm text-slate-400">3. Delivery</div>
-                <div className="font-bold">QR code sent by email</div>
+                <div className="font-bold">QR code sent after payment</div>
               </div>
             </div>
           </div>
