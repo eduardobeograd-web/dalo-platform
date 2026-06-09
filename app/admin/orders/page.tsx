@@ -64,12 +64,10 @@ export default async function OrdersPage() {
             DALO Admin
           </p>
 
-          <h1 className="mt-2 text-4xl font-bold text-slate-950">
-            Orders
-          </h1>
+          <h1 className="mt-2 text-4xl font-bold text-slate-950">Orders</h1>
 
           <p className="mt-2 text-slate-600">
-            Orders are now loaded from the local DALO database.
+            Track payment status and eSIM delivery separately.
           </p>
         </div>
 
@@ -86,29 +84,23 @@ export default async function OrdersPage() {
 
       <div className="mb-8 grid gap-6 md:grid-cols-4">
         <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
-          <p className="text-sm font-semibold text-slate-500">
-            Total Orders
-          </p>
+          <p className="text-sm font-semibold text-slate-500">Total Orders</p>
           <h2 className="mt-3 text-3xl font-bold">{orderRows.length}</h2>
         </div>
 
         <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
           <p className="text-sm font-semibold text-slate-500">Revenue</p>
-          <h2 className="mt-3 text-3xl font-bold">
-            {formatPrice(revenue)}
-          </h2>
+          <h2 className="mt-3 text-3xl font-bold">{formatPrice(revenue)}</h2>
         </div>
 
         <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
           <p className="text-sm font-semibold text-slate-500">Profit</p>
-          <h2 className="mt-3 text-3xl font-bold">
-            {formatPrice(profit)}
-          </h2>
+          <h2 className="mt-3 text-3xl font-bold">{formatPrice(profit)}</h2>
         </div>
 
         <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
           <p className="text-sm font-semibold text-slate-500">
-            Failed Orders
+            Failed Deliveries
           </p>
           <h2 className="mt-3 text-3xl font-bold text-red-600">
             {failedOrders}
@@ -119,11 +111,10 @@ export default async function OrdersPage() {
       <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
         <div className="overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-blue-50">
           <div className="border-b border-slate-100 p-6">
-            <h2 className="text-2xl font-bold text-slate-950">
-              Order List
-            </h2>
+            <h2 className="text-2xl font-bold text-slate-950">Order List</h2>
+
             <p className="mt-1 text-slate-600">
-              Each order references a real product from the product database.
+              Payment success and eSIM delivery success are tracked separately.
             </p>
           </div>
 
@@ -138,8 +129,8 @@ export default async function OrdersPage() {
                   <th className="px-6 py-4 font-semibold">Provider ID</th>
                   <th className="px-6 py-4 font-semibold">Amount</th>
                   <th className="px-6 py-4 font-semibold">Profit</th>
-                  <th className="px-6 py-4 font-semibold">Payment</th>
-                  <th className="px-6 py-4 font-semibold">Fulfillment</th>
+                  <th className="px-6 py-4 font-semibold">Payment Status</th>
+                  <th className="px-6 py-4 font-semibold">eSIM Delivery</th>
                   <th className="px-6 py-4 font-semibold">Created</th>
                 </tr>
               </thead>
@@ -203,9 +194,11 @@ export default async function OrdersPage() {
 
         <div className="space-y-6">
           <div className="rounded-[2rem] bg-slate-950 p-8 text-white shadow-xl">
-            <h2 className="text-2xl font-bold">Fulfillment Flow</h2>
+            <h2 className="text-2xl font-bold">eSIM Delivery Flow</h2>
+
             <p className="mt-2 text-slate-300">
-              After Stripe confirms payment, DALO uses the product’s provider ID.
+              Payment and eSIM delivery are separate. A customer can pay
+              successfully, but provider delivery can still fail.
             </p>
 
             <div className="mt-6 space-y-4">
@@ -233,16 +226,17 @@ export default async function OrdersPage() {
 
           <div className="rounded-[2rem] bg-white p-8 shadow-xl shadow-blue-50">
             <h2 className="text-2xl font-bold text-slate-950">
-              Failed Order Actions
+              Failed Delivery Actions
             </h2>
 
             <p className="mt-3 text-slate-600">
-              Later, failed provider requests can be retried manually or refunded.
+              Later, failed provider requests can be retried manually or
+              refunded.
             </p>
 
             <div className="mt-6 space-y-3">
               <button className="w-full rounded-2xl bg-blue-600 px-5 py-4 font-bold text-white">
-                Retry API Request
+                Retry eSIM Delivery
               </button>
 
               <button className="w-full rounded-2xl border border-red-200 px-5 py-4 font-bold text-red-600">
