@@ -1,4 +1,36 @@
-export default function ImportProductsPage() {
+import { prisma } from "../../../lib/db";
+
+function formatPrice(value: number) {
+  return `€${value.toFixed(2)}`;
+}
+
+function getMargin(buyPrice: number, sellPrice: number) {
+  const profit = sellPrice - buyPrice;
+  return Math.round((profit / sellPrice) * 100);
+}
+
+function getProfit(buyPrice: number, sellPrice: number) {
+  return sellPrice - buyPrice;
+}
+
+export default async function ProductsPage() {
+  const products = await prisma.product.findMany({
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+
+  const activeProducts = products.filter((product) => product.active);
+
+  const averageMargin =
+    products.length > 0
+      ? products.reduce(
+          (total, product) =>
+            total + getMargin(product.buyPrice, product.sellPrice),
+          0
+        ) / products.length
+      : 0;
+
   return (
     <main className="min-h-screen bg-[#F6F8FF] text-slate-900">
       <div className="flex min-h-screen">
@@ -60,137 +92,183 @@ export default function ImportProductsPage() {
               </p>
 
               <h1 className="mt-2 text-4xl font-bold text-slate-950">
-                Import Rate Sheet
+                Products
               </h1>
 
               <p className="mt-2 text-slate-600">
-                Upload your wholesale Excel file and turn packages into DALO
-                products.
+                Products are loaded from the local DALO database.
               </p>
             </div>
 
-            <a
-              href="/admin/products"
-              className="rounded-2xl border border-slate-300 px-6 py-4 font-bold text-slate-700 transition hover:bg-white"
-            >
-              ← Back to Products
-            </a>
+            <div className="flex gap-3">
+              <a
+                href="/admin/products/import"
+                className="rounded-2xl border border-slate-300 px-6 py-4 font-bold text-slate-700 transition hover:bg-white"
+              >
+                Import Rate Sheet
+              </a>
+
+              <a
+                href="/admin/products/new"
+                className="rounded-2xl bg-blue-600 px-6 py-4 font-bold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700"
+              >
+                Add Product
+              </a>
+            </div>
           </div>
 
-          <div className="grid gap-8 lg:grid-cols-[1fr_420px]">
-            <div className="rounded-[2rem] bg-white p-8 shadow-xl shadow-blue-50">
+          <div className="mb-8 grid gap-6 md:grid-cols-4">
+            <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
+              <p className="text-sm font-semibold text-slate-500">
+                Total Products
+              </p>
+              <h2 className="mt-3 text-3xl font-bold">{products.length}</h2>
+            </div>
+
+            <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
+              <p className="text-sm font-semibold text-slate-500">
+                Active Products
+              </p>
+              <h2 className="mt-3 text-3xl font-bold">
+                {activeProducts.length}
+              </h2>
+            </div>
+
+            <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
+              <p className="text-sm font-semibold text-slate-500">
+                Average Margin
+              </p>
+              <h2 className="mt-3 text-3xl font-bold">
+                {Math.round(averageMargin)}%
+              </h2>
+            </div>
+
+            <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
+              <p className="text-sm font-semibold text-slate-500">
+                API Providers
+              </p>
+              <h2 className="mt-3 text-3xl font-bold">1</h2>
+            </div>
+          </div>
+
+          <div className="overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-blue-50">
+            <div className="border-b border-slate-100 p-6">
               <h2 className="text-2xl font-bold text-slate-950">
-                Upload Excel File
+                Product Catalog
               </h2>
 
-              <p className="mt-2 text-slate-600">
-                Supported format: .xlsx rate sheet from your wholesale provider.
+              <p className="mt-1 text-slate-600">
+                These products are stored in SQLite via Prisma.
               </p>
-
-              <form className="mt-8 space-y-6">
-                <div className="rounded-[2rem] border-2 border-dashed border-blue-200 bg-blue-50/40 p-10 text-center">
-                  <div className="text-5xl">📄</div>
-
-                  <h3 className="mt-5 text-xl font-bold">
-                    Drop your rate sheet here
-                  </h3>
-
-                  <p className="mt-2 text-slate-600">
-                    Or choose the Excel file from your Mac.
-                  </p>
-
-                  <input
-                    type="file"
-                    accept=".xlsx,.xls"
-                    className="mt-6 w-full rounded-2xl border border-slate-200 bg-white p-4"
-                  />
-                </div>
-
-                <button
-                  type="button"
-                  className="w-full rounded-2xl bg-blue-600 p-5 text-lg font-bold text-white shadow-lg shadow-blue-200"
-                >
-                  Analyze Rate Sheet
-                </button>
-              </form>
             </div>
 
-            <div className="space-y-6">
-              <div className="rounded-[2rem] bg-slate-950 p-8 text-white shadow-xl">
-                <h2 className="text-2xl font-bold">Import Logic</h2>
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[1300px] text-left">
+                <thead className="bg-slate-50 text-sm text-slate-500">
+                  <tr>
+                    <th className="px-6 py-4 font-semibold">Country</th>
+                    <th className="px-6 py-4 font-semibold">Product</th>
+                    <th className="px-6 py-4 font-semibold">Data</th>
+                    <th className="px-6 py-4 font-semibold">Validity</th>
+                    <th className="px-6 py-4 font-semibold">Plan Type</th>
+                    <th className="px-6 py-4 font-semibold">Buy</th>
+                    <th className="px-6 py-4 font-semibold">Sell</th>
+                    <th className="px-6 py-4 font-semibold">Profit</th>
+                    <th className="px-6 py-4 font-semibold">Usage</th>
+                    <th className="px-6 py-4 font-semibold">Provider ID</th>
+                    <th className="px-6 py-4 font-semibold">Status</th>
+                    <th className="px-6 py-4 font-semibold">Actions</th>
+                  </tr>
+                </thead>
 
-                <p className="mt-3 text-slate-300">
-                  DALO will read the rate sheet and prepare products for review
-                  before they go live.
-                </p>
+                <tbody>
+                  {products.map((product) => {
+                    const profit = getProfit(
+                      product.buyPrice,
+                      product.sellPrice
+                    );
+                    const margin = getMargin(
+                      product.buyPrice,
+                      product.sellPrice
+                    );
 
-                <div className="mt-6 space-y-4">
-                  <div className="rounded-2xl bg-white/10 p-4">
-                    <div className="text-sm text-slate-400">Step 1</div>
-                    <div className="font-bold">Read countries and regions</div>
-                  </div>
+                    return (
+                      <tr key={product.id} className="border-t border-slate-100">
+                        <td className="px-6 py-5 font-semibold">
+                          {product.country}
+                        </td>
 
-                  <div className="rounded-2xl bg-white/10 p-4">
-                    <div className="text-sm text-slate-400">Step 2</div>
-                    <div className="font-bold">Detect package types</div>
-                  </div>
+                        <td className="px-6 py-5">
+                          <div className="font-bold">{product.name}</div>
+                          <div className="text-sm text-slate-500">
+                            {product.provider}
+                          </div>
+                        </td>
 
-                  <div className="rounded-2xl bg-white/10 p-4">
-                    <div className="text-sm text-slate-400">Step 3</div>
-                    <div className="font-bold">Map provider product IDs</div>
-                  </div>
+                        <td className="px-6 py-5">{product.data}</td>
 
-                  <div className="rounded-2xl bg-white/10 p-4">
-                    <div className="text-sm text-slate-400">Step 4</div>
-                    <div className="font-bold">Admin reviews before publish</div>
-                  </div>
-                </div>
-              </div>
+                        <td className="px-6 py-5">
+                          {product.validityDays} Days
+                        </td>
 
-              <div className="rounded-[2rem] bg-white p-8 shadow-xl shadow-blue-50">
-                <h2 className="text-2xl font-bold text-slate-950">
-                  DALO Rule
-                </h2>
+                        <td className="px-6 py-5">
+                          <span className="rounded-full bg-slate-100 px-3 py-1 text-sm font-bold text-slate-700">
+                            {product.planType.replaceAll("_", " ")}
+                          </span>
+                        </td>
 
-                <p className="mt-3 text-slate-600">
-                  Imported products should not go live automatically. You review
-                  margins, usage type and recommendation role first.
-                </p>
+                        <td className="px-6 py-5">
+                          {formatPrice(product.buyPrice)}
+                        </td>
 
-                <div className="mt-6 rounded-2xl bg-blue-50 p-5 text-blue-700">
-                  <strong>Important:</strong> import first, approve later.
-                </div>
-              </div>
-            </div>
-          </div>
+                        <td className="px-6 py-5 font-bold">
+                          {formatPrice(product.sellPrice)}
+                        </td>
 
-          <div className="mt-8 rounded-[2rem] bg-white p-8 shadow-xl shadow-blue-50">
-            <h2 className="text-2xl font-bold text-slate-950">
-              Expected Product Fields
-            </h2>
+                        <td className="px-6 py-5">
+                          <div className="font-bold text-green-700">
+                            {formatPrice(profit)}
+                          </div>
+                          <div className="text-sm text-slate-500">
+                            {margin}% margin
+                          </div>
+                        </td>
 
-            <div className="mt-6 grid gap-4 md:grid-cols-4">
-              {[
-                "Country",
-                "Region",
-                "Data",
-                "Validity",
-                "Buy Price",
-                "Sell Price",
-                "Plan Type",
-                "Usage Fit",
-                "Provider Product ID",
-                "Network",
-                "5G Support",
-                "Status",
-              ].map((field) => (
-                <div
-                  key={field}
-                  className="rounded-2xl bg-slate-50 p-4 font-semibold"
-                >
-                  {field}
-                </div>
-              ))}
+                        <td className="px-6 py-5">
+                          <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-bold text-blue-700">
+                            {product.usageFit}
+                          </span>
+                        </td>
+
+                        <td className="px-6 py-5 font-mono text-xs text-slate-500">
+                          {product.providerProductId}
+                        </td>
+
+                        <td className="px-6 py-5">
+                          <span
+                            className={`rounded-full px-3 py-1 text-sm font-bold ${
+                              product.active
+                                ? "bg-green-100 text-green-700"
+                                : "bg-slate-100 text-slate-600"
+                            }`}
+                          >
+                            {product.active ? "Active" : "Paused"}
+                          </span>
+                        </td>
+
+                        <td className="px-6 py-5">
+                          <a
+                            href={`/admin/products/${product.id}/edit`}
+                            className="rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white"
+                          >
+                            Edit
+                          </a>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           </div>
         </section>
