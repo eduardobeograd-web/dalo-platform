@@ -212,9 +212,15 @@ export default async function ResultPage({
               </div>
             </div>
 
-            <button className="mt-8 w-full rounded-2xl bg-blue-600 p-5 text-lg font-bold text-white shadow-xl shadow-blue-200 transition hover:bg-blue-700">
-              Buy Now →
-            </button>
+            <a
+             href={`/checkout?productId=${plan.id}`}
+            className="mt-8 block w-full rounded-2xl bg-blue-600 p-5 text-center text-lg font-bold text-white shadow-xl shadow-blue-200 transition hover:bg-blue-700"
+            >   
+            Buy Now →
+            </a>
+
+
+
 
             <p className="mt-4 text-center text-sm text-slate-500">
               Instant delivery after purchase. No hidden fees.
