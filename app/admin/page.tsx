@@ -1,7 +1,47 @@
 import AdminShell from "../../components/AdminShell";
+import { prisma } from "../../lib/db";
 import { adminLogout } from "./logout";
 
-export default function AdminDashboard() {
+function formatPrice(value: number) {
+  return `€${value.toFixed(2)}`;
+}
+
+function getMargin(buyPrice: number, sellPrice: number) {
+  if (sellPrice === 0) return 0;
+
+  const profit = sellPrice - buyPrice;
+  return Math.round((profit / sellPrice) * 100);
+}
+
+export default async function AdminDashboard() {
+  const products = await prisma.product.findMany({
+    orderBy: {
+      createdAt: "asc",
+    },
+  });
+
+  const orders = await prisma.order.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  const activeProducts = products.filter((product) => product.active);
+
+  const averageMargin =
+    products.length > 0
+      ? products.reduce(
+          (total, product) =>
+            total + getMargin(product.buyPrice, product.sellPrice),
+          0
+        ) / products.length
+      : 0;
+
+  const estimatedCatalogValue = products.reduce(
+    (total, product) => total + product.sellPrice,
+    0
+  );
+
   return (
     <AdminShell activePage="dashboard">
       <div className="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-center">
@@ -15,7 +55,7 @@ export default function AdminDashboard() {
           </h1>
 
           <p className="mt-2 text-slate-600">
-            Manage products, recommendations, upsells and orders.
+            Live overview from your local DALO database.
           </p>
         </div>
 
@@ -40,65 +80,89 @@ export default function AdminDashboard() {
 
       <div className="grid gap-6 md:grid-cols-4">
         <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
-          <p className="text-sm font-semibold text-slate-500">Revenue</p>
-          <h2 className="mt-3 text-3xl font-bold">€0</h2>
-          <p className="mt-2 text-sm text-slate-500">Waiting for launch</p>
-        </div>
-
-        <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
-          <p className="text-sm font-semibold text-slate-500">Orders</p>
-          <h2 className="mt-3 text-3xl font-bold">0</h2>
-          <p className="mt-2 text-sm text-slate-500">No orders yet</p>
-        </div>
-
-        <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
-          <p className="text-sm font-semibold text-slate-500">Products</p>
-          <h2 className="mt-3 text-3xl font-bold">0</h2>
+          <p className="text-sm font-semibold text-slate-500">
+            Products
+          </p>
+          <h2 className="mt-3 text-3xl font-bold">{products.length}</h2>
           <p className="mt-2 text-sm text-slate-500">
-            Import from rate sheet
+            Total products in database
           </p>
         </div>
 
         <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
-          <p className="text-sm font-semibold text-slate-500">Conversion</p>
-          <h2 className="mt-3 text-3xl font-bold">—</h2>
-          <p className="mt-2 text-sm text-slate-500">Coming soon</p>
+          <p className="text-sm font-semibold text-slate-500">
+            Active Products
+          </p>
+          <h2 className="mt-3 text-3xl font-bold">
+            {activeProducts.length}
+          </h2>
+          <p className="mt-2 text-sm text-slate-500">
+            Visible for recommendations
+          </p>
+        </div>
+
+        <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
+          <p className="text-sm font-semibold text-slate-500">
+            Avg. Margin
+          </p>
+          <h2 className="mt-3 text-3xl font-bold">
+            {Math.round(averageMargin)}%
+          </h2>
+          <p className="mt-2 text-sm text-slate-500">
+            Based on product prices
+          </p>
+        </div>
+
+        <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
+          <p className="text-sm font-semibold text-slate-500">
+            Orders
+          </p>
+          <h2 className="mt-3 text-3xl font-bold">{orders.length}</h2>
+          <p className="mt-2 text-sm text-slate-500">
+            Database orders
+          </p>
         </div>
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
         <div className="rounded-[2rem] bg-white p-8 shadow-lg shadow-blue-50">
           <div className="mb-6">
-            <h2 className="text-2xl font-bold">Build Status</h2>
+            <h2 className="text-2xl font-bold">Database Status</h2>
             <p className="mt-1 text-slate-600">
-              DALO platform foundation.
+              Current DALO product foundation.
             </p>
           </div>
 
           <div className="space-y-4">
             <div className="flex items-center justify-between rounded-2xl bg-green-50 p-4">
-              <span className="font-semibold">Landing Page</span>
-              <span className="font-bold text-green-700">Done</span>
+              <span className="font-semibold">Prisma Database</span>
+              <span className="font-bold text-green-700">Connected</span>
             </div>
 
             <div className="flex items-center justify-between rounded-2xl bg-green-50 p-4">
-              <span className="font-semibold">Quiz Flow</span>
-              <span className="font-bold text-green-700">Done</span>
+              <span className="font-semibold">Product Table</span>
+              <span className="font-bold text-green-700">
+                {products.length} Products
+              </span>
             </div>
 
             <div className="flex items-center justify-between rounded-2xl bg-green-50 p-4">
-              <span className="font-semibold">Searching Page</span>
-              <span className="font-bold text-green-700">Done</span>
-            </div>
-
-            <div className="flex items-center justify-between rounded-2xl bg-green-50 p-4">
-              <span className="font-semibold">Result Page</span>
-              <span className="font-bold text-green-700">Done</span>
+              <span className="font-semibold">Active Products</span>
+              <span className="font-bold text-green-700">
+                {activeProducts.length} Active
+              </span>
             </div>
 
             <div className="flex items-center justify-between rounded-2xl bg-blue-50 p-4">
-              <span className="font-semibold">Admin Platform</span>
-              <span className="font-bold text-blue-700">In Progress</span>
+              <span className="font-semibold">Catalog Sell Value</span>
+              <span className="font-bold text-blue-700">
+                {formatPrice(estimatedCatalogValue)}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between rounded-2xl bg-blue-50 p-4">
+              <span className="font-semibold">Excel Preview Tool</span>
+              <span className="font-bold text-blue-700">Ready</span>
             </div>
           </div>
         </div>
@@ -107,8 +171,8 @@ export default function AdminDashboard() {
           <h2 className="text-2xl font-bold">Next Step</h2>
 
           <p className="mt-3 text-slate-300">
-            Import your wholesale rate sheet and turn packages into DALO
-            products.
+            Continue improving product management before touching Stripe or API
+            fulfillment.
           </p>
 
           <div className="mt-8 space-y-3">
@@ -120,10 +184,10 @@ export default function AdminDashboard() {
             </a>
 
             <a
-              href="/admin/recommendations"
+              href="/admin/products/import"
               className="block rounded-2xl bg-white/10 px-5 py-4 text-center font-bold text-white"
             >
-              Set Recommendations
+              Import Rate Sheet
             </a>
           </div>
         </div>
