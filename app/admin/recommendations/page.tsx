@@ -1,40 +1,6 @@
 import AdminShell from "../../../components/AdminShell";
+import { getRecommendationRulesPreview } from "../../../lib/recommendation";
 import { prisma } from "../../../lib/db";
-
-const recommendationRules = [
-  {
-    country: "Europe",
-    tripLength: "1–7 Days",
-    userType: "Essential",
-    usageFit: "essential",
-    upsellUsageFit: "everyday",
-    status: "Active",
-  },
-  {
-    country: "Europe",
-    tripLength: "8–14 Days",
-    userType: "Everyday",
-    usageFit: "everyday",
-    upsellUsageFit: "power",
-    status: "Active",
-  },
-  {
-    country: "Europe",
-    tripLength: "15–30 Days",
-    userType: "Power User",
-    usageFit: "power",
-    upsellUsageFit: "power",
-    status: "Active",
-  },
-  {
-    country: "Europe",
-    tripLength: "30+ Days",
-    userType: "Long Stay",
-    usageFit: "long_stay",
-    upsellUsageFit: "power",
-    status: "Active",
-  },
-];
 
 function getPlanText(product: {
   data: string;
@@ -45,32 +11,12 @@ function getPlanText(product: {
 }
 
 export default async function RecommendationsPage() {
+  const rules = await getRecommendationRulesPreview();
+
   const products = await prisma.product.findMany({
     where: {
       active: true,
     },
-    orderBy: {
-      sellPrice: "asc",
-    },
-  });
-
-  const rules = recommendationRules.map((rule) => {
-    const recommendedProduct =
-      products.find((product) => product.usageFit === rule.usageFit) || null;
-
-    const upsellProduct =
-      products.find(
-        (product) =>
-          product.usageFit === rule.upsellUsageFit &&
-          product.id !== recommendedProduct?.id &&
-          product.sellPrice > (recommendedProduct?.sellPrice || 0)
-      ) || null;
-
-    return {
-      ...rule,
-      recommendedProduct,
-      upsellProduct,
-    };
   });
 
   return (
@@ -86,7 +32,7 @@ export default async function RecommendationsPage() {
           </h1>
 
           <p className="mt-2 text-slate-600">
-            Recommendation rules now use active products from the database.
+            This page uses the same recommendation engine as the customer result page.
           </p>
         </div>
 
@@ -97,7 +43,7 @@ export default async function RecommendationsPage() {
 
       <div className="mb-8 grid gap-6 md:grid-cols-4">
         <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
-          <p className="text-sm font-semibold text-slate-500">Active Rules</p>
+          <p className="text-sm font-semibold text-slate-500">Engine Rules</p>
           <h2 className="mt-3 text-3xl font-bold">{rules.length}</h2>
         </div>
 
@@ -118,8 +64,8 @@ export default async function RecommendationsPage() {
         </div>
 
         <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
-          <p className="text-sm font-semibold text-slate-500">Conversion</p>
-          <h2 className="mt-3 text-3xl font-bold">—</h2>
+          <p className="text-sm font-semibold text-slate-500">Engine</p>
+          <h2 className="mt-3 text-3xl font-bold">Live</h2>
         </div>
       </div>
 
@@ -127,11 +73,11 @@ export default async function RecommendationsPage() {
         <div className="overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-blue-50">
           <div className="border-b border-slate-100 p-6">
             <h2 className="text-2xl font-bold text-slate-950">
-              Recommendation Rules
+              Recommendation Engine Preview
             </h2>
 
             <p className="mt-1 text-slate-600">
-              These rules turn quiz answers into product recommendations.
+              These rows preview what DALO would recommend for common trip profiles.
             </p>
           </div>
 
@@ -203,33 +149,28 @@ export default async function RecommendationsPage() {
 
         <div className="space-y-6">
           <div className="rounded-[2rem] bg-slate-950 p-8 text-white shadow-xl">
-            <h2 className="text-2xl font-bold">Rule Builder</h2>
+            <h2 className="text-2xl font-bold">Shared Logic</h2>
 
             <p className="mt-2 text-slate-300">
-              Later, these rules will be editable from the admin panel.
+              Result Page and Admin Recommendations now use the same file:
             </p>
+
+            <div className="mt-6 rounded-2xl bg-white/10 p-4 font-mono text-sm">
+              lib/recommendation.ts
+            </div>
 
             <div className="mt-6 space-y-4">
               <div className="rounded-2xl bg-white/10 p-4">
-                <div className="text-sm text-slate-400">If</div>
-                <div className="mt-1 font-bold">
-                  Europe + 8–14 Days + Everyday
-                </div>
+                <div className="text-sm text-slate-400">Input</div>
+                <div className="mt-1 font-bold">country + days + usage</div>
               </div>
 
               <div className="text-center text-2xl">↓</div>
 
               <div className="rounded-2xl bg-blue-600 p-4">
-                <div className="text-sm text-blue-100">Recommend</div>
+                <div className="text-sm text-blue-100">Output</div>
                 <div className="mt-1 font-bold">
-                  First active Everyday product
-                </div>
-              </div>
-
-              <div className="rounded-2xl bg-white/10 p-4">
-                <div className="text-sm text-slate-400">Upsell</div>
-                <div className="mt-1 font-bold">
-                  Next higher active Power product
+                  recommended product + upsell
                 </div>
               </div>
             </div>
@@ -241,13 +182,11 @@ export default async function RecommendationsPage() {
             </h2>
 
             <p className="mt-3 text-slate-600">
-              The customer sees one clear recommendation, while the admin
-              controls the underlying product catalog.
+              One central recommendation engine prevents different pages from showing different logic.
             </p>
 
             <div className="mt-6 rounded-2xl bg-blue-50 p-5 text-blue-700">
-              <strong>Principle:</strong> one main recommendation, one upgrade,
-              one clear purchase path.
+              <strong>Principle:</strong> one engine, one recommendation, one upgrade.
             </div>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { prisma } from "../../lib/db";
+import { getDaloRecommendation } from "../../lib/recommendation";
 
 function formatPrice(value: number) {
   return `€${value.toFixed(2)}`;
@@ -19,96 +19,6 @@ function getBadge(usageFit: string) {
   return "Most popular";
 }
 
-async function findRecommendedProduct({
-  country,
-  days,
-  type,
-}: {
-  country: string;
-  days: string;
-  type: string;
-}) {
-  if (days === "30+") {
-    const longStay = await prisma.product.findFirst({
-      where: {
-        active: true,
-        usageFit: "long_stay",
-      },
-      orderBy: {
-        sellPrice: "asc",
-      },
-    });
-
-    if (longStay) return longStay;
-  }
-
-  if (type === "essential") {
-    const essential = await prisma.product.findFirst({
-      where: {
-        active: true,
-        usageFit: "essential",
-      },
-      orderBy: {
-        sellPrice: "asc",
-      },
-    });
-
-    if (essential) return essential;
-  }
-
-  if (type === "power") {
-    const power = await prisma.product.findFirst({
-      where: {
-        active: true,
-        usageFit: "power",
-      },
-      orderBy: {
-        sellPrice: "asc",
-      },
-    });
-
-    if (power) return power;
-  }
-
-  const everyday = await prisma.product.findFirst({
-    where: {
-      active: true,
-      usageFit: "everyday",
-    },
-    orderBy: {
-      sellPrice: "asc",
-    },
-  });
-
-  if (everyday) return everyday;
-
-  return prisma.product.findFirst({
-    where: {
-      active: true,
-    },
-    orderBy: {
-      sellPrice: "asc",
-    },
-  });
-}
-
-async function findUpsellProduct(planId: string, planSellPrice: number) {
-  return prisma.product.findFirst({
-    where: {
-      active: true,
-      id: {
-        not: planId,
-      },
-      sellPrice: {
-        gt: planSellPrice,
-      },
-    },
-    orderBy: {
-      sellPrice: "asc",
-    },
-  });
-}
-
 export default async function ResultPage({
   searchParams,
 }: {
@@ -124,11 +34,12 @@ export default async function ResultPage({
   const days = params.days || "8-14";
   const type = params.type || "everyday";
 
-  const plan = await findRecommendedProduct({
-    country,
-    days,
-    type,
-  });
+  const { recommendedProduct: plan, upsellProduct: upsell } =
+    await getDaloRecommendation({
+      country,
+      days,
+      type,
+    });
 
   if (!plan) {
     return (
@@ -158,6 +69,7 @@ export default async function ResultPage({
             <h1 className="text-4xl font-bold text-slate-950">
               No product found
             </h1>
+
             <p className="mt-4 text-slate-600">
               Add active products in the admin area first.
             </p>
@@ -173,8 +85,6 @@ export default async function ResultPage({
       </main>
     );
   }
-
-  const upsell = await findUpsellProduct(plan.id, plan.sellPrice);
 
   return (
     <main className="min-h-screen bg-[#F6F8FF] text-slate-900">
@@ -218,8 +128,8 @@ export default async function ResultPage({
           </h1>
 
           <p className="mx-auto mt-5 max-w-2xl text-xl leading-relaxed text-slate-600">
-            Based on your destination, trip length and usage style, this product
-            is loaded directly from the DALO database.
+            Based on your destination, trip length and usage style, DALO found
+            the best matching product from your database.
           </p>
         </div>
 
@@ -247,7 +157,7 @@ export default async function ResultPage({
 
           <div className="p-8 md:p-12">
             <p className="mb-3 text-sm font-bold uppercase tracking-wide text-blue-600">
-              DALO Database Recommendation
+              DALO Recommendation Engine
             </p>
 
             <h2 className="text-4xl font-bold text-slate-950 md:text-5xl">
@@ -264,13 +174,13 @@ export default async function ResultPage({
 
             <div className="mt-8 grid gap-4 sm:grid-cols-2">
               <div className="rounded-2xl bg-slate-50 p-5">
-                <div className="text-sm text-slate-500">Delivery</div>
-                <div className="mt-1 font-bold">Instant QR Code</div>
+                <div className="text-sm text-slate-500">Destination</div>
+                <div className="mt-1 font-bold">{country}</div>
               </div>
 
               <div className="rounded-2xl bg-slate-50 p-5">
-                <div className="text-sm text-slate-500">Installation</div>
-                <div className="mt-1 font-bold">iOS & Android</div>
+                <div className="text-sm text-slate-500">Usage</div>
+                <div className="mt-1 font-bold">{plan.usageFit}</div>
               </div>
 
               <div className="rounded-2xl bg-slate-50 p-5">
@@ -281,8 +191,8 @@ export default async function ResultPage({
               </div>
 
               <div className="rounded-2xl bg-slate-50 p-5">
-                <div className="text-sm text-slate-500">Checkout</div>
-                <div className="mt-1 font-bold">Secure payment</div>
+                <div className="text-sm text-slate-500">Delivery</div>
+                <div className="mt-1 font-bold">Instant QR Code</div>
               </div>
             </div>
 
@@ -344,7 +254,7 @@ export default async function ResultPage({
 
               <p className="mt-2 text-slate-300">
                 It matches your selected destination, travel duration and usage
-                profile.
+                profile using DALO’s recommendation engine.
               </p>
             </div>
           </div>
