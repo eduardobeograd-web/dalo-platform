@@ -1,3 +1,4 @@
+import { adminLogout } from "./logout";
 export default function AdminDashboard() {
   return (
     <main className="min-h-screen bg-[#F6F8FF] text-slate-900">
@@ -45,12 +46,26 @@ export default function AdminDashboard() {
               </p>
             </div>
 
+        <div className="flex gap-3">
             <a
               href="/"
-              className="rounded-2xl bg-blue-600 px-6 py-4 font-bold text-white shadow-lg shadow-blue-200"
-            >
-              View Website
-            </a>
+              className="rounded-2xl border border-slate-300 px-6 py-4 font-bold text-slate-700 transition hover:bg-white"
+             >
+                 View Website
+             </a>
+
+             <form action={adminLogout}>
+              <button
+            type="submit"
+             className="rounded-2xl bg-slate-950 px-6 py-4 font-bold text-white transition hover:bg-slate-800"
+              >
+            Logout
+      </button>
+     </form>
+    </div>
+        
+        
+        
           </div>
 
           {/* KPI Cards */}
