@@ -13,11 +13,29 @@ function StatusBadge({ status }: { status: string }) {
       ? "bg-blue-100 text-blue-700"
       : status === "Failed"
       ? "bg-red-100 text-red-700"
+      : status === "Pending" || status === "Waiting"
+      ? "bg-yellow-100 text-yellow-700"
       : "bg-slate-100 text-slate-600";
 
   return (
     <span className={`rounded-full px-3 py-1 text-sm font-bold ${styles}`}>
       {status}
+    </span>
+  );
+}
+
+function OrderTypeBadge({ payment }: { payment: string }) {
+  const isCheckoutTest = payment === "Pending";
+
+  return (
+    <span
+      className={`rounded-full px-3 py-1 text-sm font-bold ${
+        isCheckoutTest
+          ? "bg-yellow-100 text-yellow-700"
+          : "bg-green-100 text-green-700"
+      }`}
+    >
+      {isCheckoutTest ? "Checkout Test" : "Demo Paid"}
     </span>
   );
 }
@@ -54,6 +72,10 @@ export default async function OrdersPage() {
   const profit = orderRows.reduce((total, order) => total + order.profit, 0);
   const failedOrders = orderRows.filter(
     (order) => order.fulfillment === "Failed"
+  ).length;
+
+  const pendingOrders = orderRows.filter(
+    (order) => order.payment === "Pending"
   ).length;
 
   return (
@@ -100,10 +122,10 @@ export default async function OrdersPage() {
 
         <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
           <p className="text-sm font-semibold text-slate-500">
-            Failed Deliveries
+            Pending Checkout
           </p>
-          <h2 className="mt-3 text-3xl font-bold text-red-600">
-            {failedOrders}
+          <h2 className="mt-3 text-3xl font-bold text-yellow-600">
+            {pendingOrders}
           </h2>
         </div>
       </div>
@@ -114,12 +136,12 @@ export default async function OrdersPage() {
             <h2 className="text-2xl font-bold text-slate-950">Order List</h2>
 
             <p className="mt-1 text-slate-600">
-              Payment success and eSIM delivery success are tracked separately.
+              Pending checkout orders are test orders until Stripe is connected.
             </p>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[1150px] text-left">
+            <table className="w-full min-w-[1250px] text-left">
               <thead className="bg-slate-50 text-sm text-slate-500">
                 <tr>
                   <th className="px-6 py-4 font-semibold">Order</th>
@@ -131,6 +153,7 @@ export default async function OrdersPage() {
                   <th className="px-6 py-4 font-semibold">Profit</th>
                   <th className="px-6 py-4 font-semibold">Payment Status</th>
                   <th className="px-6 py-4 font-semibold">eSIM Delivery</th>
+                  <th className="px-6 py-4 font-semibold">Order Type</th>
                   <th className="px-6 py-4 font-semibold">Created</th>
                 </tr>
               </thead>
@@ -182,6 +205,10 @@ export default async function OrdersPage() {
                       <StatusBadge status={order.fulfillment} />
                     </td>
 
+                    <td className="px-6 py-5">
+                      <OrderTypeBadge payment={order.payment} />
+                    </td>
+
                     <td className="px-6 py-5 text-slate-500">
                       {order.createdAt.toLocaleString()}
                     </td>
@@ -203,13 +230,13 @@ export default async function OrdersPage() {
 
             <div className="mt-6 space-y-4">
               <div className="rounded-2xl bg-white/10 p-4">
-                <div className="text-sm text-slate-400">1. Payment</div>
-                <div className="mt-1 font-bold">Stripe confirms order</div>
+                <div className="text-sm text-slate-400">1. Order Created</div>
+                <div className="mt-1 font-bold">Checkout creates pending order</div>
               </div>
 
               <div className="rounded-2xl bg-white/10 p-4">
-                <div className="text-sm text-slate-400">2. Product ID</div>
-                <div className="mt-1 font-bold">Read providerProductId</div>
+                <div className="text-sm text-slate-400">2. Payment</div>
+                <div className="mt-1 font-bold">Stripe confirms payment later</div>
               </div>
 
               <div className="rounded-2xl bg-white/10 p-4">
