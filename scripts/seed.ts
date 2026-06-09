@@ -55,6 +55,52 @@ async function main() {
     });
   }
 
+  console.log("Seeding DALO demo orders...");
+
+  const demoOrders = [
+    {
+      id: "DALO-1001",
+      customer: "customer@example.com",
+      productId: "europe-smart-5gb-15d",
+      payment: "Paid",
+      fulfillment: "Delivered",
+    },
+    {
+      id: "DALO-1002",
+      customer: "traveler@example.com",
+      productId: "europe-unlimited-15d",
+      payment: "Paid",
+      fulfillment: "Provisioning",
+    },
+    {
+      id: "DALO-1003",
+      customer: "demo@example.com",
+      productId: "europe-essential-1gb-7d",
+      payment: "Pending",
+      fulfillment: "Waiting",
+    },
+    {
+      id: "DALO-1004",
+      customer: "support@example.com",
+      productId: "europe-pro-10gb-30d",
+      payment: "Paid",
+      fulfillment: "Failed",
+    },
+  ];
+
+  for (const order of demoOrders) {
+    await prisma.order.upsert({
+      where: { id: order.id },
+      update: {
+        customer: order.customer,
+        productId: order.productId,
+        payment: order.payment,
+        fulfillment: order.fulfillment,
+      },
+      create: order,
+    });
+  }
+
   console.log("Seed complete.");
 }
 
