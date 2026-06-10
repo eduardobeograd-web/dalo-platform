@@ -184,7 +184,7 @@ function normalizeFixedProducts(rows: Record<string, unknown>[]) {
         sellPrice,
         provider: "eSIM Go",
         providerProductId,
-        image: "/esim-card.png",
+        image: "/dalo-logo.png",
         description: `${data} mobile data for ${country}. Valid for ${bundle.validityDays} days.`,
       });
     }

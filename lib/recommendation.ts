@@ -19,25 +19,86 @@ function parseDays(days?: string) {
   return 14;
 }
 
-function getUsageFit(type?: string, days?: string) {
-  if (days === "30+") return "long_stay";
-  if (type === "essential") return "essential";
-  if (type === "power") return "power";
-  return "everyday";
+function parseDataGb(data: string) {
+  const match = data.match(/(\d+(?:\.\d+)?)/);
+  if (!match) return 0;
+
+  return Number(match[1]);
+}
+
+function getMinimumDataGb(type?: string, tripDays = 14) {
+  const usageType = type || "everyday";
+
+  if (tripDays <= 7) {
+    if (usageType === "essential") return 1;
+    if (usageType === "power") return 10;
+    return 3;
+  }
+
+  if (tripDays <= 15) {
+    if (usageType === "essential") return 2;
+    if (usageType === "power") return 10;
+    return 5;
+  }
+
+  if (tripDays <= 30) {
+    if (usageType === "essential") return 3;
+    if (usageType === "power") return 20;
+    return 10;
+  }
+
+  if (usageType === "essential") return 10;
+  if (usageType === "power") return 50;
+  return 20;
+}
+
+function getTargetUsageFit(type?: string) {
+  if (type === "essential") return "Light";
+  if (type === "power") return "Heavy";
+  return "Standard";
+}
+
+function getUpgradeUsageFit(type?: string) {
+  if (type === "essential") return "Standard";
+  if (type === "power") return "Power";
+  return "Heavy";
+}
+
+function isSafeMainRecommendation(product: {
+  data: string;
+  validityDays: number;
+  usageFit: string;
+  role: string;
+}, tripDays: number, minimumDataGb: number) {
+  const dataGb = parseDataGb(product.data);
+
+  if (product.usageFit === "Too Low") return false;
+  if (product.role === "emergency-only") return false;
+  if (product.validityDays < tripDays) return false;
+  if (dataGb < minimumDataGb) return false;
+
+  return true;
 }
 
 export async function getDaloRecommendation(input: RecommendationInput) {
   const country = input.country || "Europe";
   const tripDays = parseDays(input.days);
-  const usageFit = getUsageFit(input.type, input.days);
+  const minimumDataGb = getMinimumDataGb(input.type, tripDays);
+  const targetUsageFit = getTargetUsageFit(input.type);
+  const upgradeUsageFit = getUpgradeUsageFit(input.type);
 
   const activeProducts = await prisma.product.findMany({
     where: {
       active: true,
     },
-    orderBy: {
-      sellPrice: "asc",
-    },
+    orderBy: [
+      {
+        sellPrice: "asc",
+      },
+      {
+        validityDays: "asc",
+      },
+    ],
   });
 
   const countryProducts = activeProducts.filter(
@@ -48,26 +109,31 @@ export async function getDaloRecommendation(input: RecommendationInput) {
 
   const productPool = countryProducts.length > 0 ? countryProducts : activeProducts;
 
-  const matchingProducts = productPool.filter((product) => {
-    const usageMatches = product.usageFit === usageFit;
-    const validityMatches = product.validityDays >= tripDays;
+  const safeProducts = productPool.filter((product) =>
+    isSafeMainRecommendation(product, tripDays, minimumDataGb)
+  );
 
-    return usageMatches && validityMatches;
-  });
+  const matchingProducts = safeProducts.filter(
+    (product) => product.usageFit === targetUsageFit
+  );
 
   const recommendedProduct =
     matchingProducts[0] ||
-    productPool.find((product) => product.usageFit === usageFit) ||
-    productPool[0] ||
+    safeProducts.find((product) => product.usageFit === upgradeUsageFit) ||
+    safeProducts[0] ||
     null;
 
   const upsellProduct = recommendedProduct
-    ? productPool.find(
-        (product) =>
+    ? safeProducts.find((product) => {
+        const recommendedDataGb = parseDataGb(recommendedProduct.data);
+        const productDataGb = parseDataGb(product.data);
+
+        return (
           product.id !== recommendedProduct.id &&
-          product.sellPrice > recommendedProduct.sellPrice &&
-          product.active
-      ) || null
+          productDataGb > recommendedDataGb &&
+          product.sellPrice > recommendedProduct.sellPrice
+        );
+      }) || null
     : null;
 
   return {
@@ -75,14 +141,15 @@ export async function getDaloRecommendation(input: RecommendationInput) {
     upsellProduct,
     country,
     tripDays,
-    usageFit,
+    usageFit: targetUsageFit,
+    minimumDataGb,
   };
 }
 
 export async function getRecommendationRulesPreview() {
   const rules = [
     {
-      country: "Europe",
+      country: "Germany",
       tripLength: "1–7 Days",
       userType: "Essential",
       days: "1-7",
@@ -90,7 +157,7 @@ export async function getRecommendationRulesPreview() {
       status: "Active",
     },
     {
-      country: "Europe",
+      country: "Germany",
       tripLength: "8–14 Days",
       userType: "Everyday",
       days: "8-14",
@@ -98,18 +165,18 @@ export async function getRecommendationRulesPreview() {
       status: "Active",
     },
     {
-      country: "Europe",
+      country: "Germany",
       tripLength: "15–30 Days",
-      userType: "Power User",
+      userType: "Everyday",
       days: "15-30",
-      type: "power",
+      type: "everyday",
       status: "Active",
     },
     {
-      country: "Europe",
-      tripLength: "30+ Days",
-      userType: "Long Stay",
-      days: "30+",
+      country: "Germany",
+      tripLength: "15–30 Days",
+      userType: "Power User",
+      days: "15-30",
       type: "power",
       status: "Active",
     },
@@ -127,6 +194,7 @@ export async function getRecommendationRulesPreview() {
         ...rule,
         recommendedProduct: result.recommendedProduct,
         upsellProduct: result.upsellProduct,
+        minimumDataGb: result.minimumDataGb,
       };
     })
   );
