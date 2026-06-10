@@ -1,3 +1,4 @@
+import Link from "next/link";
 import AdminShell from "../../../components/AdminShell";
 import { prisma } from "../../../lib/db";
 import {
@@ -189,7 +190,17 @@ export default async function OrdersPage() {
 
                   return (
                     <tr key={order.id} className="border-t border-slate-100">
-                      <td className="px-6 py-5 font-bold">{order.id}</td>
+                    
+
+<td className="px-6 py-5">
+  <Link
+    href={`/admin/orders/${order.id}`}
+    className="font-bold text-blue-600 hover:text-blue-800 hover:underline"
+  >
+    {order.id}
+  </Link>
+</td>
+
 
                       <td className="px-6 py-5">
                         <div className="font-semibold">{order.customer}</div>
