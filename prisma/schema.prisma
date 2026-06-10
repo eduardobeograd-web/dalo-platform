@@ -21,7 +21,7 @@ model Product {
   sellPrice         Float
   oldPrice          Float?
   provider          String
-  providerProductId String
+  providerProductId String @unique
   image             String
   description       String
   active            Boolean  @default(true)

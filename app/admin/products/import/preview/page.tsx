@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import AdminShell from "../../../../../components/AdminShell";
+import { confirmRateSheetImport } from "../actions";
 
 type SheetPreview = {
   name: string;
@@ -9,10 +10,33 @@ type SheetPreview = {
   sampleRows: Record<string, string>[];
 };
 
+type ImportProductPreview = {
+  country: string;
+  isoCode: string;
+  name: string;
+  data: string;
+  validityDays: number;
+  planType: string;
+  usageFit: string;
+  role: string;
+  buyPrice: number;
+  sellPrice: number;
+  provider: string;
+  providerProductId: string;
+  image: string;
+  description: string;
+};
+
 type PreviewData = {
   fileName: string;
   analyzedAt: string;
   sheets: SheetPreview[];
+  importProducts?: ImportProductPreview[];
+  importSummary?: {
+    provider: string;
+    sheet: string;
+    productsFound: number;
+  };
 };
 
 function getPreviewData(): PreviewData | null {
@@ -28,6 +52,8 @@ function getPreviewData(): PreviewData | null {
 
 export default function ImportPreviewPage() {
   const preview = getPreviewData();
+  const importProducts = preview?.importProducts ?? [];
+  const sampleProducts = importProducts.slice(0, 10);
 
   return (
     <AdminShell activePage="products">
@@ -63,7 +89,7 @@ export default function ImportPreviewPage() {
         </div>
       ) : (
         <div className="space-y-8">
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-4">
             <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
               <p className="text-sm font-semibold text-slate-500">File</p>
               <h2 className="mt-3 break-all text-xl font-bold">
@@ -89,7 +115,104 @@ export default function ImportPreviewPage() {
                 )}
               </h2>
             </div>
+
+            <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
+              <p className="text-sm font-semibold text-slate-500">
+                Products Ready
+              </p>
+              <h2 className="mt-3 text-3xl font-bold">
+                {importProducts.length}
+              </h2>
+            </div>
           </div>
+
+          {preview.importSummary && (
+            <div className="rounded-[2rem] bg-white p-8 shadow-xl shadow-blue-50">
+              <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
+                <div>
+                  <p className="text-sm font-bold uppercase tracking-wide text-blue-600">
+                    Ready to Import
+                  </p>
+
+                  <h2 className="mt-2 text-2xl font-bold text-slate-950">
+                    {preview.importSummary.productsFound} products from{" "}
+                    {preview.importSummary.provider}
+                  </h2>
+
+                  <p className="mt-2 text-slate-600">
+                    Source sheet: {preview.importSummary.sheet}. This will create
+                    new products and update existing products with the same
+                    provider product ID.
+                  </p>
+                </div>
+
+                <form action={confirmRateSheetImport}>
+                  <button
+                    type="submit"
+                    className="rounded-2xl bg-blue-600 px-8 py-5 text-lg font-bold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700"
+                  >
+                    Confirm Import
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {sampleProducts.length > 0 && (
+            <div className="overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-blue-50">
+              <div className="border-b border-slate-100 p-6">
+                <h2 className="text-2xl font-bold text-slate-950">
+                  Product Preview
+                </h2>
+                <p className="mt-1 text-slate-600">
+                  First 10 products that will be imported.
+                </p>
+              </div>
+
+              <div className="overflow-x-auto p-6">
+                <table className="w-full min-w-[1000px] text-left">
+                  <thead className="bg-slate-50 text-sm text-slate-500">
+                    <tr>
+                      <th className="px-4 py-3 font-semibold">Country</th>
+                      <th className="px-4 py-3 font-semibold">Data</th>
+                      <th className="px-4 py-3 font-semibold">Validity</th>
+                      <th className="px-4 py-3 font-semibold">Buy</th>
+                      <th className="px-4 py-3 font-semibold">Sell</th>
+                      <th className="px-4 py-3 font-semibold">Role</th>
+                      <th className="px-4 py-3 font-semibold">Provider ID</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {sampleProducts.map((product) => (
+                      <tr
+                        key={product.providerProductId}
+                        className="border-t border-slate-100"
+                      >
+                        <td className="px-4 py-3 text-sm">
+                          {product.country}
+                        </td>
+                        <td className="px-4 py-3 text-sm">{product.data}</td>
+                        <td className="px-4 py-3 text-sm">
+                          {product.validityDays} days
+                        </td>
+                        <td className="px-4 py-3 text-sm">
+                          ${product.buyPrice.toFixed(2)}
+                        </td>
+                        <td className="px-4 py-3 text-sm font-bold text-slate-950">
+                          ${product.sellPrice.toFixed(2)}
+                        </td>
+                        <td className="px-4 py-3 text-sm">{product.role}</td>
+                        <td className="px-4 py-3 text-xs text-slate-500">
+                          {product.providerProductId}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
 
           {preview.sheets.map((sheet) => (
             <div
@@ -126,10 +249,7 @@ export default function ImportPreviewPage() {
                     <thead className="bg-slate-50 text-sm text-slate-500">
                       <tr>
                         {sheet.headers.slice(0, 8).map((header) => (
-                          <th
-                            key={header}
-                            className="px-4 py-3 font-semibold"
-                          >
+                          <th key={header} className="px-4 py-3 font-semibold">
                             {header}
                           </th>
                         ))}
@@ -152,14 +272,6 @@ export default function ImportPreviewPage() {
               </div>
             </div>
           ))}
-
-          <div className="rounded-[2rem] bg-slate-950 p-8 text-white shadow-xl">
-            <h2 className="text-2xl font-bold">Next Step</h2>
-            <p className="mt-3 text-slate-300">
-              After we confirm which sheet contains the actual packages, DALO
-              can transform rows into products.
-            </p>
-          </div>
         </div>
       )}
     </AdminShell>

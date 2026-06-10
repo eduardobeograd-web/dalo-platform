@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import * as XLSX from "xlsx";
 import fs from "fs";
 import path from "path";
+import { prisma } from "../../../../lib/db";
 
 type SheetPreview = {
   name: string;
@@ -12,9 +13,155 @@ type SheetPreview = {
   sampleRows: Record<string, string>[];
 };
 
+type ImportProductPreview = {
+  country: string;
+  isoCode: string;
+  name: string;
+  data: string;
+  validityDays: number;
+  planType: string;
+  usageFit: string;
+  role: string;
+  buyPrice: number;
+  sellPrice: number;
+  provider: string;
+  providerProductId: string;
+  image: string;
+  description: string;
+};
+
 function cleanCell(value: unknown) {
   if (value === null || value === undefined) return "";
   return String(value).trim();
+}
+
+function toNumber(value: unknown) {
+  if (value === null || value === undefined) return null;
+
+  const cleaned = String(value)
+    .replace("$", "")
+    .replace(",", ".")
+    .trim();
+
+  if (!cleaned || cleaned.toUpperCase() === "NA") return null;
+
+  const number = Number(cleaned);
+
+  if (Number.isNaN(number)) return null;
+
+  return number;
+}
+
+function calculateSellPrice(buyPrice: number) {
+  // Erste einfache Marge. Können wir später dynamisch machen.
+  const markedUp = buyPrice * 1.65;
+  return Math.ceil(markedUp * 100) / 100;
+}
+
+function getUsageFit(dataGb: number) {
+  if (dataGb <= 2) return "Light";
+  if (dataGb <= 10) return "Standard";
+  if (dataGb <= 20) return "Heavy";
+  return "Power";
+}
+
+function getRole(dataGb: number, validityDays: number) {
+  if (dataGb <= 2) return "cheapest";
+  if (dataGb >= 10 && dataGb <= 20) return "best-value";
+  if (dataGb >= 50 || validityDays >= 30) return "most-data";
+  return "recommended";
+}
+
+function normalizeFixedProducts(rows: Record<string, unknown>[]) {
+  const bundles = [
+    {
+      dataGb: 1,
+      validityDays: 7,
+      priceColumn: "1GB/7days (USD)",
+      refColumn: "eSIM Go 1GB Ref",
+    },
+    {
+      dataGb: 2,
+      validityDays: 15,
+      priceColumn: "2GB/15days (USD)",
+      refColumn: "eSIM Go 2GB Ref",
+    },
+    {
+      dataGb: 3,
+      validityDays: 30,
+      priceColumn: "3GB/30days (USD)",
+      refColumn: "eSIM Go 3GB Ref",
+    },
+    {
+      dataGb: 5,
+      validityDays: 30,
+      priceColumn: "5GB/30days (USD)",
+      refColumn: "eSIM Go 5GB Ref",
+    },
+    {
+      dataGb: 10,
+      validityDays: 30,
+      priceColumn: "10GB/30days (USD)",
+      refColumn: "eSIM Go 10GB Ref",
+    },
+    {
+      dataGb: 20,
+      validityDays: 30,
+      priceColumn: "20GB/30days (USD)",
+      refColumn: "eSIM Go 20GB Ref",
+    },
+    {
+      dataGb: 50,
+      validityDays: 30,
+      priceColumn: "50GB/30days (USD)",
+      refColumn: "eSIM Go 50GB Ref",
+    },
+    {
+      dataGb: 100,
+      validityDays: 30,
+      priceColumn: "100GB/30days (USD)",
+      refColumn: "eSIM Go 100GB Ref",
+    },
+  ];
+
+  const products: ImportProductPreview[] = [];
+
+  for (const row of rows) {
+    const country = cleanCell(row.Country);
+    const isoCode = cleanCell(row.ISOCode);
+
+    if (!country || !isoCode) continue;
+
+    for (const bundle of bundles) {
+      const buyPrice = toNumber(row[bundle.priceColumn]);
+      const providerProductId = cleanCell(row[bundle.refColumn]);
+
+      if (buyPrice === null) continue;
+      if (!providerProductId || providerProductId.toUpperCase() === "NA") continue;
+
+      const data = `${bundle.dataGb}GB`;
+      const sellPrice = calculateSellPrice(buyPrice);
+
+      products.push({
+        country,
+        isoCode,
+        name: `${country} eSIM ${data} / ${bundle.validityDays} days`,
+        data,
+        validityDays: bundle.validityDays,
+        planType: "Fixed",
+        usageFit: getUsageFit(bundle.dataGb),
+        role: getRole(bundle.dataGb, bundle.validityDays),
+        buyPrice,
+        sellPrice,
+        provider: "eSIM Go",
+        providerProductId,
+        image: "/esim-card.png",
+        description: `${data} mobile data for ${country}. Valid for ${bundle.validityDays} days.`,
+      });
+    }
+  }
+
+  return products;
 }
 
 export async function analyzeRateSheet(formData: FormData) {
@@ -60,6 +207,18 @@ export async function analyzeRateSheet(formData: FormData) {
     };
   });
 
+  const fixedSheet = workbook.Sheets["Standard - Fixed"];
+
+  if (!fixedSheet) {
+    throw new Error("Sheet 'Standard - Fixed' not found in uploaded rate sheet");
+  }
+
+  const fixedRows = XLSX.utils.sheet_to_json<Record<string, unknown>>(fixedSheet, {
+    defval: "",
+  });
+
+  const importProducts = normalizeFixedProducts(fixedRows);
+
   const dataDirectory = path.join(process.cwd(), "data");
 
   if (!fs.existsSync(dataDirectory)) {
@@ -73,6 +232,12 @@ export async function analyzeRateSheet(formData: FormData) {
         fileName: file.name,
         analyzedAt: new Date().toISOString(),
         sheets: previews,
+        importProducts,
+        importSummary: {
+          provider: "eSIM Go",
+          sheet: "Standard - Fixed",
+          productsFound: importProducts.length,
+        },
       },
       null,
       2
@@ -80,4 +245,65 @@ export async function analyzeRateSheet(formData: FormData) {
   );
 
   redirect("/admin/products/import/preview");
+}
+
+export async function confirmRateSheetImport() {
+  const previewPath = path.join(process.cwd(), "data", "rate-sheet-preview.json");
+
+  if (!fs.existsSync(previewPath)) {
+    throw new Error("No analyzed rate sheet found. Please upload the Excel file again.");
+  }
+
+  const previewData = JSON.parse(fs.readFileSync(previewPath, "utf8")) as {
+    importProducts?: ImportProductPreview[];
+  };
+
+  const products = previewData.importProducts ?? [];
+
+  if (products.length === 0) {
+    throw new Error("No importable products found.");
+  }
+
+  for (const product of products) {
+    await prisma.product.upsert({
+      where: {
+        providerProductId: product.providerProductId,
+      },
+      update: {
+        country: product.country,
+        region: null,
+        name: product.name,
+        data: product.data,
+        validityDays: product.validityDays,
+        planType: product.planType,
+        usageFit: product.usageFit,
+        role: product.role,
+        buyPrice: product.buyPrice,
+        sellPrice: product.sellPrice,
+        provider: product.provider,
+        image: product.image,
+        description: product.description,
+        active: true,
+      },
+      create: {
+        country: product.country,
+        region: null,
+        name: product.name,
+        data: product.data,
+        validityDays: product.validityDays,
+        planType: product.planType,
+        usageFit: product.usageFit,
+        role: product.role,
+        buyPrice: product.buyPrice,
+        sellPrice: product.sellPrice,
+        provider: product.provider,
+        providerProductId: product.providerProductId,
+        image: product.image,
+        description: product.description,
+        active: true,
+      },
+    });
+  }
+
+  redirect("/admin/products");
 }
