@@ -3,6 +3,12 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "../../../lib/db";
 
+function revalidateOrderPages(orderId: string) {
+  revalidatePath("/admin/orders");
+  revalidatePath(`/admin/orders/${orderId}`);
+  revalidatePath("/admin");
+}
+
 export async function markOrderPaid(orderId: string) {
   await prisma.order.update({
     where: {
@@ -13,7 +19,7 @@ export async function markOrderPaid(orderId: string) {
     },
   });
 
-  revalidatePath("/admin/orders");
+  revalidateOrderPages(orderId);
 }
 
 export async function markOrderPending(orderId: string) {
@@ -26,7 +32,7 @@ export async function markOrderPending(orderId: string) {
     },
   });
 
-  revalidatePath("/admin/orders");
+  revalidateOrderPages(orderId);
 }
 
 export async function markOrderDelivered(orderId: string) {
@@ -39,7 +45,7 @@ export async function markOrderDelivered(orderId: string) {
     },
   });
 
-  revalidatePath("/admin/orders");
+  revalidateOrderPages(orderId);
 }
 
 export async function markOrderFailed(orderId: string) {
@@ -52,7 +58,7 @@ export async function markOrderFailed(orderId: string) {
     },
   });
 
-  revalidatePath("/admin/orders");
+  revalidateOrderPages(orderId);
 }
 
 export async function markOrderWaiting(orderId: string) {
@@ -65,7 +71,7 @@ export async function markOrderWaiting(orderId: string) {
     },
   });
 
-  revalidatePath("/admin/orders");
+  revalidateOrderPages(orderId);
 }
 
 export async function deleteTestOrder(orderId: string) {
@@ -76,12 +82,12 @@ export async function deleteTestOrder(orderId: string) {
   });
 
   if (!order) {
-    revalidatePath("/admin/orders");
+    revalidateOrderPages(orderId);
     return;
   }
 
   if (order.payment !== "Pending") {
-    revalidatePath("/admin/orders");
+    revalidateOrderPages(orderId);
     return;
   }
 
@@ -91,5 +97,5 @@ export async function deleteTestOrder(orderId: string) {
     },
   });
 
-  revalidatePath("/admin/orders");
+  revalidateOrderPages(orderId);
 }
