@@ -226,3 +226,24 @@ The founder prefers:
 * fewer explanations
 * safe step-by-step progress
 * no risky partial edits
+
+
+## Future UX Improvement: Destination Cards
+
+The homepage currently shows available destination cards from the product database.
+
+Current behavior:
+- Clicking a destination card scrolls back to the quiz and selects that destination.
+
+Issue:
+- This feels confusing because it can look like the user is being sent back to the homepage/starting point.
+
+Future solution:
+- Destination cards should not just scroll back to the quiz.
+- In the future, clicking a destination should open a modal or dedicated destination view.
+- That view should show 3 available offers for the selected destination.
+- The user can then choose a plan directly or continue with the recommendation quiz.
+
+Status:
+- Keep current behavior for now.
+- Revisit after the product database has more countries and plans.
