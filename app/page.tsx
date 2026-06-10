@@ -62,44 +62,32 @@ export default function Home() {
       )}&days=${encodeURIComponent(days)}&type=${encodeURIComponent(userType)}`
     : "#quiz";
 
-  const destinationsPreview = [
-    {
-      name: "Spain",
-      flag: "🇪🇸",
-      image:
+  function getDestinationImage(destination: string) {
+    const images: Record<string, string> = {
+      Europe:
+        "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?q=80&w=1200&auto=format&fit=crop",
+      Spain:
         "https://images.unsplash.com/photo-1543783207-ec64e4d95325?q=80&w=1200&auto=format&fit=crop",
-    },
-    {
-      name: "Italy",
-      flag: "🇮🇹",
-      image:
+      Italy:
         "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?q=80&w=1200&auto=format&fit=crop",
-    },
-    {
-      name: "Japan",
-      flag: "🇯🇵",
-      image:
+      Japan:
         "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=1200&auto=format&fit=crop",
-    },
-    {
-      name: "Thailand",
-      flag: "🇹🇭",
-      image:
+      Thailand:
         "https://images.unsplash.com/photo-1508009603885-50cf7c579365?q=80&w=1200&auto=format&fit=crop",
-    },
-    {
-      name: "United States",
-      flag: "🇺🇸",
-      image:
+      "United States":
         "https://images.unsplash.com/photo-1485738422979-f5c462d49f74?q=80&w=1200&auto=format&fit=crop",
-    },
-    {
-      name: "United Kingdom",
-      flag: "🇬🇧",
-      image:
+      "United Kingdom":
         "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=1200&auto=format&fit=crop",
-    },
-  ];
+    };
+
+    return (
+      images[destination] ||
+      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop"
+    );
+  }
+
+  const availableDestinationCards =
+    destinations.length > 0 ? destinations : ["Europe"];
 
   return (
     <main className="min-h-screen bg-[#F6F8FF] text-slate-900">
@@ -413,32 +401,40 @@ export default function Home() {
       <section id="destinations" className="mx-auto max-w-7xl px-6 py-24">
         <div className="mb-16 text-center">
           <h2 className="text-4xl font-bold text-slate-950">
-            Popular destinations
+            Available destinations
           </h2>
           <p className="mt-4 text-xl text-slate-600">
-            Start with the places travelers search for most.
+            These destinations are currently available from active products in
+            the DALO database.
           </p>
         </div>
 
         <div className="grid gap-6 md:grid-cols-3">
-          {destinationsPreview.map((destination) => (
-            <div
-              key={destination.name}
-              className="overflow-hidden rounded-[2rem] bg-white shadow-lg shadow-blue-50 transition hover:-translate-y-1 hover:shadow-2xl"
+          {availableDestinationCards.map((destination) => (
+            <button
+              key={destination}
+              type="button"
+              onClick={() => {
+                setCountry(destination);
+                document.getElementById("quiz")?.scrollIntoView({
+                  behavior: "smooth",
+                });
+              }}
+              className="overflow-hidden rounded-[2rem] bg-white text-left shadow-lg shadow-blue-50 transition hover:-translate-y-1 hover:shadow-2xl"
             >
               <img
-                src={destination.image}
-                alt={destination.name}
+                src={getDestinationImage(destination)}
+                alt={destination}
                 className="h-44 w-full object-cover"
               />
               <div className="p-6">
-                <div className="text-4xl">{destination.flag}</div>
-                <h3 className="mt-3 text-xl font-bold">{destination.name}</h3>
+                <div className="text-4xl">{getDestinationFlag(destination)}</div>
+                <h3 className="mt-3 text-xl font-bold">{destination}</h3>
                 <p className="mt-2 text-slate-600">
                   Find the right eSIM for your trip.
                 </p>
               </div>
-            </div>
+            </button>
           ))}
         </div>
       </section>
@@ -587,10 +583,9 @@ export default function Home() {
             <div>
               <h4 className="mb-4 font-bold">Destinations</h4>
               <div className="space-y-2 text-slate-600">
-                <div>Spain</div>
-                <div>Europe</div>
-                <div>Italy</div>
-                <div>Japan</div>
+                {availableDestinationCards.slice(0, 4).map((destination) => (
+                  <div key={destination}>{destination}</div>
+                ))}
               </div>
             </div>
 
