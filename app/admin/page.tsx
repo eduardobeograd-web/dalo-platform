@@ -39,8 +39,17 @@ export default async function AdminDashboard() {
     };
   });
 
-  const revenue = orderRows.reduce((total, order) => total + order.amount, 0);
-  const profit = orderRows.reduce((total, order) => total + order.profit, 0);
+  const paidOrderRows = orderRows.filter((order) => order.payment === "Paid");
+
+  const revenue = paidOrderRows.reduce(
+    (total, order) => total + order.amount,
+    0
+  );
+
+  const profit = paidOrderRows.reduce(
+    (total, order) => total + order.profit,
+    0
+  );
 
   const pendingOrders = orders.filter(
     (order) => order.payment === "Pending"
@@ -100,9 +109,7 @@ export default async function AdminDashboard() {
 
       <div className="grid gap-6 md:grid-cols-4">
         <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
-          <p className="text-sm font-semibold text-slate-500">
-            Products
-          </p>
+          <p className="text-sm font-semibold text-slate-500">Products</p>
           <h2 className="mt-3 text-3xl font-bold">{products.length}</h2>
           <p className="mt-2 text-sm text-slate-500">
             Total products in database
@@ -127,7 +134,7 @@ export default async function AdminDashboard() {
           </p>
           <h2 className="mt-3 text-3xl font-bold">{formatPrice(revenue)}</h2>
           <p className="mt-2 text-sm text-slate-500">
-            Based on database orders
+            Paid orders only
           </p>
         </div>
 
@@ -139,7 +146,7 @@ export default async function AdminDashboard() {
             {formatPrice(profit)}
           </h2>
           <p className="mt-2 text-sm text-slate-500">
-            Sell price minus buy price
+            Paid orders only
           </p>
         </div>
       </div>
@@ -220,14 +227,14 @@ export default async function AdminDashboard() {
             </div>
 
             <div className="flex items-center justify-between rounded-2xl bg-blue-50 p-4">
-              <span className="font-semibold">Real Order Revenue</span>
+              <span className="font-semibold">Paid Order Revenue</span>
               <span className="font-bold text-blue-700">
                 {formatPrice(revenue)}
               </span>
             </div>
 
             <div className="flex items-center justify-between rounded-2xl bg-blue-50 p-4">
-              <span className="font-semibold">Real Order Profit</span>
+              <span className="font-semibold">Paid Order Profit</span>
               <span className="font-bold text-blue-700">
                 {formatPrice(profit)}
               </span>
