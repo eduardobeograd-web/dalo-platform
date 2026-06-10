@@ -28,6 +28,26 @@ export default async function AdminDashboard() {
 
   const activeProducts = products.filter((product) => product.active);
 
+  const orderRows = orders.map((order) => {
+    const product = products.find((item) => item.id === order.productId);
+
+    return {
+      ...order,
+      product,
+      amount: product?.sellPrice || 0,
+      profit: product ? product.sellPrice - product.buyPrice : 0,
+    };
+  });
+
+  const revenue = orderRows.reduce((total, order) => total + order.amount, 0);
+  const profit = orderRows.reduce((total, order) => total + order.profit, 0);
+
+  const pendingOrders = orders.filter(
+    (order) => order.payment === "Pending"
+  ).length;
+
+  const paidOrders = orders.filter((order) => order.payment === "Paid").length;
+
   const averageMargin =
     products.length > 0
       ? products.reduce(
@@ -103,6 +123,62 @@ export default async function AdminDashboard() {
 
         <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
           <p className="text-sm font-semibold text-slate-500">
+            Revenue
+          </p>
+          <h2 className="mt-3 text-3xl font-bold">{formatPrice(revenue)}</h2>
+          <p className="mt-2 text-sm text-slate-500">
+            Based on database orders
+          </p>
+        </div>
+
+        <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
+          <p className="text-sm font-semibold text-slate-500">
+            Profit
+          </p>
+          <h2 className="mt-3 text-3xl font-bold text-green-700">
+            {formatPrice(profit)}
+          </h2>
+          <p className="mt-2 text-sm text-slate-500">
+            Sell price minus buy price
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-8 grid gap-6 md:grid-cols-4">
+        <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
+          <p className="text-sm font-semibold text-slate-500">
+            Orders
+          </p>
+          <h2 className="mt-3 text-3xl font-bold">{orders.length}</h2>
+          <p className="mt-2 text-sm text-slate-500">
+            Total database orders
+          </p>
+        </div>
+
+        <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
+          <p className="text-sm font-semibold text-slate-500">
+            Paid Orders
+          </p>
+          <h2 className="mt-3 text-3xl font-bold">{paidOrders}</h2>
+          <p className="mt-2 text-sm text-slate-500">
+            Orders marked as paid
+          </p>
+        </div>
+
+        <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
+          <p className="text-sm font-semibold text-slate-500">
+            Pending Orders
+          </p>
+          <h2 className="mt-3 text-3xl font-bold text-yellow-600">
+            {pendingOrders}
+          </h2>
+          <p className="mt-2 text-sm text-slate-500">
+            Checkout tests or unpaid orders
+          </p>
+        </div>
+
+        <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
+          <p className="text-sm font-semibold text-slate-500">
             Avg. Margin
           </p>
           <h2 className="mt-3 text-3xl font-bold">
@@ -112,16 +188,6 @@ export default async function AdminDashboard() {
             Based on product prices
           </p>
         </div>
-
-        <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
-          <p className="text-sm font-semibold text-slate-500">
-            Orders
-          </p>
-          <h2 className="mt-3 text-3xl font-bold">{orders.length}</h2>
-          <p className="mt-2 text-sm text-slate-500">
-            Database orders
-          </p>
-        </div>
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
@@ -129,7 +195,7 @@ export default async function AdminDashboard() {
           <div className="mb-6">
             <h2 className="text-2xl font-bold">Database Status</h2>
             <p className="mt-1 text-slate-600">
-              Current DALO product foundation.
+              Current DALO product and order foundation.
             </p>
           </div>
 
@@ -147,22 +213,31 @@ export default async function AdminDashboard() {
             </div>
 
             <div className="flex items-center justify-between rounded-2xl bg-green-50 p-4">
-              <span className="font-semibold">Active Products</span>
+              <span className="font-semibold">Order Table</span>
               <span className="font-bold text-green-700">
-                {activeProducts.length} Active
+                {orders.length} Orders
               </span>
             </div>
 
             <div className="flex items-center justify-between rounded-2xl bg-blue-50 p-4">
-              <span className="font-semibold">Catalog Sell Value</span>
+              <span className="font-semibold">Real Order Revenue</span>
               <span className="font-bold text-blue-700">
+                {formatPrice(revenue)}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between rounded-2xl bg-blue-50 p-4">
+              <span className="font-semibold">Real Order Profit</span>
+              <span className="font-bold text-blue-700">
+                {formatPrice(profit)}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4">
+              <span className="font-semibold">Catalog Sell Value</span>
+              <span className="font-bold text-slate-700">
                 {formatPrice(estimatedCatalogValue)}
               </span>
-            </div>
-
-            <div className="flex items-center justify-between rounded-2xl bg-blue-50 p-4">
-              <span className="font-semibold">Excel Preview Tool</span>
-              <span className="font-bold text-blue-700">Ready</span>
             </div>
           </div>
         </div>
@@ -188,6 +263,13 @@ export default async function AdminDashboard() {
               className="block rounded-2xl bg-white/10 px-5 py-4 text-center font-bold text-white"
             >
               Import Rate Sheet
+            </a>
+
+            <a
+              href="/admin/orders"
+              className="block rounded-2xl bg-white/10 px-5 py-4 text-center font-bold text-white"
+            >
+              View Orders
             </a>
           </div>
         </div>
