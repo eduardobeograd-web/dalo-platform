@@ -53,12 +53,29 @@ function toNumber(value: unknown) {
 }
 
 function calculateSellPrice(buyPrice: number) {
-  // Erste einfache Marge. Können wir später dynamisch machen.
+  // Simple first margin. We can make this smarter later.
   const markedUp = buyPrice * 1.65;
   return Math.ceil(markedUp * 100) / 100;
 }
 
-function getUsageFit(dataGb: number) {
+function getUsageFit(dataGb: number, validityDays: number) {
+  // Important: for long trips, very small data packages should not be recommended.
+  if (validityDays >= 30) {
+    if (dataGb < 3) return "Too Low";
+    if (dataGb <= 5) return "Light";
+    if (dataGb <= 15) return "Standard";
+    if (dataGb <= 30) return "Heavy";
+    return "Power";
+  }
+
+  if (validityDays >= 15) {
+    if (dataGb < 2) return "Too Low";
+    if (dataGb <= 3) return "Light";
+    if (dataGb <= 10) return "Standard";
+    if (dataGb <= 30) return "Heavy";
+    return "Power";
+  }
+
   if (dataGb <= 2) return "Light";
   if (dataGb <= 10) return "Standard";
   if (dataGb <= 20) return "Heavy";
@@ -66,9 +83,14 @@ function getUsageFit(dataGb: number) {
 }
 
 function getRole(dataGb: number, validityDays: number) {
+  // Do not let tiny long-duration plans look like real recommendations.
+  if (validityDays >= 30 && dataGb < 3) return "emergency-only";
+  if (validityDays >= 15 && dataGb < 2) return "emergency-only";
+
   if (dataGb <= 2) return "cheapest";
-  if (dataGb >= 10 && dataGb <= 20) return "best-value";
-  if (dataGb >= 50 || validityDays >= 30) return "most-data";
+  if (dataGb >= 5 && dataGb <= 20) return "best-value";
+  if (dataGb >= 50) return "most-data";
+
   return "recommended";
 }
 
@@ -128,16 +150,23 @@ function normalizeFixedProducts(rows: Record<string, unknown>[]) {
 
   for (const row of rows) {
     const country = cleanCell(row.Country);
-    const isoCode = cleanCell(row.ISOCode);
+    const isoCode = cleanCell(row.ISOCode).toUpperCase();
 
     if (!country || !isoCode) continue;
+
+    // For now, only import real single-country products.
+    // Regional bundles often use ISO lists like "DE;FR;IT;ES".
+    // Those should later become upsells, not normal country products.
+    if (isoCode.length !== 2 || isoCode.includes(";")) continue;
 
     for (const bundle of bundles) {
       const buyPrice = toNumber(row[bundle.priceColumn]);
       const providerProductId = cleanCell(row[bundle.refColumn]);
 
       if (buyPrice === null) continue;
-      if (!providerProductId || providerProductId.toUpperCase() === "NA") continue;
+      if (!providerProductId || providerProductId.toUpperCase() === "NA") {
+        continue;
+      }
 
       const data = `${bundle.dataGb}GB`;
       const sellPrice = calculateSellPrice(buyPrice);
@@ -149,7 +178,7 @@ function normalizeFixedProducts(rows: Record<string, unknown>[]) {
         data,
         validityDays: bundle.validityDays,
         planType: "Fixed",
-        usageFit: getUsageFit(bundle.dataGb),
+        usageFit: getUsageFit(bundle.dataGb, bundle.validityDays),
         role: getRole(bundle.dataGb, bundle.validityDays),
         buyPrice,
         sellPrice,
@@ -271,6 +300,7 @@ export async function confirmRateSheetImport() {
       },
       update: {
         country: product.country,
+        isoCode: product.isoCode,
         region: null,
         name: product.name,
         data: product.data,
@@ -287,6 +317,7 @@ export async function confirmRateSheetImport() {
       },
       create: {
         country: product.country,
+        isoCode: product.isoCode,
         region: null,
         name: product.name,
         data: product.data,

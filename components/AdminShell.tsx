@@ -62,7 +62,7 @@ export default function AdminShell({ children, activePage }: AdminShellProps) {
       </div>
 
       <div className="flex min-h-screen">
-        <aside className="hidden w-72 border-r border-slate-200 bg-slate-950 p-6 text-white md:block">
+     <aside className="sticky top-0 hidden h-screen w-72 shrink-0 overflow-y-auto border-r border-slate-200 bg-slate-950 p-6 text-white md:block">
           <a href="/" className="mb-10 block">
             <img src="/dalo-logo.png" alt="DALO" className="h-16 w-auto" />
           </a>

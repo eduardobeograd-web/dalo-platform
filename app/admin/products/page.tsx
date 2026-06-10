@@ -6,6 +6,8 @@ function formatPrice(value: number) {
 }
 
 function getMargin(buyPrice: number, sellPrice: number) {
+  if (sellPrice <= 0) return 0;
+
   const profit = sellPrice - buyPrice;
   return Math.round((profit / sellPrice) * 100);
 }
@@ -14,22 +16,46 @@ function getProfit(buyPrice: number, sellPrice: number) {
   return sellPrice - buyPrice;
 }
 
-export default async function ProductsPage() {
-  const products = await prisma.product.findMany({
-    orderBy: {
-      createdAt: "asc",
-    },
-  });
+function getCountryFlag(isoCode?: string | null) {
+  if (!isoCode || isoCode.length !== 2) return "🌍";
 
-  const activeProducts = products.filter((product) => product.active);
+  return isoCode
+    .toUpperCase()
+    .replace(/./g, (char) =>
+      String.fromCodePoint(127397 + char.charCodeAt(0))
+    );
+}
+
+export default async function ProductsPage() {
+  const [products, totalProducts, activeProductsCount, allProductsForStats] =
+    await Promise.all([
+      prisma.product.findMany({
+        orderBy: {
+          createdAt: "asc",
+        },
+        take: 80,
+      }),
+      prisma.product.count(),
+      prisma.product.count({
+        where: {
+          active: true,
+        },
+      }),
+      prisma.product.findMany({
+        select: {
+          buyPrice: true,
+          sellPrice: true,
+        },
+      }),
+    ]);
 
   const averageMargin =
-    products.length > 0
-      ? products.reduce(
+    allProductsForStats.length > 0
+      ? allProductsForStats.reduce(
           (total, product) =>
             total + getMargin(product.buyPrice, product.sellPrice),
           0
-        ) / products.length
+        ) / allProductsForStats.length
       : 0;
 
   return (
@@ -71,14 +97,14 @@ export default async function ProductsPage() {
           <p className="text-sm font-semibold text-slate-500">
             Total Products
           </p>
-          <h2 className="mt-3 text-3xl font-bold">{products.length}</h2>
+          <h2 className="mt-3 text-3xl font-bold">{totalProducts}</h2>
         </div>
 
         <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
           <p className="text-sm font-semibold text-slate-500">
             Active Products
           </p>
-          <h2 className="mt-3 text-3xl font-bold">{activeProducts.length}</h2>
+          <h2 className="mt-3 text-3xl font-bold">{activeProductsCount}</h2>
         </div>
 
         <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
@@ -105,7 +131,7 @@ export default async function ProductsPage() {
           </h2>
 
           <p className="mt-1 text-slate-600">
-            These products are stored in SQLite via Prisma.
+            Showing first 80 products. Products are stored in SQLite via Prisma.
           </p>
         </div>
 
@@ -132,11 +158,22 @@ export default async function ProductsPage() {
               {products.map((product) => {
                 const profit = getProfit(product.buyPrice, product.sellPrice);
                 const margin = getMargin(product.buyPrice, product.sellPrice);
+                const flag = getCountryFlag(product.isoCode);
 
                 return (
                   <tr key={product.id} className="border-t border-slate-100">
                     <td className="px-6 py-5 font-semibold">
-                      {product.country}
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl">{flag}</span>
+                        <div>
+                          <div>{product.country}</div>
+                          {product.isoCode && (
+                            <div className="text-xs font-bold text-slate-400">
+                              {product.isoCode}
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </td>
 
                     <td className="px-6 py-5">
@@ -176,7 +213,13 @@ export default async function ProductsPage() {
                     </td>
 
                     <td className="px-6 py-5">
-                      <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-bold text-blue-700">
+                      <span
+                        className={`rounded-full px-3 py-1 text-sm font-bold ${
+                          product.usageFit === "Too Low"
+                            ? "bg-red-100 text-red-700"
+                            : "bg-blue-100 text-blue-700"
+                        }`}
+                      >
                         {product.usageFit}
                       </span>
                     </td>
@@ -211,6 +254,13 @@ export default async function ProductsPage() {
             </tbody>
           </table>
         </div>
+
+        {totalProducts > products.length && (
+          <div className="border-t border-slate-100 bg-slate-50 p-6 text-sm font-semibold text-slate-600">
+            Showing {products.length} of {totalProducts} products. Full
+            pagination comes later.
+          </div>
+        )}
       </div>
     </AdminShell>
   );

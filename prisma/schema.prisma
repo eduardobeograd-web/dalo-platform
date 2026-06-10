@@ -10,6 +10,7 @@ datasource db {
 model Product {
   id                String   @id @default(cuid())
   country           String
+  isoCode           String?
   region            String?
   name              String
   data              String
@@ -21,7 +22,7 @@ model Product {
   sellPrice         Float
   oldPrice          Float?
   provider          String
-  providerProductId String @unique
+  providerProductId String   @unique
   image             String
   description       String
   active            Boolean  @default(true)

@@ -43,6 +43,7 @@ export type ProductSumAggregateOutputType = {
 export type ProductMinAggregateOutputType = {
   id: string | null
   country: string | null
+  isoCode: string | null
   region: string | null
   name: string | null
   data: string | null
@@ -65,6 +66,7 @@ export type ProductMinAggregateOutputType = {
 export type ProductMaxAggregateOutputType = {
   id: string | null
   country: string | null
+  isoCode: string | null
   region: string | null
   name: string | null
   data: string | null
@@ -87,6 +89,7 @@ export type ProductMaxAggregateOutputType = {
 export type ProductCountAggregateOutputType = {
   id: number
   country: number
+  isoCode: number
   region: number
   name: number
   data: number
@@ -125,6 +128,7 @@ export type ProductSumAggregateInputType = {
 export type ProductMinAggregateInputType = {
   id?: true
   country?: true
+  isoCode?: true
   region?: true
   name?: true
   data?: true
@@ -147,6 +151,7 @@ export type ProductMinAggregateInputType = {
 export type ProductMaxAggregateInputType = {
   id?: true
   country?: true
+  isoCode?: true
   region?: true
   name?: true
   data?: true
@@ -169,6 +174,7 @@ export type ProductMaxAggregateInputType = {
 export type ProductCountAggregateInputType = {
   id?: true
   country?: true
+  isoCode?: true
   region?: true
   name?: true
   data?: true
@@ -278,6 +284,7 @@ export type ProductGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 export type ProductGroupByOutputType = {
   id: string
   country: string
+  isoCode: string | null
   region: string | null
   name: string
   data: string
@@ -323,6 +330,7 @@ export type ProductWhereInput = {
   NOT?: Prisma.ProductWhereInput | Prisma.ProductWhereInput[]
   id?: Prisma.StringFilter<"Product"> | string
   country?: Prisma.StringFilter<"Product"> | string
+  isoCode?: Prisma.StringNullableFilter<"Product"> | string | null
   region?: Prisma.StringNullableFilter<"Product"> | string | null
   name?: Prisma.StringFilter<"Product"> | string
   data?: Prisma.StringFilter<"Product"> | string
@@ -345,6 +353,7 @@ export type ProductWhereInput = {
 export type ProductOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   country?: Prisma.SortOrder
+  isoCode?: Prisma.SortOrderInput | Prisma.SortOrder
   region?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
   data?: Prisma.SortOrder
@@ -371,6 +380,7 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.ProductWhereInput[]
   NOT?: Prisma.ProductWhereInput | Prisma.ProductWhereInput[]
   country?: Prisma.StringFilter<"Product"> | string
+  isoCode?: Prisma.StringNullableFilter<"Product"> | string | null
   region?: Prisma.StringNullableFilter<"Product"> | string | null
   name?: Prisma.StringFilter<"Product"> | string
   data?: Prisma.StringFilter<"Product"> | string
@@ -392,6 +402,7 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
 export type ProductOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   country?: Prisma.SortOrder
+  isoCode?: Prisma.SortOrderInput | Prisma.SortOrder
   region?: Prisma.SortOrderInput | Prisma.SortOrder
   name?: Prisma.SortOrder
   data?: Prisma.SortOrder
@@ -422,6 +433,7 @@ export type ProductScalarWhereWithAggregatesInput = {
   NOT?: Prisma.ProductScalarWhereWithAggregatesInput | Prisma.ProductScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Product"> | string
   country?: Prisma.StringWithAggregatesFilter<"Product"> | string
+  isoCode?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   region?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   name?: Prisma.StringWithAggregatesFilter<"Product"> | string
   data?: Prisma.StringWithAggregatesFilter<"Product"> | string
@@ -444,6 +456,7 @@ export type ProductScalarWhereWithAggregatesInput = {
 export type ProductCreateInput = {
   id?: string
   country: string
+  isoCode?: string | null
   region?: string | null
   name: string
   data: string
@@ -466,6 +479,7 @@ export type ProductCreateInput = {
 export type ProductUncheckedCreateInput = {
   id?: string
   country: string
+  isoCode?: string | null
   region?: string | null
   name: string
   data: string
@@ -488,6 +502,7 @@ export type ProductUncheckedCreateInput = {
 export type ProductUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   country?: Prisma.StringFieldUpdateOperationsInput | string
+  isoCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   region?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   data?: Prisma.StringFieldUpdateOperationsInput | string
@@ -510,6 +525,7 @@ export type ProductUpdateInput = {
 export type ProductUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   country?: Prisma.StringFieldUpdateOperationsInput | string
+  isoCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   region?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   data?: Prisma.StringFieldUpdateOperationsInput | string
@@ -532,6 +548,7 @@ export type ProductUncheckedUpdateInput = {
 export type ProductCreateManyInput = {
   id?: string
   country: string
+  isoCode?: string | null
   region?: string | null
   name: string
   data: string
@@ -554,6 +571,7 @@ export type ProductCreateManyInput = {
 export type ProductUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   country?: Prisma.StringFieldUpdateOperationsInput | string
+  isoCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   region?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   data?: Prisma.StringFieldUpdateOperationsInput | string
@@ -576,6 +594,7 @@ export type ProductUpdateManyMutationInput = {
 export type ProductUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   country?: Prisma.StringFieldUpdateOperationsInput | string
+  isoCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   region?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   data?: Prisma.StringFieldUpdateOperationsInput | string
@@ -598,6 +617,7 @@ export type ProductUncheckedUpdateManyInput = {
 export type ProductCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   country?: Prisma.SortOrder
+  isoCode?: Prisma.SortOrder
   region?: Prisma.SortOrder
   name?: Prisma.SortOrder
   data?: Prisma.SortOrder
@@ -627,6 +647,7 @@ export type ProductAvgOrderByAggregateInput = {
 export type ProductMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   country?: Prisma.SortOrder
+  isoCode?: Prisma.SortOrder
   region?: Prisma.SortOrder
   name?: Prisma.SortOrder
   data?: Prisma.SortOrder
@@ -649,6 +670,7 @@ export type ProductMaxOrderByAggregateInput = {
 export type ProductMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   country?: Prisma.SortOrder
+  isoCode?: Prisma.SortOrder
   region?: Prisma.SortOrder
   name?: Prisma.SortOrder
   data?: Prisma.SortOrder
@@ -720,6 +742,7 @@ export type DateTimeFieldUpdateOperationsInput = {
 export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   country?: boolean
+  isoCode?: boolean
   region?: boolean
   name?: boolean
   data?: boolean
@@ -742,6 +765,7 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
 export type ProductSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   country?: boolean
+  isoCode?: boolean
   region?: boolean
   name?: boolean
   data?: boolean
@@ -764,6 +788,7 @@ export type ProductSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
 export type ProductSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   country?: boolean
+  isoCode?: boolean
   region?: boolean
   name?: boolean
   data?: boolean
@@ -786,6 +811,7 @@ export type ProductSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
 export type ProductSelectScalar = {
   id?: boolean
   country?: boolean
+  isoCode?: boolean
   region?: boolean
   name?: boolean
   data?: boolean
@@ -805,7 +831,7 @@ export type ProductSelectScalar = {
   updatedAt?: boolean
 }
 
-export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "country" | "region" | "name" | "data" | "validityDays" | "planType" | "usageFit" | "role" | "buyPrice" | "sellPrice" | "oldPrice" | "provider" | "providerProductId" | "image" | "description" | "active" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
+export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "country" | "isoCode" | "region" | "name" | "data" | "validityDays" | "planType" | "usageFit" | "role" | "buyPrice" | "sellPrice" | "oldPrice" | "provider" | "providerProductId" | "image" | "description" | "active" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
 
 export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Product"
@@ -813,6 +839,7 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     country: string
+    isoCode: string | null
     region: string | null
     name: string
     data: string
@@ -1255,6 +1282,7 @@ export interface Prisma__ProductClient<T, Null = never, ExtArgs extends runtime.
 export interface ProductFieldRefs {
   readonly id: Prisma.FieldRef<"Product", 'String'>
   readonly country: Prisma.FieldRef<"Product", 'String'>
+  readonly isoCode: Prisma.FieldRef<"Product", 'String'>
   readonly region: Prisma.FieldRef<"Product", 'String'>
   readonly name: Prisma.FieldRef<"Product", 'String'>
   readonly data: Prisma.FieldRef<"Product", 'String'>
