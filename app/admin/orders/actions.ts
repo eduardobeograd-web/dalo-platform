@@ -67,3 +67,29 @@ export async function markOrderWaiting(orderId: string) {
 
   revalidatePath("/admin/orders");
 }
+
+export async function deleteTestOrder(orderId: string) {
+  const order = await prisma.order.findUnique({
+    where: {
+      id: orderId,
+    },
+  });
+
+  if (!order) {
+    revalidatePath("/admin/orders");
+    return;
+  }
+
+  if (order.payment !== "Pending") {
+    revalidatePath("/admin/orders");
+    return;
+  }
+
+  await prisma.order.delete({
+    where: {
+      id: orderId,
+    },
+  });
+
+  revalidatePath("/admin/orders");
+}

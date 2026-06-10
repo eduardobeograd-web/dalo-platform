@@ -1,6 +1,7 @@
 import AdminShell from "../../../components/AdminShell";
 import { prisma } from "../../../lib/db";
 import {
+  deleteTestOrder,
   markOrderDelivered,
   markOrderFailed,
   markOrderPaid,
@@ -42,7 +43,7 @@ function OrderTypeBadge({ payment }: { payment: string }) {
           : "bg-green-100 text-green-700"
       }`}
     >
-      {isCheckoutTest ? "Checkout Test" : "Demo Paid"}
+      {isCheckoutTest ? "Checkout Test" : "Demo / Paid"}
     </span>
   );
 }
@@ -143,13 +144,12 @@ export default async function OrdersPage() {
             <h2 className="text-2xl font-bold text-slate-950">Order List</h2>
 
             <p className="mt-1 text-slate-600">
-              Use actions to simulate payment and eSIM delivery status. Reset
-              buttons allow you to undo mistakes.
+              Test orders can be deleted only while payment is still pending.
             </p>
           </div>
 
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[1550px] text-left">
+            <table className="w-full min-w-[1650px] text-left">
               <thead className="bg-slate-50 text-sm text-slate-500">
                 <tr>
                   <th className="px-6 py-4 font-semibold">Order</th>
@@ -169,13 +169,20 @@ export default async function OrdersPage() {
               <tbody>
                 {orderRows.map((order) => {
                   const markPaidWithId = markOrderPaid.bind(null, order.id);
-                  const markPendingWithId = markOrderPending.bind(null, order.id);
+                  const markPendingWithId = markOrderPending.bind(
+                    null,
+                    order.id
+                  );
                   const markDeliveredWithId = markOrderDelivered.bind(
                     null,
                     order.id
                   );
                   const markFailedWithId = markOrderFailed.bind(null, order.id);
                   const markWaitingWithId = markOrderWaiting.bind(
+                    null,
+                    order.id
+                  );
+                  const deleteTestOrderWithId = deleteTestOrder.bind(
                     null,
                     order.id
                   );
@@ -276,6 +283,17 @@ export default async function OrdersPage() {
                               Reset Delivery
                             </button>
                           </form>
+
+                          {order.payment === "Pending" && (
+                            <form action={deleteTestOrderWithId}>
+                              <button
+                                type="submit"
+                                className="rounded-xl bg-red-600 px-3 py-2 text-xs font-bold text-white"
+                              >
+                                Delete Test
+                              </button>
+                            </form>
+                          )}
                         </div>
                       </td>
                     </tr>
@@ -291,8 +309,8 @@ export default async function OrdersPage() {
             <h2 className="text-2xl font-bold">Manual Order Controls</h2>
 
             <p className="mt-2 text-slate-300">
-              These buttons simulate what Stripe and the provider API will do
-              automatically later.
+              These controls simulate Stripe and provider API behavior during
+              MVP testing.
             </p>
 
             <div className="mt-6 space-y-4">
@@ -307,16 +325,9 @@ export default async function OrdersPage() {
               </div>
 
               <div className="rounded-2xl bg-white/10 p-4">
-                <div className="text-sm text-slate-400">Delivered / Failed</div>
+                <div className="text-sm text-slate-400">Delete Test</div>
                 <div className="mt-1 font-bold">
-                  eSIM delivery status changes
-                </div>
-              </div>
-
-              <div className="rounded-2xl bg-white/10 p-4">
-                <div className="text-sm text-slate-400">Reset Delivery</div>
-                <div className="mt-1 font-bold">
-                  eSIM delivery goes back to Waiting
+                  Only available while payment is Pending
                 </div>
               </div>
             </div>
@@ -324,13 +335,12 @@ export default async function OrdersPage() {
 
           <div className="rounded-[2rem] bg-white p-8 shadow-xl shadow-blue-50">
             <h2 className="text-2xl font-bold text-slate-950">
-              Later Automation
+              Safety Rule
             </h2>
 
             <p className="mt-3 text-slate-600">
-              Stripe will mark orders as paid. The provider API will mark eSIM
-              delivery as delivered or failed. Manual controls are for testing
-              and customer support.
+              Paid orders should not be deleted casually. Only pending test
+              checkout orders can be removed from this screen.
             </p>
           </div>
         </div>
