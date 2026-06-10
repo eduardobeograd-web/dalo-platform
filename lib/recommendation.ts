@@ -9,6 +9,8 @@ type RecommendationInput = {
 function parseDays(days?: string) {
   if (!days) return 14;
 
+  if (days === "1-3") return 3;
+  if (days === "4-7") return 7;
   if (days === "1-7") return 7;
   if (days === "8-14") return 14;
   if (days === "15-30") return 30;
