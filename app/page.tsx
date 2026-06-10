@@ -1,17 +1,68 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+function getDestinationFlag(destination: string) {
+  const flags: Record<string, string> = {
+    Europe: "🇪🇺",
+    Spain: "🇪🇸",
+    Italy: "🇮🇹",
+    Japan: "🇯🇵",
+    Thailand: "🇹🇭",
+    "United States": "🇺🇸",
+    "United Kingdom": "🇬🇧",
+    Germany: "🇩🇪",
+    France: "🇫🇷",
+    Portugal: "🇵🇹",
+    Greece: "🇬🇷",
+    Turkey: "🇹🇷",
+    Switzerland: "🇨🇭",
+    Austria: "🇦🇹",
+    Netherlands: "🇳🇱",
+    Croatia: "🇭🇷",
+    Serbia: "🇷🇸",
+    Montenegro: "🇲🇪",
+    Albania: "🇦🇱",
+    Dubai: "🇦🇪",
+    "United Arab Emirates": "🇦🇪",
+  };
+
+  return flags[destination] || "🌍";
+}
 
 export default function Home() {
   const [country, setCountry] = useState("");
   const [days, setDays] = useState("8-14");
   const [userType, setUserType] = useState("everyday");
+  const [destinations, setDestinations] = useState<string[]>([]);
 
-  const searchingUrl = `/searching?country=${encodeURIComponent(
-    country || "Europe"
-  )}&days=${encodeURIComponent(days)}&type=${encodeURIComponent(userType)}`;
+  useEffect(() => {
+    async function loadDestinations() {
+      const response = await fetch("/api/destinations");
+      const data = await response.json();
 
-  const destinations = [
+      if (Array.isArray(data.destinations)) {
+        setDestinations(data.destinations);
+
+        if (data.destinations.length > 0) {
+          setCountry(data.destinations[0]);
+        }
+      }
+    }
+
+    loadDestinations();
+  }, []);
+
+  const selectedDestinationIsAvailable =
+    destinations.length === 0 || destinations.includes(country);
+
+  const searchingUrl = selectedDestinationIsAvailable
+    ? `/searching?country=${encodeURIComponent(
+        country || "Europe"
+      )}&days=${encodeURIComponent(days)}&type=${encodeURIComponent(userType)}`
+    : "#quiz";
+
+  const destinationsPreview = [
     {
       name: "Spain",
       flag: "🇪🇸",
@@ -55,11 +106,7 @@ export default function Home() {
       {/* NAV */}
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
         <a href="/" className="flex items-center">
-          <img
-            src="/dalo-logo.png"
-            alt="DALO"
-            className="h-16 w-auto"
-          />
+          <img src="/dalo-logo.png" alt="DALO" className="h-16 w-auto" />
         </a>
 
         <div className="hidden gap-8 text-sm font-medium text-slate-600 md:flex">
@@ -101,7 +148,9 @@ export default function Home() {
 
               <div className="rounded-2xl bg-white p-4 shadow-sm">
                 <div className="text-2xl">🌍</div>
-                <p className="mt-2 text-sm font-semibold">200+ destinations</p>
+                <p className="mt-2 text-sm font-semibold">
+                  Available destinations
+                </p>
               </div>
 
               <div className="rounded-2xl bg-white p-4 shadow-sm">
@@ -142,12 +191,37 @@ export default function Home() {
                   🌍 Where are you going?
                 </label>
 
-                <input
-                  value={country}
-                  onChange={(e) => setCountry(e.target.value)}
-                  placeholder="Spain, Italy, Europe..."
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 outline-none transition focus:border-blue-500 focus:bg-white"
-                />
+                <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 transition focus-within:border-blue-500 focus-within:bg-white">
+                  <div className="text-3xl">{getDestinationFlag(country)}</div>
+
+                  <input
+                    value={country}
+                    onChange={(e) => setCountry(e.target.value)}
+                    list="available-destinations"
+                    placeholder="Search destination..."
+                    className="w-full bg-transparent outline-none"
+                  />
+
+                  <datalist id="available-destinations">
+                    {destinations.map((destination) => (
+                      <option key={destination} value={destination}>
+                        {getDestinationFlag(destination)} {destination}
+                      </option>
+                    ))}
+                  </datalist>
+                </div>
+
+                {!selectedDestinationIsAvailable && (
+                  <p className="mt-2 text-sm font-semibold text-red-600">
+                    Please choose an available destination from the list.
+                  </p>
+                )}
+
+                {selectedDestinationIsAvailable && (
+                  <p className="mt-2 text-sm text-slate-500">
+                    Only destinations with active eSIM products are shown.
+                  </p>
+                )}
               </div>
 
               <div>
@@ -225,7 +299,12 @@ export default function Home() {
 
               <a
                 href={searchingUrl}
-                className="block w-full rounded-2xl bg-blue-600 p-5 text-center text-lg font-bold text-white shadow-xl shadow-blue-200 transition hover:bg-blue-700"
+                aria-disabled={!selectedDestinationIsAvailable}
+                className={`block w-full rounded-2xl p-5 text-center text-lg font-bold shadow-xl transition ${
+                  selectedDestinationIsAvailable
+                    ? "bg-blue-600 text-white shadow-blue-200 hover:bg-blue-700"
+                    : "cursor-not-allowed bg-slate-300 text-slate-500 shadow-none"
+                }`}
               >
                 Find My eSIM →
               </a>
@@ -252,7 +331,8 @@ export default function Home() {
             </div>
             <h3 className="mb-3 text-xl font-bold">Choose destination</h3>
             <p className="text-slate-600">
-              Tell us where you’re traveling and we check available coverage.
+              Search and select one of the destinations currently available in
+              the DALO product database.
             </p>
           </div>
 
@@ -341,7 +421,7 @@ export default function Home() {
         </div>
 
         <div className="grid gap-6 md:grid-cols-3">
-          {destinations.map((destination) => (
+          {destinationsPreview.map((destination) => (
             <div
               key={destination.name}
               className="overflow-hidden rounded-[2rem] bg-white shadow-lg shadow-blue-50 transition hover:-translate-y-1 hover:shadow-2xl"
@@ -421,8 +501,8 @@ export default function Home() {
 
             <div className="grid gap-4 sm:grid-cols-3">
               <div className="rounded-3xl bg-white/10 p-6">
-                <div className="text-3xl font-bold">200+</div>
-                <div className="mt-2 text-slate-300">Destinations</div>
+                <div className="text-3xl font-bold">Smart</div>
+                <div className="mt-2 text-slate-300">Recommendations</div>
               </div>
 
               <div className="rounded-3xl bg-white/10 p-6">
@@ -498,11 +578,7 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-6 py-16">
           <div className="grid gap-10 md:grid-cols-4">
             <div>
-              <img
-                src="/dalo-logo.png"
-                alt="DALO"
-                className="h-16 w-auto"
-              />
+              <img src="/dalo-logo.png" alt="DALO" className="h-16 w-auto" />
               <p className="mt-4 text-slate-600">
                 The travel eSIM recommendation engine.
               </p>
@@ -512,9 +588,9 @@ export default function Home() {
               <h4 className="mb-4 font-bold">Destinations</h4>
               <div className="space-y-2 text-slate-600">
                 <div>Spain</div>
+                <div>Europe</div>
                 <div>Italy</div>
                 <div>Japan</div>
-                <div>Thailand</div>
               </div>
             </div>
 
