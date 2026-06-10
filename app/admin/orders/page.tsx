@@ -77,8 +77,17 @@ export default async function OrdersPage() {
     };
   });
 
-  const revenue = orderRows.reduce((total, order) => total + order.amount, 0);
-  const profit = orderRows.reduce((total, order) => total + order.profit, 0);
+  const paidOrderRows = orderRows.filter((order) => order.payment === "Paid");
+
+  const revenue = paidOrderRows.reduce(
+    (total, order) => total + order.amount,
+    0
+  );
+
+  const profit = paidOrderRows.reduce(
+    (total, order) => total + order.profit,
+    0
+  );
 
   const pendingOrders = orderRows.filter(
     (order) => order.payment === "Pending"
@@ -122,11 +131,15 @@ export default async function OrdersPage() {
         <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
           <p className="text-sm font-semibold text-slate-500">Revenue</p>
           <h2 className="mt-3 text-3xl font-bold">{formatPrice(revenue)}</h2>
+          <p className="mt-2 text-sm text-slate-500">Paid orders only</p>
         </div>
 
         <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
           <p className="text-sm font-semibold text-slate-500">Profit</p>
-          <h2 className="mt-3 text-3xl font-bold">{formatPrice(profit)}</h2>
+          <h2 className="mt-3 text-3xl font-bold text-green-700">
+            {formatPrice(profit)}
+          </h2>
+          <p className="mt-2 text-sm text-slate-500">Paid orders only</p>
         </div>
 
         <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
@@ -190,17 +203,14 @@ export default async function OrdersPage() {
 
                   return (
                     <tr key={order.id} className="border-t border-slate-100">
-                    
-
-<td className="px-6 py-5">
-  <Link
-    href={`/admin/orders/${order.id}`}
-    className="font-bold text-blue-600 hover:text-blue-800 hover:underline"
-  >
-    {order.id}
-  </Link>
-</td>
-
+                      <td className="px-6 py-5">
+                        <Link
+                          href={`/admin/orders/${order.id}`}
+                          className="font-bold text-blue-600 hover:text-blue-800 hover:underline"
+                        >
+                          {order.id}
+                        </Link>
+                      </td>
 
                       <td className="px-6 py-5">
                         <div className="font-semibold">{order.customer}</div>
@@ -332,7 +342,9 @@ export default async function OrdersPage() {
 
               <div className="rounded-2xl bg-white/10 p-4">
                 <div className="text-sm text-slate-400">Reset Payment</div>
-                <div className="mt-1 font-bold">Payment goes back to Pending</div>
+                <div className="mt-1 font-bold">
+                  Payment goes back to Pending
+                </div>
               </div>
 
               <div className="rounded-2xl bg-white/10 p-4">
@@ -345,9 +357,7 @@ export default async function OrdersPage() {
           </div>
 
           <div className="rounded-[2rem] bg-white p-8 shadow-xl shadow-blue-50">
-            <h2 className="text-2xl font-bold text-slate-950">
-              Safety Rule
-            </h2>
+            <h2 className="text-2xl font-bold text-slate-950">Safety Rule</h2>
 
             <p className="mt-3 text-slate-600">
               Paid orders should not be deleted casually. Only pending test
