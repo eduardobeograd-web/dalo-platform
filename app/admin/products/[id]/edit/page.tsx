@@ -81,10 +81,22 @@ export default async function EditProductPage({
         </div>
 
         <div>
+          <label className="mb-2 block font-semibold">ISO Code</label>
+          <input
+            name="isoCode"
+            defaultValue={product.isoCode || ""}
+            maxLength={2}
+            placeholder="DE"
+            className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 uppercase outline-none focus:border-blue-500 focus:bg-white"
+          />
+        </div>
+
+        <div>
           <label className="mb-2 block font-semibold">Region</label>
           <input
             name="region"
             defaultValue={product.region || ""}
+            placeholder="Europe, Asia, Global..."
             className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 outline-none focus:border-blue-500 focus:bg-white"
           />
         </div>
@@ -105,6 +117,7 @@ export default async function EditProductPage({
             name="data"
             defaultValue={product.data}
             required
+            placeholder="5GB"
             className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 outline-none focus:border-blue-500 focus:bg-white"
           />
         </div>
@@ -127,11 +140,12 @@ export default async function EditProductPage({
             defaultValue={product.planType}
             className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 outline-none focus:border-blue-500 focus:bg-white"
           >
-            <option value="fixed">Fixed</option>
-            <option value="unlimited_lite">Unlimited Lite</option>
-            <option value="unlimited_essential">Unlimited Essential</option>
-            <option value="unlimited_plus">Unlimited Plus</option>
-            <option value="long_duration">Long Duration</option>
+            <option value="Fixed">Fixed</option>
+            <option value="Unlimited Lite">Unlimited Lite</option>
+            <option value="Unlimited Essential">Unlimited Essential</option>
+            <option value="Unlimited Plus">Unlimited Plus</option>
+            <option value="Long Duration">Long Duration</option>
+            <option value="Regional Bundle">Regional Bundle</option>
           </select>
         </div>
 
@@ -142,10 +156,11 @@ export default async function EditProductPage({
             defaultValue={product.usageFit}
             className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 outline-none focus:border-blue-500 focus:bg-white"
           >
-            <option value="essential">Essential</option>
-            <option value="everyday">Everyday</option>
-            <option value="power">Power User</option>
-            <option value="long_stay">Long Stay</option>
+            <option value="Light">Light</option>
+            <option value="Standard">Standard</option>
+            <option value="Heavy">Heavy</option>
+            <option value="Power">Power</option>
+            <option value="Too Low">Too Low</option>
           </select>
         </div>
 
@@ -156,10 +171,11 @@ export default async function EditProductPage({
             defaultValue={product.role}
             className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 outline-none focus:border-blue-500 focus:bg-white"
           >
-            <option value="main">Main Recommendation</option>
-            <option value="upsell">Upsell</option>
-            <option value="premium">Premium</option>
-            <option value="fallback">Fallback</option>
+            <option value="cheapest">Cheapest</option>
+            <option value="best-value">Best Value</option>
+            <option value="most-data">Most Data</option>
+            <option value="recommended">Recommended</option>
+            <option value="emergency-only">Emergency Only</option>
           </select>
         </div>
 
@@ -224,8 +240,12 @@ export default async function EditProductPage({
           <input
             name="image"
             defaultValue={product.image}
+            placeholder="/dalo-logo.png"
             className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 outline-none focus:border-blue-500 focus:bg-white"
           />
+          <p className="mt-2 text-sm text-slate-500">
+            Use a public path like /dalo-logo.png or later /images/esim-card.png.
+          </p>
         </div>
 
         <div className="lg:col-span-2">
