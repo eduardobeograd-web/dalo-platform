@@ -41,3 +41,7 @@ yarn-error.log*
 next-env.d.ts
 
 /lib/generated/prisma
+
+# DALO local files
+dev.db
+data/rate-sheet-preview.json
