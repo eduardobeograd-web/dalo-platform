@@ -30,6 +30,20 @@ export default async function CheckoutSuccessPage({
       })
     : null;
 
+  const customer = order?.customerId
+    ? await prisma.customer.findUnique({
+        where: {
+          id: order.customerId,
+        },
+      })
+    : order?.customer
+      ? await prisma.customer.findUnique({
+          where: {
+            email: order.customer,
+          },
+        })
+      : null;
+
   if (!order || !product) {
     return (
       <main className="min-h-screen bg-[#F6F8FF] text-slate-900">
@@ -75,6 +89,9 @@ export default async function CheckoutSuccessPage({
     );
   }
 
+  const hasPassword = Boolean(customer?.passwordHash);
+  const encodedEmail = encodeURIComponent(order.customer);
+
   return (
     <main className="min-h-screen bg-[#F6F8FF] text-slate-900">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
@@ -115,6 +132,46 @@ export default async function CheckoutSuccessPage({
             We received your order details. Payment and automatic eSIM delivery
             will be connected in the next step of the build.
           </p>
+
+          <div className="mt-8 rounded-[2rem] bg-blue-600 p-7 text-left text-white shadow-xl shadow-blue-100">
+            <p className="text-sm font-bold uppercase tracking-wide text-blue-100">
+              Next step
+            </p>
+
+            <h2 className="mt-2 text-2xl font-bold">
+              Manage your eSIM in your customer account
+            </h2>
+
+            <p className="mt-3 text-blue-50">
+              Create a password to access your order, eSIM details, future
+              top-ups and support information.
+            </p>
+
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+              {hasPassword ? (
+                <a
+                  href="/customer/login"
+                  className="rounded-2xl bg-white px-6 py-4 text-center font-bold text-blue-700"
+                >
+                  Log in to customer account
+                </a>
+              ) : (
+                <a
+                  href={`/customer/set-password?email=${encodedEmail}`}
+                  className="rounded-2xl bg-white px-6 py-4 text-center font-bold text-blue-700"
+                >
+                  Create password
+                </a>
+              )}
+
+              <a
+                href="/customer/login"
+                className="rounded-2xl border border-blue-200 px-6 py-4 text-center font-bold text-white"
+              >
+                Already have an account?
+              </a>
+            </div>
+          </div>
 
           <div className="mt-10 grid gap-4 text-left md:grid-cols-2">
             <div className="rounded-2xl bg-slate-50 p-5">
@@ -165,7 +222,7 @@ export default async function CheckoutSuccessPage({
           <div className="mt-10">
             <a
               href="/"
-              className="inline-block rounded-2xl bg-blue-600 px-8 py-4 font-bold text-white"
+              className="inline-block rounded-2xl bg-slate-100 px-8 py-4 font-bold text-slate-700"
             >
               Back Home
             </a>
