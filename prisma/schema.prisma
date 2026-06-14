@@ -30,13 +30,54 @@ model Product {
   updatedAt         DateTime @updatedAt
 }
 
+model Customer {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sessions CustomerSession[]
+  orders   Order[]
+}
+
+model CustomerSession {
+  id         String   @id @default(cuid())
+  customerId String
+  token      String   @unique
+  expiresAt  DateTime
+  usedAt     DateTime?
+  createdAt  DateTime @default(now())
+
+  customer Customer @relation(fields: [customerId], references: [id])
+}
+
 model Order {
-  id          String   @id @default(cuid())
+  id          String  @id @default(cuid())
   customer    String
+  customerId  String?
+
   productId   String
   payment     String
   fulfillment String
-  createdAt   DateTime @default(now())
+
+  esimStatus      String?
+  providerOrderId String?
+  iccid           String?
+  qrCodeUrl       String?
+  activationCode  String?
+
+  totalDataGb     Float?
+  usedDataGb      Float?
+  remainingDataGb Float?
+
+  expiresAt       DateTime?
+  lastUsageSyncAt DateTime?
+
+  createdAt DateTime @default(now())
+
+  customerAccount Customer? @relation(fields: [customerId], references: [id])
 }
 
 model ApiProvider {

@@ -52,6 +52,8 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   Product: 'Product',
+  Customer: 'Customer',
+  CustomerSession: 'CustomerSession',
   Order: 'Order',
   ApiProvider: 'ApiProvider'
 } as const
@@ -95,12 +97,47 @@ export const ProductScalarFieldEnum = {
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
 
 
+export const CustomerScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  name: 'name',
+  active: 'active',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CustomerScalarFieldEnum = (typeof CustomerScalarFieldEnum)[keyof typeof CustomerScalarFieldEnum]
+
+
+export const CustomerSessionScalarFieldEnum = {
+  id: 'id',
+  customerId: 'customerId',
+  token: 'token',
+  expiresAt: 'expiresAt',
+  usedAt: 'usedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type CustomerSessionScalarFieldEnum = (typeof CustomerSessionScalarFieldEnum)[keyof typeof CustomerSessionScalarFieldEnum]
+
+
 export const OrderScalarFieldEnum = {
   id: 'id',
   customer: 'customer',
+  customerId: 'customerId',
   productId: 'productId',
   payment: 'payment',
   fulfillment: 'fulfillment',
+  esimStatus: 'esimStatus',
+  providerOrderId: 'providerOrderId',
+  iccid: 'iccid',
+  qrCodeUrl: 'qrCodeUrl',
+  activationCode: 'activationCode',
+  totalDataGb: 'totalDataGb',
+  usedDataGb: 'usedDataGb',
+  remainingDataGb: 'remainingDataGb',
+  expiresAt: 'expiresAt',
+  lastUsageSyncAt: 'lastUsageSyncAt',
   createdAt: 'createdAt'
 } as const
 
