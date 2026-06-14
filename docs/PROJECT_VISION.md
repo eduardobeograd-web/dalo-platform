@@ -65,16 +65,24 @@ Admin can manage complexity in the backend.
 The current local MVP includes:
 
 * Landing page
+* Improved homepage destination quiz
 * Quiz flow
 * Searching transition page
 * Result page
 * Checkout preview
 * Pending order creation
+* Customer login/dashboard/order detail
+* Customer support page
+* Support request database storage
 * Admin login/logout
 * Product database
 * Add/edit/deactivate products
+* Admin dashboard
 * Admin orders
 * Manual order status controls
+* Admin support request list
+* Admin support request detail page
+* Admin support status controls
 * Excel rate sheet preview
 * Stripe route prepared but not live
 
@@ -82,12 +90,13 @@ The current local MVP includes:
 
 The next major goals are:
 
-1. Improve product recommendation logic
-2. Add real Stripe checkout
-3. Connect provider API fulfillment
-4. Build safer Excel import mapping
-5. Deploy with a real online database
-6. Add SEO landing pages for countries and travel use cases
+1. Prepare DALO as a mobile-friendly PWA before considering native iOS/Android apps
+2. Improve product recommendation logic
+3. Add real Stripe checkout
+4. Connect provider API fulfillment
+5. Build safer Excel import mapping
+6. Deploy with a real online database
+7. Add SEO landing pages for countries and travel use cases
 
 ## Important note for future chats
 
