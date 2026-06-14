@@ -7,6 +7,52 @@ function revalidateOrderPages(orderId: string) {
   revalidatePath("/admin/orders");
   revalidatePath(`/admin/orders/${orderId}`);
   revalidatePath("/admin");
+  revalidatePath("/customer/dashboard");
+  revalidatePath(`/customer/orders/${orderId}`);
+}
+
+function cleanOptional(value: FormDataEntryValue | null) {
+  const text = String(value || "").trim();
+  return text.length > 0 ? text : null;
+}
+
+function cleanNumber(value: FormDataEntryValue | null) {
+  const text = String(value || "").trim();
+
+  if (!text) return null;
+
+  const number = Number(text);
+
+  if (Number.isNaN(number)) return null;
+
+  return number;
+}
+
+export async function updateOrderFulfillment(orderId: string, formData: FormData) {
+  await prisma.order.update({
+    where: {
+      id: orderId,
+    },
+    data: {
+      payment: String(formData.get("payment") || "Pending"),
+      fulfillment: String(formData.get("fulfillment") || "Waiting"),
+      esimStatus: cleanOptional(formData.get("esimStatus")),
+
+      providerOrderId: cleanOptional(formData.get("providerOrderId")),
+      iccid: cleanOptional(formData.get("iccid")),
+      qrCodeUrl: cleanOptional(formData.get("qrCodeUrl")),
+      activationCode: cleanOptional(formData.get("activationCode")),
+      iosInstallUrl: cleanOptional(formData.get("iosInstallUrl")),
+      androidInstallUrl: cleanOptional(formData.get("androidInstallUrl")),
+
+      totalDataGb: cleanNumber(formData.get("totalDataGb")),
+      usedDataGb: cleanNumber(formData.get("usedDataGb")),
+      remainingDataGb: cleanNumber(formData.get("remainingDataGb")),
+      lastUsageSyncAt: formData.get("syncUsage") === "on" ? new Date() : undefined,
+    },
+  });
+
+  revalidateOrderPages(orderId);
 }
 
 export async function markOrderPaid(orderId: string) {
@@ -42,6 +88,7 @@ export async function markOrderDelivered(orderId: string) {
     },
     data: {
       fulfillment: "Delivered",
+      esimStatus: "ready",
     },
   });
 
@@ -55,6 +102,7 @@ export async function markOrderFailed(orderId: string) {
     },
     data: {
       fulfillment: "Failed",
+      esimStatus: "failed",
     },
   });
 
@@ -68,6 +116,7 @@ export async function markOrderWaiting(orderId: string) {
     },
     data: {
       fulfillment: "Waiting",
+      esimStatus: "pending",
     },
   });
 

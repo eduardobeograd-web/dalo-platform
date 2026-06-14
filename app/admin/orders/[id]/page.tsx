@@ -9,23 +9,29 @@ import {
   markOrderPaid,
   markOrderPending,
   markOrderWaiting,
+  updateOrderFulfillment,
 } from "../actions";
 
 function formatPrice(value: number) {
   return `€${value.toFixed(2)}`;
 }
 
+function formatNumber(value?: number | null) {
+  if (value === null || value === undefined) return "";
+  return String(value);
+}
+
 function StatusBadge({ status }: { status: string }) {
   const styles =
-    status === "Paid" || status === "Delivered"
+    status === "Paid" || status === "Delivered" || status === "ready"
       ? "bg-green-100 text-green-700"
       : status === "Provisioning"
-      ? "bg-blue-100 text-blue-700"
-      : status === "Failed"
-      ? "bg-red-100 text-red-700"
-      : status === "Pending" || status === "Waiting"
-      ? "bg-yellow-100 text-yellow-700"
-      : "bg-slate-100 text-slate-600";
+        ? "bg-blue-100 text-blue-700"
+        : status === "Failed" || status === "failed"
+          ? "bg-red-100 text-red-700"
+          : status === "Pending" || status === "Waiting" || status === "pending"
+            ? "bg-yellow-100 text-yellow-700"
+            : "bg-slate-100 text-slate-600";
 
   return (
     <span className={`rounded-full px-3 py-1 text-sm font-bold ${styles}`}>
@@ -39,7 +45,7 @@ function DetailCard({
   value,
 }: {
   label: string;
-  value: string | number;
+  value: string | number | null | undefined;
 }) {
   return (
     <div className="rounded-3xl border border-slate-100 bg-slate-50 p-5">
@@ -47,6 +53,30 @@ function DetailCard({
       <p className="mt-2 break-words text-lg font-bold text-slate-950">
         {value || "—"}
       </p>
+    </div>
+  );
+}
+
+function TextInput({
+  label,
+  name,
+  defaultValue,
+  placeholder,
+}: {
+  label: string;
+  name: string;
+  defaultValue?: string | number | null;
+  placeholder?: string;
+}) {
+  return (
+    <div>
+      <label className="mb-2 block font-bold text-slate-700">{label}</label>
+      <input
+        name={name}
+        defaultValue={defaultValue || ""}
+        placeholder={placeholder}
+        className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 outline-none focus:border-blue-500 focus:bg-white"
+      />
     </div>
   );
 }
@@ -87,6 +117,7 @@ export default async function OrderDetailPage({
   const markFailedWithId = markOrderFailed.bind(null, order.id);
   const markWaitingWithId = markOrderWaiting.bind(null, order.id);
   const deleteTestOrderWithId = deleteTestOrder.bind(null, order.id);
+  const updateOrderFulfillmentWithId = updateOrderFulfillment.bind(null, order.id);
 
   return (
     <AdminShell activePage="orders">
@@ -101,7 +132,8 @@ export default async function OrderDetailPage({
           </h1>
 
           <p className="mt-2 text-slate-600">
-            View one order, payment status, eSIM delivery and product details.
+            View and manually fulfill this order. Later this will be filled by
+            the eSIM Go API.
           </p>
         </div>
 
@@ -125,6 +157,7 @@ export default async function OrderDetailPage({
           <div className="flex flex-wrap gap-3">
             <StatusBadge status={order.payment} />
             <StatusBadge status={order.fulfillment} />
+            <StatusBadge status={order.esimStatus || "pending"} />
           </div>
         </div>
 
@@ -136,47 +169,186 @@ export default async function OrderDetailPage({
           <DetailCard label="Profit" value={formatPrice(profit)} />
           <DetailCard label="Payment Status" value={order.payment} />
           <DetailCard label="eSIM Delivery" value={order.fulfillment} />
-          <DetailCard
-            label="Order Type"
-            value={order.payment === "Pending" ? "Checkout Test" : "Demo / Paid"}
-          />
+          <DetailCard label="eSIM Status" value={order.esimStatus || "pending"} />
         </div>
       </div>
 
       <div className="grid gap-8 xl:grid-cols-[1fr_420px]">
-        <div className="rounded-[2rem] bg-white p-6 shadow-xl shadow-blue-50">
-          <h2 className="text-2xl font-bold text-slate-950">Product</h2>
+        <div className="space-y-8">
+          <div className="rounded-[2rem] bg-white p-6 shadow-xl shadow-blue-50">
+            <h2 className="text-2xl font-bold text-slate-950">Manual Fulfillment</h2>
 
-          {product ? (
-            <div className="mt-6 grid gap-5 md:grid-cols-2">
-              <DetailCard label="Name" value={product.name} />
-              <DetailCard label="Destination" value={product.country} />
-              <DetailCard label="Region" value={product.region || "—"} />
-              <DetailCard label="Data" value={product.data} />
-              <DetailCard label="Validity" value={`${product.validityDays} Days`} />
-              <DetailCard label="Plan Type" value={product.planType} />
-              <DetailCard label="Usage Fit" value={product.usageFit} />
-              <DetailCard label="Role" value={product.role} />
-              <DetailCard label="Buy Price" value={formatPrice(product.buyPrice)} />
-              <DetailCard label="Sell Price" value={formatPrice(product.sellPrice)} />
-              <DetailCard label="Provider" value={product.provider} />
-              <DetailCard
-                label="Provider Product ID"
-                value={product.providerProductId}
-              />
-            </div>
-          ) : (
-            <div className="mt-6 rounded-3xl bg-yellow-50 p-6 text-yellow-800">
-              This order points to a product that no longer exists.
-            </div>
-          )}
+            <p className="mt-2 text-slate-600">
+              Paste the provider data here. The customer will see these details
+              immediately in the customer portal.
+            </p>
+
+            <form action={updateOrderFulfillmentWithId} className="mt-6 space-y-6">
+              <div className="grid gap-5 md:grid-cols-3">
+                <div>
+                  <label className="mb-2 block font-bold text-slate-700">
+                    Payment
+                  </label>
+                  <select
+                    name="payment"
+                    defaultValue={order.payment}
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 outline-none focus:border-blue-500 focus:bg-white"
+                  >
+                    <option value="Pending">Pending</option>
+                    <option value="Paid">Paid</option>
+                    <option value="Failed">Failed</option>
+                    <option value="Refunded">Refunded</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="mb-2 block font-bold text-slate-700">
+                    Fulfillment
+                  </label>
+                  <select
+                    name="fulfillment"
+                    defaultValue={order.fulfillment}
+                    className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 outline-none focus:border-blue-500 focus:bg-white"
+                  >
+                    <option value="Waiting">Waiting</option>
+                    <option value="Provisioning">Provisioning</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Failed">Failed</option>
+                  </select>
+                </div>
+
+                <TextInput
+                  label="eSIM Status"
+                  name="esimStatus"
+                  defaultValue={order.esimStatus || "pending"}
+                  placeholder="pending / ready / active / expired / failed"
+                />
+              </div>
+
+              <div className="grid gap-5 md:grid-cols-2">
+                <TextInput
+                  label="Provider Order ID"
+                  name="providerOrderId"
+                  defaultValue={order.providerOrderId}
+                  placeholder="Provider order/reference"
+                />
+
+                <TextInput
+                  label="ICCID"
+                  name="iccid"
+                  defaultValue={order.iccid}
+                  placeholder="893..."
+                />
+
+                <TextInput
+                  label="iOS Install URL"
+                  name="iosInstallUrl"
+                  defaultValue={order.iosInstallUrl}
+                  placeholder="https://..."
+                />
+
+                <TextInput
+                  label="Android Install URL"
+                  name="androidInstallUrl"
+                  defaultValue={order.androidInstallUrl}
+                  placeholder="https://..."
+                />
+
+                <TextInput
+                  label="QR Code URL"
+                  name="qrCodeUrl"
+                  defaultValue={order.qrCodeUrl}
+                  placeholder="https://..."
+                />
+
+                <TextInput
+                  label="Activation Code"
+                  name="activationCode"
+                  defaultValue={order.activationCode}
+                  placeholder="LPA:1$..."
+                />
+              </div>
+
+              <div className="rounded-[2rem] bg-slate-50 p-5">
+                <h3 className="text-xl font-bold text-slate-950">Usage Data</h3>
+
+                <p className="mt-1 text-sm text-slate-600">
+                  Optional. Later this will come from provider usage sync.
+                </p>
+
+                <div className="mt-5 grid gap-5 md:grid-cols-3">
+                  <TextInput
+                    label="Total Data GB"
+                    name="totalDataGb"
+                    defaultValue={formatNumber(order.totalDataGb)}
+                    placeholder="10"
+                  />
+
+                  <TextInput
+                    label="Used Data GB"
+                    name="usedDataGb"
+                    defaultValue={formatNumber(order.usedDataGb)}
+                    placeholder="1.5"
+                  />
+
+                  <TextInput
+                    label="Remaining Data GB"
+                    name="remainingDataGb"
+                    defaultValue={formatNumber(order.remainingDataGb)}
+                    placeholder="8.5"
+                  />
+                </div>
+
+                <label className="mt-5 flex items-center gap-3 font-bold text-slate-700">
+                  <input
+                    type="checkbox"
+                    name="syncUsage"
+                    className="h-5 w-5 rounded border-slate-300"
+                  />
+                  Set usage sync timestamp to now
+                </label>
+              </div>
+
+              <button className="w-full rounded-2xl bg-blue-600 px-6 py-5 text-lg font-bold text-white shadow-lg shadow-blue-100 transition hover:bg-blue-700">
+                Save fulfillment details
+              </button>
+            </form>
+          </div>
+
+          <div className="rounded-[2rem] bg-white p-6 shadow-xl shadow-blue-50">
+            <h2 className="text-2xl font-bold text-slate-950">Product</h2>
+
+            {product ? (
+              <div className="mt-6 grid gap-5 md:grid-cols-2">
+                <DetailCard label="Name" value={product.name} />
+                <DetailCard label="Destination" value={product.country} />
+                <DetailCard label="Region" value={product.region || "—"} />
+                <DetailCard label="Data" value={product.data} />
+                <DetailCard label="Validity" value={`${product.validityDays} Days`} />
+                <DetailCard label="Plan Type" value={product.planType} />
+                <DetailCard label="Usage Fit" value={product.usageFit} />
+                <DetailCard label="Role" value={product.role} />
+                <DetailCard label="Buy Price" value={formatPrice(product.buyPrice)} />
+                <DetailCard label="Sell Price" value={formatPrice(product.sellPrice)} />
+                <DetailCard label="Provider" value={product.provider} />
+                <DetailCard
+                  label="Provider Product ID"
+                  value={product.providerProductId}
+                />
+              </div>
+            ) : (
+              <div className="mt-6 rounded-3xl bg-yellow-50 p-6 text-yellow-800">
+                This order points to a product that no longer exists.
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="rounded-[2rem] bg-white p-6 shadow-xl shadow-blue-50">
-          <h2 className="text-2xl font-bold text-slate-950">Admin Actions</h2>
+          <h2 className="text-2xl font-bold text-slate-950">Quick Actions</h2>
 
           <p className="mt-2 text-slate-600">
-            Update payment and eSIM delivery status for this order.
+            Fast status updates for this order.
           </p>
 
           <div className="mt-6 space-y-6">
