@@ -1,4 +1,5 @@
 import Link from "next/link";
+import AdminShell from "../../../components/AdminShell";
 import { prisma } from "../../../lib/db";
 
 function formatDate(date: Date) {
@@ -34,7 +35,7 @@ export default async function AdminSupportPage() {
   });
 
   return (
-    <main className="min-h-screen bg-slate-50 px-6 py-10">
+    <AdminShell activePage="support">
       <div className="mx-auto max-w-6xl">
         <div className="mb-8 flex items-center justify-between gap-4">
           <div>
@@ -133,6 +134,6 @@ export default async function AdminSupportPage() {
           )}
         </div>
       </div>
-    </main>
+    </AdminShell>
   );
 }

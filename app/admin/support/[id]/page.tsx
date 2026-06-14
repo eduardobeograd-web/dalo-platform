@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import AdminShell from "../../../../components/AdminShell";
 import { prisma } from "../../../../lib/db";
 import { updateSupportRequestStatus } from "./actions";
 
@@ -46,7 +47,7 @@ export default async function AdminSupportDetailPage({
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 px-6 py-10">
+    <AdminShell activePage="support">
       <div className="mx-auto max-w-5xl">
         <div className="mb-8 flex items-center justify-between gap-4">
           <div>
@@ -228,6 +229,6 @@ export default async function AdminSupportDetailPage({
           </aside>
         </div>
       </div>
-    </main>
+    </AdminShell>
   );
 }
