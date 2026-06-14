@@ -1,11 +1,16 @@
 import { redirect } from "next/navigation";
 import { getCurrentCustomer } from "../../../lib/customer-auth";
 import { prisma } from "../../../lib/db";
+import { createSupportRequest } from "./actions";
 
 export default async function CustomerSupportPage({
   searchParams,
 }: {
-  searchParams: Promise<{ orderId?: string }>;
+  searchParams: Promise<{
+    orderId?: string;
+    success?: string;
+    error?: string;
+  }>;
 }) {
   const customer = await getCurrentCustomer();
 
@@ -15,6 +20,8 @@ export default async function CustomerSupportPage({
 
   const params = await searchParams;
   const orderId = params.orderId;
+  const success = params.success === "1";
+  const error = params.error === "1";
 
   const orders = await prisma.order.findMany({
     where: {
@@ -47,12 +54,12 @@ export default async function CustomerSupportPage({
   return (
     <main className="min-h-screen bg-[#F6F8FF] px-6 py-8 text-slate-950">
       <div className="mx-auto max-w-5xl">
-        <nav className="flex items-center justify-between">
+        <nav className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <a href="/">
             <img src="/dalo-logo.png" alt="DALO" className="h-14 w-auto" />
           </a>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <a
               href="/customer/dashboard"
               className="rounded-2xl border border-slate-200 bg-white px-5 py-3 font-bold text-slate-700 shadow-sm"
@@ -82,7 +89,19 @@ export default async function CustomerSupportPage({
               helps support find your eSIM faster.
             </p>
 
-            <form className="mt-8 space-y-5">
+            {success ? (
+              <div className="mt-6 rounded-2xl bg-green-50 p-5 font-bold text-green-700">
+                Your support request was sent successfully.
+              </div>
+            ) : null}
+
+            {error ? (
+              <div className="mt-6 rounded-2xl bg-red-50 p-5 font-bold text-red-700">
+                Please select an order and write a message.
+              </div>
+            ) : null}
+
+            <form action={createSupportRequest} className="mt-8 space-y-5">
               <div>
                 <label className="mb-2 block font-bold text-slate-700">
                   Select order
@@ -133,21 +152,22 @@ export default async function CustomerSupportPage({
                 <textarea
                   name="message"
                   rows={6}
+                  required
                   placeholder="Describe what happened..."
                   className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 outline-none focus:border-blue-500 focus:bg-white"
                 />
               </div>
 
               <button
-                type="button"
-                className="w-full rounded-2xl bg-blue-600 p-5 text-lg font-bold text-white shadow-lg shadow-blue-100"
+                type="submit"
+                disabled={orders.length === 0}
+                className="w-full rounded-2xl bg-blue-600 p-5 text-lg font-bold text-white shadow-lg shadow-blue-100 disabled:bg-slate-300 disabled:text-slate-500"
               >
-                Submit support request soon
+                Submit support request
               </button>
 
               <p className="text-sm text-slate-500">
-                This form is prepared for the MVP. Sending support requests will
-                be connected later.
+                Your support request will be saved and attached to this order.
               </p>
             </form>
           </div>

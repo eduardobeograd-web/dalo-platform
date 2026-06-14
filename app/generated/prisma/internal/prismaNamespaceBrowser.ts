@@ -55,7 +55,7 @@ export const ModelName = {
   Customer: 'Customer',
   CustomerSession: 'CustomerSession',
   Order: 'Order',
-  ApiProvider: 'ApiProvider'
+  SupportRequest: 'SupportRequest'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -148,17 +148,22 @@ export const OrderScalarFieldEnum = {
 export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum]
 
 
-export const ApiProviderScalarFieldEnum = {
+export const SupportRequestScalarFieldEnum = {
   id: 'id',
-  name: 'name',
-  baseUrl: 'baseUrl',
-  apiKey: 'apiKey',
-  mode: 'mode',
-  active: 'active',
-  createdAt: 'createdAt'
+  customerId: 'customerId',
+  orderId: 'orderId',
+  customerEmail: 'customerEmail',
+  reason: 'reason',
+  message: 'message',
+  status: 'status',
+  orderNumber: 'orderNumber',
+  iccid: 'iccid',
+  productName: 'productName',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
-export type ApiProviderScalarFieldEnum = (typeof ApiProviderScalarFieldEnum)[keyof typeof ApiProviderScalarFieldEnum]
+export type SupportRequestScalarFieldEnum = (typeof SupportRequestScalarFieldEnum)[keyof typeof SupportRequestScalarFieldEnum]
 
 
 export const SortOrder = {

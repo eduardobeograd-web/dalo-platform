@@ -345,6 +345,7 @@ export type OrderWhereInput = {
   lastUsageSyncAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   customerAccount?: Prisma.XOR<Prisma.CustomerNullableScalarRelationFilter, Prisma.CustomerWhereInput> | null
+  supportRequests?: Prisma.SupportRequestListRelationFilter
 }
 
 export type OrderOrderByWithRelationInput = {
@@ -369,6 +370,7 @@ export type OrderOrderByWithRelationInput = {
   lastUsageSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   customerAccount?: Prisma.CustomerOrderByWithRelationInput
+  supportRequests?: Prisma.SupportRequestOrderByRelationAggregateInput
 }
 
 export type OrderWhereUniqueInput = Prisma.AtLeast<{
@@ -396,6 +398,7 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   lastUsageSyncAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   customerAccount?: Prisma.XOR<Prisma.CustomerNullableScalarRelationFilter, Prisma.CustomerWhereInput> | null
+  supportRequests?: Prisma.SupportRequestListRelationFilter
 }, "id" | "orderNumber">
 
 export type OrderOrderByWithAggregationInput = {
@@ -473,6 +476,7 @@ export type OrderCreateInput = {
   lastUsageSyncAt?: Date | string | null
   createdAt?: Date | string
   customerAccount?: Prisma.CustomerCreateNestedOneWithoutOrdersInput
+  supportRequests?: Prisma.SupportRequestCreateNestedManyWithoutOrderInput
 }
 
 export type OrderUncheckedCreateInput = {
@@ -496,6 +500,7 @@ export type OrderUncheckedCreateInput = {
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
   createdAt?: Date | string
+  supportRequests?: Prisma.SupportRequestUncheckedCreateNestedManyWithoutOrderInput
 }
 
 export type OrderUpdateInput = {
@@ -519,6 +524,7 @@ export type OrderUpdateInput = {
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customerAccount?: Prisma.CustomerUpdateOneWithoutOrdersNestedInput
+  supportRequests?: Prisma.SupportRequestUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateInput = {
@@ -542,6 +548,7 @@ export type OrderUncheckedUpdateInput = {
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  supportRequests?: Prisma.SupportRequestUncheckedUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderCreateManyInput = {
@@ -703,6 +710,11 @@ export type OrderSumOrderByAggregateInput = {
   remainingDataGb?: Prisma.SortOrder
 }
 
+export type OrderNullableScalarRelationFilter = {
+  is?: Prisma.OrderWhereInput | null
+  isNot?: Prisma.OrderWhereInput | null
+}
+
 export type OrderCreateNestedManyWithoutCustomerAccountInput = {
   create?: Prisma.XOR<Prisma.OrderCreateWithoutCustomerAccountInput, Prisma.OrderUncheckedCreateWithoutCustomerAccountInput> | Prisma.OrderCreateWithoutCustomerAccountInput[] | Prisma.OrderUncheckedCreateWithoutCustomerAccountInput[]
   connectOrCreate?: Prisma.OrderCreateOrConnectWithoutCustomerAccountInput | Prisma.OrderCreateOrConnectWithoutCustomerAccountInput[]
@@ -745,6 +757,22 @@ export type OrderUncheckedUpdateManyWithoutCustomerAccountNestedInput = {
   deleteMany?: Prisma.OrderScalarWhereInput | Prisma.OrderScalarWhereInput[]
 }
 
+export type OrderCreateNestedOneWithoutSupportRequestsInput = {
+  create?: Prisma.XOR<Prisma.OrderCreateWithoutSupportRequestsInput, Prisma.OrderUncheckedCreateWithoutSupportRequestsInput>
+  connectOrCreate?: Prisma.OrderCreateOrConnectWithoutSupportRequestsInput
+  connect?: Prisma.OrderWhereUniqueInput
+}
+
+export type OrderUpdateOneWithoutSupportRequestsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrderCreateWithoutSupportRequestsInput, Prisma.OrderUncheckedCreateWithoutSupportRequestsInput>
+  connectOrCreate?: Prisma.OrderCreateOrConnectWithoutSupportRequestsInput
+  upsert?: Prisma.OrderUpsertWithoutSupportRequestsInput
+  disconnect?: Prisma.OrderWhereInput | boolean
+  delete?: Prisma.OrderWhereInput | boolean
+  connect?: Prisma.OrderWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrderUpdateToOneWithWhereWithoutSupportRequestsInput, Prisma.OrderUpdateWithoutSupportRequestsInput>, Prisma.OrderUncheckedUpdateWithoutSupportRequestsInput>
+}
+
 export type OrderCreateWithoutCustomerAccountInput = {
   id?: string
   orderNumber?: string | null
@@ -765,6 +793,7 @@ export type OrderCreateWithoutCustomerAccountInput = {
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
   createdAt?: Date | string
+  supportRequests?: Prisma.SupportRequestCreateNestedManyWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutCustomerAccountInput = {
@@ -787,6 +816,7 @@ export type OrderUncheckedCreateWithoutCustomerAccountInput = {
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
   createdAt?: Date | string
+  supportRequests?: Prisma.SupportRequestUncheckedCreateNestedManyWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutCustomerAccountInput = {
@@ -840,6 +870,114 @@ export type OrderScalarWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
 }
 
+export type OrderCreateWithoutSupportRequestsInput = {
+  id?: string
+  orderNumber?: string | null
+  customer: string
+  productId: string
+  payment: string
+  fulfillment: string
+  esimStatus?: string | null
+  providerOrderId?: string | null
+  iccid?: string | null
+  qrCodeUrl?: string | null
+  activationCode?: string | null
+  iosInstallUrl?: string | null
+  androidInstallUrl?: string | null
+  totalDataGb?: number | null
+  usedDataGb?: number | null
+  remainingDataGb?: number | null
+  expiresAt?: Date | string | null
+  lastUsageSyncAt?: Date | string | null
+  createdAt?: Date | string
+  customerAccount?: Prisma.CustomerCreateNestedOneWithoutOrdersInput
+}
+
+export type OrderUncheckedCreateWithoutSupportRequestsInput = {
+  id?: string
+  orderNumber?: string | null
+  customer: string
+  customerId?: string | null
+  productId: string
+  payment: string
+  fulfillment: string
+  esimStatus?: string | null
+  providerOrderId?: string | null
+  iccid?: string | null
+  qrCodeUrl?: string | null
+  activationCode?: string | null
+  iosInstallUrl?: string | null
+  androidInstallUrl?: string | null
+  totalDataGb?: number | null
+  usedDataGb?: number | null
+  remainingDataGb?: number | null
+  expiresAt?: Date | string | null
+  lastUsageSyncAt?: Date | string | null
+  createdAt?: Date | string
+}
+
+export type OrderCreateOrConnectWithoutSupportRequestsInput = {
+  where: Prisma.OrderWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrderCreateWithoutSupportRequestsInput, Prisma.OrderUncheckedCreateWithoutSupportRequestsInput>
+}
+
+export type OrderUpsertWithoutSupportRequestsInput = {
+  update: Prisma.XOR<Prisma.OrderUpdateWithoutSupportRequestsInput, Prisma.OrderUncheckedUpdateWithoutSupportRequestsInput>
+  create: Prisma.XOR<Prisma.OrderCreateWithoutSupportRequestsInput, Prisma.OrderUncheckedCreateWithoutSupportRequestsInput>
+  where?: Prisma.OrderWhereInput
+}
+
+export type OrderUpdateToOneWithWhereWithoutSupportRequestsInput = {
+  where?: Prisma.OrderWhereInput
+  data: Prisma.XOR<Prisma.OrderUpdateWithoutSupportRequestsInput, Prisma.OrderUncheckedUpdateWithoutSupportRequestsInput>
+}
+
+export type OrderUpdateWithoutSupportRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer?: Prisma.StringFieldUpdateOperationsInput | string
+  productId?: Prisma.StringFieldUpdateOperationsInput | string
+  payment?: Prisma.StringFieldUpdateOperationsInput | string
+  fulfillment?: Prisma.StringFieldUpdateOperationsInput | string
+  esimStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  iccid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  qrCodeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  iosInstallUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  androidInstallUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  usedDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  remainingDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  customerAccount?: Prisma.CustomerUpdateOneWithoutOrdersNestedInput
+}
+
+export type OrderUncheckedUpdateWithoutSupportRequestsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer?: Prisma.StringFieldUpdateOperationsInput | string
+  customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  productId?: Prisma.StringFieldUpdateOperationsInput | string
+  payment?: Prisma.StringFieldUpdateOperationsInput | string
+  fulfillment?: Prisma.StringFieldUpdateOperationsInput | string
+  esimStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  iccid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  qrCodeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  activationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  iosInstallUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  androidInstallUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  usedDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  remainingDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type OrderCreateManyCustomerAccountInput = {
   id?: string
   orderNumber?: string | null
@@ -882,6 +1020,7 @@ export type OrderUpdateWithoutCustomerAccountInput = {
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  supportRequests?: Prisma.SupportRequestUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutCustomerAccountInput = {
@@ -904,6 +1043,7 @@ export type OrderUncheckedUpdateWithoutCustomerAccountInput = {
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  supportRequests?: Prisma.SupportRequestUncheckedUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateManyWithoutCustomerAccountInput = {
@@ -929,6 +1069,35 @@ export type OrderUncheckedUpdateManyWithoutCustomerAccountInput = {
 }
 
 
+/**
+ * Count Type OrderCountOutputType
+ */
+
+export type OrderCountOutputType = {
+  supportRequests: number
+}
+
+export type OrderCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  supportRequests?: boolean | OrderCountOutputTypeCountSupportRequestsArgs
+}
+
+/**
+ * OrderCountOutputType without action
+ */
+export type OrderCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OrderCountOutputType
+   */
+  select?: Prisma.OrderCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * OrderCountOutputType without action
+ */
+export type OrderCountOutputTypeCountSupportRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SupportRequestWhereInput
+}
+
 
 export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -952,6 +1121,8 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   lastUsageSyncAt?: boolean
   createdAt?: boolean
   customerAccount?: boolean | Prisma.Order$customerAccountArgs<ExtArgs>
+  supportRequests?: boolean | Prisma.Order$supportRequestsArgs<ExtArgs>
+  _count?: boolean | Prisma.OrderCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["order"]>
 
 export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1028,6 +1199,8 @@ export type OrderSelectScalar = {
 export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderNumber" | "customer" | "customerId" | "productId" | "payment" | "fulfillment" | "esimStatus" | "providerOrderId" | "iccid" | "qrCodeUrl" | "activationCode" | "iosInstallUrl" | "androidInstallUrl" | "totalDataGb" | "usedDataGb" | "remainingDataGb" | "expiresAt" | "lastUsageSyncAt" | "createdAt", ExtArgs["result"]["order"]>
 export type OrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   customerAccount?: boolean | Prisma.Order$customerAccountArgs<ExtArgs>
+  supportRequests?: boolean | Prisma.Order$supportRequestsArgs<ExtArgs>
+  _count?: boolean | Prisma.OrderCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type OrderIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   customerAccount?: boolean | Prisma.Order$customerAccountArgs<ExtArgs>
@@ -1040,6 +1213,7 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   name: "Order"
   objects: {
     customerAccount: Prisma.$CustomerPayload<ExtArgs> | null
+    supportRequests: Prisma.$SupportRequestPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1457,6 +1631,7 @@ readonly fields: OrderFieldRefs;
 export interface Prisma__OrderClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   customerAccount<T extends Prisma.Order$customerAccountArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$customerAccountArgs<ExtArgs>>): Prisma.Prisma__CustomerClient<runtime.Types.Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  supportRequests<T extends Prisma.Order$supportRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$supportRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupportRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1921,6 +2096,30 @@ export type Order$customerAccountArgs<ExtArgs extends runtime.Types.Extensions.I
    */
   include?: Prisma.CustomerInclude<ExtArgs> | null
   where?: Prisma.CustomerWhereInput
+}
+
+/**
+ * Order.supportRequests
+ */
+export type Order$supportRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SupportRequest
+   */
+  select?: Prisma.SupportRequestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SupportRequest
+   */
+  omit?: Prisma.SupportRequestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SupportRequestInclude<ExtArgs> | null
+  where?: Prisma.SupportRequestWhereInput
+  orderBy?: Prisma.SupportRequestOrderByWithRelationInput | Prisma.SupportRequestOrderByWithRelationInput[]
+  cursor?: Prisma.SupportRequestWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SupportRequestScalarFieldEnum | Prisma.SupportRequestScalarFieldEnum[]
 }
 
 /**

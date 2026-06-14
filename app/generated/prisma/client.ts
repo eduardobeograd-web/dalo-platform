@@ -62,7 +62,7 @@ export type CustomerSession = Prisma.CustomerSessionModel
  */
 export type Order = Prisma.OrderModel
 /**
- * Model ApiProvider
+ * Model SupportRequest
  * 
  */
-export type ApiProvider = Prisma.ApiProviderModel
+export type SupportRequest = Prisma.SupportRequestModel

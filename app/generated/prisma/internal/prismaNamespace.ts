@@ -388,7 +388,7 @@ export const ModelName = {
   Customer: 'Customer',
   CustomerSession: 'CustomerSession',
   Order: 'Order',
-  ApiProvider: 'ApiProvider'
+  SupportRequest: 'SupportRequest'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -404,7 +404,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "product" | "customer" | "customerSession" | "order" | "apiProvider"
+    modelProps: "product" | "customer" | "customerSession" | "order" | "supportRequest"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -704,77 +704,77 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    ApiProvider: {
-      payload: Prisma.$ApiProviderPayload<ExtArgs>
-      fields: Prisma.ApiProviderFieldRefs
+    SupportRequest: {
+      payload: Prisma.$SupportRequestPayload<ExtArgs>
+      fields: Prisma.SupportRequestFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.ApiProviderFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiProviderPayload> | null
+          args: Prisma.SupportRequestFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportRequestPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.ApiProviderFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiProviderPayload>
+          args: Prisma.SupportRequestFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportRequestPayload>
         }
         findFirst: {
-          args: Prisma.ApiProviderFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiProviderPayload> | null
+          args: Prisma.SupportRequestFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportRequestPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.ApiProviderFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiProviderPayload>
+          args: Prisma.SupportRequestFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportRequestPayload>
         }
         findMany: {
-          args: Prisma.ApiProviderFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiProviderPayload>[]
+          args: Prisma.SupportRequestFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportRequestPayload>[]
         }
         create: {
-          args: Prisma.ApiProviderCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiProviderPayload>
+          args: Prisma.SupportRequestCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportRequestPayload>
         }
         createMany: {
-          args: Prisma.ApiProviderCreateManyArgs<ExtArgs>
+          args: Prisma.SupportRequestCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.ApiProviderCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiProviderPayload>[]
+          args: Prisma.SupportRequestCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportRequestPayload>[]
         }
         delete: {
-          args: Prisma.ApiProviderDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiProviderPayload>
+          args: Prisma.SupportRequestDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportRequestPayload>
         }
         update: {
-          args: Prisma.ApiProviderUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiProviderPayload>
+          args: Prisma.SupportRequestUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportRequestPayload>
         }
         deleteMany: {
-          args: Prisma.ApiProviderDeleteManyArgs<ExtArgs>
+          args: Prisma.SupportRequestDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.ApiProviderUpdateManyArgs<ExtArgs>
+          args: Prisma.SupportRequestUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.ApiProviderUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiProviderPayload>[]
+          args: Prisma.SupportRequestUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportRequestPayload>[]
         }
         upsert: {
-          args: Prisma.ApiProviderUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$ApiProviderPayload>
+          args: Prisma.SupportRequestUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportRequestPayload>
         }
         aggregate: {
-          args: Prisma.ApiProviderAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateApiProvider>
+          args: Prisma.SupportRequestAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSupportRequest>
         }
         groupBy: {
-          args: Prisma.ApiProviderGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ApiProviderGroupByOutputType>[]
+          args: Prisma.SupportRequestGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SupportRequestGroupByOutputType>[]
         }
         count: {
-          args: Prisma.ApiProviderCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.ApiProviderCountAggregateOutputType> | number
+          args: Prisma.SupportRequestCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SupportRequestCountAggregateOutputType> | number
         }
       }
     }
@@ -891,17 +891,22 @@ export const OrderScalarFieldEnum = {
 export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum]
 
 
-export const ApiProviderScalarFieldEnum = {
+export const SupportRequestScalarFieldEnum = {
   id: 'id',
-  name: 'name',
-  baseUrl: 'baseUrl',
-  apiKey: 'apiKey',
-  mode: 'mode',
-  active: 'active',
-  createdAt: 'createdAt'
+  customerId: 'customerId',
+  orderId: 'orderId',
+  customerEmail: 'customerEmail',
+  reason: 'reason',
+  message: 'message',
+  status: 'status',
+  orderNumber: 'orderNumber',
+  iccid: 'iccid',
+  productName: 'productName',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
-export type ApiProviderScalarFieldEnum = (typeof ApiProviderScalarFieldEnum)[keyof typeof ApiProviderScalarFieldEnum]
+export type SupportRequestScalarFieldEnum = (typeof SupportRequestScalarFieldEnum)[keyof typeof SupportRequestScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1074,7 +1079,7 @@ export type GlobalOmitConfig = {
   customer?: Prisma.CustomerOmit
   customerSession?: Prisma.CustomerSessionOmit
   order?: Prisma.OrderOmit
-  apiProvider?: Prisma.ApiProviderOmit
+  supportRequest?: Prisma.SupportRequestOmit
 }
 
 /* Types for Logging */

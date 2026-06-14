@@ -5,6 +5,7 @@ generator client {
 
 datasource db {
   provider = "sqlite"
+
 }
 
 model Product {
@@ -39,8 +40,9 @@ model Customer {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  sessions CustomerSession[]
-  orders   Order[]
+  sessions        CustomerSession[]
+  orders          Order[]
+  supportRequests SupportRequest[]
 }
 
 model CustomerSession {
@@ -69,8 +71,8 @@ model Order {
   iccid           String?
   qrCodeUrl       String?
   activationCode  String?
-  iosInstallUrl     String?
-  androidInstallUrl String? 
+  iosInstallUrl   String?
+  androidInstallUrl String?
 
   totalDataGb     Float?
   usedDataGb      Float?
@@ -82,14 +84,28 @@ model Order {
   createdAt DateTime @default(now())
 
   customerAccount Customer? @relation(fields: [customerId], references: [id])
+
+  supportRequests SupportRequest[]
 }
 
-model ApiProvider {
-  id        String   @id @default(cuid())
-  name      String
-  baseUrl   String
-  apiKey    String?
-  mode      String   @default("test")
-  active    Boolean  @default(true)
+model SupportRequest {
+  id String @id @default(cuid())
+
+  customerId String?
+  orderId    String?
+
+  customerEmail String
+  reason        String
+  message       String
+  status        String @default("open")
+
+  orderNumber String?
+  iccid       String?
+  productName String?
+
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  customer Customer? @relation(fields: [customerId], references: [id])
+  order    Order?    @relation(fields: [orderId], references: [id])
 }
