@@ -1,32 +1,44 @@
 "use server";
 
+import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 import { prisma } from "../../../lib/db";
-import { createCustomerToken } from "../../../lib/customer-auth";
+
+const CUSTOMER_SESSION_COOKIE = "dalo_customer_session";
 
 function normalizeEmail(value: FormDataEntryValue | null) {
   return String(value || "").trim().toLowerCase();
 }
 
-export async function requestCustomerLogin(formData: FormData) {
-  const email = normalizeEmail(formData.get("email"));
+function createCustomerToken() {
+  return crypto.randomBytes(32).toString("hex");
+}
 
-  if (!email || !email.includes("@")) {
-    throw new Error("Please enter a valid email address.");
+export async function loginCustomer(formData: FormData) {
+  const email = normalizeEmail(formData.get("email"));
+  const password = String(formData.get("password") || "");
+
+  if (!email || !email.includes("@") || !password) {
+    redirect("/customer/login?error=1");
   }
 
-  const customer = await prisma.customer.upsert({
+  const customer = await prisma.customer.findUnique({
     where: {
       email,
     },
-    update: {
-      active: true,
-    },
-    create: {
-      email,
-      active: true,
-    },
   });
+
+  if (!customer || !customer.active || !customer.passwordHash) {
+    redirect("/customer/login?error=1");
+  }
+
+  const passwordOk = await bcrypt.compare(password, customer.passwordHash);
+
+  if (!passwordOk) {
+    redirect("/customer/login?error=1");
+  }
 
   const token = createCustomerToken();
 
@@ -38,15 +50,15 @@ export async function requestCustomerLogin(formData: FormData) {
     },
   });
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  const loginUrl = `${baseUrl}/customer/magic?token=${token}`;
+  const cookieStore = await cookies();
 
-  console.log("");
-  console.log("==========================================");
-  console.log("DALO CUSTOMER MAGIC LOGIN LINK");
-  console.log(loginUrl);
-  console.log("==========================================");
-  console.log("");
+  cookieStore.set(CUSTOMER_SESSION_COOKIE, token, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 60 * 60 * 24 * 30,
+  });
 
-  redirect("/customer/login/sent");
+  redirect("/customer/dashboard");
 }
