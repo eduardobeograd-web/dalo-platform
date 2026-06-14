@@ -58,48 +58,50 @@ export default async function CustomerDashboardPage() {
   const productById = new Map(products.map((product) => [product.id, product]));
 
   return (
-    <main className="min-h-screen bg-[#F6F8FF] px-6 py-10 text-slate-950">
+    <main className="min-h-screen bg-[#F6F8FF] px-6 py-8 text-slate-950">
       <div className="mx-auto max-w-6xl">
-        <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-          <div>
+        <nav className="rounded-[2rem] bg-white p-5 shadow-xl shadow-blue-100">
+          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
             <a href="/" className="inline-block">
               <img src="/dalo-logo.png" alt="DALO" className="h-16 w-auto" />
             </a>
 
-            <p className="mt-6 text-sm font-bold uppercase tracking-wide text-blue-600">
-              Customer Dashboard
-            </p>
+            <div className="flex flex-wrap items-center gap-3">
+              <a
+                href="/"
+                className="rounded-2xl bg-blue-600 px-5 py-3 font-bold text-white shadow-lg shadow-blue-200"
+              >
+                Buy new eSIM
+              </a>
 
-            <h1 className="mt-2 text-4xl font-bold">Your eSIMs</h1>
+              <a
+                href="/customer/support"
+                className="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-3 font-bold text-slate-700"
+              >
+                Support
+              </a>
 
-            <p className="mt-2 text-slate-600">
-              Logged in as {customer.email}
-            </p>
+              <a
+                href="/customer/logout"
+                className="rounded-2xl bg-slate-950 px-5 py-3 font-bold text-white"
+              >
+                Logout
+              </a>
+            </div>
           </div>
+        </nav>
 
-          <div className="flex flex-wrap gap-3">
-            <a
-              href="/"
-              className="rounded-2xl bg-blue-600 px-6 py-4 font-bold text-white shadow-lg shadow-blue-200"
-            >
-              Buy new eSIM
-            </a>
+        <section className="mt-8 rounded-[2.5rem] bg-gradient-to-br from-blue-600 to-slate-950 p-8 text-white shadow-2xl shadow-blue-100 md:p-10">
+          <p className="text-sm font-bold uppercase tracking-wide text-blue-100">
+            Customer Dashboard
+          </p>
 
-            <a
-              href="/customer/support"
-              className="rounded-2xl border border-slate-300 bg-white px-6 py-4 font-bold text-slate-700"
-            >
-              Support
-            </a>
+          <h1 className="mt-3 text-5xl font-bold">Your eSIMs</h1>
 
-            <a
-              href="/customer/logout"
-              className="rounded-2xl border border-slate-300 px-6 py-4 font-bold text-slate-700"
-            >
-              Logout
-            </a>
-          </div>
-        </div>
+          <p className="mt-4 max-w-2xl text-lg text-blue-50">
+            Logged in as {customer.email}
+          </p>
+        </section>
 
         {orders.length === 0 ? (
           <div className="mt-10 rounded-[2rem] bg-white p-10 shadow-xl shadow-blue-100">
