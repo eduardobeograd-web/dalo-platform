@@ -2,6 +2,31 @@
 
 import { useEffect, useState } from "react";
 
+const popularDestinations = [
+  "Germany",
+  "Spain",
+  "Italy",
+  "France",
+  "Portugal",
+  "Greece",
+  "Turkey",
+  "Thailand",
+  "Japan",
+  "United States of America",
+  "United Kingdom",
+];
+
+function getDestinationLabel(destination: string) {
+  const labels: Record<string, string> = {
+    "United States of America": "United States",
+    "Korea-Republic of": "South Korea",
+    VietNam: "Vietnam",
+    "Czech Republic": "Czech Republic",
+  };
+
+  return labels[destination] || destination;
+}
+
 function getDestinationFlag(destination: string) {
   const flags: Record<string, string> = {
     Europe: "🇪🇺",
@@ -10,6 +35,7 @@ function getDestinationFlag(destination: string) {
     Japan: "🇯🇵",
     Thailand: "🇹🇭",
     "United States": "🇺🇸",
+    "United States of America": "🇺🇸",
     "United Kingdom": "🇬🇧",
     Germany: "🇩🇪",
     France: "🇫🇷",
@@ -25,6 +51,9 @@ function getDestinationFlag(destination: string) {
     Albania: "🇦🇱",
     Dubai: "🇦🇪",
     "United Arab Emirates": "🇦🇪",
+    "Korea-Republic of": "🇰🇷",
+    VietNam: "🇻🇳",
+    "Czech Republic": "🇨🇿",
   };
 
   return flags[destination] || "🌍";
@@ -43,24 +72,40 @@ export default function Home() {
 
       if (Array.isArray(data.destinations)) {
         setDestinations(data.destinations);
-
-        if (data.destinations.length > 0) {
-          setCountry(data.destinations[0]);
-        }
       }
     }
 
     loadDestinations();
   }, []);
 
+  const normalizedCountry = country.trim().toLowerCase();
+
+  const matchedDestination =
+    destinations.find(
+      (destination) => destination.toLowerCase() === normalizedCountry
+    ) || "";
+
   const selectedDestinationIsAvailable =
-    destinations.length === 0 || destinations.includes(country);
+    normalizedCountry.length > 0 &&
+    (destinations.length === 0 || matchedDestination.length > 0);
+
+  const selectedCountryForSearch = matchedDestination || country.trim();
 
   const searchingUrl = selectedDestinationIsAvailable
     ? `/searching?country=${encodeURIComponent(
-        country || "Europe"
+        selectedCountryForSearch
       )}&days=${encodeURIComponent(days)}&type=${encodeURIComponent(userType)}`
     : "#quiz";
+
+  const popularAvailableDestinations = popularDestinations.filter(
+    (destination) =>
+      destinations.length === 0 || destinations.includes(destination)
+  );
+
+  const availableDestinationCards =
+    popularAvailableDestinations.length > 0
+      ? popularAvailableDestinations
+      : destinations.slice(0, 9);
 
   function getDestinationImage(destination: string) {
     const images: Record<string, string> = {
@@ -76,8 +121,20 @@ export default function Home() {
         "https://images.unsplash.com/photo-1508009603885-50cf7c579365?q=80&w=1200&auto=format&fit=crop",
       "United States":
         "https://images.unsplash.com/photo-1485738422979-f5c462d49f74?q=80&w=1200&auto=format&fit=crop",
+      "United States of America":
+        "https://images.unsplash.com/photo-1485738422979-f5c462d49f74?q=80&w=1200&auto=format&fit=crop",
       "United Kingdom":
         "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=1200&auto=format&fit=crop",
+      Germany:
+        "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?q=80&w=1200&auto=format&fit=crop",
+      France:
+        "https://images.unsplash.com/photo-1502602898536-47ad22581b52?q=80&w=1200&auto=format&fit=crop",
+      Portugal:
+        "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?q=80&w=1200&auto=format&fit=crop",
+      Greece:
+        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format&fit=crop",
+      Turkey:
+        "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?q=80&w=1200&auto=format&fit=crop",
     };
 
     return (
@@ -86,8 +143,9 @@ export default function Home() {
     );
   }
 
-  const availableDestinationCards =
-    destinations.length > 0 ? destinations : ["Europe"];
+  function selectDestination(destination: string) {
+    setCountry(destination);
+  }
 
   return (
     <main className="min-h-screen bg-[#F6F8FF] text-slate-900">
@@ -175,31 +233,75 @@ export default function Home() {
 
             <div className="space-y-6">
               <div>
-                <label className="mb-2 block font-semibold">
+                <label className="mb-3 block font-semibold">
                   🌍 Where are you going?
                 </label>
 
+                <div className="mb-4">
+                  <p className="mb-3 text-sm font-semibold text-slate-500">
+                    Popular destinations
+                  </p>
+
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                    {popularAvailableDestinations
+                      .slice(0, 9)
+                      .map((destination) => {
+                        const isSelected =
+                          selectedCountryForSearch === destination;
+
+                        return (
+                          <button
+                            key={destination}
+                            type="button"
+                            onClick={() => selectDestination(destination)}
+                            className={`rounded-2xl border px-3 py-3 text-left text-sm font-semibold transition ${
+                              isSelected
+                                ? "border-blue-600 bg-blue-50 text-blue-700"
+                                : "border-slate-200 bg-white text-slate-700 hover:border-blue-400"
+                            }`}
+                          >
+                            <span className="mr-2">
+                              {getDestinationFlag(destination)}
+                            </span>
+                            {getDestinationLabel(destination)}
+                          </button>
+                        );
+                      })}
+                  </div>
+                </div>
+
                 <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 transition focus-within:border-blue-500 focus-within:bg-white">
-                  <div className="text-3xl">{getDestinationFlag(country)}</div>
+                  <div className="text-3xl">
+                    {country
+                      ? getDestinationFlag(selectedCountryForSearch)
+                      : "🌍"}
+                  </div>
 
                   <input
                     value={country}
                     onChange={(e) => setCountry(e.target.value)}
                     list="available-destinations"
-                    placeholder="Search destination..."
+                    placeholder="Search all destinations..."
                     className="w-full bg-transparent outline-none"
                   />
 
                   <datalist id="available-destinations">
                     {destinations.map((destination) => (
                       <option key={destination} value={destination}>
-                        {getDestinationFlag(destination)} {destination}
+                        {getDestinationLabel(destination)}
                       </option>
                     ))}
                   </datalist>
                 </div>
 
-                {!selectedDestinationIsAvailable && (
+                {country.trim().length === 0 && (
+                  <p className="mt-2 text-sm text-slate-500">
+                    Choose a popular destination or search all available
+                    countries.
+                  </p>
+                )}
+
+                {country.trim().length > 0 && !selectedDestinationIsAvailable && (
                   <p className="mt-2 text-sm font-semibold text-red-600">
                     Please choose an available destination from the list.
                   </p>
@@ -207,7 +309,11 @@ export default function Home() {
 
                 {selectedDestinationIsAvailable && (
                   <p className="mt-2 text-sm text-slate-500">
-                    Only destinations with active eSIM products are shown.
+                    Selected:{" "}
+                    <span className="font-semibold text-slate-700">
+                      {getDestinationFlag(selectedCountryForSearch)}{" "}
+                      {getDestinationLabel(selectedCountryForSearch)}
+                    </span>
                   </p>
                 )}
               </div>
@@ -288,6 +394,11 @@ export default function Home() {
               <a
                 href={searchingUrl}
                 aria-disabled={!selectedDestinationIsAvailable}
+                onClick={(event) => {
+                  if (!selectedDestinationIsAvailable) {
+                    event.preventDefault();
+                  }
+                }}
                 className={`block w-full rounded-2xl p-5 text-center text-lg font-bold shadow-xl transition ${
                   selectedDestinationIsAvailable
                     ? "bg-blue-600 text-white shadow-blue-200 hover:bg-blue-700"
@@ -401,11 +512,11 @@ export default function Home() {
       <section id="destinations" className="mx-auto max-w-7xl px-6 py-24">
         <div className="mb-16 text-center">
           <h2 className="text-4xl font-bold text-slate-950">
-            Available destinations
+            Popular destinations
           </h2>
           <p className="mt-4 text-xl text-slate-600">
-            These destinations are currently available from active products in
-            the DALO database.
+            Start with one of the most common travel destinations, or search all
+            available countries in the quiz.
           </p>
         </div>
 
@@ -424,12 +535,14 @@ export default function Home() {
             >
               <img
                 src={getDestinationImage(destination)}
-                alt={destination}
+                alt={getDestinationLabel(destination)}
                 className="h-44 w-full object-cover"
               />
               <div className="p-6">
                 <div className="text-4xl">{getDestinationFlag(destination)}</div>
-                <h3 className="mt-3 text-xl font-bold">{destination}</h3>
+                <h3 className="mt-3 text-xl font-bold">
+                  {getDestinationLabel(destination)}
+                </h3>
                 <p className="mt-2 text-slate-600">
                   Find the right eSIM for your trip.
                 </p>
@@ -437,6 +550,13 @@ export default function Home() {
             </button>
           ))}
         </div>
+
+        {destinations.length > availableDestinationCards.length && (
+          <p className="mt-8 text-center text-sm text-slate-500">
+            More destinations are available through the search field in the
+            quiz.
+          </p>
+        )}
       </section>
 
       {/* TRAVELER TYPES */}
@@ -584,7 +704,7 @@ export default function Home() {
               <h4 className="mb-4 font-bold">Destinations</h4>
               <div className="space-y-2 text-slate-600">
                 {availableDestinationCards.slice(0, 4).map((destination) => (
-                  <div key={destination}>{destination}</div>
+                  <div key={destination}>{getDestinationLabel(destination)}</div>
                 ))}
               </div>
             </div>
