@@ -166,7 +166,7 @@ export default async function OrdersPage() {
             <table className="w-full min-w-[1650px] text-left">
               <thead className="bg-slate-50 text-sm text-slate-500">
                 <tr>
-                  <th className="px-6 py-4 font-semibold">Order</th>
+                  <th className="px-6 py-4 font-semibold">DALO Order</th>
                   <th className="px-6 py-4 font-semibold">Customer</th>
                   <th className="px-6 py-4 font-semibold">Destination</th>
                   <th className="px-6 py-4 font-semibold">Product</th>
@@ -203,14 +203,20 @@ export default async function OrdersPage() {
 
                   return (
                     <tr key={order.id} className="border-t border-slate-100">
+                      
                       <td className="px-6 py-5">
                         <Link
                           href={`/admin/orders/${order.id}`}
                           className="font-bold text-blue-600 hover:text-blue-800 hover:underline"
-                        >
-                          {order.id}
+  >
+                         {order.orderNumber || "No DALO number"}
                         </Link>
+
+                          <div className="mt-1 max-w-[220px] truncate font-mono text-xs text-slate-400">
+                          ICCID: {order.iccid || "Not assigned yet"}
+                          </div>
                       </td>
+                      
 
                       <td className="px-6 py-5">
                         <div className="font-semibold">{order.customer}</div>

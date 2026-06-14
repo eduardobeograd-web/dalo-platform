@@ -40,6 +40,7 @@ export type OrderSumAggregateOutputType = {
 
 export type OrderMinAggregateOutputType = {
   id: string | null
+  orderNumber: string | null
   customer: string | null
   customerId: string | null
   productId: string | null
@@ -62,6 +63,7 @@ export type OrderMinAggregateOutputType = {
 
 export type OrderMaxAggregateOutputType = {
   id: string | null
+  orderNumber: string | null
   customer: string | null
   customerId: string | null
   productId: string | null
@@ -84,6 +86,7 @@ export type OrderMaxAggregateOutputType = {
 
 export type OrderCountAggregateOutputType = {
   id: number
+  orderNumber: number
   customer: number
   customerId: number
   productId: number
@@ -120,6 +123,7 @@ export type OrderSumAggregateInputType = {
 
 export type OrderMinAggregateInputType = {
   id?: true
+  orderNumber?: true
   customer?: true
   customerId?: true
   productId?: true
@@ -142,6 +146,7 @@ export type OrderMinAggregateInputType = {
 
 export type OrderMaxAggregateInputType = {
   id?: true
+  orderNumber?: true
   customer?: true
   customerId?: true
   productId?: true
@@ -164,6 +169,7 @@ export type OrderMaxAggregateInputType = {
 
 export type OrderCountAggregateInputType = {
   id?: true
+  orderNumber?: true
   customer?: true
   customerId?: true
   productId?: true
@@ -273,6 +279,7 @@ export type OrderGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 
 export type OrderGroupByOutputType = {
   id: string
+  orderNumber: string | null
   customer: string
   customerId: string | null
   productId: string
@@ -318,6 +325,7 @@ export type OrderWhereInput = {
   OR?: Prisma.OrderWhereInput[]
   NOT?: Prisma.OrderWhereInput | Prisma.OrderWhereInput[]
   id?: Prisma.StringFilter<"Order"> | string
+  orderNumber?: Prisma.StringNullableFilter<"Order"> | string | null
   customer?: Prisma.StringFilter<"Order"> | string
   customerId?: Prisma.StringNullableFilter<"Order"> | string | null
   productId?: Prisma.StringFilter<"Order"> | string
@@ -341,6 +349,7 @@ export type OrderWhereInput = {
 
 export type OrderOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  orderNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   customer?: Prisma.SortOrder
   customerId?: Prisma.SortOrderInput | Prisma.SortOrder
   productId?: Prisma.SortOrder
@@ -364,6 +373,7 @@ export type OrderOrderByWithRelationInput = {
 
 export type OrderWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  orderNumber?: string
   AND?: Prisma.OrderWhereInput | Prisma.OrderWhereInput[]
   OR?: Prisma.OrderWhereInput[]
   NOT?: Prisma.OrderWhereInput | Prisma.OrderWhereInput[]
@@ -386,10 +396,11 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   lastUsageSyncAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   customerAccount?: Prisma.XOR<Prisma.CustomerNullableScalarRelationFilter, Prisma.CustomerWhereInput> | null
-}, "id">
+}, "id" | "orderNumber">
 
 export type OrderOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  orderNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   customer?: Prisma.SortOrder
   customerId?: Prisma.SortOrderInput | Prisma.SortOrder
   productId?: Prisma.SortOrder
@@ -420,6 +431,7 @@ export type OrderScalarWhereWithAggregatesInput = {
   OR?: Prisma.OrderScalarWhereWithAggregatesInput[]
   NOT?: Prisma.OrderScalarWhereWithAggregatesInput | Prisma.OrderScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Order"> | string
+  orderNumber?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   customer?: Prisma.StringWithAggregatesFilter<"Order"> | string
   customerId?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   productId?: Prisma.StringWithAggregatesFilter<"Order"> | string
@@ -442,6 +454,7 @@ export type OrderScalarWhereWithAggregatesInput = {
 
 export type OrderCreateInput = {
   id?: string
+  orderNumber?: string | null
   customer: string
   productId: string
   payment: string
@@ -464,6 +477,7 @@ export type OrderCreateInput = {
 
 export type OrderUncheckedCreateInput = {
   id?: string
+  orderNumber?: string | null
   customer: string
   customerId?: string | null
   productId: string
@@ -486,6 +500,7 @@ export type OrderUncheckedCreateInput = {
 
 export type OrderUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customer?: Prisma.StringFieldUpdateOperationsInput | string
   productId?: Prisma.StringFieldUpdateOperationsInput | string
   payment?: Prisma.StringFieldUpdateOperationsInput | string
@@ -508,6 +523,7 @@ export type OrderUpdateInput = {
 
 export type OrderUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customer?: Prisma.StringFieldUpdateOperationsInput | string
   customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -530,6 +546,7 @@ export type OrderUncheckedUpdateInput = {
 
 export type OrderCreateManyInput = {
   id?: string
+  orderNumber?: string | null
   customer: string
   customerId?: string | null
   productId: string
@@ -552,6 +569,7 @@ export type OrderCreateManyInput = {
 
 export type OrderUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customer?: Prisma.StringFieldUpdateOperationsInput | string
   productId?: Prisma.StringFieldUpdateOperationsInput | string
   payment?: Prisma.StringFieldUpdateOperationsInput | string
@@ -573,6 +591,7 @@ export type OrderUpdateManyMutationInput = {
 
 export type OrderUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customer?: Prisma.StringFieldUpdateOperationsInput | string
   customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -605,6 +624,7 @@ export type OrderOrderByRelationAggregateInput = {
 
 export type OrderCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  orderNumber?: Prisma.SortOrder
   customer?: Prisma.SortOrder
   customerId?: Prisma.SortOrder
   productId?: Prisma.SortOrder
@@ -633,6 +653,7 @@ export type OrderAvgOrderByAggregateInput = {
 
 export type OrderMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  orderNumber?: Prisma.SortOrder
   customer?: Prisma.SortOrder
   customerId?: Prisma.SortOrder
   productId?: Prisma.SortOrder
@@ -655,6 +676,7 @@ export type OrderMaxOrderByAggregateInput = {
 
 export type OrderMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  orderNumber?: Prisma.SortOrder
   customer?: Prisma.SortOrder
   customerId?: Prisma.SortOrder
   productId?: Prisma.SortOrder
@@ -725,6 +747,7 @@ export type OrderUncheckedUpdateManyWithoutCustomerAccountNestedInput = {
 
 export type OrderCreateWithoutCustomerAccountInput = {
   id?: string
+  orderNumber?: string | null
   customer: string
   productId: string
   payment: string
@@ -746,6 +769,7 @@ export type OrderCreateWithoutCustomerAccountInput = {
 
 export type OrderUncheckedCreateWithoutCustomerAccountInput = {
   id?: string
+  orderNumber?: string | null
   customer: string
   productId: string
   payment: string
@@ -795,6 +819,7 @@ export type OrderScalarWhereInput = {
   OR?: Prisma.OrderScalarWhereInput[]
   NOT?: Prisma.OrderScalarWhereInput | Prisma.OrderScalarWhereInput[]
   id?: Prisma.StringFilter<"Order"> | string
+  orderNumber?: Prisma.StringNullableFilter<"Order"> | string | null
   customer?: Prisma.StringFilter<"Order"> | string
   customerId?: Prisma.StringNullableFilter<"Order"> | string | null
   productId?: Prisma.StringFilter<"Order"> | string
@@ -817,6 +842,7 @@ export type OrderScalarWhereInput = {
 
 export type OrderCreateManyCustomerAccountInput = {
   id?: string
+  orderNumber?: string | null
   customer: string
   productId: string
   payment: string
@@ -838,6 +864,7 @@ export type OrderCreateManyCustomerAccountInput = {
 
 export type OrderUpdateWithoutCustomerAccountInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customer?: Prisma.StringFieldUpdateOperationsInput | string
   productId?: Prisma.StringFieldUpdateOperationsInput | string
   payment?: Prisma.StringFieldUpdateOperationsInput | string
@@ -859,6 +886,7 @@ export type OrderUpdateWithoutCustomerAccountInput = {
 
 export type OrderUncheckedUpdateWithoutCustomerAccountInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customer?: Prisma.StringFieldUpdateOperationsInput | string
   productId?: Prisma.StringFieldUpdateOperationsInput | string
   payment?: Prisma.StringFieldUpdateOperationsInput | string
@@ -880,6 +908,7 @@ export type OrderUncheckedUpdateWithoutCustomerAccountInput = {
 
 export type OrderUncheckedUpdateManyWithoutCustomerAccountInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customer?: Prisma.StringFieldUpdateOperationsInput | string
   productId?: Prisma.StringFieldUpdateOperationsInput | string
   payment?: Prisma.StringFieldUpdateOperationsInput | string
@@ -903,6 +932,7 @@ export type OrderUncheckedUpdateManyWithoutCustomerAccountInput = {
 
 export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  orderNumber?: boolean
   customer?: boolean
   customerId?: boolean
   productId?: boolean
@@ -926,6 +956,7 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
 
 export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  orderNumber?: boolean
   customer?: boolean
   customerId?: boolean
   productId?: boolean
@@ -949,6 +980,7 @@ export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 
 export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  orderNumber?: boolean
   customer?: boolean
   customerId?: boolean
   productId?: boolean
@@ -972,6 +1004,7 @@ export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 
 export type OrderSelectScalar = {
   id?: boolean
+  orderNumber?: boolean
   customer?: boolean
   customerId?: boolean
   productId?: boolean
@@ -992,7 +1025,7 @@ export type OrderSelectScalar = {
   createdAt?: boolean
 }
 
-export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "customer" | "customerId" | "productId" | "payment" | "fulfillment" | "esimStatus" | "providerOrderId" | "iccid" | "qrCodeUrl" | "activationCode" | "iosInstallUrl" | "androidInstallUrl" | "totalDataGb" | "usedDataGb" | "remainingDataGb" | "expiresAt" | "lastUsageSyncAt" | "createdAt", ExtArgs["result"]["order"]>
+export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderNumber" | "customer" | "customerId" | "productId" | "payment" | "fulfillment" | "esimStatus" | "providerOrderId" | "iccid" | "qrCodeUrl" | "activationCode" | "iosInstallUrl" | "androidInstallUrl" | "totalDataGb" | "usedDataGb" | "remainingDataGb" | "expiresAt" | "lastUsageSyncAt" | "createdAt", ExtArgs["result"]["order"]>
 export type OrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   customerAccount?: boolean | Prisma.Order$customerAccountArgs<ExtArgs>
 }
@@ -1010,6 +1043,7 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    orderNumber: string | null
     customer: string
     customerId: string | null
     productId: string
@@ -1453,6 +1487,7 @@ export interface Prisma__OrderClient<T, Null = never, ExtArgs extends runtime.Ty
  */
 export interface OrderFieldRefs {
   readonly id: Prisma.FieldRef<"Order", 'String'>
+  readonly orderNumber: Prisma.FieldRef<"Order", 'String'>
   readonly customer: Prisma.FieldRef<"Order", 'String'>
   readonly customerId: Prisma.FieldRef<"Order", 'String'>
   readonly productId: Prisma.FieldRef<"Order", 'String'>

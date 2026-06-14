@@ -1,7 +1,10 @@
 "use server";
 
+import crypto from "crypto";
 import { redirect } from "next/navigation";
 import { prisma } from "../../lib/db";
+
+const ORDER_NUMBER_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
 function normalizeEmail(email: string) {
   return email.trim().toLowerCase();
@@ -25,6 +28,35 @@ function extractDataGb(dataText: string) {
   }
 
   return null;
+}
+
+function createRandomOrderNumber() {
+  let code = "";
+
+  for (let i = 0; i < 6; i++) {
+    const index = crypto.randomInt(0, ORDER_NUMBER_CHARS.length);
+    code += ORDER_NUMBER_CHARS[index];
+  }
+
+  return `DALO-${code}`;
+}
+
+async function createUniqueOrderNumber() {
+  for (let attempt = 0; attempt < 10; attempt++) {
+    const orderNumber = createRandomOrderNumber();
+
+    const existingOrder = await prisma.order.findUnique({
+      where: {
+        orderNumber,
+      },
+    });
+
+    if (!existingOrder) {
+      return orderNumber;
+    }
+  }
+
+  throw new Error("Could not create unique DALO order number.");
 }
 
 export async function createCheckoutOrder(formData: FormData) {
@@ -59,9 +91,11 @@ export async function createCheckoutOrder(formData: FormData) {
   });
 
   const totalDataGb = extractDataGb(product.data);
+  const orderNumber = await createUniqueOrderNumber();
 
   const order = await prisma.order.create({
     data: {
+      orderNumber,
       customer: email,
       customerId: customer.id,
       productId: product.id,
@@ -73,6 +107,8 @@ export async function createCheckoutOrder(formData: FormData) {
       iccid: null,
       qrCodeUrl: null,
       activationCode: null,
+      iosInstallUrl: null,
+      androidInstallUrl: null,
 
       totalDataGb,
       usedDataGb: null,

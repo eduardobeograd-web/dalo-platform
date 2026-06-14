@@ -170,6 +170,12 @@ export default async function CustomerDashboardPage() {
                         Ordered on {formatDate(order.createdAt)}
                       </p>
 
+                      <p className="mt-2 font-mono text-sm font-bold text-slate-500">
+                        Order Number: {order.orderNumber || order.id}
+                      </p>
+
+                    
+
                       <div className="mt-6 grid gap-4 md:grid-cols-3">
                         <div className="rounded-2xl bg-slate-50 p-5">
                           <p className="text-sm font-semibold text-slate-500">

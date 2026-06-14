@@ -148,10 +148,17 @@ export default async function OrderDetailPage({
       <div className="mb-8 rounded-[2rem] bg-white p-6 shadow-xl shadow-blue-50">
         <div className="flex flex-col justify-between gap-4 border-b border-slate-100 pb-6 md:flex-row md:items-center">
           <div>
-            <p className="text-sm font-semibold text-slate-500">Order ID</p>
-            <h2 className="mt-2 break-all text-2xl font-bold text-slate-950">
-              {order.id}
+            
+            <p className="text-sm font-semibold text-slate-500">DALO Order Number</p>
+            <h2 className="mt-2 text-2xl font-bold text-slate-950">
+            {order.orderNumber || "Not assigned yet"}
             </h2>
+
+            <p className="mt-3 text-sm font-semibold text-slate-500">Internal Order ID</p>
+            <p className="mt-1 break-all font-mono text-sm font-bold text-slate-500">
+             {order.id}
+            </p>
+          
           </div>
 
           <div className="flex flex-wrap gap-3">
@@ -162,7 +169,7 @@ export default async function OrderDetailPage({
         </div>
 
         <div className="mt-6 grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-          <DetailCard label="Customer" value={order.customer} />
+          <DetailCard label="DALO Order Number" value={order.orderNumber || "—"} />
           <DetailCard label="Product ID" value={order.productId} />
           <DetailCard label="Created" value={order.createdAt.toLocaleString()} />
           <DetailCard label="Amount" value={formatPrice(amount)} />

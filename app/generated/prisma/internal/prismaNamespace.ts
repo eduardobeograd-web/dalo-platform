@@ -867,6 +867,7 @@ export type CustomerSessionScalarFieldEnum = (typeof CustomerSessionScalarFieldE
 
 export const OrderScalarFieldEnum = {
   id: 'id',
+  orderNumber: 'orderNumber',
   customer: 'customer',
   customerId: 'customerId',
   productId: 'productId',

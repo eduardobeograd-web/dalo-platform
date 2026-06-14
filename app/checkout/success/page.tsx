@@ -175,10 +175,11 @@ export default async function CheckoutSuccessPage({
 
           <div className="mt-10 grid gap-4 text-left md:grid-cols-2">
             <div className="rounded-2xl bg-slate-50 p-5">
-              <div className="text-sm text-slate-500">Order ID</div>
-              <div className="mt-1 break-all font-mono text-sm font-bold">
-                {order.id}
+              <div className="text-sm text-slate-500">Order Number</div>
+              <div className="mt-1 font-mono text-sm font-bold">
+                {order.orderNumber || order.id}
               </div>
+
             </div>
 
             <div className="rounded-2xl bg-slate-50 p-5">
