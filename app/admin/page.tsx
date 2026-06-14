@@ -26,6 +26,12 @@ export default async function AdminDashboard() {
     },
   });
 
+  const supportRequests = await prisma.supportRequest.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
   const activeProducts = products.filter((product) => product.active);
 
   const orderRows = orders.map((order) => {
@@ -56,6 +62,18 @@ export default async function AdminDashboard() {
   ).length;
 
   const paidOrders = orders.filter((order) => order.payment === "Paid").length;
+
+  const openSupportRequests = supportRequests.filter(
+    (request) => request.status === "open"
+  ).length;
+
+  const inProgressSupportRequests = supportRequests.filter(
+    (request) => request.status === "in_progress"
+  ).length;
+
+  const resolvedSupportRequests = supportRequests.filter(
+    (request) => request.status === "resolved"
+  ).length;
 
   const averageMargin =
     products.length > 0
@@ -120,42 +138,30 @@ export default async function AdminDashboard() {
           <p className="text-sm font-semibold text-slate-500">
             Active Products
           </p>
-          <h2 className="mt-3 text-3xl font-bold">
-            {activeProducts.length}
-          </h2>
+          <h2 className="mt-3 text-3xl font-bold">{activeProducts.length}</h2>
           <p className="mt-2 text-sm text-slate-500">
             Visible for recommendations
           </p>
         </div>
 
         <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
-          <p className="text-sm font-semibold text-slate-500">
-            Revenue
-          </p>
+          <p className="text-sm font-semibold text-slate-500">Revenue</p>
           <h2 className="mt-3 text-3xl font-bold">{formatPrice(revenue)}</h2>
-          <p className="mt-2 text-sm text-slate-500">
-            Paid orders only
-          </p>
+          <p className="mt-2 text-sm text-slate-500">Paid orders only</p>
         </div>
 
         <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
-          <p className="text-sm font-semibold text-slate-500">
-            Profit
-          </p>
+          <p className="text-sm font-semibold text-slate-500">Profit</p>
           <h2 className="mt-3 text-3xl font-bold text-green-700">
             {formatPrice(profit)}
           </h2>
-          <p className="mt-2 text-sm text-slate-500">
-            Paid orders only
-          </p>
+          <p className="mt-2 text-sm text-slate-500">Paid orders only</p>
         </div>
       </div>
 
       <div className="mt-8 grid gap-6 md:grid-cols-4">
         <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
-          <p className="text-sm font-semibold text-slate-500">
-            Orders
-          </p>
+          <p className="text-sm font-semibold text-slate-500">Orders</p>
           <h2 className="mt-3 text-3xl font-bold">{orders.length}</h2>
           <p className="mt-2 text-sm text-slate-500">
             Total database orders
@@ -163,13 +169,9 @@ export default async function AdminDashboard() {
         </div>
 
         <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
-          <p className="text-sm font-semibold text-slate-500">
-            Paid Orders
-          </p>
+          <p className="text-sm font-semibold text-slate-500">Paid Orders</p>
           <h2 className="mt-3 text-3xl font-bold">{paidOrders}</h2>
-          <p className="mt-2 text-sm text-slate-500">
-            Orders marked as paid
-          </p>
+          <p className="mt-2 text-sm text-slate-500">Orders marked as paid</p>
         </div>
 
         <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
@@ -184,17 +186,18 @@ export default async function AdminDashboard() {
           </p>
         </div>
 
-        <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
-          <p className="text-sm font-semibold text-slate-500">
-            Avg. Margin
-          </p>
-          <h2 className="mt-3 text-3xl font-bold">
-            {Math.round(averageMargin)}%
+        <a
+          href="/admin/support"
+          className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50 transition hover:-translate-y-1 hover:shadow-xl"
+        >
+          <p className="text-sm font-semibold text-slate-500">Open Support</p>
+          <h2 className="mt-3 text-3xl font-bold text-blue-700">
+            {openSupportRequests}
           </h2>
           <p className="mt-2 text-sm text-slate-500">
-            Based on product prices
+            {inProgressSupportRequests} in progress
           </p>
-        </div>
+        </a>
       </div>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
@@ -202,7 +205,7 @@ export default async function AdminDashboard() {
           <div className="mb-6">
             <h2 className="text-2xl font-bold">Database Status</h2>
             <p className="mt-1 text-slate-600">
-              Current DALO product and order foundation.
+              Current DALO product, order and support foundation.
             </p>
           </div>
 
@@ -226,6 +229,34 @@ export default async function AdminDashboard() {
               </span>
             </div>
 
+            <div className="flex items-center justify-between rounded-2xl bg-green-50 p-4">
+              <span className="font-semibold">Support Table</span>
+              <span className="font-bold text-green-700">
+                {supportRequests.length} Requests
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between rounded-2xl bg-blue-50 p-4">
+              <span className="font-semibold">Open Support Requests</span>
+              <span className="font-bold text-blue-700">
+                {openSupportRequests} Open
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between rounded-2xl bg-amber-50 p-4">
+              <span className="font-semibold">Support In Progress</span>
+              <span className="font-bold text-amber-700">
+                {inProgressSupportRequests} In Progress
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between rounded-2xl bg-emerald-50 p-4">
+              <span className="font-semibold">Resolved Support</span>
+              <span className="font-bold text-emerald-700">
+                {resolvedSupportRequests} Resolved
+              </span>
+            </div>
+
             <div className="flex items-center justify-between rounded-2xl bg-blue-50 p-4">
               <span className="font-semibold">Paid Order Revenue</span>
               <span className="font-bold text-blue-700">
@@ -237,6 +268,13 @@ export default async function AdminDashboard() {
               <span className="font-semibold">Paid Order Profit</span>
               <span className="font-bold text-blue-700">
                 {formatPrice(profit)}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4">
+              <span className="font-semibold">Avg. Margin</span>
+              <span className="font-bold text-slate-700">
+                {Math.round(averageMargin)}%
               </span>
             </div>
 
@@ -253,8 +291,8 @@ export default async function AdminDashboard() {
           <h2 className="text-2xl font-bold">Next Step</h2>
 
           <p className="mt-3 text-slate-300">
-            Continue improving product management before touching Stripe or API
-            fulfillment.
+            Continue improving product management, order handling and customer
+            support before touching Stripe or API fulfillment.
           </p>
 
           <div className="mt-8 space-y-3">
@@ -277,6 +315,13 @@ export default async function AdminDashboard() {
               className="block rounded-2xl bg-white/10 px-5 py-4 text-center font-bold text-white"
             >
               View Orders
+            </a>
+
+            <a
+              href="/admin/support"
+              className="block rounded-2xl bg-white/10 px-5 py-4 text-center font-bold text-white"
+            >
+              View Support Requests
             </a>
           </div>
         </div>
