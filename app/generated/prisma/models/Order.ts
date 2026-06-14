@@ -50,6 +50,8 @@ export type OrderMinAggregateOutputType = {
   iccid: string | null
   qrCodeUrl: string | null
   activationCode: string | null
+  iosInstallUrl: string | null
+  androidInstallUrl: string | null
   totalDataGb: number | null
   usedDataGb: number | null
   remainingDataGb: number | null
@@ -70,6 +72,8 @@ export type OrderMaxAggregateOutputType = {
   iccid: string | null
   qrCodeUrl: string | null
   activationCode: string | null
+  iosInstallUrl: string | null
+  androidInstallUrl: string | null
   totalDataGb: number | null
   usedDataGb: number | null
   remainingDataGb: number | null
@@ -90,6 +94,8 @@ export type OrderCountAggregateOutputType = {
   iccid: number
   qrCodeUrl: number
   activationCode: number
+  iosInstallUrl: number
+  androidInstallUrl: number
   totalDataGb: number
   usedDataGb: number
   remainingDataGb: number
@@ -124,6 +130,8 @@ export type OrderMinAggregateInputType = {
   iccid?: true
   qrCodeUrl?: true
   activationCode?: true
+  iosInstallUrl?: true
+  androidInstallUrl?: true
   totalDataGb?: true
   usedDataGb?: true
   remainingDataGb?: true
@@ -144,6 +152,8 @@ export type OrderMaxAggregateInputType = {
   iccid?: true
   qrCodeUrl?: true
   activationCode?: true
+  iosInstallUrl?: true
+  androidInstallUrl?: true
   totalDataGb?: true
   usedDataGb?: true
   remainingDataGb?: true
@@ -164,6 +174,8 @@ export type OrderCountAggregateInputType = {
   iccid?: true
   qrCodeUrl?: true
   activationCode?: true
+  iosInstallUrl?: true
+  androidInstallUrl?: true
   totalDataGb?: true
   usedDataGb?: true
   remainingDataGb?: true
@@ -271,6 +283,8 @@ export type OrderGroupByOutputType = {
   iccid: string | null
   qrCodeUrl: string | null
   activationCode: string | null
+  iosInstallUrl: string | null
+  androidInstallUrl: string | null
   totalDataGb: number | null
   usedDataGb: number | null
   remainingDataGb: number | null
@@ -314,6 +328,8 @@ export type OrderWhereInput = {
   iccid?: Prisma.StringNullableFilter<"Order"> | string | null
   qrCodeUrl?: Prisma.StringNullableFilter<"Order"> | string | null
   activationCode?: Prisma.StringNullableFilter<"Order"> | string | null
+  iosInstallUrl?: Prisma.StringNullableFilter<"Order"> | string | null
+  androidInstallUrl?: Prisma.StringNullableFilter<"Order"> | string | null
   totalDataGb?: Prisma.FloatNullableFilter<"Order"> | number | null
   usedDataGb?: Prisma.FloatNullableFilter<"Order"> | number | null
   remainingDataGb?: Prisma.FloatNullableFilter<"Order"> | number | null
@@ -335,6 +351,8 @@ export type OrderOrderByWithRelationInput = {
   iccid?: Prisma.SortOrderInput | Prisma.SortOrder
   qrCodeUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   activationCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  iosInstallUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  androidInstallUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   totalDataGb?: Prisma.SortOrderInput | Prisma.SortOrder
   usedDataGb?: Prisma.SortOrderInput | Prisma.SortOrder
   remainingDataGb?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -359,6 +377,8 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   iccid?: Prisma.StringNullableFilter<"Order"> | string | null
   qrCodeUrl?: Prisma.StringNullableFilter<"Order"> | string | null
   activationCode?: Prisma.StringNullableFilter<"Order"> | string | null
+  iosInstallUrl?: Prisma.StringNullableFilter<"Order"> | string | null
+  androidInstallUrl?: Prisma.StringNullableFilter<"Order"> | string | null
   totalDataGb?: Prisma.FloatNullableFilter<"Order"> | number | null
   usedDataGb?: Prisma.FloatNullableFilter<"Order"> | number | null
   remainingDataGb?: Prisma.FloatNullableFilter<"Order"> | number | null
@@ -380,6 +400,8 @@ export type OrderOrderByWithAggregationInput = {
   iccid?: Prisma.SortOrderInput | Prisma.SortOrder
   qrCodeUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   activationCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  iosInstallUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  androidInstallUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   totalDataGb?: Prisma.SortOrderInput | Prisma.SortOrder
   usedDataGb?: Prisma.SortOrderInput | Prisma.SortOrder
   remainingDataGb?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -408,6 +430,8 @@ export type OrderScalarWhereWithAggregatesInput = {
   iccid?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   qrCodeUrl?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   activationCode?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  iosInstallUrl?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  androidInstallUrl?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   totalDataGb?: Prisma.FloatNullableWithAggregatesFilter<"Order"> | number | null
   usedDataGb?: Prisma.FloatNullableWithAggregatesFilter<"Order"> | number | null
   remainingDataGb?: Prisma.FloatNullableWithAggregatesFilter<"Order"> | number | null
@@ -427,6 +451,8 @@ export type OrderCreateInput = {
   iccid?: string | null
   qrCodeUrl?: string | null
   activationCode?: string | null
+  iosInstallUrl?: string | null
+  androidInstallUrl?: string | null
   totalDataGb?: number | null
   usedDataGb?: number | null
   remainingDataGb?: number | null
@@ -448,6 +474,8 @@ export type OrderUncheckedCreateInput = {
   iccid?: string | null
   qrCodeUrl?: string | null
   activationCode?: string | null
+  iosInstallUrl?: string | null
+  androidInstallUrl?: string | null
   totalDataGb?: number | null
   usedDataGb?: number | null
   remainingDataGb?: number | null
@@ -467,6 +495,8 @@ export type OrderUpdateInput = {
   iccid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   qrCodeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  iosInstallUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  androidInstallUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   totalDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   usedDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   remainingDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
@@ -488,6 +518,8 @@ export type OrderUncheckedUpdateInput = {
   iccid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   qrCodeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  iosInstallUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  androidInstallUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   totalDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   usedDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   remainingDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
@@ -508,6 +540,8 @@ export type OrderCreateManyInput = {
   iccid?: string | null
   qrCodeUrl?: string | null
   activationCode?: string | null
+  iosInstallUrl?: string | null
+  androidInstallUrl?: string | null
   totalDataGb?: number | null
   usedDataGb?: number | null
   remainingDataGb?: number | null
@@ -527,6 +561,8 @@ export type OrderUpdateManyMutationInput = {
   iccid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   qrCodeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  iosInstallUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  androidInstallUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   totalDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   usedDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   remainingDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
@@ -547,6 +583,8 @@ export type OrderUncheckedUpdateManyInput = {
   iccid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   qrCodeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  iosInstallUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  androidInstallUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   totalDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   usedDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   remainingDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
@@ -577,6 +615,8 @@ export type OrderCountOrderByAggregateInput = {
   iccid?: Prisma.SortOrder
   qrCodeUrl?: Prisma.SortOrder
   activationCode?: Prisma.SortOrder
+  iosInstallUrl?: Prisma.SortOrder
+  androidInstallUrl?: Prisma.SortOrder
   totalDataGb?: Prisma.SortOrder
   usedDataGb?: Prisma.SortOrder
   remainingDataGb?: Prisma.SortOrder
@@ -603,6 +643,8 @@ export type OrderMaxOrderByAggregateInput = {
   iccid?: Prisma.SortOrder
   qrCodeUrl?: Prisma.SortOrder
   activationCode?: Prisma.SortOrder
+  iosInstallUrl?: Prisma.SortOrder
+  androidInstallUrl?: Prisma.SortOrder
   totalDataGb?: Prisma.SortOrder
   usedDataGb?: Prisma.SortOrder
   remainingDataGb?: Prisma.SortOrder
@@ -623,6 +665,8 @@ export type OrderMinOrderByAggregateInput = {
   iccid?: Prisma.SortOrder
   qrCodeUrl?: Prisma.SortOrder
   activationCode?: Prisma.SortOrder
+  iosInstallUrl?: Prisma.SortOrder
+  androidInstallUrl?: Prisma.SortOrder
   totalDataGb?: Prisma.SortOrder
   usedDataGb?: Prisma.SortOrder
   remainingDataGb?: Prisma.SortOrder
@@ -690,6 +734,8 @@ export type OrderCreateWithoutCustomerAccountInput = {
   iccid?: string | null
   qrCodeUrl?: string | null
   activationCode?: string | null
+  iosInstallUrl?: string | null
+  androidInstallUrl?: string | null
   totalDataGb?: number | null
   usedDataGb?: number | null
   remainingDataGb?: number | null
@@ -709,6 +755,8 @@ export type OrderUncheckedCreateWithoutCustomerAccountInput = {
   iccid?: string | null
   qrCodeUrl?: string | null
   activationCode?: string | null
+  iosInstallUrl?: string | null
+  androidInstallUrl?: string | null
   totalDataGb?: number | null
   usedDataGb?: number | null
   remainingDataGb?: number | null
@@ -757,6 +805,8 @@ export type OrderScalarWhereInput = {
   iccid?: Prisma.StringNullableFilter<"Order"> | string | null
   qrCodeUrl?: Prisma.StringNullableFilter<"Order"> | string | null
   activationCode?: Prisma.StringNullableFilter<"Order"> | string | null
+  iosInstallUrl?: Prisma.StringNullableFilter<"Order"> | string | null
+  androidInstallUrl?: Prisma.StringNullableFilter<"Order"> | string | null
   totalDataGb?: Prisma.FloatNullableFilter<"Order"> | number | null
   usedDataGb?: Prisma.FloatNullableFilter<"Order"> | number | null
   remainingDataGb?: Prisma.FloatNullableFilter<"Order"> | number | null
@@ -776,6 +826,8 @@ export type OrderCreateManyCustomerAccountInput = {
   iccid?: string | null
   qrCodeUrl?: string | null
   activationCode?: string | null
+  iosInstallUrl?: string | null
+  androidInstallUrl?: string | null
   totalDataGb?: number | null
   usedDataGb?: number | null
   remainingDataGb?: number | null
@@ -795,6 +847,8 @@ export type OrderUpdateWithoutCustomerAccountInput = {
   iccid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   qrCodeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  iosInstallUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  androidInstallUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   totalDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   usedDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   remainingDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
@@ -814,6 +868,8 @@ export type OrderUncheckedUpdateWithoutCustomerAccountInput = {
   iccid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   qrCodeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  iosInstallUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  androidInstallUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   totalDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   usedDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   remainingDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
@@ -833,6 +889,8 @@ export type OrderUncheckedUpdateManyWithoutCustomerAccountInput = {
   iccid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   qrCodeUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   activationCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  iosInstallUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  androidInstallUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   totalDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   usedDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   remainingDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
@@ -855,6 +913,8 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   iccid?: boolean
   qrCodeUrl?: boolean
   activationCode?: boolean
+  iosInstallUrl?: boolean
+  androidInstallUrl?: boolean
   totalDataGb?: boolean
   usedDataGb?: boolean
   remainingDataGb?: boolean
@@ -876,6 +936,8 @@ export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   iccid?: boolean
   qrCodeUrl?: boolean
   activationCode?: boolean
+  iosInstallUrl?: boolean
+  androidInstallUrl?: boolean
   totalDataGb?: boolean
   usedDataGb?: boolean
   remainingDataGb?: boolean
@@ -897,6 +959,8 @@ export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   iccid?: boolean
   qrCodeUrl?: boolean
   activationCode?: boolean
+  iosInstallUrl?: boolean
+  androidInstallUrl?: boolean
   totalDataGb?: boolean
   usedDataGb?: boolean
   remainingDataGb?: boolean
@@ -918,6 +982,8 @@ export type OrderSelectScalar = {
   iccid?: boolean
   qrCodeUrl?: boolean
   activationCode?: boolean
+  iosInstallUrl?: boolean
+  androidInstallUrl?: boolean
   totalDataGb?: boolean
   usedDataGb?: boolean
   remainingDataGb?: boolean
@@ -926,7 +992,7 @@ export type OrderSelectScalar = {
   createdAt?: boolean
 }
 
-export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "customer" | "customerId" | "productId" | "payment" | "fulfillment" | "esimStatus" | "providerOrderId" | "iccid" | "qrCodeUrl" | "activationCode" | "totalDataGb" | "usedDataGb" | "remainingDataGb" | "expiresAt" | "lastUsageSyncAt" | "createdAt", ExtArgs["result"]["order"]>
+export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "customer" | "customerId" | "productId" | "payment" | "fulfillment" | "esimStatus" | "providerOrderId" | "iccid" | "qrCodeUrl" | "activationCode" | "iosInstallUrl" | "androidInstallUrl" | "totalDataGb" | "usedDataGb" | "remainingDataGb" | "expiresAt" | "lastUsageSyncAt" | "createdAt", ExtArgs["result"]["order"]>
 export type OrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   customerAccount?: boolean | Prisma.Order$customerAccountArgs<ExtArgs>
 }
@@ -954,6 +1020,8 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     iccid: string | null
     qrCodeUrl: string | null
     activationCode: string | null
+    iosInstallUrl: string | null
+    androidInstallUrl: string | null
     totalDataGb: number | null
     usedDataGb: number | null
     remainingDataGb: number | null
@@ -1395,6 +1463,8 @@ export interface OrderFieldRefs {
   readonly iccid: Prisma.FieldRef<"Order", 'String'>
   readonly qrCodeUrl: Prisma.FieldRef<"Order", 'String'>
   readonly activationCode: Prisma.FieldRef<"Order", 'String'>
+  readonly iosInstallUrl: Prisma.FieldRef<"Order", 'String'>
+  readonly androidInstallUrl: Prisma.FieldRef<"Order", 'String'>
   readonly totalDataGb: Prisma.FieldRef<"Order", 'Float'>
   readonly usedDataGb: Prisma.FieldRef<"Order", 'Float'>
   readonly remainingDataGb: Prisma.FieldRef<"Order", 'Float'>

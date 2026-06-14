@@ -68,7 +68,9 @@ model Order {
   iccid           String?
   qrCodeUrl       String?
   activationCode  String?
-
+  iosInstallUrl     String?
+  androidInstallUrl String? 
+  
   totalDataGb     Float?
   usedDataGb      Float?
   remainingDataGb Float?

@@ -70,9 +70,7 @@ export default async function CustomerDashboardPage() {
               Customer Dashboard
             </p>
 
-            <h1 className="mt-2 text-4xl font-bold">
-              Your eSIMs
-            </h1>
+            <h1 className="mt-2 text-4xl font-bold">Your eSIMs</h1>
 
             <p className="mt-2 text-slate-600">
               Logged in as {customer.email}
@@ -100,9 +98,7 @@ export default async function CustomerDashboardPage() {
           <div className="mt-10 rounded-[2rem] bg-white p-10 shadow-xl shadow-blue-100">
             <div className="text-5xl">🌍</div>
 
-            <h2 className="mt-5 text-3xl font-bold">
-              No eSIM orders yet
-            </h2>
+            <h2 className="mt-5 text-3xl font-bold">No eSIM orders yet</h2>
 
             <p className="mt-3 text-slate-600">
               Once you buy an eSIM with this email address, it will appear here.
@@ -130,6 +126,13 @@ export default async function CustomerDashboardPage() {
                 order.usedDataGb !== null &&
                 order.usedDataGb !== undefined;
 
+              const hasInstallDetails =
+                order.iosInstallUrl ||
+                order.androidInstallUrl ||
+                order.qrCodeUrl ||
+                order.activationCode ||
+                order.iccid;
+
               return (
                 <div
                   key={order.id}
@@ -139,12 +142,24 @@ export default async function CustomerDashboardPage() {
                     <div>
                       <div className="flex flex-wrap items-center gap-3">
                         <span className="rounded-full bg-blue-100 px-4 py-2 text-sm font-bold text-blue-700">
-                          {order.esimStatus || order.fulfillment || "Order created"}
+                          {order.esimStatus ||
+                            order.fulfillment ||
+                            "Order created"}
                         </span>
 
                         <span className="rounded-full bg-slate-100 px-4 py-2 text-sm font-bold text-slate-700">
                           {order.payment}
                         </span>
+
+                        {hasInstallDetails ? (
+                          <span className="rounded-full bg-green-100 px-4 py-2 text-sm font-bold text-green-700">
+                            Installation ready
+                          </span>
+                        ) : (
+                          <span className="rounded-full bg-yellow-100 px-4 py-2 text-sm font-bold text-yellow-700">
+                            Installation pending
+                          </span>
+                        )}
                       </div>
 
                       <h2 className="mt-5 text-3xl font-bold">
@@ -170,7 +185,9 @@ export default async function CustomerDashboardPage() {
                             Validity
                           </p>
                           <p className="mt-2 text-xl font-bold">
-                            {product ? `${product.validityDays} days` : "Not available"}
+                            {product
+                              ? `${product.validityDays} days`
+                              : "Not available"}
                           </p>
                         </div>
 
@@ -203,11 +220,11 @@ export default async function CustomerDashboardPage() {
                             )}
                           </div>
 
-                          {order.lastUsageSyncAt && (
+                          {order.lastUsageSyncAt ? (
                             <p className="text-sm text-slate-500">
                               Updated {formatDate(order.lastUsageSyncAt)}
                             </p>
-                          )}
+                          ) : null}
                         </div>
 
                         <div className="mt-4 h-3 overflow-hidden rounded-full bg-slate-200">
@@ -219,29 +236,35 @@ export default async function CustomerDashboardPage() {
                           />
                         </div>
 
-                        {hasUsageData && (
+                        {hasUsageData ? (
                           <p className="mt-3 text-sm font-semibold text-slate-600">
                             Remaining: {formatGb(order.remainingDataGb)}
                           </p>
-                        )}
+                        ) : null}
                       </div>
                     </div>
 
                     <div className="rounded-[2rem] bg-slate-950 p-6 text-white">
-                      <h3 className="text-2xl font-bold">
-                        Manage eSIM
-                      </h3>
+                      <h3 className="text-2xl font-bold">Manage eSIM</h3>
 
                       <p className="mt-3 text-slate-300">
-                        Buy more data or view activation details for this eSIM.
+                        View activation details, install links, usage and future
+                        top-ups for this eSIM.
                       </p>
 
                       <div className="mt-6 space-y-3">
                         <a
+                          href={`/customer/orders/${order.id}`}
+                          className="block rounded-2xl bg-blue-600 px-5 py-4 text-center font-bold text-white"
+                        >
+                          View eSIM details
+                        </a>
+
+                        <a
                           href={`/?country=${encodeURIComponent(
                             product?.country || ""
                           )}`}
-                          className="block rounded-2xl bg-blue-600 px-5 py-4 text-center font-bold text-white"
+                          className="block rounded-2xl bg-white/10 px-5 py-4 text-center font-bold text-white"
                         >
                           Buy more data
                         </a>
@@ -258,28 +281,17 @@ export default async function CustomerDashboardPage() {
                         <p className="text-sm text-slate-400">
                           Provider Order ID
                         </p>
-                        <p className="mt-1 break-all font-mono text-xs">
-                          {order.providerOrderId || "Not synced yet"}
+                        <p className="mt-1 break-all font-mono text-sm font-bold">
+                          {order.providerOrderId || "Not available yet"}
                         </p>
                       </div>
 
                       <div className="mt-4 rounded-2xl bg-white/10 p-4">
-                        <p className="text-sm text-slate-400">
-                          ICCID
-                        </p>
-                        <p className="mt-1 break-all font-mono text-xs">
+                        <p className="text-sm text-slate-400">ICCID</p>
+                        <p className="mt-1 break-all font-mono text-sm font-bold">
                           {order.iccid || "Not available yet"}
                         </p>
                       </div>
-
-                      {order.qrCodeUrl && (
-                        <a
-                          href={order.qrCodeUrl}
-                          className="mt-4 block rounded-2xl bg-white px-5 py-4 text-center font-bold text-slate-950"
-                        >
-                          View QR Code
-                        </a>
-                      )}
                     </div>
                   </div>
                 </div>

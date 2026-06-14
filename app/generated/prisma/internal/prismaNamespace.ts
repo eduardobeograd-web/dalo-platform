@@ -877,6 +877,8 @@ export const OrderScalarFieldEnum = {
   iccid: 'iccid',
   qrCodeUrl: 'qrCodeUrl',
   activationCode: 'activationCode',
+  iosInstallUrl: 'iosInstallUrl',
+  androidInstallUrl: 'androidInstallUrl',
   totalDataGb: 'totalDataGb',
   usedDataGb: 'usedDataGb',
   remainingDataGb: 'remainingDataGb',
