@@ -77,12 +77,19 @@ export default async function CustomerDashboardPage() {
             </p>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
             <a
               href="/"
               className="rounded-2xl bg-blue-600 px-6 py-4 font-bold text-white shadow-lg shadow-blue-200"
             >
               Buy new eSIM
+            </a>
+
+            <a
+              href="/customer/support"
+              className="rounded-2xl border border-slate-300 bg-white px-6 py-4 font-bold text-slate-700"
+            >
+              Support
             </a>
 
             <a
@@ -115,6 +122,7 @@ export default async function CustomerDashboardPage() {
           <div className="mt-10 grid gap-6">
             {orders.map((order) => {
               const product = productById.get(order.productId);
+
               const usagePercent = getUsagePercent(
                 order.totalDataGb,
                 order.usedDataGb
@@ -173,8 +181,6 @@ export default async function CustomerDashboardPage() {
                       <p className="mt-2 font-mono text-sm font-bold text-slate-500">
                         Order Number: {order.orderNumber || order.id}
                       </p>
-
-                    
 
                       <div className="mt-6 grid gap-4 md:grid-cols-3">
                         <div className="rounded-2xl bg-slate-50 p-5">
@@ -267,6 +273,13 @@ export default async function CustomerDashboardPage() {
                         </a>
 
                         <a
+                          href={`/customer/support?orderId=${order.id}`}
+                          className="block rounded-2xl bg-white/10 px-5 py-4 text-center font-bold text-white"
+                        >
+                          Get help
+                        </a>
+
+                        <a
                           href={`/?country=${encodeURIComponent(
                             product?.country || ""
                           )}`}
@@ -285,17 +298,17 @@ export default async function CustomerDashboardPage() {
 
                       <div className="mt-6 rounded-2xl bg-white/10 p-4">
                         <p className="text-sm text-slate-400">
-                          Provider Order ID
+                          DALO Order Number
                         </p>
                         <p className="mt-1 break-all font-mono text-sm font-bold">
-                          {order.providerOrderId || "Not available yet"}
+                          {order.orderNumber || "Not assigned yet"}
                         </p>
                       </div>
 
                       <div className="mt-4 rounded-2xl bg-white/10 p-4">
                         <p className="text-sm text-slate-400">ICCID</p>
                         <p className="mt-1 break-all font-mono text-sm font-bold">
-                          {order.iccid || "Not available yet"}
+                          {order.iccid || "Not assigned yet"}
                         </p>
                       </div>
                     </div>
