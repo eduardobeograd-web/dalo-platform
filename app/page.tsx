@@ -152,7 +152,7 @@ export default function Home() {
       {/* NAV */}
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
         <a href="/" className="flex items-center">
-          <img src="/dalo-logo.png" alt="DALO" className="h-16 w-auto" />
+          <img src="/dalo-logo.png" alt="DALO" className="h-40 w-auto" />
         </a>
 
         <div className="hidden gap-8 text-sm font-medium text-slate-600 md:flex">
@@ -177,8 +177,8 @@ export default function Home() {
               Travel eSIM Recommendation Engine
             </div>
 
-            <h1 className="mb-6 max-w-3xl text-5xl font-bold leading-tight tracking-tight text-slate-950 md:text-7xl">
-              Smarter travel starts here.
+              <h1 className="mb-7 max-w-3xl text-6xl font-bold leading-tight tracking-tight text-slate-950 md:text-8xl">
+                Smarter travel starts here.
             </h1>
 
             <p className="mb-8 max-w-2xl text-xl leading-relaxed text-slate-600">
