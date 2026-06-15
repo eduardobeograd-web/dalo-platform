@@ -86,6 +86,15 @@ export default async function ResultPage({
     );
   }
 
+  const hasUpsell =
+    upsell &&
+    upsell.id !== plan.id &&
+    upsell.sellPrice >= plan.sellPrice;
+
+  const upsellPriceDifference = hasUpsell
+    ? upsell.sellPrice - plan.sellPrice
+    : 0;
+
   return (
     <main className="min-h-screen bg-[#F6F8FF] text-slate-900">
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
@@ -196,7 +205,7 @@ export default async function ResultPage({
               </div>
             </div>
 
-            <div className="mt-9 flex items-end gap-4">
+            <div className="mt-9 flex flex-wrap items-end gap-4">
               <div className="text-5xl font-bold text-slate-950">
                 {formatPrice(plan.sellPrice)}
               </div>
@@ -212,64 +221,126 @@ export default async function ResultPage({
               </div>
             </div>
 
-            <a
-             href={`/checkout?productId=${plan.id}`}
-            className="mt-8 block w-full rounded-2xl bg-blue-600 p-5 text-center text-lg font-bold text-white shadow-xl shadow-blue-200 transition hover:bg-blue-700"
-            >   
-            Buy Now →
-            </a>
+            {hasUpsell ? (
+              <div className="mt-8 rounded-[2rem] border-2 border-blue-200 bg-blue-50 p-5 shadow-xl shadow-blue-100">
+                <div className="mb-4 flex items-center justify-between gap-3">
+                  <div>
+                    <div className="text-sm font-bold uppercase tracking-wide text-blue-700">
+                      Recommended upgrade
+                    </div>
 
-
-
-
-            <p className="mt-4 text-center text-sm text-slate-500">
-              Instant delivery after purchase. No hidden fees.
-            </p>
-          </div>
-        </div>
-
-        {upsell && (
-          <div className="mt-8 grid gap-6 md:grid-cols-[1fr_360px]">
-            <div className="rounded-[2rem] bg-white p-7 shadow-lg shadow-blue-50">
-              <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
-                <div>
-                  <div className="mb-2 text-sm font-bold uppercase tracking-wide text-blue-600">
-                    Optional upgrade
+                    <h3 className="mt-1 text-2xl font-bold text-slate-950">
+                      Choose your data package
+                    </h3>
                   </div>
 
-                  <h3 className="text-2xl font-bold text-slate-950">
-                    Need more freedom?
-                  </h3>
-
-                  <p className="mt-2 text-slate-600">
-                    Upgrade to {upsell.name} with {upsell.data} for{" "}
-                    {formatPrice(upsell.sellPrice)}.
-                  </p>
+                  <div className="hidden rounded-full bg-blue-600 px-4 py-2 text-sm font-bold text-white sm:block">
+                    Best value
+                  </div>
                 </div>
 
-                <button className="rounded-xl border border-blue-600 px-6 py-3 font-bold text-blue-600 transition hover:bg-blue-50">
-                  Upgrade Plan
-                </button>
+                <div className="grid gap-4">
+                  <a
+                    href={`/checkout?productId=${plan.id}`}
+                    className="block rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-blue-400 hover:bg-blue-50"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <div className="text-sm font-bold text-slate-500">
+                          Recommended plan
+                        </div>
+
+                        <div className="mt-1 text-xl font-bold text-slate-950">
+                          {plan.name}
+                        </div>
+
+                        <div className="mt-1 font-semibold text-blue-600">
+                          {plan.data} / {plan.validityDays} Days
+                        </div>
+                      </div>
+
+                      <div className="text-right">
+                        <div className="text-2xl font-bold text-slate-950">
+                          {formatPrice(plan.sellPrice)}
+                        </div>
+
+                        <div className="mt-1 text-sm font-semibold text-slate-500">
+                          Continue
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+
+                  <a
+                    href={`/checkout?productId=${upsell.id}`}
+                    className="block rounded-2xl border-2 border-blue-600 bg-blue-600 p-5 text-white shadow-xl shadow-blue-200 transition hover:bg-blue-700"
+                  >
+                    <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+                      <div>
+                        <div className="inline-flex rounded-full bg-white px-3 py-1 text-xs font-bold text-blue-700">
+                          Upgrade recommended
+                        </div>
+
+                        <div className="mt-3 text-2xl font-bold">
+                          {upsell.name}
+                        </div>
+
+                        <div className="mt-1 font-semibold text-blue-100">
+                          {upsell.data} / {upsell.validityDays} Days
+                        </div>
+
+                        <p className="mt-3 text-sm leading-relaxed text-blue-100">
+                          More data for maps, social media, video calls,
+                          hotspot and fewer worries while traveling.
+                        </p>
+                      </div>
+
+                      <div className="shrink-0 text-left sm:text-right">
+                        <div className="text-3xl font-bold">
+                          {formatPrice(upsell.sellPrice)}
+                        </div>
+
+                        {upsellPriceDifference > 0 && (
+                          <div className="mt-1 text-sm font-bold text-blue-100">
+                            only +{formatPrice(upsellPriceDifference)}
+                          </div>
+                        )}
+
+                        <div className="mt-4 rounded-xl bg-white px-4 py-3 text-center font-bold text-blue-700">
+                          Upgrade →
+                        </div>
+                      </div>
+                    </div>
+                  </a>
+                </div>
+
+                <p className="mt-4 text-center text-sm text-slate-600">
+                  Instant delivery after purchase. No hidden fees.
+                </p>
               </div>
-            </div>
+            ) : (
+              <>
+                <a
+                  href={`/checkout?productId=${plan.id}`}
+                  className="mt-8 block w-full rounded-2xl bg-blue-600 p-5 text-center text-lg font-bold text-white shadow-xl shadow-blue-200 transition hover:bg-blue-700"
+                >
+                  Buy recommended plan →
+                </a>
 
-            <div className="rounded-[2rem] bg-slate-950 p-7 text-white shadow-lg">
-              <div className="text-3xl">✓</div>
-
-              <h3 className="mt-4 text-xl font-bold">Why this plan?</h3>
-
-              <p className="mt-2 text-slate-300">
-                It matches your selected destination, travel duration and usage
-                profile using DALO’s recommendation engine.
-              </p>
-            </div>
+                <p className="mt-4 text-center text-sm text-slate-500">
+                  Instant delivery after purchase. No hidden fees.
+                </p>
+              </>
+            )}
           </div>
-        )}
+        </div>
 
         <div className="mt-10 grid gap-6 md:grid-cols-3">
           <div className="rounded-[2rem] bg-white p-7 shadow-lg shadow-blue-50">
             <div className="text-3xl">⚡</div>
+
             <h3 className="mt-4 font-bold">Instant delivery</h3>
+
             <p className="mt-2 text-slate-600">
               Receive your eSIM digitally after purchase.
             </p>
@@ -277,7 +348,9 @@ export default async function ResultPage({
 
           <div className="rounded-[2rem] bg-white p-7 shadow-lg shadow-blue-50">
             <div className="text-3xl">🌍</div>
+
             <h3 className="mt-4 font-bold">Travel-ready coverage</h3>
+
             <p className="mt-2 text-slate-600">
               Built for international travel and quick activation.
             </p>
@@ -285,7 +358,9 @@ export default async function ResultPage({
 
           <div className="rounded-[2rem] bg-white p-7 shadow-lg shadow-blue-50">
             <div className="text-3xl">🔒</div>
+
             <h3 className="mt-4 font-bold">Secure checkout</h3>
+
             <p className="mt-2 text-slate-600">
               Fast and secure payment flow prepared for Stripe.
             </p>
