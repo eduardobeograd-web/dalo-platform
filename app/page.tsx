@@ -126,10 +126,10 @@ export default function Home() {
         </div>
 
         <a
-          href="#quiz"
-          className="rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700"
+          href="/customer/login"
+          className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-blue-700 shadow-lg shadow-blue-100 ring-1 ring-blue-100 transition hover:bg-blue-50"
         >
-          Find my eSIM
+          Customer login
         </a>
       </nav>
 
