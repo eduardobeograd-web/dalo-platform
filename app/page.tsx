@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 function DaloWordmark({ className = "h-6" }: { className?: string }) {
   return (
     <img
-      src="/dalo-wordmark.png"
+      src="/dalo-logo-horizontal.png"
       alt="DALO"
       className={`inline-block w-auto align-[-0.15em] ${className}`}
     />
@@ -116,7 +116,7 @@ export default function Home() {
       {/* NAV */}
       <nav className="relative z-10 mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
         <a href="/" className="flex items-center">
-          <img src="/dalo-logo.png" alt="DALO" className="h-24 w-auto" />
+          <img src="/dalo-logo-horizontal.png" alt="DALO" className="h-14 w-auto" />
         </a>
 
         <div className="hidden gap-8 text-sm font-medium text-slate-600 md:flex">
@@ -833,7 +833,7 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-6 py-16">
           <div className="grid gap-10 md:grid-cols-4">
             <div>
-              <img src="/dalo-logo.png" alt="DALO" className="h-20 w-auto" />
+              <img src="/dalo-logo-horizontal.png" alt="DALO" className="h-20 w-auto" />
 
               <p className="mt-4 text-slate-600">
                 The travel eSIM recommendation engine.

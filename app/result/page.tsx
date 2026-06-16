@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { getDaloRecommendation } from "../../lib/recommendation";
+import TravelTicketCard from "../../components/result/TravelTicketCard";
 
 function formatPrice(value: number) {
   return `€${value.toFixed(2)}`;
@@ -17,6 +18,75 @@ function getBadge(usageFit: string) {
   if (usageFit === "power") return "Best for heavy use";
   if (usageFit === "long_stay") return "Best for long trips";
   return "Most popular";
+}
+
+function getDestinationFlag(destination: string) {
+  const flags: Record<string, string> = {
+    Europe: "🇪🇺",
+    Spain: "🇪🇸",
+    Italy: "🇮🇹",
+    Japan: "🇯🇵",
+    Thailand: "🇹🇭",
+    "United States": "🇺🇸",
+    "United States of America": "🇺🇸",
+    "United Kingdom": "🇬🇧",
+    Germany: "🇩🇪",
+    France: "🇫🇷",
+    Portugal: "🇵🇹",
+    Greece: "🇬🇷",
+    Turkey: "🇹🇷",
+    Switzerland: "🇨🇭",
+    Austria: "🇦🇹",
+    Netherlands: "🇳🇱",
+    Croatia: "🇭🇷",
+    Serbia: "🇷🇸",
+    Montenegro: "🇲🇪",
+    Albania: "🇦🇱",
+    Dubai: "🇦🇪",
+    "United Arab Emirates": "🇦🇪",
+  };
+
+  return flags[destination] || "🌍";
+}
+
+function getDestinationImage(destination: string) {
+  const images: Record<string, string> = {
+    Europe:
+      "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?q=80&w=1400&auto=format&fit=crop",
+    Spain:
+      "https://images.unsplash.com/photo-1543783207-ec64e4d95325?q=80&w=1400&auto=format&fit=crop",
+    Italy:
+      "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?q=80&w=1400&auto=format&fit=crop",
+    Japan:
+      "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=1400&auto=format&fit=crop",
+    Thailand:
+      "https://images.unsplash.com/photo-1508009603885-50cf7c579365?q=80&w=1400&auto=format&fit=crop",
+    "United States":
+      "https://images.unsplash.com/photo-1485738422979-f5c462d49f74?q=80&w=1400&auto=format&fit=crop",
+    "United States of America":
+      "https://images.unsplash.com/photo-1485738422979-f5c462d49f74?q=80&w=1400&auto=format&fit=crop",
+    "United Kingdom":
+      "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=1400&auto=format&fit=crop",
+    Germany:
+      "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?q=80&w=1400&auto=format&fit=crop",
+    France:
+      "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=1400&auto=format&fit=crop",
+    Portugal:
+      "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?q=80&w=1400&auto=format&fit=crop",
+    Greece:
+      "https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=1400&auto=format&fit=crop",
+    Turkey:
+      "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?q=80&w=1400&auto=format&fit=crop",
+    Dubai:
+      "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=1400&auto=format&fit=crop",
+    "United Arab Emirates":
+      "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=1400&auto=format&fit=crop",
+  };
+
+  return (
+    images[destination] ||
+    "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1400&auto=format&fit=crop"
+  );
 }
 
 export default async function ResultPage({
@@ -51,7 +121,7 @@ export default async function ResultPage({
               alt="DALO"
               width={180}
               height={80}
-              className="h-16 w-auto"
+              className="h-20 w-auto"
               priority
             />
           </a>
@@ -100,11 +170,11 @@ export default async function ResultPage({
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
         <a href="/">
           <Image
-            src="/dalo-logo.png"
+            src="/dalo-logo-horizontal.png"
             alt="DALO"
-            width={180}
+            width={260}
             height={80}
-            className="h-16 w-auto"
+            className="h-14 w-auto"
             priority
           />
         </a>
@@ -126,87 +196,47 @@ export default async function ResultPage({
         </div>
       </nav>
 
-      <section className="mx-auto max-w-7xl px-6 py-10">
-        <div className="mb-10 text-center">
-          <div className="mb-5 inline-block rounded-full bg-blue-100 px-4 py-2 text-sm font-semibold text-blue-700">
-            Best match found
+      <section className="mx-auto max-w-7xl px-6 pb-10 pt-4">
+        <div className="mb-6 text-center">
+          <div className="inline-flex items-center gap-3 rounded-full bg-white px-5 py-3 text-sm font-bold text-slate-800 shadow-lg shadow-blue-100 ring-1 ring-blue-100">
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-green-500 text-white">
+              ✓
+            </span>
+            <span>Your recommendation is ready</span>
           </div>
-
-          <h1 className="text-5xl font-bold tracking-tight text-slate-950 md:text-6xl">
-            Your perfect eSIM
-          </h1>
-
-          <p className="mx-auto mt-5 max-w-2xl text-xl leading-relaxed text-slate-600">
-            Based on your destination, trip length and usage style, DALO found
-            the best matching product from your database.
-          </p>
         </div>
 
-        <div className="grid overflow-hidden rounded-[2.5rem] bg-white shadow-2xl shadow-blue-100 lg:grid-cols-[1fr_1.1fr]">
-          <div className="relative min-h-[420px]">
-            <img
-              src={plan.image}
-              alt={plan.name}
-              className="h-full min-h-[420px] w-full object-cover"
+        <div className="grid overflow-hidden rounded-[2.5rem] bg-white shadow-2xl shadow-blue-100 lg:grid-cols-[0.9fr_1.1fr]">
+          <div className="relative min-h-[360px]">
+            <TravelTicketCard
+              country={country}
+              planName={plan.name}
+              data={plan.data}
+              validityDays={plan.validityDays}
+              usageLabel={getFitLabel(type)}
             />
-
-            <div className="absolute left-6 top-6 rounded-full bg-white/90 px-4 py-2 text-sm font-bold text-blue-700 backdrop-blur">
-              {getBadge(plan.usageFit)}
-            </div>
-
-            <div className="absolute bottom-6 left-6 right-6 rounded-[2rem] bg-white/90 p-5 backdrop-blur">
-              <div className="text-sm font-semibold text-slate-500">
-                Recommended for
-              </div>
-              <div className="mt-1 text-xl font-bold text-slate-950">
-                {getFitLabel(type)}
-              </div>
-            </div>
           </div>
 
-          <div className="p-8 md:p-12">
-            <p className="mb-3 text-sm font-bold uppercase tracking-wide text-blue-600">
-              DALO Recommendation Engine
+          <div className="p-6 md:p-8">
+            <p className="mb-2 text-sm font-bold uppercase tracking-wide text-blue-600">
+              Recommended eSIM
             </p>
 
-            <h2 className="text-4xl font-bold text-slate-950 md:text-5xl">
-              {plan.name}
+            <h2 className="text-2xl font-bold text-slate-950 md:text-3xl">
+              Best eSIM for your trip
             </h2>
 
-            <p className="mt-4 text-3xl font-bold text-blue-600">
+            <div className="mt-4 inline-flex rounded-2xl bg-blue-50 px-5 py-3 text-xl font-black text-blue-700">
               {plan.data} / {plan.validityDays} Days
-            </p>
-
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-slate-600">
-              {plan.description}
-            </p>
-
-            <div className="mt-8 grid gap-4 sm:grid-cols-2">
-              <div className="rounded-2xl bg-slate-50 p-5">
-                <div className="text-sm text-slate-500">Destination</div>
-                <div className="mt-1 font-bold">{country}</div>
-              </div>
-
-              <div className="rounded-2xl bg-slate-50 p-5">
-                <div className="text-sm text-slate-500">Usage</div>
-                <div className="mt-1 font-bold">{plan.usageFit}</div>
-              </div>
-
-              <div className="rounded-2xl bg-slate-50 p-5">
-                <div className="text-sm text-slate-500">Provider ID</div>
-                <div className="mt-1 break-all font-mono text-xs font-bold">
-                  {plan.providerProductId}
-                </div>
-              </div>
-
-              <div className="rounded-2xl bg-slate-50 p-5">
-                <div className="text-sm text-slate-500">Delivery</div>
-                <div className="mt-1 font-bold">Instant QR Code</div>
-              </div>
             </div>
 
-            <div className="mt-9 flex flex-wrap items-end gap-4">
-              <div className="text-5xl font-bold text-slate-950">
+            <div className="mt-5 rounded-2xl bg-slate-50 p-4">
+              <div className="text-sm text-slate-500">Destination</div>
+              <div className="mt-1 font-bold">{country}</div>
+            </div>
+
+            <div className="mt-6 flex flex-wrap items-end gap-4">
+              <div className="text-4xl font-bold text-slate-950">
                 {formatPrice(plan.sellPrice)}
               </div>
 
@@ -217,155 +247,68 @@ export default async function ResultPage({
               )}
 
               <div className="mb-1 rounded-full bg-green-100 px-3 py-1 text-sm font-bold text-green-700">
-                Today only
+                Best match
               </div>
             </div>
 
-            {hasUpsell ? (
-              <div className="mt-8 rounded-[2rem] border-2 border-blue-200 bg-blue-50 p-5 shadow-xl shadow-blue-100">
+            <div className="mt-6">
+              <a
+                href={`/checkout?productId=${plan.id}`}
+                className="block rounded-2xl bg-blue-600 px-6 py-4 text-center text-lg font-bold text-white shadow-xl shadow-blue-200 transition hover:bg-blue-700"
+              >
+                Continue with this plan →
+              </a>
+            </div>
+
+            {hasUpsell && (
+              <div className="mt-5 rounded-[2rem] border-2 border-blue-500 bg-gradient-to-br from-blue-600 to-blue-800 p-5 text-white shadow-2xl shadow-blue-200">
                 <div className="mb-4 flex items-center justify-between gap-3">
+                  <div className="rounded-full bg-white px-4 py-2 text-xs font-black uppercase tracking-wide text-blue-700">
+                    Hot deal
+                  </div>
+
+                  {upsellPriceDifference > 0 && (
+                    <div className="rounded-full bg-cyan-300 px-4 py-2 text-xs font-black uppercase tracking-wide text-blue-950">
+                      Only +{formatPrice(upsellPriceDifference)}
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
                   <div>
-                    <div className="text-sm font-bold uppercase tracking-wide text-blue-700">
-                      Recommended upgrade
-                    </div>
-
-                    <h3 className="mt-1 text-2xl font-bold text-slate-950">
-                      Choose your data package
+                    <h3 className="text-2xl font-black">
+                      More data, more safety
                     </h3>
+
+                    <div className="mt-2 text-lg font-bold text-blue-100">
+                      Upgrade to {upsell.data} / {upsell.validityDays} Days
+                    </div>
+
+                    <p className="mt-3 max-w-md text-sm leading-relaxed text-blue-100">
+                      Recommended if you use hotspot, video calls, navigation,
+                      social media or heavier travel days.
+                    </p>
                   </div>
 
-                  <div className="hidden rounded-full bg-blue-600 px-4 py-2 text-sm font-bold text-white sm:block">
-                    Best value
+                  <div className="shrink-0 text-left sm:text-right">
+                    <div className="text-3xl font-black">
+                      {formatPrice(upsell.sellPrice)}
+                    </div>
+
+                    <a
+                      href={`/checkout?productId=${upsell.id}`}
+                      className="mt-3 inline-block rounded-2xl bg-white px-5 py-3 text-sm font-black text-blue-700 shadow-lg transition hover:bg-blue-50"
+                    >
+                      Choose hot deal →
+                    </a>
                   </div>
                 </div>
-
-                <div className="grid gap-4">
-                  <a
-                    href={`/checkout?productId=${plan.id}`}
-                    className="block rounded-2xl border border-slate-200 bg-white p-5 transition hover:border-blue-400 hover:bg-blue-50"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <div className="text-sm font-bold text-slate-500">
-                          Recommended plan
-                        </div>
-
-                        <div className="mt-1 text-xl font-bold text-slate-950">
-                          {plan.name}
-                        </div>
-
-                        <div className="mt-1 font-semibold text-blue-600">
-                          {plan.data} / {plan.validityDays} Days
-                        </div>
-                      </div>
-
-                      <div className="text-right">
-                        <div className="text-2xl font-bold text-slate-950">
-                          {formatPrice(plan.sellPrice)}
-                        </div>
-
-                        <div className="mt-1 text-sm font-semibold text-slate-500">
-                          Continue
-                        </div>
-                      </div>
-                    </div>
-                  </a>
-
-                  <a
-                    href={`/checkout?productId=${upsell.id}`}
-                    className="block rounded-2xl border-2 border-blue-600 bg-blue-600 p-5 text-white shadow-xl shadow-blue-200 transition hover:bg-blue-700"
-                  >
-                    <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
-                      <div>
-                        <div className="inline-flex rounded-full bg-white px-3 py-1 text-xs font-bold text-blue-700">
-                          Upgrade recommended
-                        </div>
-
-                        <div className="mt-3 text-2xl font-bold">
-                          {upsell.name}
-                        </div>
-
-                        <div className="mt-1 font-semibold text-blue-100">
-                          {upsell.data} / {upsell.validityDays} Days
-                        </div>
-
-                        <p className="mt-3 text-sm leading-relaxed text-blue-100">
-                          More data for maps, social media, video calls,
-                          hotspot and fewer worries while traveling.
-                        </p>
-                      </div>
-
-                      <div className="shrink-0 text-left sm:text-right">
-                        <div className="text-3xl font-bold">
-                          {formatPrice(upsell.sellPrice)}
-                        </div>
-
-                        {upsellPriceDifference > 0 && (
-                          <div className="mt-1 text-sm font-bold text-blue-100">
-                            only +{formatPrice(upsellPriceDifference)}
-                          </div>
-                        )}
-
-                        <div className="mt-4 rounded-xl bg-white px-4 py-3 text-center font-bold text-blue-700">
-                          Upgrade →
-                        </div>
-                      </div>
-                    </div>
-                  </a>
-                </div>
-
-                <p className="mt-4 text-center text-sm text-slate-600">
-                  Instant delivery after purchase. No hidden fees.
-                </p>
               </div>
-            ) : (
-              <>
-                <a
-                  href={`/checkout?productId=${plan.id}`}
-                  className="mt-8 block w-full rounded-2xl bg-blue-600 p-5 text-center text-lg font-bold text-white shadow-xl shadow-blue-200 transition hover:bg-blue-700"
-                >
-                  Buy recommended plan →
-                </a>
-
-                <p className="mt-4 text-center text-sm text-slate-500">
-                  Instant delivery after purchase. No hidden fees.
-                </p>
-              </>
             )}
+
           </div>
         </div>
 
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
-          <div className="rounded-[2rem] bg-white p-7 shadow-lg shadow-blue-50">
-            <div className="text-3xl">⚡</div>
-
-            <h3 className="mt-4 font-bold">Instant delivery</h3>
-
-            <p className="mt-2 text-slate-600">
-              Receive your eSIM digitally after purchase.
-            </p>
-          </div>
-
-          <div className="rounded-[2rem] bg-white p-7 shadow-lg shadow-blue-50">
-            <div className="text-3xl">🌍</div>
-
-            <h3 className="mt-4 font-bold">Travel-ready coverage</h3>
-
-            <p className="mt-2 text-slate-600">
-              Built for international travel and quick activation.
-            </p>
-          </div>
-
-          <div className="rounded-[2rem] bg-white p-7 shadow-lg shadow-blue-50">
-            <div className="text-3xl">🔒</div>
-
-            <h3 className="mt-4 font-bold">Secure checkout</h3>
-
-            <p className="mt-2 text-slate-600">
-              Fast and secure payment flow prepared for Stripe.
-            </p>
-          </div>
-        </div>
       </section>
     </main>
   );
