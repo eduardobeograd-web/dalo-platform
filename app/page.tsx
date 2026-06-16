@@ -2,30 +2,16 @@
 
 import { useEffect, useState } from "react";
 
-const popularDestinations = [
-  "Germany",
-  "Spain",
-  "Italy",
-  "France",
-  "Portugal",
-  "Greece",
-  "Turkey",
-  "Thailand",
-  "Japan",
-  "United States of America",
-  "United Kingdom",
-];
-
-function getDestinationLabel(destination: string) {
-  const labels: Record<string, string> = {
-    "United States of America": "United States",
-    "Korea-Republic of": "South Korea",
-    VietNam: "Vietnam",
-    "Czech Republic": "Czech Republic",
-  };
-
-  return labels[destination] || destination;
+function DaloWordmark({ className = "h-6" }: { className?: string }) {
+  return (
+    <img
+      src="/dalo-wordmark.png"
+      alt="DALO"
+      className={`inline-block w-auto align-[-0.15em] ${className}`}
+    />
+  );
 }
+
 
 function getDestinationFlag(destination: string) {
   const flags: Record<string, string> = {
@@ -51,12 +37,35 @@ function getDestinationFlag(destination: string) {
     Albania: "🇦🇱",
     Dubai: "🇦🇪",
     "United Arab Emirates": "🇦🇪",
-    "Korea-Republic of": "🇰🇷",
-    VietNam: "🇻🇳",
-    "Czech Republic": "🇨🇿",
   };
 
   return flags[destination] || "🌍";
+}
+
+function getDestinationImage(destination: string) {
+  const images: Record<string, string> = {
+    Europe:
+      "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?q=80&w=1200&auto=format&fit=crop",
+    Spain:
+      "https://images.unsplash.com/photo-1543783207-ec64e4d95325?q=80&w=1200&auto=format&fit=crop",
+    Italy:
+      "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?q=80&w=1200&auto=format&fit=crop",
+    Japan:
+      "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=1200&auto=format&fit=crop",
+    Thailand:
+      "https://images.unsplash.com/photo-1508009603885-50cf7c579365?q=80&w=1200&auto=format&fit=crop",
+    "United States":
+      "https://images.unsplash.com/photo-1485738422979-f5c462d49f74?q=80&w=1200&auto=format&fit=crop",
+    "United States of America":
+      "https://images.unsplash.com/photo-1485738422979-f5c462d49f74?q=80&w=1200&auto=format&fit=crop",
+    "United Kingdom":
+      "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=1200&auto=format&fit=crop",
+  };
+
+  return (
+    images[destination] ||
+    "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop"
+  );
 }
 
 export default function Home() {
@@ -67,29 +76,27 @@ export default function Home() {
 
   useEffect(() => {
     async function loadDestinations() {
-      const response = await fetch("/api/destinations");
-      const data = await response.json();
+      try {
+        const response = await fetch("/api/destinations");
+        const data = await response.json();
 
-      if (Array.isArray(data.destinations)) {
-        setDestinations(data.destinations);
+        if (Array.isArray(data.destinations)) {
+          setDestinations(data.destinations);
+        }
+      } catch (error) {
+        console.error("Failed to load destinations", error);
       }
     }
 
     loadDestinations();
   }, []);
 
-  const normalizedCountry = country.trim().toLowerCase();
-
-  const matchedDestination =
-    destinations.find(
-      (destination) => destination.toLowerCase() === normalizedCountry
-    ) || "";
-
   const selectedDestinationIsAvailable =
-    normalizedCountry.length > 0 &&
-    (destinations.length === 0 || matchedDestination.length > 0);
+    country.trim() === "" ||
+    destinations.length === 0 ||
+    destinations.includes(country);
 
-  const selectedCountryForSearch = matchedDestination || country.trim();
+  const selectedCountryForSearch = country.trim() || "Europe";
 
   const searchingUrl = selectedDestinationIsAvailable
     ? `/searching?country=${encodeURIComponent(
@@ -97,62 +104,19 @@ export default function Home() {
       )}&days=${encodeURIComponent(days)}&type=${encodeURIComponent(userType)}`
     : "#quiz";
 
-  const popularAvailableDestinations = popularDestinations.filter(
-    (destination) =>
-      destinations.length === 0 || destinations.includes(destination)
-  );
-
   const availableDestinationCards =
-    popularAvailableDestinations.length > 0
-      ? popularAvailableDestinations
-      : destinations.slice(0, 9);
-
-  function getDestinationImage(destination: string) {
-    const images: Record<string, string> = {
-      Europe:
-        "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?q=80&w=1200&auto=format&fit=crop",
-      Spain:
-        "https://images.unsplash.com/photo-1543783207-ec64e4d95325?q=80&w=1200&auto=format&fit=crop",
-      Italy:
-        "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?q=80&w=1200&auto=format&fit=crop",
-      Japan:
-        "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=1200&auto=format&fit=crop",
-      Thailand:
-        "https://images.unsplash.com/photo-1508009603885-50cf7c579365?q=80&w=1200&auto=format&fit=crop",
-      "United States":
-        "https://images.unsplash.com/photo-1485738422979-f5c462d49f74?q=80&w=1200&auto=format&fit=crop",
-      "United States of America":
-        "https://images.unsplash.com/photo-1485738422979-f5c462d49f74?q=80&w=1200&auto=format&fit=crop",
-      "United Kingdom":
-        "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=1200&auto=format&fit=crop",
-      Germany:
-        "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?q=80&w=1200&auto=format&fit=crop",
-      France:
-        "https://images.unsplash.com/photo-1502602898536-47ad22581b52?q=80&w=1200&auto=format&fit=crop",
-      Portugal:
-        "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?q=80&w=1200&auto=format&fit=crop",
-      Greece:
-        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200&auto=format&fit=crop",
-      Turkey:
-        "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?q=80&w=1200&auto=format&fit=crop",
-    };
-
-    return (
-      images[destination] ||
-      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop"
-    );
-  }
-
-  function selectDestination(destination: string) {
-    setCountry(destination);
-  }
+    destinations.length > 0 ? destinations : ["Europe"];
 
   return (
-    <main className="min-h-screen bg-[#F6F8FF] text-slate-900">
+    <main className="relative min-h-screen overflow-hidden bg-[#F6F8FF] text-slate-900">
+      <div className="pointer-events-none absolute -left-24 top-24 h-80 w-80 rounded-full bg-blue-300/30 blur-3xl" />
+      <div className="pointer-events-none absolute right-[-120px] top-40 h-96 w-96 rounded-full bg-cyan-300/30 blur-3xl" />
+      <div className="pointer-events-none absolute left-1/3 top-[620px] h-72 w-72 rounded-full bg-indigo-200/40 blur-3xl" />
+
       {/* NAV */}
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
+      <nav className="relative z-10 mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
         <a href="/" className="flex items-center">
-          <img src="/dalo-logo.png" alt="DALO" className="h-40 w-auto" />
+          <img src="/dalo-logo.png" alt="DALO" className="h-24 w-auto" />
         </a>
 
         <div className="hidden gap-8 text-sm font-medium text-slate-600 md:flex">
@@ -170,138 +134,184 @@ export default function Home() {
       </nav>
 
       {/* HERO */}
-      <section className="mx-auto max-w-7xl px-6 pb-20 pt-8">
-        <div className="grid items-center gap-12 lg:grid-cols-[1fr_540px]">
+      <section className="relative z-10 mx-auto max-w-7xl px-6 pb-10 pt-4">
+        <div className="grid items-start gap-8 lg:grid-cols-[1fr_520px]">
           <div>
-            <div className="mb-6 inline-flex rounded-full bg-white px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm">
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-blue-700 shadow-lg shadow-blue-100 ring-1 ring-blue-100">
+              <span className="h-2 w-2 rounded-full bg-green-500" />
               Travel eSIM Recommendation Engine
             </div>
 
-              <h1 className="mb-7 max-w-3xl text-6xl font-bold leading-tight tracking-tight text-slate-950 md:text-8xl">
-                Smarter travel starts here.
-            </h1>
-
-            <p className="mb-8 max-w-2xl text-xl leading-relaxed text-slate-600">
-              Find the perfect eSIM for your trip in under 20 seconds. No
-              comparing plans. No guessing. Just the right recommendation.
-            </p>
-
-            <div className="mb-10 grid max-w-xl gap-4 sm:grid-cols-3">
-              <div className="rounded-2xl bg-white p-4 shadow-sm">
-                <div className="text-2xl">⚡</div>
-                <p className="mt-2 text-sm font-semibold">Instant delivery</p>
-              </div>
-
-              <div className="rounded-2xl bg-white p-4 shadow-sm">
-                <div className="text-2xl">🌍</div>
-                <p className="mt-2 text-sm font-semibold">
-                  Available destinations
-                </p>
-              </div>
-
-              <div className="rounded-2xl bg-white p-4 shadow-sm">
-                <div className="text-2xl">🎯</div>
-                <p className="mt-2 text-sm font-semibold">Smart match</p>
-              </div>
+            <div className="mb-6 max-w-4xl">
+              <h1 className="text-[clamp(2.7rem,5vw,4.9rem)] font-black leading-[0.95] tracking-[-0.055em] text-slate-950">
+                Find your travel eSIM{" "}
+                <span className="relative inline-block italic text-blue-600">
+                  in seconds.
+                  <span className="absolute -bottom-2 left-1 right-1 -z-10 h-3 -rotate-1 rounded-full bg-blue-200/70" />
+                </span>
+              </h1>
             </div>
 
-            <div className="overflow-hidden rounded-[2rem] bg-white shadow-2xl shadow-blue-100">
-              <img
-                src="https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?q=80&w=1600&auto=format&fit=crop"
-                alt="Travel destination"
-                className="h-72 w-full object-cover"
-              />
+            <p className="mb-7 max-w-3xl text-lg leading-relaxed text-slate-600 md:text-xl">
+              DALO compares available travel eSIM plans for your destination,
+              trip length and phone usage — then shows you the best match
+              without endless plan tables or confusing gigabyte choices.
+            </p>
+
+            <div className="overflow-hidden rounded-[2rem] border border-white bg-white/90 shadow-2xl shadow-blue-100 backdrop-blur">
+              <div className="grid gap-0 md:grid-cols-[0.95fr_1.05fr]">
+                <div className="bg-gradient-to-br from-blue-600 to-slate-950 p-6 text-white">
+                  <div className="text-sm font-bold uppercase tracking-wide text-blue-100">
+                    How DALO works
+                  </div>
+
+                  <h3 className="mt-3 text-3xl font-black leading-tight tracking-tight">
+                    One clear eSIM match.
+                  </h3>
+
+                  <p className="mt-4 text-base leading-relaxed text-blue-100">
+                    DALO compares plans using your destination, trip length and
+                    phone usage.
+                  </p>
+
+                  <div className="mt-6 rounded-[1.5rem] bg-white p-5 text-slate-950 shadow-xl">
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <div className="text-sm font-bold text-slate-500">
+                        Example result
+                      </div>
+
+                      <div className="rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-700">
+                        Best match
+                      </div>
+                    </div>
+
+                    <div className="text-2xl font-black">
+                      Europe Smart
+                    </div>
+
+                    <div className="mt-3 flex items-end justify-between gap-4">
+                      <div>
+                        <div className="text-4xl font-black tracking-tight text-blue-600">
+                          5GB
+                        </div>
+                        <div className="text-sm font-bold text-slate-500">
+                          15 Days · Everyday usage
+                        </div>
+                      </div>
+
+                      <div className="text-right">
+                        <div className="text-sm font-semibold text-blue-100/80">
+                          from
+                        </div>
+                        <div className="text-3xl font-black">
+                          €7.99
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-6">
+                  <div className="mb-5">
+                    <div className="text-sm font-bold uppercase tracking-wide text-blue-600">
+                      3 quick steps
+                    </div>
+
+                    <h4 className="mt-2 text-2xl font-black leading-tight text-slate-950">
+                      No plan tables. No guessing.
+                    </h4>
+                  </div>
+
+                  <div className="space-y-3">
+                    <div className="rounded-2xl bg-slate-50 p-4">
+                      <div className="text-sm font-bold text-blue-600">
+                        01
+                      </div>
+                      <div className="mt-1 font-bold text-slate-950">
+                        Choose destination
+                      </div>
+                      <p className="mt-1 text-sm text-slate-600">
+                        Pick where you are going.
+                      </p>
+                    </div>
+
+                    <div className="rounded-2xl bg-slate-50 p-4">
+                      <div className="text-sm font-bold text-blue-600">
+                        02
+                      </div>
+                      <div className="mt-1 font-bold text-slate-950">
+                        Tell us usage
+                      </div>
+                      <p className="mt-1 text-sm text-slate-600">
+                        Essential, Everyday or Power User.
+                      </p>
+                    </div>
+
+                    <div className="rounded-2xl bg-blue-50 p-4">
+                      <div className="text-sm font-bold text-blue-600">
+                        03
+                      </div>
+                      <div className="mt-1 font-bold text-slate-950">
+                        Get the best match
+                      </div>
+                      <p className="mt-1 text-sm text-slate-600">
+                        DALO shows the strongest plan first.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* QUIZ */}
           <div
             id="quiz"
-            className="rounded-[2rem] border border-white bg-white/95 p-6 shadow-2xl shadow-blue-100 backdrop-blur md:p-8"
+            className="rounded-[2rem] border border-white bg-white/95 p-5 shadow-2xl shadow-blue-200 ring-1 ring-blue-100 backdrop-blur md:p-7"
           >
-            <div className="mb-8">
+            <div className="mb-6">
               <p className="text-sm font-semibold text-blue-600">
                 FIND YOUR PLAN
               </p>
+
               <h2 className="mt-2 text-3xl font-bold text-slate-950">
                 Your trip. Your eSIM.
               </h2>
+
               <p className="mt-2 text-slate-500">
                 Answer 3 quick questions and we’ll recommend the best plan.
               </p>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-5">
               <div>
-                <label className="mb-3 block font-semibold">
+                <label className="mb-2 block font-semibold">
                   🌍 Where are you going?
                 </label>
 
-                <div className="mb-4">
-                  <p className="mb-3 text-sm font-semibold text-slate-500">
-                    Popular destinations
-                  </p>
-
-                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-                    {popularAvailableDestinations
-                      .slice(0, 9)
-                      .map((destination) => {
-                        const isSelected =
-                          selectedCountryForSearch === destination;
-
-                        return (
-                          <button
-                            key={destination}
-                            type="button"
-                            onClick={() => selectDestination(destination)}
-                            className={`rounded-2xl border px-3 py-3 text-left text-sm font-semibold transition ${
-                              isSelected
-                                ? "border-blue-600 bg-blue-50 text-blue-700"
-                                : "border-slate-200 bg-white text-slate-700 hover:border-blue-400"
-                            }`}
-                          >
-                            <span className="mr-2">
-                              {getDestinationFlag(destination)}
-                            </span>
-                            {getDestinationLabel(destination)}
-                          </button>
-                        );
-                      })}
-                  </div>
-                </div>
-
                 <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 transition focus-within:border-blue-500 focus-within:bg-white">
                   <div className="text-3xl">
-                    {country
-                      ? getDestinationFlag(selectedCountryForSearch)
-                      : "🌍"}
+                    {getDestinationFlag(country || "Europe")}
                   </div>
 
                   <input
                     value={country}
-                    onChange={(e) => setCountry(e.target.value)}
+                    onChange={(event) => setCountry(event.target.value)}
                     list="available-destinations"
-                    placeholder="Search all destinations..."
+                    placeholder="Search destination..."
                     className="w-full bg-transparent outline-none"
                   />
 
                   <datalist id="available-destinations">
                     {destinations.map((destination) => (
                       <option key={destination} value={destination}>
-                        {getDestinationLabel(destination)}
+                        {getDestinationFlag(destination)} {destination}
                       </option>
                     ))}
                   </datalist>
                 </div>
 
-                {country.trim().length === 0 && (
-                  <p className="mt-2 text-sm text-slate-500">
-                    Choose a popular destination or search all available
-                    countries.
-                  </p>
-                )}
-
-                {country.trim().length > 0 && !selectedDestinationIsAvailable && (
+                {!selectedDestinationIsAvailable && (
                   <p className="mt-2 text-sm font-semibold text-red-600">
                     Please choose an available destination from the list.
                   </p>
@@ -309,11 +319,7 @@ export default function Home() {
 
                 {selectedDestinationIsAvailable && (
                   <p className="mt-2 text-sm text-slate-500">
-                    Selected:{" "}
-                    <span className="font-semibold text-slate-700">
-                      {getDestinationFlag(selectedCountryForSearch)}{" "}
-                      {getDestinationLabel(selectedCountryForSearch)}
-                    </span>
+                    Leave empty for Europe or choose an available destination.
                   </p>
                 )}
               </div>
@@ -325,7 +331,7 @@ export default function Home() {
 
                 <select
                   value={days}
-                  onChange={(e) => setDays(e.target.value)}
+                  onChange={(event) => setDays(event.target.value)}
                   className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 outline-none transition focus:border-blue-500 focus:bg-white"
                 >
                   <option value="1-3">1–3 Days</option>
@@ -368,11 +374,12 @@ export default function Home() {
                       onClick={() => setUserType(item.id)}
                       className={`flex items-center gap-4 rounded-2xl border p-4 text-left transition ${
                         userType === item.id
-                          ? "border-blue-600 bg-blue-50"
-                          : "border-slate-200 bg-white hover:border-blue-400"
+                          ? "border-blue-600 bg-blue-50 shadow-lg shadow-blue-100"
+                          : "border-blue-100 bg-white shadow-sm hover:border-blue-400 hover:bg-blue-50"
                       }`}
                     >
                       <div className="text-3xl">{item.icon}</div>
+
                       <div>
                         <div className="font-bold">
                           {item.title}
@@ -382,6 +389,7 @@ export default function Home() {
                             </span>
                           )}
                         </div>
+
                         <div className="text-sm text-slate-500">
                           {item.text}
                         </div>
@@ -394,18 +402,13 @@ export default function Home() {
               <a
                 href={searchingUrl}
                 aria-disabled={!selectedDestinationIsAvailable}
-                onClick={(event) => {
-                  if (!selectedDestinationIsAvailable) {
-                    event.preventDefault();
-                  }
-                }}
                 className={`block w-full rounded-2xl p-5 text-center text-lg font-bold shadow-xl transition ${
                   selectedDestinationIsAvailable
                     ? "bg-blue-600 text-white shadow-blue-200 hover:bg-blue-700"
                     : "cursor-not-allowed bg-slate-300 text-slate-500 shadow-none"
                 }`}
               >
-                Find My eSIM →
+                Show my best eSIM match →
               </a>
             </div>
           </div>
@@ -413,52 +416,175 @@ export default function Home() {
       </section>
 
       {/* HOW IT WORKS */}
-      <section id="how" className="mx-auto max-w-7xl px-6 py-24">
-        <div className="mb-16 text-center">
-          <h2 className="text-4xl font-bold text-slate-950">
-            How DALO works
+      <section id="how" className="relative z-10 mx-auto max-w-7xl px-6 py-16">
+        <div className="mb-12 max-w-3xl">
+          <div className="mb-4 inline-flex rounded-full bg-blue-100 px-4 py-2 text-sm font-bold text-blue-700">
+            HOW DALO WORKS
+          </div>
+
+          <h2 className="text-4xl font-black tracking-tight text-slate-950 md:text-5xl">
+            DALO estimates the best eSIM based on your real travel behavior.
           </h2>
-          <p className="mt-4 text-xl text-slate-600">
-            Three questions. One perfect eSIM recommendation.
+
+          <p className="mt-5 text-xl leading-relaxed text-slate-600">
+            Instead of showing you a long list of confusing eSIM plans, DALO
+            uses your destination, trip length and phone usage to calculate a
+            practical recommendation for your trip.
           </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
-          <div className="rounded-[2rem] bg-white p-8 shadow-lg shadow-blue-50">
-            <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-3xl">
-              🌍
+        <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
+          <div className="space-y-5">
+            <div className="rounded-[2rem] bg-white p-6 shadow-xl shadow-blue-100 ring-1 ring-blue-50">
+              <div className="grid gap-5 md:grid-cols-[160px_1fr]">
+                <img
+                  src="https://images.unsplash.com/photo-1526778548025-fa2f459cd5ce?q=80&w=900&auto=format&fit=crop"
+                  alt="Travel destination planning"
+                  className="h-40 w-full rounded-[1.5rem] object-cover md:h-full"
+                />
+
+                <div>
+                  <div className="text-sm font-bold uppercase tracking-wide text-blue-600">
+                    Step 01
+                  </div>
+
+                  <h3 className="mt-2 text-2xl font-bold text-slate-950">
+                    Destination and network need
+                  </h3>
+
+                  <p className="mt-3 leading-relaxed text-slate-600">
+                    A short city trip, a beach holiday and a business trip do
+                    not need the same data package. DALO starts with your
+                    destination and trip length to understand the basic travel
+                    situation.
+                  </p>
+                </div>
+              </div>
             </div>
-            <h3 className="mb-3 text-xl font-bold">Choose destination</h3>
-            <p className="text-slate-600">
-              Search and select one of the destinations currently available in
-              the DALO product database.
-            </p>
+
+            <div className="rounded-[2rem] bg-white p-6 shadow-xl shadow-blue-100 ring-1 ring-blue-50">
+              <div className="grid gap-5 md:grid-cols-[160px_1fr]">
+                <img
+                  src="https://images.unsplash.com/photo-1512428559087-560fa5ceab42?q=80&w=900&auto=format&fit=crop"
+                  alt="Phone usage while traveling"
+                  className="h-40 w-full rounded-[1.5rem] object-cover md:h-full"
+                />
+
+                <div>
+                  <div className="text-sm font-bold uppercase tracking-wide text-blue-600">
+                    Step 02
+                  </div>
+
+                  <h3 className="mt-2 text-2xl font-bold text-slate-950">
+                    Phone usage behavior
+                  </h3>
+
+                  <p className="mt-3 leading-relaxed text-slate-600">
+                    DALO asks how you actually use your phone: maps and
+                    messages, everyday social media, or heavier usage like
+                    streaming, hotspot and remote work. This helps estimate a
+                    realistic data range.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-[2rem] bg-white p-6 shadow-xl shadow-blue-100 ring-1 ring-blue-50">
+              <div className="grid gap-5 md:grid-cols-[160px_1fr]">
+                <img
+                  src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=900&auto=format&fit=crop"
+                  alt="Recommendation calculation"
+                  className="h-40 w-full rounded-[1.5rem] object-cover md:h-full"
+                />
+
+                <div>
+                  <div className="text-sm font-bold uppercase tracking-wide text-blue-600">
+                    Step 03
+                  </div>
+
+                  <h3 className="mt-2 text-2xl font-bold text-slate-950">
+                    Best match plus safer upgrade
+                  </h3>
+
+                  <p className="mt-3 leading-relaxed text-slate-600">
+                    DALO recommends the plan that looks like the best balance
+                    between price, duration and expected data usage. Because no
+                    estimate can guarantee your exact future usage, DALO can
+                    also show an optional upsell with more data or longer
+                    validity for extra safety.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div className="rounded-[2rem] bg-white p-8 shadow-lg shadow-blue-50">
-            <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-3xl">
-              📱
-            </div>
-            <h3 className="mb-3 text-xl font-bold">Describe usage</h3>
-            <p className="text-slate-600">
-              Essential, Everyday or Power User — no technical knowledge needed.
-            </p>
-          </div>
+          <div className="rounded-[2.5rem] bg-gradient-to-br from-blue-700 via-blue-800 to-slate-950 p-7 text-white shadow-2xl shadow-blue-200 lg:sticky lg:top-8">
+            <div className="mb-6 rounded-[2rem] bg-white/12 p-5 ring-1 ring-white/10">
+              <div className="text-sm font-bold uppercase tracking-wide text-blue-200">
+                Example logic
+              </div>
 
-          <div className="rounded-[2rem] bg-white p-8 shadow-lg shadow-blue-50">
-            <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-3xl">
-              🎯
+              <h3 className="mt-2 text-3xl font-black leading-tight">
+                8–14 days in Europe with everyday usage
+              </h3>
+
+              <p className="mt-4 leading-relaxed text-slate-300">
+                DALO may calculate that a 5GB plan is a strong match for normal
+                travel use like maps, WhatsApp calls, social media and browsing.
+              </p>
             </div>
-            <h3 className="mb-3 text-xl font-bold">Get your match</h3>
-            <p className="text-slate-600">
-              DALO recommends the plan that best fits your trip.
+
+            <div className="space-y-3">
+              <div className="rounded-2xl bg-white p-5 text-slate-950 shadow-xl shadow-blue-950/10">
+                <div className="mb-2 inline-flex rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-700">
+                  Best match
+                </div>
+
+                <div className="flex items-end justify-between gap-4">
+                  <div>
+                    <div className="text-2xl font-black">Europe Smart</div>
+                    <div className="mt-1 text-sm font-semibold text-slate-500">
+                      5GB / 15 Days
+                    </div>
+                  </div>
+
+                  <div className="text-3xl font-black text-blue-600">
+                    €7.99
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-cyan-200/60 bg-cyan-400/20 p-5 shadow-lg shadow-blue-950/10">
+                <div className="mb-2 inline-flex rounded-full bg-cyan-100 px-3 py-1 text-xs font-bold text-cyan-800">
+                  Optional safer choice
+                </div>
+
+                <div className="flex items-end justify-between gap-4">
+                  <div>
+                    <div className="text-2xl font-black">Europe Plus</div>
+                    <div className="mt-1 text-sm font-semibold text-cyan-100">
+                      More data for heavier usage
+                    </div>
+                  </div>
+
+                  <div className="text-3xl font-black">
+                    +€4
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <p className="mt-5 text-sm leading-relaxed text-blue-100/80">
+              DALO is a recommendation engine, not a guarantee. Your real data
+              usage can change depending on video calls, hotspot use, streaming,
+              app updates and network behavior.
             </p>
           </div>
         </div>
       </section>
 
       {/* RESULT PREVIEW */}
-      <section className="mx-auto max-w-7xl px-6 py-24">
+      <section className="relative z-10 mx-auto max-w-7xl px-6 py-14">
         <div className="grid items-center gap-10 lg:grid-cols-2">
           <div>
             <div className="mb-5 inline-block rounded-full bg-blue-100 px-4 py-2 text-sm font-bold text-blue-700">
@@ -477,7 +603,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="rounded-[2rem] bg-white p-6 shadow-2xl shadow-blue-100">
+          <div className="rounded-[2rem] bg-white p-6 shadow-2xl shadow-blue-100 ring-1 ring-blue-50">
             <img
               src="https://images.unsplash.com/photo-1499856871958-5b9627545d1a?q=80&w=1200&auto=format&fit=crop"
               alt="Europe travel"
@@ -491,6 +617,7 @@ export default function Home() {
             <h3 className="text-3xl font-bold text-slate-950">
               Europe Smart
             </h3>
+
             <p className="mt-2 text-2xl font-bold text-blue-600">
               5GB / 15 Days
             </p>
@@ -502,21 +629,25 @@ export default function Home() {
 
             <div className="mt-6 flex items-end gap-3">
               <div className="text-4xl font-bold">€7.99</div>
-              <div className="pb-1 text-slate-400 line-through">€12.99</div>
+              <div className="pb-1 text-blue-100/80 line-through">€12.99</div>
             </div>
           </div>
         </div>
       </section>
 
       {/* DESTINATIONS */}
-      <section id="destinations" className="mx-auto max-w-7xl px-6 py-24">
-        <div className="mb-16 text-center">
+      <section
+        id="destinations"
+        className="relative z-10 mx-auto max-w-7xl px-6 py-14"
+      >
+        <div className="mb-10 text-center">
           <h2 className="text-4xl font-bold text-slate-950">
-            Popular destinations
+            Available destinations
           </h2>
-          <p className="mt-4 text-xl text-slate-600">
-            Start with one of the most common travel destinations, or search all
-            available countries in the quiz.
+
+          <p className="mx-auto mt-4 max-w-2xl text-xl text-slate-600">
+            These destinations are currently available from active products in
+            the DALO database.
           </p>
         </div>
 
@@ -531,18 +662,21 @@ export default function Home() {
                   behavior: "smooth",
                 });
               }}
-              className="overflow-hidden rounded-[2rem] bg-white text-left shadow-lg shadow-blue-50 transition hover:-translate-y-1 hover:shadow-2xl"
+              className="overflow-hidden rounded-[2rem] bg-white text-left shadow-lg shadow-blue-50 ring-1 ring-blue-50 transition hover:-translate-y-1 hover:shadow-2xl"
             >
               <img
                 src={getDestinationImage(destination)}
-                alt={getDestinationLabel(destination)}
+                alt={destination}
                 className="h-44 w-full object-cover"
               />
+
               <div className="p-6">
-                <div className="text-4xl">{getDestinationFlag(destination)}</div>
-                <h3 className="mt-3 text-xl font-bold">
-                  {getDestinationLabel(destination)}
-                </h3>
+                <div className="text-4xl">
+                  {getDestinationFlag(destination)}
+                </div>
+
+                <h3 className="mt-3 text-xl font-bold">{destination}</h3>
+
                 <p className="mt-2 text-slate-600">
                   Find the right eSIM for your trip.
                 </p>
@@ -550,30 +684,26 @@ export default function Home() {
             </button>
           ))}
         </div>
-
-        {destinations.length > availableDestinationCards.length && (
-          <p className="mt-8 text-center text-sm text-slate-500">
-            More destinations are available through the search field in the
-            quiz.
-          </p>
-        )}
       </section>
 
       {/* TRAVELER TYPES */}
-      <section className="mx-auto max-w-7xl px-6 py-24">
-        <div className="mb-16 text-center">
+      <section className="relative z-10 mx-auto max-w-7xl px-6 py-14">
+        <div className="mb-10 text-center">
           <h2 className="text-4xl font-bold text-slate-950">
             Travelers don’t think in gigabytes.
           </h2>
-          <p className="mt-4 text-xl text-slate-600">
+
+          <p className="mx-auto mt-4 max-w-2xl text-xl text-slate-600">
             That’s why DALO asks how you actually use your phone.
           </p>
         </div>
 
         <div className="grid gap-6 md:grid-cols-3">
-          <div className="rounded-[2rem] bg-white p-8 shadow-lg shadow-blue-50">
+          <div className="rounded-[2rem] bg-white p-8 shadow-lg shadow-blue-50 ring-1 ring-blue-50">
             <div className="text-5xl">🗺</div>
+
             <h3 className="mt-5 text-2xl font-bold">Essential</h3>
+
             <p className="mt-3 text-slate-600">
               Maps, WhatsApp messages, email and light browsing.
             </p>
@@ -581,20 +711,24 @@ export default function Home() {
 
           <div className="rounded-[2rem] border-2 border-blue-600 bg-white p-8 shadow-2xl shadow-blue-100">
             <div className="text-5xl">📸</div>
+
             <h3 className="mt-5 text-2xl font-bold">
               Everyday{" "}
               <span className="rounded-full bg-blue-600 px-3 py-1 text-sm text-white">
                 Most popular
               </span>
             </h3>
+
             <p className="mt-3 text-slate-600">
               Social media, navigation, WhatsApp calls and daily usage.
             </p>
           </div>
 
-          <div className="rounded-[2rem] bg-white p-8 shadow-lg shadow-blue-50">
+          <div className="rounded-[2rem] bg-white p-8 shadow-lg shadow-blue-50 ring-1 ring-blue-50">
             <div className="text-5xl">🎥</div>
+
             <h3 className="mt-5 text-2xl font-bold">Power User</h3>
+
             <p className="mt-3 text-slate-600">
               Streaming, hotspot, remote work and video calls.
             </p>
@@ -603,13 +737,14 @@ export default function Home() {
       </section>
 
       {/* TRUST */}
-      <section className="mx-auto max-w-7xl px-6 py-24">
-        <div className="rounded-[2.5rem] bg-slate-950 p-10 text-white md:p-14">
+      <section className="relative z-10 mx-auto max-w-7xl px-6 py-14">
+        <div className="rounded-[2.5rem] bg-slate-950 p-10 text-white shadow-2xl shadow-slate-200 md:p-14">
           <div className="grid items-center gap-10 md:grid-cols-[1fr_1.2fr]">
             <div>
               <h2 className="text-4xl font-bold">
                 Built for travelers who want clarity.
               </h2>
+
               <p className="mt-4 text-lg text-slate-300">
                 DALO helps travelers stop guessing and start connected.
               </p>
@@ -622,13 +757,13 @@ export default function Home() {
               </div>
 
               <div className="rounded-3xl bg-white/10 p-6">
-                <div className="text-3xl font-bold">Instant</div>
-                <div className="mt-2 text-slate-300">Delivery</div>
+                <div className="text-3xl font-bold">Fast</div>
+                <div className="mt-2 text-slate-300">Travel decisions</div>
               </div>
 
               <div className="rounded-3xl bg-white/10 p-6">
-                <div className="text-3xl font-bold">24/7</div>
-                <div className="mt-2 text-slate-300">Support-ready</div>
+                <div className="text-3xl font-bold">Clear</div>
+                <div className="mt-2 text-slate-300">Plan matching</div>
               </div>
             </div>
           </div>
@@ -636,32 +771,35 @@ export default function Home() {
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-5xl px-6 py-24">
-        <div className="mb-16 text-center">
+      <section id="faq" className="relative z-10 mx-auto max-w-5xl px-6 py-14">
+        <div className="mb-10 text-center">
           <h2 className="text-4xl font-bold text-slate-950">
             Frequently asked questions
           </h2>
         </div>
 
         <div className="space-y-4">
-          <div className="rounded-2xl bg-white p-6 shadow-lg shadow-blue-50">
+          <div className="rounded-2xl bg-white p-6 shadow-lg shadow-blue-50 ring-1 ring-blue-50">
             <h3 className="mb-2 font-bold">What is an eSIM?</h3>
+
             <p className="text-slate-600">
               An eSIM is a digital SIM card that lets you activate mobile data
               without a physical SIM.
             </p>
           </div>
 
-          <div className="rounded-2xl bg-white p-6 shadow-lg shadow-blue-50">
+          <div className="rounded-2xl bg-white p-6 shadow-lg shadow-blue-50 ring-1 ring-blue-50">
             <h3 className="mb-2 font-bold">Can I keep my phone number?</h3>
+
             <p className="text-slate-600">
               Yes. Your physical SIM and your travel eSIM can work together on
               most modern phones.
             </p>
           </div>
 
-          <div className="rounded-2xl bg-white p-6 shadow-lg shadow-blue-50">
+          <div className="rounded-2xl bg-white p-6 shadow-lg shadow-blue-50 ring-1 ring-blue-50">
             <h3 className="mb-2 font-bold">How long does installation take?</h3>
+
             <p className="text-slate-600">
               Usually less than 2 minutes after purchase. You receive your eSIM
               digitally.
@@ -671,11 +809,12 @@ export default function Home() {
       </section>
 
       {/* FINAL CTA */}
-      <section className="mx-auto max-w-7xl px-6 py-24">
+      <section className="relative z-10 mx-auto max-w-7xl px-6 py-14">
         <div className="rounded-[2.5rem] bg-blue-600 p-10 text-center text-white shadow-2xl shadow-blue-200 md:p-16">
           <h2 className="text-4xl font-bold md:text-5xl">
             Ready to travel smarter?
           </h2>
+
           <p className="mx-auto mt-4 max-w-2xl text-lg text-blue-100">
             Find your perfect eSIM recommendation in under 20 seconds.
           </p>
@@ -690,11 +829,12 @@ export default function Home() {
       </section>
 
       {/* FOOTER */}
-      <footer className="border-t border-slate-200 bg-white">
+      <footer className="relative z-10 border-t border-slate-200 bg-white">
         <div className="mx-auto max-w-7xl px-6 py-16">
           <div className="grid gap-10 md:grid-cols-4">
             <div>
-              <img src="/dalo-logo.png" alt="DALO" className="h-16 w-auto" />
+              <img src="/dalo-logo.png" alt="DALO" className="h-20 w-auto" />
+
               <p className="mt-4 text-slate-600">
                 The travel eSIM recommendation engine.
               </p>
@@ -702,15 +842,17 @@ export default function Home() {
 
             <div>
               <h4 className="mb-4 font-bold">Destinations</h4>
+
               <div className="space-y-2 text-slate-600">
                 {availableDestinationCards.slice(0, 4).map((destination) => (
-                  <div key={destination}>{getDestinationLabel(destination)}</div>
+                  <div key={destination}>{destination}</div>
                 ))}
               </div>
             </div>
 
             <div>
               <h4 className="mb-4 font-bold">Support</h4>
+
               <div className="space-y-2 text-slate-600">
                 <div>FAQ</div>
                 <div>Contact</div>
@@ -720,6 +862,7 @@ export default function Home() {
 
             <div>
               <h4 className="mb-4 font-bold">Company</h4>
+
               <div className="space-y-2 text-slate-600">
                 <div>About</div>
                 <div>Privacy</div>
