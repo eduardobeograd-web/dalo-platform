@@ -33,7 +33,7 @@ export default function AdminShell({ children, activePage }: AdminShellProps) {
       <div className="border-b border-slate-200 bg-white px-4 py-4 md:hidden">
         <div className="mb-4 flex items-center justify-between">
           <a href="/">
-            <img src="/dalo-logo.png" alt="DALO" className="h-12 w-auto" />
+            <img src="/dalo-logo-horizontal.png" alt="DALO" className="h-12 w-auto" />
           </a>
 
           <a
@@ -66,9 +66,16 @@ export default function AdminShell({ children, activePage }: AdminShellProps) {
       </div>
 
       <div className="flex min-h-screen">
-        <aside className="sticky top-0 hidden h-screen w-72 shrink-0 overflow-y-auto border-r border-slate-200 bg-slate-950 p-6 text-white md:block">
-          <a href="/" className="mb-10 block">
-            <img src="/dalo-logo.png" alt="DALO" className="h-16 w-auto" />
+        <aside className="sticky top-0 hidden h-screen w-72 shrink-0 overflow-y-auto border-r border-slate-200 bg-white p-6 text-slate-900 shadow-xl shadow-blue-50 md:block">
+          <a
+            href="/"
+            className="mb-10 flex rounded-2xl bg-blue-50 px-4 py-4 ring-1 ring-blue-100"
+          >
+            <img
+              src="/dalo-logo-horizontal.png"
+              alt="DALO"
+              className="h-12 w-auto"
+            />
           </a>
 
           <nav className="space-y-2">
@@ -81,8 +88,8 @@ export default function AdminShell({ children, activePage }: AdminShellProps) {
                   href={item.href}
                   className={`block rounded-2xl px-5 py-4 ${
                     isActive
-                      ? "bg-blue-600 font-semibold text-white"
-                      : "text-slate-300 hover:bg-white/10"
+                      ? "bg-blue-600 font-bold text-white"
+                      : "font-bold text-black hover:bg-blue-50 hover:text-blue-700"
                   }`}
                 >
                   {item.label}

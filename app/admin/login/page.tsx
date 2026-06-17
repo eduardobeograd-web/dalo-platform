@@ -13,7 +13,7 @@ export default async function AdminLoginPage({
       <div className="w-full max-w-md rounded-[2rem] bg-white p-8 shadow-2xl shadow-blue-100">
         <div className="mb-8 text-center">
           <img
-            src="/dalo-logo.png"
+            src="/dalo-logo-horizontal.png"
             alt="DALO"
             className="mx-auto h-20 w-auto"
           />

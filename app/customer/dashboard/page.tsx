@@ -63,7 +63,7 @@ export default async function CustomerDashboardPage() {
         <nav className="rounded-[2rem] bg-white p-5 shadow-xl shadow-blue-100">
           <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
             <a href="/" className="inline-block">
-              <img src="/dalo-logo.png" alt="DALO" className="h-16 w-auto" />
+              <img src="/dalo-logo-horizontal.png" alt="DALO" className="h-16 w-auto" />
             </a>
 
             <div className="flex flex-wrap items-center gap-3">

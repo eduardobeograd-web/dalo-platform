@@ -119,7 +119,7 @@ export default async function ResultPage({
         <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
           <a href="/">
             <Image
-              src="/dalo-logo.png"
+              src="/dalo-logo-horizontal.png"
               alt="DALO"
               width={180}
               height={80}

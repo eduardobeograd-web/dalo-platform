@@ -92,12 +92,14 @@ export default function Home() {
     loadDestinations();
   }, []);
 
-  const selectedDestinationIsAvailable =
-    country.trim() === "" ||
-    destinations.length === 0 ||
-    destinations.includes(country);
+  const selectedCountryForSearch = country.trim();
 
-  const selectedCountryForSearch = country.trim() || "Europe";
+  const hasSelectedDestination = selectedCountryForSearch.length > 0;
+
+  const selectedDestinationIsAvailable =
+    hasSelectedDestination &&
+    (destinations.length === 0 ||
+      destinations.includes(selectedCountryForSearch));
 
   const searchingUrl = selectedDestinationIsAvailable
     ? `/searching?country=${encodeURIComponent(
@@ -109,7 +111,7 @@ export default function Home() {
     destinations.length > 0 ? destinations : ["Europe"];
 
   function handleSearchClick(event: React.MouseEvent<HTMLAnchorElement>) {
-    if (!selectedDestinationIsAvailable) {
+    if (!hasSelectedDestination || !selectedDestinationIsAvailable) {
       event.preventDefault();
       return;
     }
@@ -329,15 +331,21 @@ export default function Home() {
                   </datalist>
                 </div>
 
-                {!selectedDestinationIsAvailable && (
+                {!hasSelectedDestination && (
+                  <p className="mt-2 text-sm font-semibold text-red-600">
+                    Please choose a destination before continuing.
+                  </p>
+                )}
+
+                {hasSelectedDestination && !selectedDestinationIsAvailable && (
                   <p className="mt-2 text-sm font-semibold text-red-600">
                     Please choose an available destination from the list.
                   </p>
                 )}
 
-                {selectedDestinationIsAvailable && (
+                {hasSelectedDestination && selectedDestinationIsAvailable && (
                   <p className="mt-2 text-sm text-slate-500">
-                    Leave empty for Europe or choose an available destination.
+                    Destination available. You can continue.
                   </p>
                 )}
               </div>

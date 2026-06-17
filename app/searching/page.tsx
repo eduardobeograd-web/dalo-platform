@@ -20,7 +20,7 @@ export default function SearchingPage() {
     <main className="flex min-h-screen items-center justify-center bg-[#F6F8FF] px-6">
       <div className="max-w-xl text-center">
         <Image
-          src="/dalo-logo.png"
+          src="/dalo-logo-horizontal.png"
           alt="DALO"
           width={160}
           height={80}

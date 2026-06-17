@@ -56,7 +56,7 @@ export default async function CustomerSupportPage({
       <div className="mx-auto max-w-5xl">
         <nav className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <a href="/">
-            <img src="/dalo-logo.png" alt="DALO" className="h-14 w-auto" />
+            <img src="/dalo-logo-horizontal.png" alt="DALO" className="h-14 w-auto" />
           </a>
 
           <div className="flex flex-wrap items-center gap-3">
