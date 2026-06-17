@@ -1,17 +1,26 @@
 import AdminShell from "../../../components/AdminShell";
+import { prisma } from "../../../lib/db";
+import TestEmailButton from "../../../components/admin/TestEmailButton";
 import SendAbandonedCheckoutEmailButton from "../../../components/admin/SendAbandonedCheckoutEmailButton";
 import SendProductInterestEmailButton from "../../../components/admin/SendProductInterestEmailButton";
-import TestEmailButton from "../../../components/admin/TestEmailButton";
-import { prisma } from "../../../lib/db";
 
 function formatDate(value: Date) {
   return new Intl.DateTimeFormat("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
+    dateStyle: "medium",
+    timeStyle: "short",
   }).format(value);
+}
+
+function formatMetadata(metadata: unknown) {
+  if (!metadata) {
+    return "—";
+  }
+
+  try {
+    return JSON.stringify(metadata, null, 2);
+  } catch {
+    return "Invalid metadata";
+  }
 }
 
 function getMetadataValue(metadata: unknown, key: string) {
@@ -28,77 +37,14 @@ function getMetadataValue(metadata: unknown, key: string) {
   return String(value);
 }
 
-function formatMetadata(metadata: unknown) {
-  if (!metadata) {
-    return "—";
-  }
-
-  try {
-    return JSON.stringify(metadata, null, 2);
-  } catch {
-    return "Could not format metadata";
-  }
-}
-
 function getMinutesSince(date: Date) {
-  const diff = Date.now() - date.getTime();
-  return Math.max(0, Math.floor(diff / 1000 / 60));
-}
-
-function formatPrice(value: string | null) {
-  if (!value) {
-    return "—";
-  }
-
-  return value.startsWith("€") ? value : `€${value}`;
-}
-
-function getEventBadgeClass(eventType: string) {
-  if (eventType === "purchase_completed") {
-    return "bg-green-100 text-green-700";
-  }
-
-  if (eventType === "checkout_started") {
-    return "bg-orange-100 text-orange-700";
-  }
-
-  if (eventType === "checkout_email_entered") {
-    return "bg-yellow-100 text-yellow-700";
-  }
-
-  if (eventType === "product_view") {
-    return "bg-purple-100 text-purple-700";
-  }
-
-  if (eventType === "search") {
-    return "bg-blue-100 text-blue-700";
-  }
-
-  if (
-    eventType === "abandoned_checkout_email_sent" ||
-    eventType === "product_interest_email_sent"
-  ) {
-    return "bg-green-100 text-green-700";
-  }
-
-  if (eventType === "marketing_email_clicked") {
-    return "bg-cyan-100 text-cyan-700";
-  }
-
-  return "bg-slate-100 text-slate-700";
+  const diffMs = Date.now() - date.getTime();
+  return Math.max(0, Math.floor(diffMs / 1000 / 60));
 }
 
 const eventFilters = [
-  {
-    label: "All",
-    value: "all",
-    href: "/admin/events",
-  },
-  {
-    label: "Search",
-    value: "search",
-    href: "/admin/events?type=search",
-  },
+  { label: "All", value: "all", href: "/admin/events" },
+  { label: "Search", value: "search", href: "/admin/events?type=search" },
   {
     label: "Product Views",
     value: "product_view",
@@ -136,17 +82,40 @@ const eventFilters = [
   },
 ];
 
+function getEventBadgeClass(eventType: string) {
+  if (eventType === "purchase_completed") {
+    return "bg-green-100 text-green-700";
+  }
+
+  if (eventType === "checkout_started") {
+    return "bg-blue-100 text-blue-700";
+  }
+
+  if (eventType === "product_view") {
+    return "bg-purple-100 text-purple-700";
+  }
+
+  if (eventType === "search") {
+    return "bg-yellow-100 text-yellow-800";
+  }
+
+  if (eventType.includes("failed") || eventType.includes("expired")) {
+    return "bg-red-100 text-red-700";
+  }
+
+  return "bg-slate-100 text-slate-700";
+}
+
 export default async function AdminEventsPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ type?: string }>;
+  searchParams?: Promise<{
+    type?: string;
+  }>;
 }) {
   const params = searchParams ? await searchParams : {};
   const selectedType = params.type || "all";
-
-  const selectedFilter = eventFilters.some(
-    (filter) => filter.value === selectedType
-  )
+  const selectedFilter = eventFilters.some((filter) => filter.value === selectedType)
     ? selectedType
     : "all";
 
@@ -170,6 +139,32 @@ export default async function AdminEventsPage({
     },
   });
 
+  const totalEvents = await prisma.customerEvent.count();
+
+  const searchEvents = await prisma.customerEvent.count({
+    where: {
+      eventType: "search",
+    },
+  });
+
+  const productViews = await prisma.customerEvent.count({
+    where: {
+      eventType: "product_view",
+    },
+  });
+
+  const checkoutStarts = await prisma.customerEvent.count({
+    where: {
+      eventType: "checkout_started",
+    },
+  });
+
+  const purchases = await prisma.customerEvent.count({
+    where: {
+      eventType: "purchase_completed",
+    },
+  });
+
   const checkoutEmailEvents = await prisma.customerEvent.findMany({
     where: {
       eventType: "checkout_email_entered",
@@ -186,7 +181,7 @@ export default async function AdminEventsPage({
     },
   });
 
-  const abandonedCheckoutCandidates: typeof checkoutEmailEvents = [];
+  const abandonedCheckoutCandidates = [];
 
   for (const emailEvent of checkoutEmailEvents) {
     if (!emailEvent.sessionId) {
@@ -206,18 +201,7 @@ export default async function AdminEventsPage({
       },
     });
 
-    const alreadySent = await prisma.customerEvent.findFirst({
-      where: {
-        eventType: "abandoned_checkout_email_sent",
-        sessionId: emailEvent.sessionId,
-        productId: emailEvent.productId,
-        createdAt: {
-          gte: emailEvent.createdAt,
-        },
-      },
-    });
-
-    if (!completedPurchase && !alreadySent) {
+    if (!completedPurchase) {
       abandonedCheckoutCandidates.push(emailEvent);
     }
   }
@@ -239,8 +223,7 @@ export default async function AdminEventsPage({
     },
   });
 
-  const knownVisitorProductInterestCandidates: typeof knownVisitorProductViews =
-    [];
+  const knownVisitorProductInterestCandidates = [];
 
   for (const productView of knownVisitorProductViews) {
     if (!productView.sessionId || !productView.productId) {
@@ -291,7 +274,10 @@ export default async function AdminEventsPage({
   const sentMarketingEmailEvents = await prisma.customerEvent.findMany({
     where: {
       eventType: {
-        in: ["abandoned_checkout_email_sent", "product_interest_email_sent"],
+        in: [
+          "abandoned_checkout_email_sent",
+          "product_interest_email_sent",
+        ],
       },
     },
     orderBy: {
@@ -301,6 +287,19 @@ export default async function AdminEventsPage({
     include: {
       customer: true,
       product: true,
+    },
+  });
+
+  const knownVisitorsCount = await prisma.customer.count();
+
+  const marketingEmailsSentCount = await prisma.customerEvent.count({
+    where: {
+      eventType: {
+        in: [
+          "abandoned_checkout_email_sent",
+          "product_interest_email_sent",
+        ],
+      },
     },
   });
 
@@ -331,7 +330,8 @@ export default async function AdminEventsPage({
       clickedCandidates.find(
         (event) =>
           getMetadataValue(event.metadata, "sourceEventId") ===
-            sentEmailEvent.id || event.sessionId === sentEmailEvent.sessionId
+            sentEmailEvent.id ||
+          event.sessionId === sentEmailEvent.sessionId
       ) || null;
 
     const purchaseCandidates = await prisma.customerEvent.findMany({
@@ -352,7 +352,8 @@ export default async function AdminEventsPage({
       purchaseCandidates.find(
         (event) =>
           getMetadataValue(event.metadata, "marketingSourceEventId") ===
-            sentEmailEvent.id || event.sessionId === sentEmailEvent.sessionId
+            sentEmailEvent.id ||
+          event.sessionId === sentEmailEvent.sessionId
       ) || null;
 
     marketingEmailPerformanceRows.push({
@@ -361,22 +362,6 @@ export default async function AdminEventsPage({
       purchasedEvent,
     });
   }
-
-  const knownVisitorsCount = await prisma.customer.count();
-
-  const marketingEmailsSentCount = await prisma.customerEvent.count({
-    where: {
-      eventType: {
-        in: ["abandoned_checkout_email_sent", "product_interest_email_sent"],
-      },
-    },
-  });
-
-  const conversionEventsCount = await prisma.customerEvent.count({
-    where: {
-      eventType: "purchase_completed",
-    },
-  });
 
   const marketingPurchasesCount = marketingEmailPerformanceRows.filter(
     (row) => row.purchasedEvent
@@ -401,30 +386,30 @@ export default async function AdminEventsPage({
     0
   );
 
+  const conversionEventsCount = await prisma.customerEvent.count({
+    where: {
+      eventType: "purchase_completed",
+    },
+  });
+
   return (
     <AdminShell activePage="events">
-      <div className="mb-8 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-        <div>
-          <p className="text-sm font-bold uppercase tracking-wide text-blue-600">
-            Customer Tracking
-          </p>
+      <div className="mb-8">
+        <p className="text-sm font-bold uppercase tracking-wide text-blue-600">
+          Customer Tracking
+        </p>
 
-          <h1 className="mt-2 text-4xl font-black tracking-tight text-slate-950">
-            Marketing Events
-          </h1>
+        <h1 className="mt-2 text-4xl font-black tracking-tight text-slate-950">
+          Customer Events
+        </h1>
 
-          <p className="mt-3 max-w-3xl text-slate-600">
-            A cleaned-up marketing cockpit for visitor recognition, abandoned
-            checkout emails, product interest emails and conversion attribution.
-          </p>
-        </div>
-
-        <div className="w-full max-w-sm">
-          <TestEmailButton />
-        </div>
+        <p className="mt-3 max-w-3xl text-slate-600">
+          Live overview of tracked customer actions across search, product
+          views, checkout starts and purchases.
+        </p>
       </div>
 
-      <section className="mb-8 rounded-[2rem] bg-slate-950 p-6 text-white shadow-2xl shadow-slate-200">
+      <div className="mb-8 rounded-[2rem] bg-slate-950 p-6 text-white shadow-2xl shadow-slate-200">
         <div className="mb-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-sm font-black uppercase tracking-wide text-blue-300">
@@ -437,8 +422,8 @@ export default async function AdminEventsPage({
           </div>
 
           <p className="max-w-2xl text-sm leading-relaxed text-slate-300">
-            Snapshot of known visitors, open marketing opportunities, sent
-            emails, clicks and attributed purchases.
+            Snapshot of known visitors, open marketing opportunities and sent
+            reminder emails.
           </p>
         </div>
 
@@ -515,9 +500,270 @@ export default async function AdminEventsPage({
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
-      <section className="mb-8 overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-emerald-50 ring-1 ring-emerald-100">
+      <div className="mb-8">
+        <TestEmailButton />
+      </div>
+
+      <div className="mb-8 grid gap-4 md:grid-cols-5">
+        <div className="rounded-2xl bg-white p-5 shadow-lg shadow-blue-50 ring-1 ring-blue-50">
+          <div className="text-sm font-bold text-slate-500">Total Events</div>
+          <div className="mt-2 text-3xl font-black text-slate-950">
+            {totalEvents}
+          </div>
+        </div>
+
+        <div className="rounded-2xl bg-white p-5 shadow-lg shadow-blue-50 ring-1 ring-blue-50">
+          <div className="text-sm font-bold text-slate-500">Searches</div>
+          <div className="mt-2 text-3xl font-black text-yellow-700">
+            {searchEvents}
+          </div>
+        </div>
+
+        <div className="rounded-2xl bg-white p-5 shadow-lg shadow-blue-50 ring-1 ring-blue-50">
+          <div className="text-sm font-bold text-slate-500">Product Views</div>
+          <div className="mt-2 text-3xl font-black text-purple-700">
+            {productViews}
+          </div>
+        </div>
+
+        <div className="rounded-2xl bg-white p-5 shadow-lg shadow-blue-50 ring-1 ring-blue-50">
+          <div className="text-sm font-bold text-slate-500">Checkouts</div>
+          <div className="mt-2 text-3xl font-black text-blue-700">
+            {checkoutStarts}
+          </div>
+        </div>
+
+        <div className="rounded-2xl bg-white p-5 shadow-lg shadow-blue-50 ring-1 ring-blue-50">
+          <div className="text-sm font-bold text-slate-500">Purchases</div>
+          <div className="mt-2 text-3xl font-black text-green-700">
+            {purchases}
+          </div>
+        </div>
+      </div>
+
+      <div className="mb-8 overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-orange-50 ring-1 ring-orange-100">
+        <div className="border-b border-orange-100 bg-orange-50 p-6">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-sm font-black uppercase tracking-wide text-orange-700">
+                Marketing Automation Preview
+              </p>
+
+              <h2 className="mt-1 text-2xl font-black text-slate-950">
+                Abandoned Checkout Candidates
+              </h2>
+
+              <p className="mt-2 max-w-3xl text-sm text-slate-600">
+                Customers who entered an email in checkout but have no completed
+                purchase with the same session afterward.
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-white px-5 py-3 text-center shadow-sm ring-1 ring-orange-100">
+              <div className="text-xs font-bold uppercase text-slate-500">
+                Candidates
+              </div>
+              <div className="text-3xl font-black text-orange-700">
+                {abandonedCheckoutCandidates.length}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[1120px] border-collapse text-left text-sm">
+            <thead className="bg-white text-xs uppercase tracking-wide text-slate-500">
+              <tr>
+                <th className="px-5 py-4">Email</th>
+                <th className="px-5 py-4">Product</th>
+                <th className="px-5 py-4">Destination</th>
+                <th className="px-5 py-4">Price</th>
+                <th className="px-5 py-4">Entered</th>
+                <th className="px-5 py-4">Age</th>
+                <th className="px-5 py-4">Session</th>
+                <th className="px-5 py-4">Action</th>
+              </tr>
+            </thead>
+
+            <tbody className="divide-y divide-slate-100">
+              {abandonedCheckoutCandidates.map((event) => (
+                <tr key={event.id} className="align-top hover:bg-orange-50/40">
+                  <td className="px-5 py-4 font-bold text-slate-950">
+                    {getMetadataValue(event.metadata, "customerEmail") || "—"}
+                  </td>
+
+                  <td className="px-5 py-4">
+                    <div className="font-bold text-slate-950">
+                      {event.product?.name ||
+                        getMetadataValue(event.metadata, "productName") ||
+                        "—"}
+                    </div>
+                    <div className="mt-1 text-xs text-slate-500">
+                      {event.productId || "—"}
+                    </div>
+                  </td>
+
+                  <td className="px-5 py-4 font-semibold text-slate-700">
+                    {getMetadataValue(event.metadata, "destination") ||
+                      event.product?.country ||
+                      "—"}
+                  </td>
+
+                  <td className="px-5 py-4 font-semibold text-slate-700">
+                    {getMetadataValue(event.metadata, "price")
+                      ? `€${getMetadataValue(event.metadata, "price")}`
+                      : "—"}
+                  </td>
+
+                  <td className="whitespace-nowrap px-5 py-4 font-semibold text-slate-700">
+                    {formatDate(event.createdAt)}
+                  </td>
+
+                  <td className="px-5 py-4">
+                    <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-black text-orange-700">
+                      {getMinutesSince(event.createdAt)} min ago
+                    </span>
+                  </td>
+
+                  <td className="max-w-[220px] px-5 py-4">
+                    <div className="truncate font-mono text-xs text-slate-500">
+                      {event.sessionId || "—"}
+                    </div>
+                  </td>
+
+                  <td className="px-5 py-4">
+                    <SendAbandonedCheckoutEmailButton eventId={event.id} />
+                  </td>
+                </tr>
+              ))}
+
+              {abandonedCheckoutCandidates.length === 0 && (
+                <tr>
+                  <td colSpan={8} className="px-5 py-10 text-center text-slate-500">
+                    No abandoned checkout candidates right now.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="mb-8 overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-purple-50 ring-1 ring-purple-100">
+        <div className="border-b border-purple-100 bg-purple-50 p-6">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-sm font-black uppercase tracking-wide text-purple-700">
+                Marketing Automation Preview
+              </p>
+
+              <h2 className="mt-1 text-2xl font-black text-slate-950">
+                Known Visitor Product Interest
+              </h2>
+
+              <p className="mt-2 max-w-3xl text-sm text-slate-600">
+                Known visitors who viewed a product but did not start checkout
+                or purchase that product afterward.
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-white px-5 py-3 text-center shadow-sm ring-1 ring-purple-100">
+              <div className="text-xs font-bold uppercase text-slate-500">
+                Candidates
+              </div>
+              <div className="text-3xl font-black text-purple-700">
+                {knownVisitorProductInterestCandidates.length}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[1120px] border-collapse text-left text-sm">
+            <thead className="bg-white text-xs uppercase tracking-wide text-slate-500">
+              <tr>
+                <th className="px-5 py-4">Customer</th>
+                <th className="px-5 py-4">Product</th>
+                <th className="px-5 py-4">Destination</th>
+                <th className="px-5 py-4">Price</th>
+                <th className="px-5 py-4">Viewed</th>
+                <th className="px-5 py-4">Age</th>
+                <th className="px-5 py-4">Session</th>
+                <th className="px-5 py-4">Action</th>
+              </tr>
+            </thead>
+
+            <tbody className="divide-y divide-slate-100">
+              {knownVisitorProductInterestCandidates.map((event) => (
+                <tr key={event.id} className="align-top hover:bg-purple-50/40">
+                  <td className="px-5 py-4 font-bold text-slate-950">
+                    {event.customer?.email ||
+                      getMetadataValue(event.metadata, "knownCustomerEmail") ||
+                      "—"}
+                  </td>
+
+                  <td className="px-5 py-4">
+                    <div className="font-bold text-slate-950">
+                      {event.product?.name ||
+                        getMetadataValue(event.metadata, "productName") ||
+                        "—"}
+                    </div>
+                    <div className="mt-1 text-xs text-slate-500">
+                      {event.productId || "—"}
+                    </div>
+                  </td>
+
+                  <td className="px-5 py-4 font-semibold text-slate-700">
+                    {getMetadataValue(event.metadata, "destination") ||
+                      event.product?.country ||
+                      "—"}
+                  </td>
+
+                  <td className="px-5 py-4 font-semibold text-slate-700">
+                    {getMetadataValue(event.metadata, "price")
+                      ? `€${getMetadataValue(event.metadata, "price")}`
+                      : event.product
+                        ? `€${event.product.sellPrice}`
+                        : "—"}
+                  </td>
+
+                  <td className="whitespace-nowrap px-5 py-4 font-semibold text-slate-700">
+                    {formatDate(event.createdAt)}
+                  </td>
+
+                  <td className="px-5 py-4">
+                    <span className="rounded-full bg-purple-100 px-3 py-1 text-xs font-black text-purple-700">
+                      {getMinutesSince(event.createdAt)} min ago
+                    </span>
+                  </td>
+
+                  <td className="max-w-[220px] px-5 py-4">
+                    <div className="truncate font-mono text-xs text-slate-500">
+                      {event.sessionId || "—"}
+                    </div>
+                  </td>
+
+                  <td className="px-5 py-4">
+                    <SendProductInterestEmailButton eventId={event.id} />
+                  </td>
+                </tr>
+              ))}
+
+              {knownVisitorProductInterestCandidates.length === 0 && (
+                <tr>
+                  <td colSpan={8} className="px-5 py-10 text-center text-slate-500">
+                    No known visitor product interest candidates right now.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="mb-8 overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-emerald-50 ring-1 ring-emerald-100">
         <div className="border-b border-emerald-100 bg-emerald-50 p-6">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div>
@@ -530,8 +776,8 @@ export default async function AdminEventsPage({
               </h2>
 
               <p className="mt-2 max-w-3xl text-sm text-slate-600">
-                The most important table: which email was sent, clicked and
-                later converted into a purchase.
+                Shows whether sent marketing emails were clicked and whether
+                they later converted into purchases.
               </p>
             </div>
 
@@ -586,20 +832,14 @@ export default async function AdminEventsPage({
 
                     <td className="px-5 py-4 font-bold text-slate-950">
                       {sentEmailEvent.customer?.email ||
-                        getMetadataValue(
-                          sentEmailEvent.metadata,
-                          "customerEmail"
-                        ) ||
+                        getMetadataValue(sentEmailEvent.metadata, "customerEmail") ||
                         "—"}
                     </td>
 
                     <td className="px-5 py-4">
                       <div className="font-bold text-slate-950">
                         {sentEmailEvent.product?.name ||
-                          getMetadataValue(
-                            sentEmailEvent.metadata,
-                            "productName"
-                          ) ||
+                          getMetadataValue(sentEmailEvent.metadata, "productName") ||
                           "—"}
                       </div>
                       <div className="mt-1 text-xs text-slate-500">
@@ -608,10 +848,7 @@ export default async function AdminEventsPage({
                     </td>
 
                     <td className="px-5 py-4 font-semibold text-slate-700">
-                      {getMetadataValue(
-                        sentEmailEvent.metadata,
-                        "destination"
-                      ) ||
+                      {getMetadataValue(sentEmailEvent.metadata, "destination") ||
                         sentEmailEvent.product?.country ||
                         "—"}
                     </td>
@@ -656,13 +893,11 @@ export default async function AdminEventsPage({
 
                     <td className="px-5 py-4 font-black text-emerald-700">
                       {purchasedEvent
-                        ? formatPrice(
+                        ? `€${
                             getMetadataValue(purchasedEvent.metadata, "price") ||
-                              getMetadataValue(
-                                sentEmailEvent.metadata,
-                                "price"
-                              )
-                          )
+                            getMetadataValue(sentEmailEvent.metadata, "price") ||
+                            "0"
+                          }`
                         : "—"}
                     </td>
                   </tr>
@@ -671,10 +906,7 @@ export default async function AdminEventsPage({
 
               {marketingEmailPerformanceRows.length === 0 && (
                 <tr>
-                  <td
-                    colSpan={8}
-                    className="px-5 py-10 text-center text-slate-500"
-                  >
+                  <td colSpan={8} className="px-5 py-10 text-center text-slate-500">
                     No marketing email performance data yet.
                   </td>
                 </tr>
@@ -682,182 +914,35 @@ export default async function AdminEventsPage({
             </tbody>
           </table>
         </div>
-      </section>
+      </div>
 
-      <section className="mb-8 grid gap-8 xl:grid-cols-2">
-        <div className="overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-orange-50 ring-1 ring-orange-100">
-          <div className="border-b border-orange-100 bg-orange-50 p-6">
-            <p className="text-sm font-black uppercase tracking-wide text-orange-700">
-              Active Opportunity
-            </p>
-
-            <h2 className="mt-1 text-2xl font-black text-slate-950">
-              Abandoned Checkout
-            </h2>
-
-            <p className="mt-2 text-sm text-slate-600">
-              Email entered in checkout, but no completed purchase afterward.
-            </p>
-
-            <div className="mt-4 inline-flex rounded-2xl bg-white px-4 py-2 text-sm font-black text-orange-700 ring-1 ring-orange-100">
-              {abandonedCheckoutCandidates.length} candidates
-            </div>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[760px] border-collapse text-left text-sm">
-              <thead className="bg-white text-xs uppercase tracking-wide text-slate-500">
-                <tr>
-                  <th className="px-5 py-4">Email</th>
-                  <th className="px-5 py-4">Product</th>
-                  <th className="px-5 py-4">Age</th>
-                  <th className="px-5 py-4">Action</th>
-                </tr>
-              </thead>
-
-              <tbody className="divide-y divide-slate-100">
-                {abandonedCheckoutCandidates.map((event) => (
-                  <tr key={event.id} className="align-top hover:bg-orange-50/40">
-                    <td className="px-5 py-4 font-bold text-slate-950">
-                      {getMetadataValue(event.metadata, "customerEmail") || "—"}
-                    </td>
-
-                    <td className="px-5 py-4">
-                      <div className="font-bold text-slate-950">
-                        {event.product?.name ||
-                          getMetadataValue(event.metadata, "productName") ||
-                          "—"}
-                      </div>
-                      <div className="mt-1 text-xs text-slate-500">
-                        {getMetadataValue(event.metadata, "destination") ||
-                          event.product?.country ||
-                          "—"}{" "}
-                        · {formatPrice(getMetadataValue(event.metadata, "price"))}
-                      </div>
-                    </td>
-
-                    <td className="px-5 py-4">
-                      <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-black text-orange-700">
-                        {getMinutesSince(event.createdAt)} min ago
-                      </span>
-                    </td>
-
-                    <td className="px-5 py-4">
-                      <SendAbandonedCheckoutEmailButton eventId={event.id} />
-                    </td>
-                  </tr>
-                ))}
-
-                {abandonedCheckoutCandidates.length === 0 && (
-                  <tr>
-                    <td
-                      colSpan={4}
-                      className="px-5 py-10 text-center text-slate-500"
-                    >
-                      No abandoned checkout candidates right now.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <div className="overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-purple-50 ring-1 ring-purple-100">
-          <div className="border-b border-purple-100 bg-purple-50 p-6">
-            <p className="text-sm font-black uppercase tracking-wide text-purple-700">
-              Active Opportunity
-            </p>
-
-            <h2 className="mt-1 text-2xl font-black text-slate-950">
-              Known Visitor Product Interest
-            </h2>
-
-            <p className="mt-2 text-sm text-slate-600">
-              Known visitor viewed a product, but did not start checkout or buy.
-            </p>
-
-            <div className="mt-4 inline-flex rounded-2xl bg-white px-4 py-2 text-sm font-black text-purple-700 ring-1 ring-purple-100">
-              {knownVisitorProductInterestCandidates.length} candidates
-            </div>
-          </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[760px] border-collapse text-left text-sm">
-              <thead className="bg-white text-xs uppercase tracking-wide text-slate-500">
-                <tr>
-                  <th className="px-5 py-4">Customer</th>
-                  <th className="px-5 py-4">Product</th>
-                  <th className="px-5 py-4">Age</th>
-                  <th className="px-5 py-4">Action</th>
-                </tr>
-              </thead>
-
-              <tbody className="divide-y divide-slate-100">
-                {knownVisitorProductInterestCandidates.map((event) => (
-                  <tr key={event.id} className="align-top hover:bg-purple-50/40">
-                    <td className="px-5 py-4 font-bold text-slate-950">
-                      {event.customer?.email ||
-                        getMetadataValue(event.metadata, "knownCustomerEmail") ||
-                        "—"}
-                    </td>
-
-                    <td className="px-5 py-4">
-                      <div className="font-bold text-slate-950">
-                        {event.product?.name ||
-                          getMetadataValue(event.metadata, "productName") ||
-                          "—"}
-                      </div>
-                      <div className="mt-1 text-xs text-slate-500">
-                        {getMetadataValue(event.metadata, "destination") ||
-                          event.product?.country ||
-                          "—"}{" "}
-                        · {formatPrice(getMetadataValue(event.metadata, "price"))}
-                      </div>
-                    </td>
-
-                    <td className="px-5 py-4">
-                      <span className="rounded-full bg-purple-100 px-3 py-1 text-xs font-black text-purple-700">
-                        {getMinutesSince(event.createdAt)} min ago
-                      </span>
-                    </td>
-
-                    <td className="px-5 py-4">
-                      <SendProductInterestEmailButton eventId={event.id} />
-                    </td>
-                  </tr>
-                ))}
-
-                {knownVisitorProductInterestCandidates.length === 0 && (
-                  <tr>
-                    <td
-                      colSpan={4}
-                      className="px-5 py-10 text-center text-slate-500"
-                    >
-                      No known visitor product interest candidates right now.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-
-      <section className="mb-8 overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-green-50 ring-1 ring-green-100">
+      <div className="mb-8 overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-green-50 ring-1 ring-green-100">
         <div className="border-b border-green-100 bg-green-50 p-6">
-          <p className="text-sm font-black uppercase tracking-wide text-green-700">
-            Marketing Email Log
-          </p>
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-sm font-black uppercase tracking-wide text-green-700">
+                Marketing Email Log
+              </p>
 
-          <h2 className="mt-1 text-2xl font-black text-slate-950">
-            Sent Marketing Emails
-          </h2>
+              <h2 className="mt-1 text-2xl font-black text-slate-950">
+                Sent Marketing Emails
+              </h2>
 
-          <p className="mt-2 max-w-3xl text-sm text-slate-600">
-            Recent abandoned checkout and product interest emails that were
-            manually sent.
-          </p>
+              <p className="mt-2 max-w-3xl text-sm text-slate-600">
+                Recent manually sent abandoned checkout and product interest
+                emails.
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-white px-5 py-3 text-center shadow-sm ring-1 ring-green-100">
+              <div className="text-xs font-bold uppercase text-slate-500">
+                Sent
+              </div>
+              <div className="text-3xl font-black text-green-700">
+                {sentMarketingEmailEvents.length}
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="overflow-x-auto">
@@ -894,6 +979,7 @@ export default async function AdminEventsPage({
                   <td className="px-5 py-4 font-bold text-slate-950">
                     {event.customer?.email ||
                       getMetadataValue(event.metadata, "customerEmail") ||
+                      getMetadataValue(event.metadata, "knownCustomerEmail") ||
                       "—"}
                   </td>
 
@@ -915,7 +1001,7 @@ export default async function AdminEventsPage({
                   </td>
 
                   <td className="px-5 py-4 font-semibold text-slate-700">
-                    {formatPrice(getMetadataValue(event.metadata, "price"))}
+                    {getMetadataValue(event.metadata, "price") || "—"}
                   </td>
 
                   <td className="whitespace-nowrap px-5 py-4 font-semibold text-slate-700">
@@ -932,10 +1018,7 @@ export default async function AdminEventsPage({
 
               {sentMarketingEmailEvents.length === 0 && (
                 <tr>
-                  <td
-                    colSpan={7}
-                    className="px-5 py-10 text-center text-slate-500"
-                  >
+                  <td colSpan={7} className="px-5 py-10 text-center text-slate-500">
                     No marketing emails sent yet.
                   </td>
                 </tr>
@@ -943,46 +1026,53 @@ export default async function AdminEventsPage({
             </tbody>
           </table>
         </div>
-      </section>
+      </div>
 
-      <section className="overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-blue-50 ring-1 ring-blue-50">
-        <div className="border-b border-slate-100 bg-slate-50 p-6">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div className="overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-blue-50 ring-1 ring-blue-50">
+        <div className="border-b border-slate-100 p-6">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="text-sm font-black uppercase tracking-wide text-slate-500">
-                Raw Event Log
-              </p>
-
-              <h2 className="mt-1 text-2xl font-black text-slate-950">
+              <h2 className="text-2xl font-black text-slate-950">
                 Latest Events
               </h2>
 
-              <p className="mt-2 text-sm text-slate-600">
-                Technical event log. Showing the latest 100 matching events.
+              <p className="mt-1 text-sm text-slate-500">
+                Showing the latest 100 events
+                {selectedFilter === "all" ? "" : ` for ${selectedFilter}`}.
               </p>
             </div>
 
-            <div className="flex flex-wrap gap-2">
-              {eventFilters.map((filter) => (
-                <a
-                  key={filter.value}
-                  href={filter.href}
-                  className={`rounded-full px-4 py-2 text-xs font-black transition ${
-                    selectedFilter === filter.value
-                      ? "bg-blue-600 text-white"
-                      : "bg-white text-slate-600 ring-1 ring-slate-200 hover:bg-blue-50"
-                  }`}
-                >
-                  {filter.label}
-                </a>
-              ))}
+            <div>
+              <div className="mb-2 text-xs font-black uppercase tracking-wide text-slate-500">
+                Filter Events
+              </div>
+
+              <div className="flex max-w-full flex-wrap gap-2">
+                {eventFilters.map((filter) => {
+                  const isActive = filter.value === selectedFilter;
+
+                  return (
+                    <a
+                      key={filter.value}
+                      href={filter.href}
+                      className={`rounded-full px-4 py-2 text-xs font-black transition ${
+                        isActive
+                          ? "bg-blue-600 text-white shadow-lg shadow-blue-100"
+                          : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                      }`}
+                    >
+                      {filter.label}
+                    </a>
+                  );
+                })}
+              </div>
             </div>
           </div>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full min-w-[1200px] border-collapse text-left text-sm">
-            <thead className="bg-white text-xs uppercase tracking-wide text-slate-500">
+            <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
               <tr>
                 <th className="px-5 py-4">Time</th>
                 <th className="px-5 py-4">Event</th>
@@ -996,7 +1086,7 @@ export default async function AdminEventsPage({
 
             <tbody className="divide-y divide-slate-100">
               {events.map((event) => (
-                <tr key={event.id} className="align-top hover:bg-blue-50/30">
+                <tr key={event.id} className="align-top hover:bg-slate-50">
                   <td className="whitespace-nowrap px-5 py-4 font-semibold text-slate-700">
                     {formatDate(event.createdAt)}
                   </td>
@@ -1017,7 +1107,7 @@ export default async function AdminEventsPage({
                         <div className="font-bold text-slate-950">
                           {event.customer.email}
                         </div>
-                        <div className="mt-1 font-mono text-xs text-slate-400">
+                        <div className="mt-1 text-xs text-slate-500">
                           {event.customerId}
                         </div>
                       </div>
@@ -1036,10 +1126,6 @@ export default async function AdminEventsPage({
                           {event.product.country} · {event.product.data}
                         </div>
                       </div>
-                    ) : event.productId ? (
-                      <div className="font-mono text-xs text-slate-500">
-                        {event.productId}
-                      </div>
                     ) : (
                       <span className="text-slate-400">—</span>
                     )}
@@ -1055,23 +1141,19 @@ export default async function AdminEventsPage({
                           {event.order.payment} · {event.order.fulfillment}
                         </div>
                       </div>
-                    ) : event.orderId ? (
-                      <div className="font-mono text-xs text-slate-500">
-                        {event.orderId}
-                      </div>
                     ) : (
                       <span className="text-slate-400">—</span>
                     )}
                   </td>
 
-                  <td className="max-w-[220px] px-5 py-4">
+                  <td className="max-w-[180px] px-5 py-4">
                     <div className="truncate font-mono text-xs text-slate-500">
                       {event.sessionId || "—"}
                     </div>
                   </td>
 
-                  <td className="max-w-[360px] px-5 py-4">
-                    <pre className="max-h-40 overflow-auto whitespace-pre-wrap rounded-2xl bg-slate-950 p-3 text-xs leading-relaxed text-slate-100">
+                  <td className="px-5 py-4">
+                    <pre className="max-h-40 max-w-[360px] overflow-auto rounded-xl bg-slate-950 p-3 text-xs text-slate-100">
                       {formatMetadata(event.metadata)}
                     </pre>
                   </td>
@@ -1080,18 +1162,15 @@ export default async function AdminEventsPage({
 
               {events.length === 0 && (
                 <tr>
-                  <td
-                    colSpan={7}
-                    className="px-5 py-10 text-center text-slate-500"
-                  >
-                    No events found for this filter.
+                  <td colSpan={7} className="px-5 py-10 text-center text-slate-500">
+                    No customer events found for this filter.
                   </td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
-      </section>
+      </div>
     </AdminShell>
   );
 }
