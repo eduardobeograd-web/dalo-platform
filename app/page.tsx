@@ -70,6 +70,16 @@ function getDestinationImage(destination: string) {
 }
 
 export default function Home() {
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "DALO",
+    url: "http://localhost:3000",
+    logo: "http://localhost:3000/dalo-logo-horizontal.png",
+    description:
+      "DALO is a travel eSIM recommendation platform that helps travelers find the right eSIM plan by destination, trip length and data usage.",
+  };
+
   const homepageFaqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -163,6 +173,11 @@ export default function Home() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(homepageFaqSchema) }}
+      />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
       />
 
       <div className="pointer-events-none absolute -left-24 top-24 h-80 w-80 rounded-full bg-blue-300/30 blur-3xl" />
