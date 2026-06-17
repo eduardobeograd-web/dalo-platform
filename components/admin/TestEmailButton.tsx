@@ -9,6 +9,36 @@ type TestStatus =
   | "skipped"
   | "error";
 
+function getReadableMessage(value: unknown) {
+  if (!value) {
+    return "";
+  }
+
+  if (typeof value === "string") {
+    return value;
+  }
+
+  if (typeof value === "object" && !Array.isArray(value)) {
+    const objectValue = value as Record<string, unknown>;
+
+    if (typeof objectValue.message === "string") {
+      return objectValue.message;
+    }
+
+    if (typeof objectValue.name === "string") {
+      return objectValue.name;
+    }
+
+    try {
+      return JSON.stringify(value);
+    } catch {
+      return "Unknown error";
+    }
+  }
+
+  return String(value);
+}
+
 export default function TestEmailButton() {
   const [status, setStatus] = useState<TestStatus>("idle");
   const [message, setMessage] = useState("");
@@ -32,16 +62,16 @@ export default function TestEmailButton() {
 
       if (data.skipped) {
         setStatus("skipped");
-        setMessage(data.reason || "Email sending skipped.");
+        setMessage(getReadableMessage(data.reason) || "Email sending skipped.");
         return;
       }
 
       setStatus("error");
-      setMessage(data.error || "Test email failed.");
+      setMessage(getReadableMessage(data.error) || "Test email failed.");
     } catch (error) {
       console.error("Test email request failed:", error);
       setStatus("error");
-      setMessage("Test email request failed.");
+      setMessage(getReadableMessage(error) || "Test email request failed.");
     }
   }
 
