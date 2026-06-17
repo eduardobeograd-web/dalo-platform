@@ -1,5 +1,6 @@
 import AdminShell from "../../../components/AdminShell";
 import { prisma } from "../../../lib/db";
+import TestEmailButton from "../../../components/admin/TestEmailButton";
 
 function formatDate(value: Date) {
   return new Intl.DateTimeFormat("en-GB", {
@@ -203,6 +204,10 @@ export default async function AdminEventsPage({
           Live overview of tracked customer actions across search, product
           views, checkout starts and purchases.
         </p>
+      </div>
+
+      <div className="mb-8">
+        <TestEmailButton />
       </div>
 
       <div className="mb-8 grid gap-4 md:grid-cols-5">
