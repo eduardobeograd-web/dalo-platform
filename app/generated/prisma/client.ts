@@ -66,3 +66,8 @@ export type Order = Prisma.OrderModel
  * 
  */
 export type SupportRequest = Prisma.SupportRequestModel
+/**
+ * Model CustomerEvent
+ * 
+ */
+export type CustomerEvent = Prisma.CustomerEventModel

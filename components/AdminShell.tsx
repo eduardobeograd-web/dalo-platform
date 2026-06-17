@@ -6,6 +6,7 @@ type AdminShellProps = {
     | "recommendations"
     | "upsells"
     | "orders"
+    | "events"
     | "support"
     | "providers";
 };
@@ -20,6 +21,7 @@ const navItems = [
   },
   { key: "upsells", label: "Upsells", href: "/admin/upsells" },
   { key: "orders", label: "Orders", href: "/admin/orders" },
+  { key: "events", label: "Events", href: "/admin/events" },
   { key: "support", label: "Support", href: "/admin/support" },
   { key: "providers", label: "API Providers", href: "/admin/providers" },
 ];

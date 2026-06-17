@@ -201,6 +201,7 @@ export type CustomerWhereInput = {
   sessions?: Prisma.CustomerSessionListRelationFilter
   orders?: Prisma.OrderListRelationFilter
   supportRequests?: Prisma.SupportRequestListRelationFilter
+  customerEvents?: Prisma.CustomerEventListRelationFilter
 }
 
 export type CustomerOrderByWithRelationInput = {
@@ -214,6 +215,7 @@ export type CustomerOrderByWithRelationInput = {
   sessions?: Prisma.CustomerSessionOrderByRelationAggregateInput
   orders?: Prisma.OrderOrderByRelationAggregateInput
   supportRequests?: Prisma.SupportRequestOrderByRelationAggregateInput
+  customerEvents?: Prisma.CustomerEventOrderByRelationAggregateInput
 }
 
 export type CustomerWhereUniqueInput = Prisma.AtLeast<{
@@ -230,6 +232,7 @@ export type CustomerWhereUniqueInput = Prisma.AtLeast<{
   sessions?: Prisma.CustomerSessionListRelationFilter
   orders?: Prisma.OrderListRelationFilter
   supportRequests?: Prisma.SupportRequestListRelationFilter
+  customerEvents?: Prisma.CustomerEventListRelationFilter
 }, "id" | "email">
 
 export type CustomerOrderByWithAggregationInput = {
@@ -269,6 +272,7 @@ export type CustomerCreateInput = {
   sessions?: Prisma.CustomerSessionCreateNestedManyWithoutCustomerInput
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerAccountInput
   supportRequests?: Prisma.SupportRequestCreateNestedManyWithoutCustomerInput
+  customerEvents?: Prisma.CustomerEventCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerUncheckedCreateInput = {
@@ -282,6 +286,7 @@ export type CustomerUncheckedCreateInput = {
   sessions?: Prisma.CustomerSessionUncheckedCreateNestedManyWithoutCustomerInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerAccountInput
   supportRequests?: Prisma.SupportRequestUncheckedCreateNestedManyWithoutCustomerInput
+  customerEvents?: Prisma.CustomerEventUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerUpdateInput = {
@@ -295,6 +300,7 @@ export type CustomerUpdateInput = {
   sessions?: Prisma.CustomerSessionUpdateManyWithoutCustomerNestedInput
   orders?: Prisma.OrderUpdateManyWithoutCustomerAccountNestedInput
   supportRequests?: Prisma.SupportRequestUpdateManyWithoutCustomerNestedInput
+  customerEvents?: Prisma.CustomerEventUpdateManyWithoutCustomerNestedInput
 }
 
 export type CustomerUncheckedUpdateInput = {
@@ -308,6 +314,7 @@ export type CustomerUncheckedUpdateInput = {
   sessions?: Prisma.CustomerSessionUncheckedUpdateManyWithoutCustomerNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerAccountNestedInput
   supportRequests?: Prisma.SupportRequestUncheckedUpdateManyWithoutCustomerNestedInput
+  customerEvents?: Prisma.CustomerEventUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type CustomerCreateManyInput = {
@@ -426,6 +433,22 @@ export type CustomerUpdateOneWithoutSupportRequestsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CustomerUpdateToOneWithWhereWithoutSupportRequestsInput, Prisma.CustomerUpdateWithoutSupportRequestsInput>, Prisma.CustomerUncheckedUpdateWithoutSupportRequestsInput>
 }
 
+export type CustomerCreateNestedOneWithoutCustomerEventsInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutCustomerEventsInput, Prisma.CustomerUncheckedCreateWithoutCustomerEventsInput>
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutCustomerEventsInput
+  connect?: Prisma.CustomerWhereUniqueInput
+}
+
+export type CustomerUpdateOneWithoutCustomerEventsNestedInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutCustomerEventsInput, Prisma.CustomerUncheckedCreateWithoutCustomerEventsInput>
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutCustomerEventsInput
+  upsert?: Prisma.CustomerUpsertWithoutCustomerEventsInput
+  disconnect?: Prisma.CustomerWhereInput | boolean
+  delete?: Prisma.CustomerWhereInput | boolean
+  connect?: Prisma.CustomerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CustomerUpdateToOneWithWhereWithoutCustomerEventsInput, Prisma.CustomerUpdateWithoutCustomerEventsInput>, Prisma.CustomerUncheckedUpdateWithoutCustomerEventsInput>
+}
+
 export type CustomerCreateWithoutSessionsInput = {
   id?: string
   email: string
@@ -436,6 +459,7 @@ export type CustomerCreateWithoutSessionsInput = {
   updatedAt?: Date | string
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerAccountInput
   supportRequests?: Prisma.SupportRequestCreateNestedManyWithoutCustomerInput
+  customerEvents?: Prisma.CustomerEventCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerUncheckedCreateWithoutSessionsInput = {
@@ -448,6 +472,7 @@ export type CustomerUncheckedCreateWithoutSessionsInput = {
   updatedAt?: Date | string
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerAccountInput
   supportRequests?: Prisma.SupportRequestUncheckedCreateNestedManyWithoutCustomerInput
+  customerEvents?: Prisma.CustomerEventUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerCreateOrConnectWithoutSessionsInput = {
@@ -476,6 +501,7 @@ export type CustomerUpdateWithoutSessionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orders?: Prisma.OrderUpdateManyWithoutCustomerAccountNestedInput
   supportRequests?: Prisma.SupportRequestUpdateManyWithoutCustomerNestedInput
+  customerEvents?: Prisma.CustomerEventUpdateManyWithoutCustomerNestedInput
 }
 
 export type CustomerUncheckedUpdateWithoutSessionsInput = {
@@ -488,6 +514,7 @@ export type CustomerUncheckedUpdateWithoutSessionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerAccountNestedInput
   supportRequests?: Prisma.SupportRequestUncheckedUpdateManyWithoutCustomerNestedInput
+  customerEvents?: Prisma.CustomerEventUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type CustomerCreateWithoutOrdersInput = {
@@ -500,6 +527,7 @@ export type CustomerCreateWithoutOrdersInput = {
   updatedAt?: Date | string
   sessions?: Prisma.CustomerSessionCreateNestedManyWithoutCustomerInput
   supportRequests?: Prisma.SupportRequestCreateNestedManyWithoutCustomerInput
+  customerEvents?: Prisma.CustomerEventCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerUncheckedCreateWithoutOrdersInput = {
@@ -512,6 +540,7 @@ export type CustomerUncheckedCreateWithoutOrdersInput = {
   updatedAt?: Date | string
   sessions?: Prisma.CustomerSessionUncheckedCreateNestedManyWithoutCustomerInput
   supportRequests?: Prisma.SupportRequestUncheckedCreateNestedManyWithoutCustomerInput
+  customerEvents?: Prisma.CustomerEventUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerCreateOrConnectWithoutOrdersInput = {
@@ -540,6 +569,7 @@ export type CustomerUpdateWithoutOrdersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.CustomerSessionUpdateManyWithoutCustomerNestedInput
   supportRequests?: Prisma.SupportRequestUpdateManyWithoutCustomerNestedInput
+  customerEvents?: Prisma.CustomerEventUpdateManyWithoutCustomerNestedInput
 }
 
 export type CustomerUncheckedUpdateWithoutOrdersInput = {
@@ -552,6 +582,7 @@ export type CustomerUncheckedUpdateWithoutOrdersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.CustomerSessionUncheckedUpdateManyWithoutCustomerNestedInput
   supportRequests?: Prisma.SupportRequestUncheckedUpdateManyWithoutCustomerNestedInput
+  customerEvents?: Prisma.CustomerEventUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type CustomerCreateWithoutSupportRequestsInput = {
@@ -564,6 +595,7 @@ export type CustomerCreateWithoutSupportRequestsInput = {
   updatedAt?: Date | string
   sessions?: Prisma.CustomerSessionCreateNestedManyWithoutCustomerInput
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerAccountInput
+  customerEvents?: Prisma.CustomerEventCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerUncheckedCreateWithoutSupportRequestsInput = {
@@ -576,6 +608,7 @@ export type CustomerUncheckedCreateWithoutSupportRequestsInput = {
   updatedAt?: Date | string
   sessions?: Prisma.CustomerSessionUncheckedCreateNestedManyWithoutCustomerInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerAccountInput
+  customerEvents?: Prisma.CustomerEventUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type CustomerCreateOrConnectWithoutSupportRequestsInput = {
@@ -604,6 +637,7 @@ export type CustomerUpdateWithoutSupportRequestsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.CustomerSessionUpdateManyWithoutCustomerNestedInput
   orders?: Prisma.OrderUpdateManyWithoutCustomerAccountNestedInput
+  customerEvents?: Prisma.CustomerEventUpdateManyWithoutCustomerNestedInput
 }
 
 export type CustomerUncheckedUpdateWithoutSupportRequestsInput = {
@@ -616,6 +650,75 @@ export type CustomerUncheckedUpdateWithoutSupportRequestsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.CustomerSessionUncheckedUpdateManyWithoutCustomerNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerAccountNestedInput
+  customerEvents?: Prisma.CustomerEventUncheckedUpdateManyWithoutCustomerNestedInput
+}
+
+export type CustomerCreateWithoutCustomerEventsInput = {
+  id?: string
+  email: string
+  name?: string | null
+  passwordHash?: string | null
+  active?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.CustomerSessionCreateNestedManyWithoutCustomerInput
+  orders?: Prisma.OrderCreateNestedManyWithoutCustomerAccountInput
+  supportRequests?: Prisma.SupportRequestCreateNestedManyWithoutCustomerInput
+}
+
+export type CustomerUncheckedCreateWithoutCustomerEventsInput = {
+  id?: string
+  email: string
+  name?: string | null
+  passwordHash?: string | null
+  active?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.CustomerSessionUncheckedCreateNestedManyWithoutCustomerInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerAccountInput
+  supportRequests?: Prisma.SupportRequestUncheckedCreateNestedManyWithoutCustomerInput
+}
+
+export type CustomerCreateOrConnectWithoutCustomerEventsInput = {
+  where: Prisma.CustomerWhereUniqueInput
+  create: Prisma.XOR<Prisma.CustomerCreateWithoutCustomerEventsInput, Prisma.CustomerUncheckedCreateWithoutCustomerEventsInput>
+}
+
+export type CustomerUpsertWithoutCustomerEventsInput = {
+  update: Prisma.XOR<Prisma.CustomerUpdateWithoutCustomerEventsInput, Prisma.CustomerUncheckedUpdateWithoutCustomerEventsInput>
+  create: Prisma.XOR<Prisma.CustomerCreateWithoutCustomerEventsInput, Prisma.CustomerUncheckedCreateWithoutCustomerEventsInput>
+  where?: Prisma.CustomerWhereInput
+}
+
+export type CustomerUpdateToOneWithWhereWithoutCustomerEventsInput = {
+  where?: Prisma.CustomerWhereInput
+  data: Prisma.XOR<Prisma.CustomerUpdateWithoutCustomerEventsInput, Prisma.CustomerUncheckedUpdateWithoutCustomerEventsInput>
+}
+
+export type CustomerUpdateWithoutCustomerEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.CustomerSessionUpdateManyWithoutCustomerNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutCustomerAccountNestedInput
+  supportRequests?: Prisma.SupportRequestUpdateManyWithoutCustomerNestedInput
+}
+
+export type CustomerUncheckedUpdateWithoutCustomerEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.CustomerSessionUncheckedUpdateManyWithoutCustomerNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerAccountNestedInput
+  supportRequests?: Prisma.SupportRequestUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 
@@ -627,12 +730,14 @@ export type CustomerCountOutputType = {
   sessions: number
   orders: number
   supportRequests: number
+  customerEvents: number
 }
 
 export type CustomerCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | CustomerCountOutputTypeCountSessionsArgs
   orders?: boolean | CustomerCountOutputTypeCountOrdersArgs
   supportRequests?: boolean | CustomerCountOutputTypeCountSupportRequestsArgs
+  customerEvents?: boolean | CustomerCountOutputTypeCountCustomerEventsArgs
 }
 
 /**
@@ -666,6 +771,13 @@ export type CustomerCountOutputTypeCountSupportRequestsArgs<ExtArgs extends runt
   where?: Prisma.SupportRequestWhereInput
 }
 
+/**
+ * CustomerCountOutputType without action
+ */
+export type CustomerCountOutputTypeCountCustomerEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CustomerEventWhereInput
+}
+
 
 export type CustomerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -678,6 +790,7 @@ export type CustomerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   sessions?: boolean | Prisma.Customer$sessionsArgs<ExtArgs>
   orders?: boolean | Prisma.Customer$ordersArgs<ExtArgs>
   supportRequests?: boolean | Prisma.Customer$supportRequestsArgs<ExtArgs>
+  customerEvents?: boolean | Prisma.Customer$customerEventsArgs<ExtArgs>
   _count?: boolean | Prisma.CustomerCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["customer"]>
 
@@ -716,6 +829,7 @@ export type CustomerInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   sessions?: boolean | Prisma.Customer$sessionsArgs<ExtArgs>
   orders?: boolean | Prisma.Customer$ordersArgs<ExtArgs>
   supportRequests?: boolean | Prisma.Customer$supportRequestsArgs<ExtArgs>
+  customerEvents?: boolean | Prisma.Customer$customerEventsArgs<ExtArgs>
   _count?: boolean | Prisma.CustomerCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type CustomerIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -727,6 +841,7 @@ export type $CustomerPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     sessions: Prisma.$CustomerSessionPayload<ExtArgs>[]
     orders: Prisma.$OrderPayload<ExtArgs>[]
     supportRequests: Prisma.$SupportRequestPayload<ExtArgs>[]
+    customerEvents: Prisma.$CustomerEventPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1133,6 +1248,7 @@ export interface Prisma__CustomerClient<T, Null = never, ExtArgs extends runtime
   sessions<T extends Prisma.Customer$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CustomerSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   orders<T extends Prisma.Customer$ordersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   supportRequests<T extends Prisma.Customer$supportRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$supportRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupportRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  customerEvents<T extends Prisma.Customer$customerEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$customerEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CustomerEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1629,6 +1745,30 @@ export type Customer$supportRequestsArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.SupportRequestScalarFieldEnum | Prisma.SupportRequestScalarFieldEnum[]
+}
+
+/**
+ * Customer.customerEvents
+ */
+export type Customer$customerEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CustomerEvent
+   */
+  select?: Prisma.CustomerEventSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CustomerEvent
+   */
+  omit?: Prisma.CustomerEventOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CustomerEventInclude<ExtArgs> | null
+  where?: Prisma.CustomerEventWhereInput
+  orderBy?: Prisma.CustomerEventOrderByWithRelationInput | Prisma.CustomerEventOrderByWithRelationInput[]
+  cursor?: Prisma.CustomerEventWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CustomerEventScalarFieldEnum | Prisma.CustomerEventScalarFieldEnum[]
 }
 
 /**

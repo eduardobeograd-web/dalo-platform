@@ -29,6 +29,8 @@ model Product {
   active            Boolean  @default(true)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+
+  customerEvents    CustomerEvent[]
 }
 
 model Customer {
@@ -43,6 +45,7 @@ model Customer {
   sessions        CustomerSession[]
   orders          Order[]
   supportRequests SupportRequest[]
+  customerEvents  CustomerEvent[]
 }
 
 model CustomerSession {
@@ -86,6 +89,7 @@ model Order {
   customerAccount Customer? @relation(fields: [customerId], references: [id])
 
   supportRequests SupportRequest[]
+  customerEvents  CustomerEvent[]
 }
 
 model SupportRequest {
@@ -108,4 +112,29 @@ model SupportRequest {
 
   customer Customer? @relation(fields: [customerId], references: [id])
   order    Order?    @relation(fields: [orderId], references: [id])
+}
+
+model CustomerEvent {
+  id String @id @default(cuid())
+
+  customerId String?
+  orderId    String?
+  productId  String?
+
+  sessionId String?
+  eventType String
+  metadata  Json?
+
+  createdAt DateTime @default(now())
+
+  customer Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  order    Order?    @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  product  Product?  @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([customerId])
+  @@index([orderId])
+  @@index([productId])
+  @@index([sessionId])
+  @@index([eventType])
+  @@index([createdAt])
 }

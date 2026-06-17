@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { prisma } from "../../lib/db";
 import { createCheckoutOrder } from "./actions";
+import CheckoutSessionInput from "../../components/tracking/CheckoutSessionInput";
 
 function formatPrice(value: number) {
   return `€${value.toFixed(2)}`;
@@ -116,6 +117,7 @@ export default async function CheckoutPage({
 
           <form action={createCheckoutOrder} className="mt-8 space-y-5">
             <input type="hidden" name="productId" value={product.id} />
+            <CheckoutSessionInput />
 
             <div>
               <label className="mb-2 block font-semibold">Email address</label>
@@ -158,6 +160,7 @@ export default async function CheckoutPage({
             className="mt-4 space-y-4"
           >
             <input type="hidden" name="productId" value={product.id} />
+            <CheckoutSessionInput />
 
             <input
               name="email"

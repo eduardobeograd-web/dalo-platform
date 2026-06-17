@@ -55,7 +55,8 @@ export const ModelName = {
   Customer: 'Customer',
   CustomerSession: 'CustomerSession',
   Order: 'Order',
-  SupportRequest: 'SupportRequest'
+  SupportRequest: 'SupportRequest',
+  CustomerEvent: 'CustomerEvent'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -166,6 +167,20 @@ export const SupportRequestScalarFieldEnum = {
 export type SupportRequestScalarFieldEnum = (typeof SupportRequestScalarFieldEnum)[keyof typeof SupportRequestScalarFieldEnum]
 
 
+export const CustomerEventScalarFieldEnum = {
+  id: 'id',
+  customerId: 'customerId',
+  orderId: 'orderId',
+  productId: 'productId',
+  sessionId: 'sessionId',
+  eventType: 'eventType',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type CustomerEventScalarFieldEnum = (typeof CustomerEventScalarFieldEnum)[keyof typeof CustomerEventScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -174,10 +189,35 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
 export const NullsOrder = {
   first: 'first',
   last: 'last'
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
+
+
+export const QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+} as const
+
+export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 

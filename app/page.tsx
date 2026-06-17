@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { trackClientEvent } from "@/lib/track-client-event";
 
 function DaloWordmark({ className = "h-6" }: { className?: string }) {
   return (
@@ -106,6 +107,23 @@ export default function Home() {
 
   const availableDestinationCards =
     destinations.length > 0 ? destinations : ["Europe"];
+
+  function handleSearchClick(event: React.MouseEvent<HTMLAnchorElement>) {
+    if (!selectedDestinationIsAvailable) {
+      event.preventDefault();
+      return;
+    }
+
+    trackClientEvent({
+      eventType: "search",
+      metadata: {
+        destination: selectedCountryForSearch,
+        days,
+        userType,
+        source: "homepage_quiz",
+      },
+    });
+  }
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#F6F8FF] text-slate-900">
@@ -401,6 +419,7 @@ export default function Home() {
 
               <a
                 href={searchingUrl}
+                onClick={handleSearchClick}
                 aria-disabled={!selectedDestinationIsAvailable}
                 className={`block w-full rounded-2xl p-5 text-center text-lg font-bold shadow-xl transition ${
                   selectedDestinationIsAvailable

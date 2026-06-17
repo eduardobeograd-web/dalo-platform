@@ -388,7 +388,8 @@ export const ModelName = {
   Customer: 'Customer',
   CustomerSession: 'CustomerSession',
   Order: 'Order',
-  SupportRequest: 'SupportRequest'
+  SupportRequest: 'SupportRequest',
+  CustomerEvent: 'CustomerEvent'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -404,7 +405,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "product" | "customer" | "customerSession" | "order" | "supportRequest"
+    modelProps: "product" | "customer" | "customerSession" | "order" | "supportRequest" | "customerEvent"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -778,6 +779,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    CustomerEvent: {
+      payload: Prisma.$CustomerEventPayload<ExtArgs>
+      fields: Prisma.CustomerEventFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CustomerEventFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerEventPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CustomerEventFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerEventPayload>
+        }
+        findFirst: {
+          args: Prisma.CustomerEventFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerEventPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CustomerEventFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerEventPayload>
+        }
+        findMany: {
+          args: Prisma.CustomerEventFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerEventPayload>[]
+        }
+        create: {
+          args: Prisma.CustomerEventCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerEventPayload>
+        }
+        createMany: {
+          args: Prisma.CustomerEventCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CustomerEventCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerEventPayload>[]
+        }
+        delete: {
+          args: Prisma.CustomerEventDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerEventPayload>
+        }
+        update: {
+          args: Prisma.CustomerEventUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerEventPayload>
+        }
+        deleteMany: {
+          args: Prisma.CustomerEventDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CustomerEventUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CustomerEventUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerEventPayload>[]
+        }
+        upsert: {
+          args: Prisma.CustomerEventUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CustomerEventPayload>
+        }
+        aggregate: {
+          args: Prisma.CustomerEventAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCustomerEvent>
+        }
+        groupBy: {
+          args: Prisma.CustomerEventGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CustomerEventGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CustomerEventCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CustomerEventCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -909,6 +984,20 @@ export const SupportRequestScalarFieldEnum = {
 export type SupportRequestScalarFieldEnum = (typeof SupportRequestScalarFieldEnum)[keyof typeof SupportRequestScalarFieldEnum]
 
 
+export const CustomerEventScalarFieldEnum = {
+  id: 'id',
+  customerId: 'customerId',
+  orderId: 'orderId',
+  productId: 'productId',
+  sessionId: 'sessionId',
+  eventType: 'eventType',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type CustomerEventScalarFieldEnum = (typeof CustomerEventScalarFieldEnum)[keyof typeof CustomerEventScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -917,12 +1006,37 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
 export const NullsOrder = {
   first: 'first',
   last: 'last'
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: DbNull,
+  JsonNull: JsonNull,
+  AnyNull: AnyNull
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
+
+
+export const QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+} as const
+
+export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 
 
 
@@ -963,6 +1077,20 @@ export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
  * Reference to a field of type 'DateTime'
  */
 export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
+    
+
+
+/**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 /**
@@ -1080,6 +1208,7 @@ export type GlobalOmitConfig = {
   customerSession?: Prisma.CustomerSessionOmit
   order?: Prisma.OrderOmit
   supportRequest?: Prisma.SupportRequestOmit
+  customerEvent?: Prisma.CustomerEventOmit
 }
 
 /* Types for Logging */

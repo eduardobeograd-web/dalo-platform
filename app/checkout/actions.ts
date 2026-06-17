@@ -3,6 +3,7 @@
 import crypto from "crypto";
 import { redirect } from "next/navigation";
 import { prisma } from "../../lib/db";
+import { trackCustomerEvent } from "../../lib/customer-events";
 
 const ORDER_NUMBER_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
@@ -62,6 +63,7 @@ async function createUniqueOrderNumber() {
 export async function createCheckoutOrder(formData: FormData) {
   const productId = String(formData.get("productId") || "");
   const email = normalizeEmail(String(formData.get("email") || ""));
+  const sessionId = String(formData.get("sessionId") || "");
 
   if (!productId || !email || !email.includes("@")) {
     redirect(`/checkout?productId=${productId}&error=1`);
@@ -116,6 +118,29 @@ export async function createCheckoutOrder(formData: FormData) {
 
       expiresAt: null,
       lastUsageSyncAt: null,
+    },
+  });
+
+  await trackCustomerEvent({
+    customerId: customer.id,
+    orderId: order.id,
+    productId: product.id,
+    sessionId: sessionId || null,
+    eventType: "purchase_completed",
+    metadata: {
+      source: "checkout_mvp_test_order",
+      sessionId: sessionId || null,
+      paymentMode: "mvp_test_order",
+      paymentStatus: order.payment,
+      fulfillmentStatus: order.fulfillment,
+      orderNumber: order.orderNumber,
+      customerEmail: email,
+      productName: product.name,
+      destination: product.country,
+      data: product.data,
+      validityDays: product.validityDays,
+      price: product.sellPrice,
+      provider: product.provider,
     },
   });
 

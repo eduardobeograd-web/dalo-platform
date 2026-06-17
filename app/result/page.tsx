@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { getDaloRecommendation } from "../../lib/recommendation";
 import TravelTicketCard from "../../components/result/TravelTicketCard";
+import ProductViewTracker from "../../components/tracking/ProductViewTracker";
+import CheckoutStartedLink from "../../components/tracking/CheckoutStartedLink";
 
 function formatPrice(value: number) {
   return `€${value.toFixed(2)}`;
@@ -167,6 +169,23 @@ export default async function ResultPage({
 
   return (
     <main className="min-h-screen bg-[#F6F8FF] text-slate-900">
+      <ProductViewTracker
+        productId={plan.id}
+        metadata={{
+          source: "result_page",
+          destination: country,
+          days,
+          userType: type,
+          productName: plan.name,
+          data: plan.data,
+          validityDays: plan.validityDays,
+          price: plan.sellPrice,
+          provider: plan.provider,
+          hasUpsell: Boolean(hasUpsell),
+          upsellProductId: hasUpsell ? upsell.id : null,
+        }}
+      />
+
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
         <a href="/">
           <Image
@@ -252,12 +271,24 @@ export default async function ResultPage({
             </div>
 
             <div className="mt-6">
-              <a
+              <CheckoutStartedLink
                 href={`/checkout?productId=${plan.id}`}
+                productId={plan.id}
                 className="block rounded-2xl bg-blue-600 px-6 py-4 text-center text-lg font-bold text-white shadow-xl shadow-blue-200 transition hover:bg-blue-700"
+                metadata={{
+                  source: "result_page_main_cta",
+                  destination: country,
+                  days,
+                  userType: type,
+                  productName: plan.name,
+                  data: plan.data,
+                  validityDays: plan.validityDays,
+                  price: plan.sellPrice,
+                  provider: plan.provider,
+                }}
               >
                 Continue with this plan →
-              </a>
+              </CheckoutStartedLink>
             </div>
 
             {hasUpsell && (
@@ -295,12 +326,27 @@ export default async function ResultPage({
                       {formatPrice(upsell.sellPrice)}
                     </div>
 
-                    <a
+                    <CheckoutStartedLink
                       href={`/checkout?productId=${upsell.id}`}
+                      productId={upsell.id}
                       className="mt-3 inline-block rounded-2xl bg-white px-5 py-3 text-sm font-black text-blue-700 shadow-lg transition hover:bg-blue-50"
+                      metadata={{
+                        source: "result_page_upsell_cta",
+                        destination: country,
+                        days,
+                        userType: type,
+                        productName: upsell.name,
+                        data: upsell.data,
+                        validityDays: upsell.validityDays,
+                        price: upsell.sellPrice,
+                        provider: upsell.provider,
+                        originalProductId: plan.id,
+                        originalProductName: plan.name,
+                        priceDifference: upsellPriceDifference,
+                      }}
                     >
                       Choose hot deal →
-                    </a>
+                    </CheckoutStartedLink>
                   </div>
                 </div>
               </div>
