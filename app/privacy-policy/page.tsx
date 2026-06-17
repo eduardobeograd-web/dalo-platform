@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import SiteFooter from "../../components/SiteFooter";
 
 const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
@@ -159,6 +160,7 @@ export default function PrivacyPolicyPage() {
           </div>
         </section>
       </section>
+      <SiteFooter />
     </main>
   );
 }
