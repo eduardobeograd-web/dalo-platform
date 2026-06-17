@@ -363,7 +363,7 @@ export default async function EsimLandingPage({ params }: PageProps) {
                     href="/"
                     className="rounded-full bg-blue-700 px-5 py-3 text-sm font-bold text-white"
                   >
-                    Compare
+                    Find best match
                   </Link>
                 </div>
               </article>
