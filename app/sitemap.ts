@@ -18,6 +18,17 @@ const indexedCountrySlugs = new Set([
   "united-arab-emirates",
   "united-kingdom",
   "united-states-of-america",
+  "greece",
+  "portugal",
+  "morocco",
+  "canada",
+  "australia",
+  "mexico",
+  "indonesia",
+  "malaysia",
+  "singapore",
+  "korea-republic-of",
+  "saudi-arabia",
 ]);
 
 function slugify(value: string) {

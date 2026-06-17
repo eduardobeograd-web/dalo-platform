@@ -23,7 +23,20 @@ const popularDestinations = [
   { name: "Spain", href: "/esim/spain" },
   { name: "Japan", href: "/esim/japan" },
   { name: "Egypt", href: "/esim/egypt" },
+  { name: "United Arab Emirates", href: "/esim/united-arab-emirates" },
+  { name: "United Kingdom", href: "/esim/united-kingdom" },
   { name: "United States", href: "/esim/united-states-of-america" },
+  { name: "Greece", href: "/esim/greece" },
+  { name: "Portugal", href: "/esim/portugal" },
+  { name: "Morocco", href: "/esim/morocco" },
+  { name: "Canada", href: "/esim/canada" },
+  { name: "Australia", href: "/esim/australia" },
+  { name: "Mexico", href: "/esim/mexico" },
+  { name: "Indonesia", href: "/esim/indonesia" },
+  { name: "Malaysia", href: "/esim/malaysia" },
+  { name: "Singapore", href: "/esim/singapore" },
+  { name: "South Korea", href: "/esim/korea-republic-of" },
+  { name: "Saudi Arabia", href: "/esim/saudi-arabia" },
 ];
 
 const landingPages: Record<

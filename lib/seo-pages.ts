@@ -381,6 +381,304 @@ export const seoLandingPages: Record<string, SeoLandingPage> = {
     ],
   },
 
+  greece: {
+    name: "Greece",
+    headline: "Greece eSIM plans for islands, Athens and holidays",
+    title: "Greece eSIM | Travel Data Plans for Greece | DALO",
+    description:
+      "Compare Greece eSIM plans for your trip. Find prepaid mobile data options for Athens, islands and holidays with clear prices and validity.",
+    intro:
+      "Traveling to Greece for islands, Athens, beach holidays or island hopping? A Greece eSIM can help you stay connected for maps, ferries, taxis, hotel check-ins, messaging and travel apps.",
+    faq: [
+      {
+        question: "Does a Greece eSIM work on the islands?",
+        answer:
+          "Many Greece eSIM plans work in supported island destinations, but coverage depends on the provider and local network. Check the plan details before buying.",
+      },
+      {
+        question: "Can I use a Greece eSIM for ferries and navigation?",
+        answer:
+          "Yes. It is useful for maps, ferry tickets, hotel communication, messaging and travel planning.",
+      },
+      {
+        question: "Is a Greece eSIM useful for tourists?",
+        answer:
+          "Yes. A Greece eSIM can help tourists avoid relying only on hotel Wi-Fi or expensive roaming.",
+      },
+    ],
+  },
+
+  portugal: {
+    name: "Portugal",
+    headline: "Portugal eSIM plans for Lisbon, Porto and coastal trips",
+    title: "Portugal eSIM | Travel Data Plans for Portugal | DALO",
+    description:
+      "Compare Portugal eSIM plans for your trip. Find prepaid mobile data options for Lisbon, Porto, Algarve and more.",
+    intro:
+      "Traveling to Portugal for Lisbon, Porto, the Algarve or a longer stay? A Portugal eSIM can help you stay online for maps, public transport, ride apps, bookings and messaging.",
+    faq: [
+      {
+        question: "Does a Portugal eSIM work in Lisbon and Porto?",
+        answer:
+          "Yes. A Portugal eSIM can provide mobile data in Lisbon, Porto and other supported areas, depending on the local network.",
+      },
+      {
+        question: "Is a Portugal eSIM good for digital nomads?",
+        answer:
+          "Yes. It can be useful as a travel data option for navigation, messaging, work apps and backup connectivity.",
+      },
+      {
+        question: "Can I install a Portugal eSIM before travel?",
+        answer:
+          "In many cases you can install your eSIM before departure and activate it according to the provider instructions.",
+      },
+    ],
+  },
+
+  morocco: {
+    name: "Morocco",
+    headline: "Morocco eSIM plans for Marrakech, cities and tours",
+    title: "Morocco eSIM | Travel Data Plans for Morocco | DALO",
+    description:
+      "Compare Morocco eSIM plans for your trip. Find prepaid mobile data options with clear data volume, validity and pricing.",
+    intro:
+      "Traveling to Morocco? A Morocco eSIM can help you stay connected in Marrakech, Casablanca, Fes, coastal cities or while joining tours and road trips.",
+    faq: [
+      {
+        question: "Does a Morocco eSIM work for tourists?",
+        answer:
+          "Yes, if your phone supports eSIM and the provider offers Morocco coverage, you can use it for mobile data while traveling.",
+      },
+      {
+        question: "Can I use a Morocco eSIM for maps and taxis?",
+        answer:
+          "Yes. It is useful for maps, ride apps, messaging, hotel communication and travel planning.",
+      },
+      {
+        question: "Is a Morocco eSIM better than roaming?",
+        answer:
+          "For many travelers, a prepaid Morocco eSIM can be clearer than roaming because you choose a data package and price before use.",
+      },
+    ],
+  },
+
+  canada: {
+    name: "Canada",
+    headline: "Canada eSIM plans for cities, road trips and travel data",
+    title: "Canada eSIM | Travel Data Plans for Canada | DALO",
+    description:
+      "Compare Canada eSIM plans for your trip. Find prepaid mobile data options for cities, road trips and travel apps.",
+    intro:
+      "Traveling to Canada? A Canada eSIM can help you stay connected for maps, ride apps, hotel check-ins, messaging, road trips and everyday travel data.",
+    faq: [
+      {
+        question: "Does a Canada eSIM work with iPhone?",
+        answer:
+          "Yes, if your iPhone supports eSIM and is unlocked, you can use a Canada eSIM for mobile data.",
+      },
+      {
+        question: "Can I use a Canada eSIM for road trips?",
+        answer:
+          "Yes. It is useful for navigation, bookings, messaging and travel apps, but coverage can vary in remote areas.",
+      },
+      {
+        question: "Is a Canada eSIM useful for tourists?",
+        answer:
+          "Yes. It helps travelers stay online without needing to buy a physical SIM card after arrival.",
+      },
+    ],
+  },
+
+  australia: {
+    name: "Australia",
+    headline: "Australia eSIM plans for cities, beaches and road trips",
+    title: "Australia eSIM | Travel Data Plans for Australia | DALO",
+    description:
+      "Compare Australia eSIM plans for your trip. Find prepaid mobile data options with clear data volume, validity and pricing.",
+    intro:
+      "Traveling to Australia? An Australia eSIM can help you stay connected in Sydney, Melbourne, Brisbane, coastal areas and during road trips.",
+    faq: [
+      {
+        question: "Does an Australia eSIM work for tourists?",
+        answer:
+          "Yes, if your phone supports eSIM and is unlocked, an Australia eSIM can be used for mobile data while traveling.",
+      },
+      {
+        question: "Can I use an Australia eSIM for navigation?",
+        answer:
+          "Yes. It is useful for maps, ride apps, bookings, messaging and travel planning.",
+      },
+      {
+        question: "Does coverage work everywhere in Australia?",
+        answer:
+          "Coverage depends on the local network used by the eSIM provider. Major cities usually have stronger coverage than remote areas.",
+      },
+    ],
+  },
+
+  mexico: {
+    name: "Mexico",
+    headline: "Mexico eSIM plans for holidays, cities and travel data",
+    title: "Mexico eSIM | Travel Data Plans for Mexico | DALO",
+    description:
+      "Compare Mexico eSIM plans for your trip. Find prepaid mobile data options for holidays, cities and travel apps.",
+    intro:
+      "Traveling to Mexico? A Mexico eSIM can help you stay connected for airport transfers, maps, hotels, messaging, ride apps and travel planning.",
+    faq: [
+      {
+        question: "Does a Mexico eSIM work in tourist areas?",
+        answer:
+          "Yes. A Mexico eSIM can provide mobile data in supported areas, depending on the local network and provider.",
+      },
+      {
+        question: "Can I use WhatsApp with a Mexico eSIM?",
+        answer:
+          "Yes. A data eSIM lets you use WhatsApp, maps, browsers and other apps while keeping your normal number on your main SIM.",
+      },
+      {
+        question: "Is a Mexico eSIM good for holidays?",
+        answer:
+          "Yes. It can be useful for navigation, hotel communication, bookings and staying online outside Wi-Fi.",
+      },
+    ],
+  },
+
+  indonesia: {
+    name: "Indonesia",
+    headline: "Indonesia eSIM plans for Bali, Jakarta and island travel",
+    title: "Indonesia eSIM | Travel Data Plans for Indonesia | DALO",
+    description:
+      "Compare Indonesia eSIM plans for Bali, Jakarta and island travel. Find prepaid mobile data options with clear pricing.",
+    intro:
+      "Traveling to Indonesia or Bali? An Indonesia eSIM can help you stay connected for maps, ride apps, hotel communication, messaging and travel planning.",
+    faq: [
+      {
+        question: "Does an Indonesia eSIM work in Bali?",
+        answer:
+          "Many Indonesia eSIM plans work in Bali, depending on the provider and local network coverage.",
+      },
+      {
+        question: "Can I use an Indonesia eSIM for ride apps?",
+        answer:
+          "Yes. It is useful for ride apps, maps, messaging, bookings and browsing.",
+      },
+      {
+        question: "Is an Indonesia eSIM useful for island travel?",
+        answer:
+          "Yes, but coverage can vary between islands and remote areas. Check the provider details before buying.",
+      },
+    ],
+  },
+
+  malaysia: {
+    name: "Malaysia",
+    headline: "Malaysia eSIM plans for Kuala Lumpur and travel data",
+    title: "Malaysia eSIM | Travel Data Plans for Malaysia | DALO",
+    description:
+      "Compare Malaysia eSIM plans for your trip. Find prepaid mobile data options with clear data volume, validity and pricing.",
+    intro:
+      "Traveling to Malaysia? A Malaysia eSIM can help you stay connected in Kuala Lumpur, Penang, Langkawi and other travel destinations.",
+    faq: [
+      {
+        question: "Does a Malaysia eSIM work in Kuala Lumpur?",
+        answer:
+          "Yes. A Malaysia eSIM can provide mobile data in Kuala Lumpur and other supported areas, depending on network coverage.",
+      },
+      {
+        question: "Can I use a Malaysia eSIM for maps and messaging?",
+        answer:
+          "Yes. It is useful for maps, messaging, ride apps, bookings and travel planning.",
+      },
+      {
+        question: "Do I need a physical SIM card in Malaysia?",
+        answer:
+          "No. If your phone supports eSIM, you can use a digital Malaysia eSIM instead of buying a physical SIM card.",
+      },
+    ],
+  },
+
+  singapore: {
+    name: "Singapore",
+    headline: "Singapore eSIM plans for city travel and business trips",
+    title: "Singapore eSIM | Travel Data Plans for Singapore | DALO",
+    description:
+      "Compare Singapore eSIM plans for your trip. Find prepaid mobile data options for city travel, business and stopovers.",
+    intro:
+      "Traveling to Singapore for business, a stopover or city travel? A Singapore eSIM can help you stay connected for maps, ride apps, messaging, meetings and bookings.",
+    faq: [
+      {
+        question: "Does a Singapore eSIM work immediately after arrival?",
+        answer:
+          "Most Singapore eSIM plans work once installed and connected to a supported local network, depending on provider rules.",
+      },
+      {
+        question: "Is a Singapore eSIM useful for business travel?",
+        answer:
+          "Yes. It is useful for emails, maps, ride apps, messaging and staying connected between meetings.",
+      },
+      {
+        question: "Can I use WhatsApp with a Singapore eSIM?",
+        answer:
+          "Yes. A data eSIM lets you use WhatsApp and other apps while keeping your normal number active on your main SIM.",
+      },
+    ],
+  },
+
+  "korea-republic-of": {
+    name: "South Korea",
+    headline: "South Korea eSIM plans for Seoul, Busan and travel apps",
+    title: "South Korea eSIM | Travel Data Plans for Korea | DALO",
+    description:
+      "Compare South Korea eSIM plans for your trip. Find prepaid mobile data options for Seoul, Busan and travel apps.",
+    intro:
+      "Traveling to South Korea? A South Korea eSIM can help you stay connected for maps, translation, messaging, public transport, bookings and travel apps.",
+    faq: [
+      {
+        question: "Does a South Korea eSIM work in Seoul?",
+        answer:
+          "Yes. A South Korea eSIM can provide mobile data in Seoul and other supported areas, depending on the provider network.",
+      },
+      {
+        question: "Can I use a South Korea eSIM for translation apps?",
+        answer:
+          "Yes. It is useful for translation, maps, transport apps, messaging and browsing.",
+      },
+      {
+        question: "Is a South Korea eSIM data-only?",
+        answer:
+          "Most travel eSIMs are data-only. Check the plan details if you need calls or SMS.",
+      },
+    ],
+  },
+
+  "saudi-arabia": {
+    name: "Saudi Arabia",
+    headline: "Saudi Arabia eSIM plans for travel, business and pilgrimage",
+    title: "Saudi Arabia eSIM | Travel Data Plans for Saudi Arabia | DALO",
+    description:
+      "Compare Saudi Arabia eSIM plans for your trip. Find prepaid mobile data options with clear data volume, validity and pricing.",
+    intro:
+      "Traveling to Saudi Arabia for business, tourism or pilgrimage? A Saudi Arabia eSIM can help you stay connected for maps, messaging, hotel communication, bookings and travel apps.",
+    faq: [
+      {
+        question: "Does a Saudi Arabia eSIM work for travelers?",
+        answer:
+          "Yes, if your phone supports eSIM and the provider offers Saudi Arabia coverage, you can use it for mobile data while traveling.",
+      },
+      {
+        question: "Can I use a Saudi Arabia eSIM for maps and messaging?",
+        answer:
+          "Yes. It is useful for maps, messaging, hotel communication, ride apps and travel planning.",
+      },
+      {
+        question: "Can I install a Saudi Arabia eSIM before departure?",
+        answer:
+          "In many cases you can install the eSIM before your trip and activate it according to the provider instructions.",
+      },
+    ],
+  },
+
+
 };
 
 export function getSeoLandingPage(slug: string) {
