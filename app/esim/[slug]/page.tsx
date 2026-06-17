@@ -195,6 +195,31 @@ export default async function EsimLandingPage({ params }: PageProps) {
     })),
   };
 
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "DALO",
+        item: "/",
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "eSIM",
+        item: "/esim",
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: displayName,
+        item: `/esim/${slug}`,
+      },
+    ],
+  };
+
   return (
     <main className="min-h-screen bg-[#F6F8FF] text-slate-900">
       {productSchema ? (
@@ -207,6 +232,11 @@ export default async function EsimLandingPage({ params }: PageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
       <section className="mx-auto max-w-6xl px-6 py-12">
