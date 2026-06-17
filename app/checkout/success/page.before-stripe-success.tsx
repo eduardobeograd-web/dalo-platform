@@ -1,123 +1,8 @@
 import Image from "next/image";
 import { prisma } from "../../../lib/db";
-import { stripe } from "../../../lib/stripe";
-import { trackCustomerEvent } from "../../../lib/customer-events";
 
 function formatPrice(value: number) {
   return `€${value.toFixed(2)}`;
-}
-
-async function finalizeStripeCheckout(sessionId: string) {
-  if (!process.env.STRIPE_SECRET_KEY) {
-    return null;
-  }
-
-  const stripeSession = await stripe.checkout.sessions.retrieve(sessionId);
-  const orderId = stripeSession.metadata?.orderId;
-
-  if (!orderId) {
-    return null;
-  }
-
-  const existingOrder = await prisma.order.findUnique({
-    where: {
-      id: orderId,
-    },
-  });
-
-  if (!existingOrder) {
-    return null;
-  }
-
-  if (stripeSession.payment_status !== "paid") {
-    return existingOrder;
-  }
-
-  const product = await prisma.product.findUnique({
-    where: {
-      id: existingOrder.productId,
-    },
-  });
-
-  if (!product) {
-    return existingOrder;
-  }
-
-  const email =
-    stripeSession.customer_details?.email ||
-    stripeSession.customer_email ||
-    existingOrder.customer;
-
-  const customer = await prisma.customer.upsert({
-    where: {
-      email,
-    },
-    update: {
-      active: true,
-    },
-    create: {
-      email,
-      active: true,
-    },
-  });
-
-  const updatedOrder = await prisma.order.update({
-    where: {
-      id: existingOrder.id,
-    },
-    data: {
-      customer: email,
-      customerId: customer.id,
-      payment: "Paid",
-      fulfillment: "pending_manual",
-      esimStatus: "pending",
-    },
-  });
-
-  const existingPurchaseEvent = await prisma.customerEvent.findFirst({
-    where: {
-      eventType: "purchase_completed",
-      orderId: updatedOrder.id,
-    },
-  });
-
-  if (!existingPurchaseEvent) {
-    const marketingCampaign = stripeSession.metadata?.marketingCampaign || "";
-    const marketingSourceEventId =
-      stripeSession.metadata?.marketingSourceEventId || "";
-    const daloSessionId = stripeSession.metadata?.daloSessionId || "";
-
-    await trackCustomerEvent({
-      customerId: customer.id,
-      orderId: updatedOrder.id,
-      productId: product.id,
-      sessionId: daloSessionId || null,
-      eventType: "purchase_completed",
-      metadata: {
-        source: "stripe_checkout_success",
-        sessionId: daloSessionId || null,
-        paymentMode: "stripe_checkout",
-        paymentStatus: updatedOrder.payment,
-        fulfillmentStatus: updatedOrder.fulfillment,
-        stripeCheckoutSessionId: stripeSession.id,
-        orderNumber: updatedOrder.orderNumber,
-        customerEmail: email,
-        productName: product.name,
-        destination: product.country,
-        data: product.data,
-        validityDays: product.validityDays,
-        price: product.sellPrice,
-        provider: product.provider,
-        marketingCampaign: marketingCampaign || null,
-        marketingSourceEventId: marketingSourceEventId || null,
-        attributedToMarketing: Boolean(
-          marketingCampaign || marketingSourceEventId
-        ),
-      },
-    });
-  }
-
-  return updatedOrder;
 }
 
 export default async function CheckoutSuccessPage({
@@ -125,22 +10,17 @@ export default async function CheckoutSuccessPage({
 }: {
   searchParams: Promise<{
     orderId?: string;
-    session_id?: string;
   }>;
 }) {
   const params = await searchParams;
 
-  let order = params.session_id
-    ? await finalizeStripeCheckout(params.session_id)
+  const order = params.orderId
+    ? await prisma.order.findUnique({
+        where: {
+          id: params.orderId,
+        },
+      })
     : null;
-
-  if (!order && params.orderId) {
-    order = await prisma.order.findUnique({
-      where: {
-        id: params.orderId,
-      },
-    });
-  }
 
   const product = order
     ? await prisma.product.findUnique({
@@ -241,16 +121,16 @@ export default async function CheckoutSuccessPage({
           </div>
 
           <p className="mt-8 text-sm font-bold uppercase tracking-wide text-blue-600">
-            Order Confirmed
+            Order Received
           </p>
 
           <h1 className="mt-3 text-5xl font-bold text-slate-950">
-            Your eSIM order is confirmed
+            Your eSIM order is pending
           </h1>
 
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-slate-600">
-            Your payment was received in test mode. eSIM delivery stays manual
-            for now, so no provider API is triggered automatically.
+            We received your order details. Payment and automatic eSIM delivery
+            will be connected in the next step of the build.
           </p>
 
           <div className="mt-8 rounded-[2rem] bg-blue-600 p-7 text-left text-white shadow-xl shadow-blue-100">
@@ -299,6 +179,7 @@ export default async function CheckoutSuccessPage({
               <div className="mt-1 font-mono text-sm font-bold">
                 {order.orderNumber || order.id}
               </div>
+
             </div>
 
             <div className="rounded-2xl bg-slate-50 p-5">
@@ -334,8 +215,8 @@ export default async function CheckoutSuccessPage({
               Total: {formatPrice(product.sellPrice)}
             </div>
             <div className="mt-1">
-              This checkout can now be completed with Stripe test mode. eSIM
-              fulfillment remains manual until provider APIs are connected.
+              This is currently a test order only. No real payment has been
+              charged yet.
             </div>
           </div>
 
