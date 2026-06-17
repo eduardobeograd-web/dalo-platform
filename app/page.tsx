@@ -910,6 +910,67 @@ export default function Home() {
         </div>
       </section>
 
+      {/* HOMEPAGE SEO CONTENT */}
+      <section className="relative z-10 mx-auto max-w-7xl px-6 py-14">
+        <div className="grid gap-6 lg:grid-cols-3">
+          <div className="rounded-[2rem] bg-white p-8 shadow-xl shadow-blue-100 ring-1 ring-blue-50">
+            <p className="mb-3 text-sm font-bold uppercase tracking-wide text-blue-600">
+              Travel eSIM basics
+            </p>
+
+            <h2 className="text-3xl font-black text-slate-950">
+              What is a travel eSIM?
+            </h2>
+
+            <p className="mt-4 leading-8 text-slate-600">
+              A travel eSIM is a digital SIM plan that gives you mobile data
+              abroad without changing your physical SIM card. It can help you
+              use maps, messaging, taxi apps, bookings and travel tools while
+              avoiding expensive roaming surprises.
+            </p>
+          </div>
+
+          <div className="rounded-[2rem] bg-white p-8 shadow-xl shadow-blue-100 ring-1 ring-blue-50">
+            <p className="mb-3 text-sm font-bold uppercase tracking-wide text-blue-600">
+              Smarter choice
+            </p>
+
+            <h2 className="text-3xl font-black text-slate-950">
+              How DALO helps you choose
+            </h2>
+
+            <p className="mt-4 leading-8 text-slate-600">
+              DALO focuses on your destination, trip length and expected data
+              usage. Instead of making you compare endless eSIM plans, DALO
+              guides you toward a clearer recommendation for your travel needs.
+            </p>
+          </div>
+
+          <div className="rounded-[2rem] bg-white p-8 shadow-xl shadow-blue-100 ring-1 ring-blue-50">
+            <p className="mb-3 text-sm font-bold uppercase tracking-wide text-blue-600">
+              Popular destinations
+            </p>
+
+            <h2 className="text-3xl font-black text-slate-950">
+              Find eSIM plans by country
+            </h2>
+
+            <p className="mt-4 leading-8 text-slate-600">
+              Explore travel eSIM options for popular destinations like Turkey,
+              Thailand, Serbia, Japan, Germany, France, Spain, Italy and the
+              United States.
+            </p>
+
+            <a
+              href="/esim"
+              className="mt-6 inline-flex rounded-full bg-blue-50 px-5 py-3 text-sm font-bold text-blue-700"
+            >
+              Explore eSIM destinations →
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* FINAL CTA */}
       <section className="relative z-10 mx-auto max-w-7xl px-6 py-14">
         <div className="rounded-[2.5rem] bg-blue-600 p-10 text-center text-white shadow-2xl shadow-blue-200 md:p-16">
