@@ -9,6 +9,21 @@ type PageProps = {
   }>;
 };
 
+const popularDestinations = [
+  { name: "Turkey", href: "/esim/turkey" },
+  { name: "Thailand", href: "/esim/thailand" },
+  { name: "Serbia", href: "/esim/serbia" },
+  { name: "Croatia", href: "/esim/croatia" },
+  { name: "Bosnia and Herzegovina", href: "/esim/bosnia-and-herzegovina" },
+  { name: "Germany", href: "/esim/germany" },
+  { name: "France", href: "/esim/france" },
+  { name: "Italy", href: "/esim/italy" },
+  { name: "Spain", href: "/esim/spain" },
+  { name: "Japan", href: "/esim/japan" },
+  { name: "Egypt", href: "/esim/egypt" },
+  { name: "United States", href: "/esim/united-states-of-america" },
+];
+
 const landingPages: Record<
   string,
   {
@@ -288,6 +303,31 @@ export default async function EsimLandingPage({ params }: PageProps) {
             </Link>
           </section>
         )}
+
+        <section className="mt-10 rounded-[2rem] bg-white p-8 shadow-xl shadow-blue-100">
+          <h2 className="text-3xl font-black text-slate-950">
+            Popular eSIM destinations
+          </h2>
+
+          <p className="mt-3 max-w-3xl text-slate-600">
+            Compare other popular travel eSIM destinations and find the right
+            data plan for your next trip.
+          </p>
+
+          <div className="mt-6 flex flex-wrap gap-3">
+            {popularDestinations
+              .filter((destination) => destination.href !== `/esim/${slug}`)
+              .map((destination) => (
+                <Link
+                  key={destination.href}
+                  href={destination.href}
+                  className="rounded-full border border-blue-100 bg-blue-50 px-4 py-2 text-sm font-bold text-blue-700 hover:bg-blue-100"
+                >
+                  {destination.name} eSIM
+                </Link>
+              ))}
+          </div>
+        </section>
 
         <section className="mt-10 rounded-[2rem] bg-white p-8 shadow-xl shadow-blue-100">
           <h2 className="text-3xl font-black text-slate-950">
