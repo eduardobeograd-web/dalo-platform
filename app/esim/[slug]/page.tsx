@@ -293,7 +293,9 @@ export default async function EsimLandingPage({ params }: PageProps) {
 
           <span aria-hidden="true">/</span>
 
-          <span>eSIM</span>
+          <Link href="/esim" className="text-blue-700 hover:text-blue-900">
+            eSIM
+          </Link>
 
           <span aria-hidden="true">/</span>
 
