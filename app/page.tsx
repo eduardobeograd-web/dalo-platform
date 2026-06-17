@@ -87,10 +87,18 @@ export default function Home() {
     mainEntity: [
       {
         "@type": "Question",
-        name: "What is an eSIM?",
+        name: "What is a travel eSIM?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "An eSIM is a digital SIM card that lets you activate mobile data without a physical SIM.",
+          text: "A travel eSIM is a digital mobile data plan that helps you stay connected abroad without changing your physical SIM card.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "How does DALO choose an eSIM?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "DALO uses your destination, trip length and expected data usage to guide you toward a clearer travel eSIM recommendation.",
         },
       },
       {
@@ -98,15 +106,31 @@ export default function Home() {
         name: "Can I keep my phone number?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Yes. Your physical SIM and your travel eSIM can work together on most modern phones.",
+          text: "Yes. On most modern phones, your normal SIM can stay active while your travel eSIM is used for mobile data.",
         },
       },
       {
         "@type": "Question",
-        name: "How long does installation take?",
+        name: "Can I use WhatsApp with a travel eSIM?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Usually less than 2 minutes after purchase. You receive your eSIM digitally.",
+          text: "Yes. A travel eSIM provides mobile data, so apps like WhatsApp, maps, taxi apps and booking tools can work while you travel.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "How much data do I need for travel?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Light users may only need a small data plan for maps and messaging, while longer trips, video use or hotspot sharing may require larger plans.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "How long does eSIM installation take?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Installation usually takes only a few minutes after purchase, depending on your phone, provider and internet connection.",
         },
       },
     ],
