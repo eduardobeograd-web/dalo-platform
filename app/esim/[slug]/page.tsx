@@ -86,6 +86,24 @@ function slugify(value: string) {
     .replace(/^-+|-+$/g, "");
 }
 
+function getPlanHint(dataAmount: string) {
+  const normalized = dataAmount.toLowerCase();
+
+  if (normalized.includes("100gb") || normalized.includes("50gb")) {
+    return "Best for heavy data use";
+  }
+
+  if (normalized.includes("20gb") || normalized.includes("10gb")) {
+    return "Best for longer trips";
+  }
+
+  if (normalized.includes("5gb") || normalized.includes("3gb")) {
+    return "Best for maps, taxis and messaging";
+  }
+
+  return "Best for light travel use";
+}
+
 async function getProducts(slug: string) {
   const page = getPage(slug);
 
@@ -336,6 +354,10 @@ export default async function EsimLandingPage({ params }: PageProps) {
                 <h2 className="mt-2 text-2xl font-black text-slate-950">
                   {product.name}
                 </h2>
+
+                <p className="mt-3 inline-flex rounded-full bg-blue-50 px-3 py-1 text-xs font-bold text-blue-700">
+                  {getPlanHint(product.data)}
+                </p>
 
                 <div className="mt-4 space-y-2 text-sm text-slate-600">
                   <p>
