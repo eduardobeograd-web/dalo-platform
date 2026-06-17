@@ -240,11 +240,22 @@ export default async function EsimLandingPage({ params }: PageProps) {
       />
 
       <section className="mx-auto max-w-6xl px-6 py-12">
-        <div className="mb-8">
-          <Link href="/" className="text-sm font-semibold text-blue-700">
-            ← Back to DALO
+        <nav
+          aria-label="Breadcrumb"
+          className="mb-8 flex flex-wrap items-center gap-2 text-sm font-semibold text-slate-500"
+        >
+          <Link href="/" className="text-blue-700 hover:text-blue-900">
+            DALO
           </Link>
-        </div>
+
+          <span aria-hidden="true">/</span>
+
+          <span>eSIM</span>
+
+          <span aria-hidden="true">/</span>
+
+          <span className="text-slate-900">{displayName}</span>
+        </nav>
 
         <div className="rounded-[2rem] bg-white p-8 shadow-xl shadow-blue-100">
           <p className="mb-3 text-sm font-bold uppercase tracking-wide text-blue-600">
