@@ -75,6 +75,11 @@ const eventFilters = [
     value: "product_interest_email_sent",
     href: "/admin/events?type=product_interest_email_sent",
   },
+  {
+    label: "Email Clicks",
+    value: "marketing_email_clicked",
+    href: "/admin/events?type=marketing_email_clicked",
+  },
 ];
 
 function getEventBadgeClass(eventType: string) {
@@ -285,6 +290,31 @@ export default async function AdminEventsPage({
     },
   });
 
+  const knownVisitorsCount = await prisma.customer.count();
+
+  const marketingEmailsSentCount = await prisma.customerEvent.count({
+    where: {
+      eventType: {
+        in: [
+          "abandoned_checkout_email_sent",
+          "product_interest_email_sent",
+        ],
+      },
+    },
+  });
+
+  const marketingEmailClicksCount = await prisma.customerEvent.count({
+    where: {
+      eventType: "marketing_email_clicked",
+    },
+  });
+
+  const conversionEventsCount = await prisma.customerEvent.count({
+    where: {
+      eventType: "purchase_completed",
+    },
+  });
+
   return (
     <AdminShell activePage="events">
       <div className="mb-8">
@@ -300,6 +330,81 @@ export default async function AdminEventsPage({
           Live overview of tracked customer actions across search, product
           views, checkout starts and purchases.
         </p>
+      </div>
+
+      <div className="mb-8 rounded-[2rem] bg-slate-950 p-6 text-white shadow-2xl shadow-slate-200">
+        <div className="mb-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-sm font-black uppercase tracking-wide text-blue-300">
+              Marketing Summary
+            </p>
+
+            <h2 className="mt-1 text-3xl font-black tracking-tight">
+              Automation readiness
+            </h2>
+          </div>
+
+          <p className="max-w-2xl text-sm leading-relaxed text-slate-300">
+            Snapshot of known visitors, open marketing opportunities and sent
+            reminder emails.
+          </p>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-6">
+          <div className="rounded-2xl bg-white/10 p-5 ring-1 ring-white/10">
+            <div className="text-xs font-black uppercase tracking-wide text-slate-400">
+              Known Visitors
+            </div>
+            <div className="mt-2 text-3xl font-black text-white">
+              {knownVisitorsCount}
+            </div>
+          </div>
+
+          <div className="rounded-2xl bg-orange-500/15 p-5 ring-1 ring-orange-300/20">
+            <div className="text-xs font-black uppercase tracking-wide text-orange-200">
+              Abandoned
+            </div>
+            <div className="mt-2 text-3xl font-black text-orange-100">
+              {abandonedCheckoutCandidates.length}
+            </div>
+          </div>
+
+          <div className="rounded-2xl bg-purple-500/15 p-5 ring-1 ring-purple-300/20">
+            <div className="text-xs font-black uppercase tracking-wide text-purple-200">
+              Product Interest
+            </div>
+            <div className="mt-2 text-3xl font-black text-purple-100">
+              {knownVisitorProductInterestCandidates.length}
+            </div>
+          </div>
+
+          <div className="rounded-2xl bg-green-500/15 p-5 ring-1 ring-green-300/20">
+            <div className="text-xs font-black uppercase tracking-wide text-green-200">
+              Emails Sent
+            </div>
+            <div className="mt-2 text-3xl font-black text-green-100">
+              {marketingEmailsSentCount}
+            </div>
+          </div>
+
+          <div className="rounded-2xl bg-cyan-500/15 p-5 ring-1 ring-cyan-300/20">
+            <div className="text-xs font-black uppercase tracking-wide text-cyan-200">
+              Email Clicks
+            </div>
+            <div className="mt-2 text-3xl font-black text-cyan-100">
+              {marketingEmailClicksCount}
+            </div>
+          </div>
+
+          <div className="rounded-2xl bg-blue-500/15 p-5 ring-1 ring-blue-300/20">
+            <div className="text-xs font-black uppercase tracking-wide text-blue-200">
+              Purchases
+            </div>
+            <div className="mt-2 text-3xl font-black text-blue-100">
+              {conversionEventsCount}
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="mb-8">

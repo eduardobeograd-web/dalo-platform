@@ -64,6 +64,8 @@ export async function createCheckoutOrder(formData: FormData) {
   const productId = String(formData.get("productId") || "");
   const email = normalizeEmail(String(formData.get("email") || ""));
   const sessionId = String(formData.get("sessionId") || "");
+  const marketingCampaign = String(formData.get("marketingCampaign") || "");
+  const marketingSourceEventId = String(formData.get("marketingSourceEventId") || "");
 
   if (!productId || !email || !email.includes("@")) {
     redirect(`/checkout?productId=${productId}&error=1`);
@@ -141,6 +143,9 @@ export async function createCheckoutOrder(formData: FormData) {
       validityDays: product.validityDays,
       price: product.sellPrice,
       provider: product.provider,
+      marketingCampaign: marketingCampaign || null,
+      marketingSourceEventId: marketingSourceEventId || null,
+      attributedToMarketing: Boolean(marketingCampaign || marketingSourceEventId),
     },
   });
 

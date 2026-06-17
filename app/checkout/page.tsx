@@ -15,12 +15,16 @@ export default async function CheckoutPage({
     productId?: string;
     error?: string;
     stripe?: string;
+    marketingCampaign?: string;
+    marketingSourceEventId?: string;
   }>;
 }) {
   const params = await searchParams;
   const productId = params.productId;
   const hasError = params.error === "1";
   const stripeMissing = params.stripe === "missing";
+  const marketingCampaign = params.marketingCampaign || "";
+  const marketingSourceEventId = params.marketingSourceEventId || "";
 
   const product = productId
     ? await prisma.product.findUnique({
@@ -118,6 +122,8 @@ export default async function CheckoutPage({
 
           <form action={createCheckoutOrder} className="mt-8 space-y-5">
             <input type="hidden" name="productId" value={product.id} />
+            <input type="hidden" name="marketingCampaign" value={marketingCampaign} />
+            <input type="hidden" name="marketingSourceEventId" value={marketingSourceEventId} />
             <CheckoutSessionInput />
 
             <div>

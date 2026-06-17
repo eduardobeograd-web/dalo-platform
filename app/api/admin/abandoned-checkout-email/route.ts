@@ -130,9 +130,13 @@ export async function POST(request: Request) {
     const baseUrl =
       process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 
-    const checkoutUrl = emailEvent.productId
+    const directCheckoutUrl = emailEvent.productId
       ? `${baseUrl}/checkout?productId=${emailEvent.productId}`
       : `${baseUrl}/`;
+
+    const checkoutUrl = emailEvent.productId
+      ? `${baseUrl}/api/marketing/click?campaign=abandoned_checkout&sourceEventId=${emailEvent.id}&productId=${emailEvent.productId}`
+      : directCheckoutUrl;
 
     const result = await sendEmail({
       to: customerEmail,
