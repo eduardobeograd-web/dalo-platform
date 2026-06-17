@@ -261,7 +261,7 @@ export default async function EsimLandingPage({ params }: PageProps) {
         description:
           product.seoDescription ||
           product.description ||
-          `${product.dataAmount} mobile data for ${displayName}. Valid for ${product.validityDays} days.`,
+          `${product.data} mobile data for ${displayName}. Valid for ${product.validityDays} days.`,
         brand: {
           "@type": "Brand",
           name: product.provider,

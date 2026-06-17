@@ -1,10 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function SearchingPage() {
+function SearchingContent() {
   const router = useRouter();
   const params = useSearchParams();
 
@@ -46,5 +46,13 @@ export default function SearchingPage() {
         </p>
       </div>
     </main>
+  );
+}
+
+export default function SearchingPage() {
+  return (
+    <Suspense fallback={null}>
+      <SearchingContent />
+    </Suspense>
   );
 }

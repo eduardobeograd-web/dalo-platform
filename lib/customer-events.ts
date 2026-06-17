@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { Prisma } from "../app/generated/prisma/client";
 
 type TrackCustomerEventInput = {
   customerId?: string | null;
@@ -18,7 +19,7 @@ export async function trackCustomerEvent(input: TrackCustomerEventInput) {
         productId: input.productId ?? null,
         sessionId: input.sessionId ?? null,
         eventType: input.eventType,
-        metadata: input.metadata ?? undefined,
+        metadata: input.metadata ? (input.metadata as Prisma.InputJsonValue) : undefined,
       },
     });
   } catch (error) {
