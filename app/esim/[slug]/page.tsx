@@ -225,6 +225,34 @@ export default async function EsimLandingPage({ params }: PageProps) {
     ],
   };
 
+  const itemListSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: `${displayName} eSIM plans`,
+    itemListElement: products.map((product, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      item: {
+        "@type": "Product",
+        name: product.name,
+        description:
+          product.seoDescription ||
+          product.description ||
+          `${product.dataAmount} mobile data for ${displayName}. Valid for ${product.validityDays} days.`,
+        brand: {
+          "@type": "Brand",
+          name: product.provider,
+        },
+        offers: {
+          "@type": "Offer",
+          price: product.sellPrice,
+          priceCurrency: "EUR",
+          availability: "https://schema.org/InStock",
+        },
+      },
+    })),
+  };
+
   return (
     <main className="min-h-screen bg-[#F6F8FF] text-slate-900">
       {productSchema ? (
@@ -242,6 +270,11 @@ export default async function EsimLandingPage({ params }: PageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
       />
 
       <section className="mx-auto max-w-6xl px-6 py-12">
