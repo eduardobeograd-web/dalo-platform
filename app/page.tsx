@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { trackClientEvent } from "@/lib/track-client-event";
 import SiteFooter from "../components/SiteFooter";
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
 function DaloWordmark({ className = "h-6" }: { className?: string }) {
   return (
     <img
@@ -75,8 +77,8 @@ export default function Home() {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "DALO",
-    url: "http://localhost:3000",
-    logo: "http://localhost:3000/dalo-logo-horizontal.png",
+    url: baseUrl,
+    logo: `${baseUrl}/dalo-logo-horizontal.png`,
     description:
       "DALO is a travel eSIM recommendation platform that helps travelers find the right eSIM plan by destination, trip length and data usage.",
   };
