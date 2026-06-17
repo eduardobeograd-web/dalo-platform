@@ -342,11 +342,21 @@ export default async function EsimLandingPage({ params }: PageProps) {
 
         {products.length ? (
           <section className="mt-10 grid gap-6 md:grid-cols-3">
-            {products.map((product) => (
+            {products.map((product) => {
+              return (
               <article
                 key={product.id}
-                className="rounded-[1.5rem] bg-white p-6 shadow-lg shadow-blue-100"
+                className={
+                  product.data.toLowerCase().includes("5gb")
+                    ? "rounded-[1.5rem] border-2 border-blue-600 bg-white p-6 shadow-xl shadow-blue-200"
+                    : "rounded-[1.5rem] bg-white p-6 shadow-lg shadow-blue-100"
+                }
               >
+                {product.data.toLowerCase().includes("5gb") ? (
+                  <p className="mb-4 inline-flex rounded-full bg-blue-700 px-3 py-1 text-xs font-black uppercase tracking-wide text-white">
+                    DALO pick
+                  </p>
+                ) : null}
                 <p className="text-sm font-semibold text-blue-700">
                   {product.provider}
                 </p>
@@ -391,7 +401,8 @@ export default async function EsimLandingPage({ params }: PageProps) {
                   </Link>
                 </div>
               </article>
-            ))}
+              );
+            })}
           </section>
         ) : (
           <section className="mt-10 rounded-[2rem] bg-white p-8 shadow-xl shadow-blue-100">
