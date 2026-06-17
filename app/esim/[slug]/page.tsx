@@ -3,6 +3,8 @@ import Link from "next/link";
 import { prisma } from "../../../lib/db";
 import { getSeoLandingPage } from "../../../lib/seo-pages";
 
+const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
 type PageProps = {
   params: Promise<{
     slug: string;
@@ -118,16 +120,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const title = seoPage?.title || page.title;
   const description = seoPage?.description || page.description;
 
+  const pageUrl = `${baseUrl}/esim/${slug}`;
+
   return {
     title,
     description,
     alternates: {
-      canonical: `/esim/${slug}`,
+      canonical: pageUrl,
     },
     openGraph: {
       title,
       description,
-      url: `/esim/${slug}`,
+      url: pageUrl,
       type: "website",
     },
   };
@@ -138,6 +142,7 @@ export default async function EsimLandingPage({ params }: PageProps) {
   const page = getPage(slug);
   const seoPage = getSeoLandingPage(slug);
   const displayName = seoPage?.name || page.name;
+  const pageUrl = `${baseUrl}/esim/${slug}`;
   const headline = seoPage?.headline || `${displayName} eSIM plans for your trip`;
   const introText =
     seoPage?.intro ||
@@ -203,19 +208,19 @@ export default async function EsimLandingPage({ params }: PageProps) {
         "@type": "ListItem",
         position: 1,
         name: "DALO",
-        item: "/",
+        item: baseUrl,
       },
       {
         "@type": "ListItem",
         position: 2,
         name: "eSIM",
-        item: "/esim",
+        item: `${baseUrl}/esim`,
       },
       {
         "@type": "ListItem",
         position: 3,
         name: displayName,
-        item: `/esim/${slug}`,
+        item: pageUrl,
       },
     ],
   };
