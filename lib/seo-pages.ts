@@ -172,6 +172,215 @@ export const seoLandingPages: Record<string, SeoLandingPage> = {
       },
     ],
   },
+  germany: {
+    name: "Germany",
+    headline: "Germany eSIM plans for city trips and business travel",
+    title: "Germany eSIM | Travel Data Plans for Germany | DALO",
+    description:
+      "Compare Germany eSIM plans for your trip. Find prepaid mobile data options with clear data volume, validity and pricing.",
+    intro:
+      "Traveling to Germany for business, a city trip or a longer stay? DALO helps you compare Germany eSIM plans for maps, train routes, hotel check-ins, messaging and everyday mobile data.",
+    faq: [
+      {
+        question: "Does a Germany eSIM work with iPhone?",
+        answer:
+          "Yes, if your iPhone supports eSIM and is unlocked, you can use a Germany eSIM for mobile data during your trip.",
+      },
+      {
+        question: "Can I use a Germany eSIM for maps and trains?",
+        answer:
+          "Yes. A Germany eSIM is useful for Google Maps, train apps, ride apps, messaging and browsing while traveling.",
+      },
+      {
+        question: "Is a Germany eSIM useful for business travel?",
+        answer:
+          "Yes. It can help you stay online for emails, navigation, hotel check-ins and work apps without relying on public Wi-Fi.",
+      },
+    ],
+  },
+  france: {
+    name: "France",
+    headline: "France eSIM plans for Paris, holidays and road trips",
+    title: "France eSIM | Travel Data Plans for France | DALO",
+    description:
+      "Compare France eSIM plans with clear prices, data volume and validity. Find the right prepaid mobile data option for your trip.",
+    intro:
+      "Planning a trip to France? A France eSIM can help you stay connected in Paris, on the coast, in the countryside or while traveling between cities.",
+    faq: [
+      {
+        question: "Does a France eSIM work in Paris?",
+        answer:
+          "Yes. A France eSIM can provide mobile data in Paris and other supported areas, depending on the provider network.",
+      },
+      {
+        question: "Can I use a France eSIM for navigation?",
+        answer:
+          "Yes. You can use it for maps, public transport apps, hotel bookings, messaging and browsing.",
+      },
+      {
+        question: "Is a France eSIM better than airport Wi-Fi?",
+        answer:
+          "For many travelers, an eSIM is more convenient because it gives mobile data outside airports, hotels and cafés.",
+      },
+    ],
+  },
+  italy: {
+    name: "Italy",
+    headline: "Italy eSIM plans for Rome, Milan and holiday travel",
+    title: "Italy eSIM | Travel Data Plans for Italy | DALO",
+    description:
+      "Compare Italy eSIM plans for your trip. Find prepaid mobile data options for Rome, Milan, Venice and more.",
+    intro:
+      "Traveling to Italy? A prepaid Italy eSIM can help you stay connected for maps, train routes, restaurant searches, hotel check-ins and messaging.",
+    faq: [
+      {
+        question: "Does an Italy eSIM work with unlocked phones?",
+        answer:
+          "Yes, if your phone supports eSIM and is unlocked, you can use an Italy eSIM for mobile data.",
+      },
+      {
+        question: "Can I use an Italy eSIM for train travel?",
+        answer:
+          "Yes. It is useful for train apps, maps, tickets, translation, messaging and browsing while moving between cities.",
+      },
+      {
+        question: "Do I need a physical SIM card in Italy?",
+        answer:
+          "No. If your phone supports eSIM, you can use a digital Italy eSIM instead of buying a physical SIM card.",
+      },
+    ],
+  },
+  spain: {
+    name: "Spain",
+    headline: "Spain eSIM plans for holidays, cities and islands",
+    title: "Spain eSIM | Travel Data Plans for Spain | DALO",
+    description:
+      "Compare Spain eSIM plans with clear data volume, validity and pricing. Find the right prepaid mobile data option before you travel.",
+    intro:
+      "Visiting Spain for a beach holiday, city break or island trip? DALO helps you compare Spain eSIM plans for maps, messaging, bookings and travel apps.",
+    faq: [
+      {
+        question: "Does a Spain eSIM work in Barcelona and Madrid?",
+        answer:
+          "Yes. A Spain eSIM can provide mobile data in major cities and supported areas, depending on the local network coverage.",
+      },
+      {
+        question: "Can I use a Spain eSIM on the islands?",
+        answer:
+          "Many Spain eSIM plans work in supported Spanish destinations, but coverage can depend on the provider and local network.",
+      },
+      {
+        question: "Is a Spain eSIM useful for tourists?",
+        answer:
+          "Yes. It is useful for maps, messaging, hotel check-ins, restaurant searches and travel planning.",
+      },
+    ],
+  },
+  egypt: {
+    name: "Egypt",
+    headline: "Egypt eSIM plans for holidays and travel data",
+    title: "Egypt eSIM | Travel Data Plans for Egypt | DALO",
+    description:
+      "Compare Egypt eSIM plans for your trip. Find prepaid mobile data options with clear prices, data volume and validity.",
+    intro:
+      "Traveling to Egypt? An Egypt eSIM can help you stay connected for airport transfers, maps, hotel communication, messaging and travel planning.",
+    faq: [
+      {
+        question: "Does an Egypt eSIM work for tourists?",
+        answer:
+          "Yes. If your phone supports eSIM and is unlocked, an Egypt eSIM can be used for mobile data while traveling.",
+      },
+      {
+        question: "Can I install an Egypt eSIM before departure?",
+        answer:
+          "In many cases you can install the eSIM before your trip and activate it according to the provider instructions.",
+      },
+      {
+        question: "Is an Egypt eSIM useful for resorts and tours?",
+        answer:
+          "Yes. It can help with messaging, maps, transfers, bookings and staying online outside hotel Wi-Fi.",
+      },
+    ],
+  },
+  "united-arab-emirates": {
+    name: "United Arab Emirates",
+    headline: "UAE eSIM plans for Dubai, Abu Dhabi and business travel",
+    title: "UAE eSIM | Dubai and Abu Dhabi Travel Data Plans | DALO",
+    description:
+      "Compare UAE eSIM plans for Dubai, Abu Dhabi and the United Arab Emirates. Find prepaid mobile data options with clear pricing.",
+    intro:
+      "Traveling to Dubai, Abu Dhabi or elsewhere in the UAE? A UAE eSIM can help you stay connected for maps, airport transfers, hotel check-ins, messaging and business travel.",
+    faq: [
+      {
+        question: "Does a UAE eSIM work in Dubai?",
+        answer:
+          "Yes. A UAE eSIM can provide mobile data in Dubai and other supported areas, depending on the provider network.",
+      },
+      {
+        question: "Can I use a UAE eSIM for business travel?",
+        answer:
+          "Yes. It is useful for emails, maps, messaging, ride apps and staying connected between meetings.",
+      },
+      {
+        question: "Do I need to buy a SIM card at Dubai airport?",
+        answer:
+          "Not necessarily. If your phone supports eSIM, you can compare and prepare an eSIM before your trip.",
+      },
+    ],
+  },
+  "united-kingdom": {
+    name: "United Kingdom",
+    headline: "UK eSIM plans for London and travel across Britain",
+    title: "UK eSIM | Travel Data Plans for the United Kingdom | DALO",
+    description:
+      "Compare UK eSIM plans for London and the United Kingdom. Find prepaid mobile data options with clear data volume and validity.",
+    intro:
+      "Traveling to London or elsewhere in the United Kingdom? A UK eSIM can help you stay connected for maps, trains, messaging, hotel check-ins and travel apps.",
+    faq: [
+      {
+        question: "Does a UK eSIM work in London?",
+        answer:
+          "Yes. A UK eSIM can provide mobile data in London and other supported areas, depending on network coverage.",
+      },
+      {
+        question: "Can I use a UK eSIM for trains and maps?",
+        answer:
+          "Yes. It is useful for maps, train apps, tickets, messaging and browsing while traveling.",
+      },
+      {
+        question: "Can I keep my normal SIM active in the UK?",
+        answer:
+          "Yes. Most eSIM phones allow you to keep your normal SIM active and use the UK eSIM for mobile data.",
+      },
+    ],
+  },
+  "united-states-of-america": {
+    name: "United States",
+    headline: "USA eSIM plans for road trips, cities and travel data",
+    title: "USA eSIM | Travel Data Plans for the United States | DALO",
+    description:
+      "Compare USA eSIM plans for your trip. Find prepaid mobile data options for the United States with clear pricing and validity.",
+    intro:
+      "Traveling to the United States? A USA eSIM can help you stay connected for maps, ride apps, hotel check-ins, messaging, road trips and everyday mobile data.",
+    faq: [
+      {
+        question: "Does a USA eSIM work with iPhone?",
+        answer:
+          "Yes, if your iPhone supports eSIM and is unlocked, you can use a USA eSIM for mobile data.",
+      },
+      {
+        question: "Can I use a USA eSIM for road trips?",
+        answer:
+          "Yes. It is useful for maps, navigation, hotel bookings, messaging and travel apps, depending on network coverage.",
+      },
+      {
+        question: "Is a USA eSIM better than roaming?",
+        answer:
+          "For many travelers, a prepaid USA eSIM can be clearer and more predictable than roaming because you choose a fixed data package.",
+      },
+    ],
+  },
+
 };
 
 export function getSeoLandingPage(slug: string) {
