@@ -21,6 +21,7 @@ const allowedEvents = new Set([
   "esim_expiring",
   "esim_expired",
   "abandoned_checkout_email_sent",
+  "product_interest_email_sent",
 ]);
 
 function normalizeEmail(value: unknown) {
