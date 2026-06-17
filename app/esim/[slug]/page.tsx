@@ -151,7 +151,7 @@ export default async function EsimLandingPage({ params }: PageProps) {
   const headline = seoPage?.headline || `${displayName} eSIM plans for your trip`;
   const introText =
     seoPage?.intro ||
-    `Compare available eSIM plans for ${displayName}. DALO helps travelers find simple mobile data options with transparent prices, validity, and data volume.`;
+    `Find available eSIM plans for ${displayName}. DALO helps travelers find simple mobile data options with transparent prices, validity, and data volume.`;
   const faqs =
     seoPage?.faq || [
       {
@@ -304,7 +304,7 @@ export default async function EsimLandingPage({ params }: PageProps) {
 
         <div className="rounded-[2rem] bg-white p-8 shadow-xl shadow-blue-100">
           <p className="mb-3 text-sm font-bold uppercase tracking-wide text-blue-600">
-            Travel eSIM comparison
+            Travel eSIM recommendation
           </p>
 
           <h1 className="max-w-3xl text-4xl font-black tracking-tight text-slate-950 md:text-6xl">
@@ -362,7 +362,7 @@ export default async function EsimLandingPage({ params }: PageProps) {
                   </div>
 
                   <Link
-                    href="/"
+                    href="/#quiz"
                     className="rounded-full bg-blue-700 px-5 py-3 text-sm font-bold text-white"
                   >
                     Find best match
@@ -396,7 +396,7 @@ export default async function EsimLandingPage({ params }: PageProps) {
           </h2>
 
           <p className="mt-3 max-w-3xl text-slate-600">
-            Compare other popular travel eSIM destinations and find the right
+            Explore other popular travel eSIM destinations and find the right
             data plan for your next trip.
           </p>
 
