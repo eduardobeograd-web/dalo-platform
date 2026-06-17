@@ -891,12 +891,27 @@ export default function Home() {
             </div>
 
             <div>
-              <h4 className="mb-4 font-bold">Destinations</h4>
+              <h4 className="mb-4 font-bold">Popular eSIM destinations</h4>
 
               <div className="space-y-2 text-slate-600">
-                {availableDestinationCards.slice(0, 4).map((destination) => (
-                  <div key={destination}>{destination}</div>
-                ))}
+                <a className="block hover:text-blue-700" href="/esim/turkey">
+                  Turkey eSIM
+                </a>
+                <a className="block hover:text-blue-700" href="/esim/thailand">
+                  Thailand eSIM
+                </a>
+                <a className="block hover:text-blue-700" href="/esim/serbia">
+                  Serbia eSIM
+                </a>
+                <a className="block hover:text-blue-700" href="/esim/germany">
+                  Germany eSIM
+                </a>
+                <a className="block hover:text-blue-700" href="/esim/france">
+                  France eSIM
+                </a>
+                <a className="block hover:text-blue-700" href="/esim/united-states-of-america">
+                  USA eSIM
+                </a>
               </div>
             </div>
 
