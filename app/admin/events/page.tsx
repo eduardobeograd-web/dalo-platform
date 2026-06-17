@@ -1,6 +1,7 @@
 import AdminShell from "../../../components/AdminShell";
 import { prisma } from "../../../lib/db";
 import TestEmailButton from "../../../components/admin/TestEmailButton";
+import SendAbandonedCheckoutEmailButton from "../../../components/admin/SendAbandonedCheckoutEmailButton";
 
 function formatDate(value: Date) {
   return new Intl.DateTimeFormat("en-GB", {
@@ -277,7 +278,7 @@ export default async function AdminEventsPage({
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full min-w-[1000px] border-collapse text-left text-sm">
+          <table className="w-full min-w-[1120px] border-collapse text-left text-sm">
             <thead className="bg-white text-xs uppercase tracking-wide text-slate-500">
               <tr>
                 <th className="px-5 py-4">Email</th>
@@ -287,6 +288,7 @@ export default async function AdminEventsPage({
                 <th className="px-5 py-4">Entered</th>
                 <th className="px-5 py-4">Age</th>
                 <th className="px-5 py-4">Session</th>
+                <th className="px-5 py-4">Action</th>
               </tr>
             </thead>
 
@@ -335,12 +337,16 @@ export default async function AdminEventsPage({
                       {event.sessionId || "—"}
                     </div>
                   </td>
+
+                  <td className="px-5 py-4">
+                    <SendAbandonedCheckoutEmailButton eventId={event.id} />
+                  </td>
                 </tr>
               ))}
 
               {abandonedCheckoutCandidates.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-5 py-10 text-center text-slate-500">
+                  <td colSpan={8} className="px-5 py-10 text-center text-slate-500">
                     No abandoned checkout candidates right now.
                   </td>
                 </tr>
