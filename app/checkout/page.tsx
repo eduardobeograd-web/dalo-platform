@@ -2,6 +2,7 @@ import Image from "next/image";
 import { prisma } from "../../lib/db";
 import { createCheckoutOrder } from "./actions";
 import CheckoutSessionInput from "../../components/tracking/CheckoutSessionInput";
+import CheckoutEmailInput from "../../components/tracking/CheckoutEmailInput";
 
 function formatPrice(value: number) {
   return `€${value.toFixed(2)}`;
@@ -121,12 +122,11 @@ export default async function CheckoutPage({
 
             <div>
               <label className="mb-2 block font-semibold">Email address</label>
-              <input
-                name="email"
-                type="email"
-                required
-                placeholder="you@example.com"
-                className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 outline-none focus:border-blue-500 focus:bg-white"
+              <CheckoutEmailInput
+                productId={product.id}
+                productName={product.name}
+                destination={product.country}
+                price={product.sellPrice}
               />
             </div>
 

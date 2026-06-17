@@ -20,6 +20,25 @@ function formatMetadata(metadata: unknown) {
   }
 }
 
+function getMetadataValue(metadata: unknown, key: string) {
+  if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) {
+    return null;
+  }
+
+  const value = (metadata as Record<string, unknown>)[key];
+
+  if (value === null || value === undefined) {
+    return null;
+  }
+
+  return String(value);
+}
+
+function getMinutesSince(date: Date) {
+  const diffMs = Date.now() - date.getTime();
+  return Math.max(0, Math.floor(diffMs / 1000 / 60));
+}
+
 function getEventBadgeClass(eventType: string) {
   if (eventType === "purchase_completed") {
     return "bg-green-100 text-green-700";
@@ -83,6 +102,47 @@ export default async function AdminEventsPage() {
     },
   });
 
+  const checkoutEmailEvents = await prisma.customerEvent.findMany({
+    where: {
+      eventType: "checkout_email_entered",
+      sessionId: {
+        not: null,
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    take: 50,
+    include: {
+      product: true,
+    },
+  });
+
+  const abandonedCheckoutCandidates = [];
+
+  for (const emailEvent of checkoutEmailEvents) {
+    if (!emailEvent.sessionId) {
+      continue;
+    }
+
+    const completedPurchase = await prisma.customerEvent.findFirst({
+      where: {
+        eventType: "purchase_completed",
+        sessionId: emailEvent.sessionId,
+        createdAt: {
+          gte: emailEvent.createdAt,
+        },
+      },
+      orderBy: {
+        createdAt: "asc",
+      },
+    });
+
+    if (!completedPurchase) {
+      abandonedCheckoutCandidates.push(emailEvent);
+    }
+  }
+
   return (
     <AdminShell activePage="events">
       <div className="mb-8">
@@ -134,6 +194,109 @@ export default async function AdminEventsPage() {
           <div className="mt-2 text-3xl font-black text-green-700">
             {purchases}
           </div>
+        </div>
+      </div>
+
+      <div className="mb-8 overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-orange-50 ring-1 ring-orange-100">
+        <div className="border-b border-orange-100 bg-orange-50 p-6">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-sm font-black uppercase tracking-wide text-orange-700">
+                Marketing Automation Preview
+              </p>
+
+              <h2 className="mt-1 text-2xl font-black text-slate-950">
+                Abandoned Checkout Candidates
+              </h2>
+
+              <p className="mt-2 max-w-3xl text-sm text-slate-600">
+                Customers who entered an email in checkout but have no completed
+                purchase with the same session afterward.
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-white px-5 py-3 text-center shadow-sm ring-1 ring-orange-100">
+              <div className="text-xs font-bold uppercase text-slate-500">
+                Candidates
+              </div>
+              <div className="text-3xl font-black text-orange-700">
+                {abandonedCheckoutCandidates.length}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[1000px] border-collapse text-left text-sm">
+            <thead className="bg-white text-xs uppercase tracking-wide text-slate-500">
+              <tr>
+                <th className="px-5 py-4">Email</th>
+                <th className="px-5 py-4">Product</th>
+                <th className="px-5 py-4">Destination</th>
+                <th className="px-5 py-4">Price</th>
+                <th className="px-5 py-4">Entered</th>
+                <th className="px-5 py-4">Age</th>
+                <th className="px-5 py-4">Session</th>
+              </tr>
+            </thead>
+
+            <tbody className="divide-y divide-slate-100">
+              {abandonedCheckoutCandidates.map((event) => (
+                <tr key={event.id} className="align-top hover:bg-orange-50/40">
+                  <td className="px-5 py-4 font-bold text-slate-950">
+                    {getMetadataValue(event.metadata, "customerEmail") || "—"}
+                  </td>
+
+                  <td className="px-5 py-4">
+                    <div className="font-bold text-slate-950">
+                      {event.product?.name ||
+                        getMetadataValue(event.metadata, "productName") ||
+                        "—"}
+                    </div>
+                    <div className="mt-1 text-xs text-slate-500">
+                      {event.productId || "—"}
+                    </div>
+                  </td>
+
+                  <td className="px-5 py-4 font-semibold text-slate-700">
+                    {getMetadataValue(event.metadata, "destination") ||
+                      event.product?.country ||
+                      "—"}
+                  </td>
+
+                  <td className="px-5 py-4 font-semibold text-slate-700">
+                    {getMetadataValue(event.metadata, "price")
+                      ? `€${getMetadataValue(event.metadata, "price")}`
+                      : "—"}
+                  </td>
+
+                  <td className="whitespace-nowrap px-5 py-4 font-semibold text-slate-700">
+                    {formatDate(event.createdAt)}
+                  </td>
+
+                  <td className="px-5 py-4">
+                    <span className="rounded-full bg-orange-100 px-3 py-1 text-xs font-black text-orange-700">
+                      {getMinutesSince(event.createdAt)} min ago
+                    </span>
+                  </td>
+
+                  <td className="max-w-[220px] px-5 py-4">
+                    <div className="truncate font-mono text-xs text-slate-500">
+                      {event.sessionId || "—"}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+
+              {abandonedCheckoutCandidates.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="px-5 py-10 text-center text-slate-500">
+                    No abandoned checkout candidates right now.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
 

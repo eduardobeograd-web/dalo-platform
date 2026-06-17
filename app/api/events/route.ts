@@ -7,6 +7,7 @@ const allowedEvents = new Set([
   "search",
   "add_to_cart",
   "checkout_started",
+  "checkout_email_entered",
   "payment_success",
   "payment_failed",
   "purchase_completed",
