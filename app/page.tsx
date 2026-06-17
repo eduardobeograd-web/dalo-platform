@@ -70,6 +70,37 @@ function getDestinationImage(destination: string) {
 }
 
 export default function Home() {
+  const homepageFaqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: "What is an eSIM?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "An eSIM is a digital SIM card that lets you activate mobile data without a physical SIM.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Can I keep my phone number?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes. Your physical SIM and your travel eSIM can work together on most modern phones.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "How long does installation take?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Usually less than 2 minutes after purchase. You receive your eSIM digitally.",
+        },
+      },
+    ],
+  };
+
   const [country, setCountry] = useState("");
   const [days, setDays] = useState("8-14");
   const [userType, setUserType] = useState("everyday");
@@ -129,6 +160,11 @@ export default function Home() {
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#F6F8FF] text-slate-900">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homepageFaqSchema) }}
+      />
+
       <div className="pointer-events-none absolute -left-24 top-24 h-80 w-80 rounded-full bg-blue-300/30 blur-3xl" />
       <div className="pointer-events-none absolute right-[-120px] top-40 h-96 w-96 rounded-full bg-cyan-300/30 blur-3xl" />
       <div className="pointer-events-none absolute left-1/3 top-[620px] h-72 w-72 rounded-full bg-indigo-200/40 blur-3xl" />
