@@ -65,6 +65,16 @@ const eventFilters = [
     value: "purchase_completed",
     href: "/admin/events?type=purchase_completed",
   },
+  {
+    label: "Abandoned Sent",
+    value: "abandoned_checkout_email_sent",
+    href: "/admin/events?type=abandoned_checkout_email_sent",
+  },
+  {
+    label: "Interest Sent",
+    value: "product_interest_email_sent",
+    href: "/admin/events?type=product_interest_email_sent",
+  },
 ];
 
 function getEventBadgeClass(eventType: string) {
@@ -255,6 +265,25 @@ export default async function AdminEventsPage({
       knownVisitorProductInterestCandidates.push(productView);
     }
   }
+
+  const sentMarketingEmailEvents = await prisma.customerEvent.findMany({
+    where: {
+      eventType: {
+        in: [
+          "abandoned_checkout_email_sent",
+          "product_interest_email_sent",
+        ],
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+    take: 50,
+    include: {
+      customer: true,
+      product: true,
+    },
+  });
 
   return (
     <AdminShell activePage="events">
@@ -526,6 +555,118 @@ export default async function AdminEventsPage({
                 <tr>
                   <td colSpan={8} className="px-5 py-10 text-center text-slate-500">
                     No known visitor product interest candidates right now.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div className="mb-8 overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-green-50 ring-1 ring-green-100">
+        <div className="border-b border-green-100 bg-green-50 p-6">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-sm font-black uppercase tracking-wide text-green-700">
+                Marketing Email Log
+              </p>
+
+              <h2 className="mt-1 text-2xl font-black text-slate-950">
+                Sent Marketing Emails
+              </h2>
+
+              <p className="mt-2 max-w-3xl text-sm text-slate-600">
+                Recent manually sent abandoned checkout and product interest
+                emails.
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-white px-5 py-3 text-center shadow-sm ring-1 ring-green-100">
+              <div className="text-xs font-bold uppercase text-slate-500">
+                Sent
+              </div>
+              <div className="text-3xl font-black text-green-700">
+                {sentMarketingEmailEvents.length}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[1120px] border-collapse text-left text-sm">
+            <thead className="bg-white text-xs uppercase tracking-wide text-slate-500">
+              <tr>
+                <th className="px-5 py-4">Type</th>
+                <th className="px-5 py-4">Email</th>
+                <th className="px-5 py-4">Product</th>
+                <th className="px-5 py-4">Destination</th>
+                <th className="px-5 py-4">Price</th>
+                <th className="px-5 py-4">Sent</th>
+                <th className="px-5 py-4">Session</th>
+              </tr>
+            </thead>
+
+            <tbody className="divide-y divide-slate-100">
+              {sentMarketingEmailEvents.map((event) => (
+                <tr key={event.id} className="align-top hover:bg-green-50/40">
+                  <td className="px-5 py-4">
+                    <span
+                      className={`inline-flex rounded-full px-3 py-1 text-xs font-black ${
+                        event.eventType === "abandoned_checkout_email_sent"
+                          ? "bg-orange-100 text-orange-700"
+                          : "bg-purple-100 text-purple-700"
+                      }`}
+                    >
+                      {event.eventType === "abandoned_checkout_email_sent"
+                        ? "Abandoned reminder"
+                        : "Product interest"}
+                    </span>
+                  </td>
+
+                  <td className="px-5 py-4 font-bold text-slate-950">
+                    {event.customer?.email ||
+                      getMetadataValue(event.metadata, "customerEmail") ||
+                      getMetadataValue(event.metadata, "knownCustomerEmail") ||
+                      "—"}
+                  </td>
+
+                  <td className="px-5 py-4">
+                    <div className="font-bold text-slate-950">
+                      {event.product?.name ||
+                        getMetadataValue(event.metadata, "productName") ||
+                        "—"}
+                    </div>
+                    <div className="mt-1 text-xs text-slate-500">
+                      {event.productId || "—"}
+                    </div>
+                  </td>
+
+                  <td className="px-5 py-4 font-semibold text-slate-700">
+                    {getMetadataValue(event.metadata, "destination") ||
+                      event.product?.country ||
+                      "—"}
+                  </td>
+
+                  <td className="px-5 py-4 font-semibold text-slate-700">
+                    {getMetadataValue(event.metadata, "price") || "—"}
+                  </td>
+
+                  <td className="whitespace-nowrap px-5 py-4 font-semibold text-slate-700">
+                    {formatDate(event.createdAt)}
+                  </td>
+
+                  <td className="max-w-[220px] px-5 py-4">
+                    <div className="truncate font-mono text-xs text-slate-500">
+                      {event.sessionId || "—"}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+
+              {sentMarketingEmailEvents.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="px-5 py-10 text-center text-slate-500">
+                    No marketing emails sent yet.
                   </td>
                 </tr>
               )}
