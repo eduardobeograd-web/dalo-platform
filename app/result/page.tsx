@@ -106,12 +106,16 @@ export default async function ResultPage({
   const days = params.days || "8-14";
   const type = params.type || "everyday";
 
-  const { recommendedProduct: plan, upsellProduct: upsell } =
-    await getDaloRecommendation({
-      country,
-      days,
-      type,
-    });
+  const {
+    recommendedProduct: plan,
+    upsellProduct: upsell,
+    minimumDataGb,
+    tripDays,
+  } = await getDaloRecommendation({
+    country,
+    days,
+    type,
+  });
 
   if (!plan) {
     return (
@@ -249,9 +253,34 @@ export default async function ResultPage({
               {plan.data} / {plan.validityDays} Days
             </div>
 
-            <div className="mt-5 rounded-2xl bg-slate-50 p-4">
-              <div className="text-sm text-slate-500">Destination</div>
-              <div className="mt-1 font-bold">{country}</div>
+            <div className="mt-5 grid gap-3 rounded-2xl bg-slate-50 p-4 sm:grid-cols-3">
+              <div>
+                <div className="text-sm text-slate-500">Destination</div>
+                <div className="mt-1 font-bold">{country}</div>
+              </div>
+
+              <div>
+                <div className="text-sm text-slate-500">Trip length</div>
+                <div className="mt-1 font-bold">{tripDays} days</div>
+              </div>
+
+              <div>
+                <div className="text-sm text-slate-500">Estimated need</div>
+                <div className="mt-1 font-bold">At least {minimumDataGb}GB</div>
+              </div>
+            </div>
+
+            <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50 p-4">
+              <div className="text-sm font-black uppercase tracking-wide text-blue-700">
+                Why DALO picked this plan
+              </div>
+
+              <p className="mt-2 text-sm leading-relaxed text-slate-700">
+                Based on your destination, trip length and usage type, DALO
+                estimates that you need at least {minimumDataGb}GB. This plan
+                gives you a safer travel buffer for maps, WhatsApp, taxis,
+                browsing and travel apps.
+              </p>
             </div>
 
             <div className="mt-6 flex flex-wrap items-end gap-4">
