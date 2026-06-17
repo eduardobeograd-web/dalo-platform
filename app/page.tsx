@@ -970,9 +970,15 @@ export default function Home() {
               <h4 className="mb-4 font-bold">Support</h4>
 
               <div className="space-y-2 text-slate-600">
-                <div>FAQ</div>
-                <div>Contact</div>
-                <div>Help Center</div>
+                <a className="block hover:text-blue-700" href="/support">
+                  Support
+                </a>
+                <a className="block hover:text-blue-700" href="/contact">
+                  Contact
+                </a>
+                <a className="block hover:text-blue-700" href="/refund-policy">
+                  Refund Policy
+                </a>
               </div>
             </div>
 
@@ -980,9 +986,15 @@ export default function Home() {
               <h4 className="mb-4 font-bold">Company</h4>
 
               <div className="space-y-2 text-slate-600">
-                <div>About</div>
-                <div>Privacy</div>
-                <div>Terms</div>
+                <a className="block hover:text-blue-700" href="/about">
+                  About
+                </a>
+                <a className="block hover:text-blue-700" href="/privacy-policy">
+                  Privacy Policy
+                </a>
+                <a className="block hover:text-blue-700" href="/terms">
+                  Terms
+                </a>
               </div>
             </div>
           </div>
