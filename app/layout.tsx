@@ -13,9 +13,9 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "DALO – Smart Travel eSIM",
-description:
-  "Find the perfect eSIM for your trip in under 20 seconds with DALO.",
+  title: "DALO | Find the Best Travel eSIM for Your Trip",
+  description:
+    "DALO helps travelers find the right eSIM plan by destination, trip length and data usage. Get a simple recommendation instead of comparing hundreds of plans.",
 };
 
 export default function RootLayout({
