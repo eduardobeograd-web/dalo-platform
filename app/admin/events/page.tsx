@@ -39,6 +39,31 @@ function getMinutesSince(date: Date) {
   return Math.max(0, Math.floor(diffMs / 1000 / 60));
 }
 
+const eventFilters = [
+  { label: "All", value: "all", href: "/admin/events" },
+  { label: "Search", value: "search", href: "/admin/events?type=search" },
+  {
+    label: "Product Views",
+    value: "product_view",
+    href: "/admin/events?type=product_view",
+  },
+  {
+    label: "Checkout Started",
+    value: "checkout_started",
+    href: "/admin/events?type=checkout_started",
+  },
+  {
+    label: "Email Entered",
+    value: "checkout_email_entered",
+    href: "/admin/events?type=checkout_email_entered",
+  },
+  {
+    label: "Purchases",
+    value: "purchase_completed",
+    href: "/admin/events?type=purchase_completed",
+  },
+];
+
 function getEventBadgeClass(eventType: string) {
   if (eventType === "purchase_completed") {
     return "bg-green-100 text-green-700";
@@ -63,8 +88,28 @@ function getEventBadgeClass(eventType: string) {
   return "bg-slate-100 text-slate-700";
 }
 
-export default async function AdminEventsPage() {
+export default async function AdminEventsPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{
+    type?: string;
+  }>;
+}) {
+  const params = searchParams ? await searchParams : {};
+  const selectedType = params.type || "all";
+  const selectedFilter = eventFilters.some((filter) => filter.value === selectedType)
+    ? selectedType
+    : "all";
+
+  const eventWhere =
+    selectedFilter === "all"
+      ? {}
+      : {
+          eventType: selectedFilter,
+        };
+
   const events = await prisma.customerEvent.findMany({
+    where: eventWhere,
     orderBy: {
       createdAt: "desc",
     },
@@ -302,13 +347,44 @@ export default async function AdminEventsPage() {
 
       <div className="overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-blue-50 ring-1 ring-blue-50">
         <div className="border-b border-slate-100 p-6">
-          <h2 className="text-2xl font-black text-slate-950">
-            Latest Events
-          </h2>
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+            <div>
+              <h2 className="text-2xl font-black text-slate-950">
+                Latest Events
+              </h2>
 
-          <p className="mt-1 text-sm text-slate-500">
-            Showing the latest 100 events.
-          </p>
+              <p className="mt-1 text-sm text-slate-500">
+                Showing the latest 100 events
+                {selectedFilter === "all" ? "" : ` for ${selectedFilter}`}.
+              </p>
+            </div>
+
+            <div>
+              <div className="mb-2 text-xs font-black uppercase tracking-wide text-slate-500">
+                Filter Events
+              </div>
+
+              <div className="flex max-w-full flex-wrap gap-2">
+                {eventFilters.map((filter) => {
+                  const isActive = filter.value === selectedFilter;
+
+                  return (
+                    <a
+                      key={filter.value}
+                      href={filter.href}
+                      className={`rounded-full px-4 py-2 text-xs font-black transition ${
+                        isActive
+                          ? "bg-blue-600 text-white shadow-lg shadow-blue-100"
+                          : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+                      }`}
+                    >
+                      {filter.label}
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
         </div>
 
         <div className="overflow-x-auto">
@@ -404,7 +480,7 @@ export default async function AdminEventsPage() {
               {events.length === 0 && (
                 <tr>
                   <td colSpan={7} className="px-5 py-10 text-center text-slate-500">
-                    No customer events found yet.
+                    No customer events found for this filter.
                   </td>
                 </tr>
               )}
