@@ -88,49 +88,6 @@ function getEventBadgeClass(eventType: string) {
   return "bg-slate-100 text-slate-700";
 }
 
-const dateRangeFilters = [
-  {
-    label: "Today",
-    value: "today",
-  },
-  {
-    label: "7 Days",
-    value: "7d",
-  },
-  {
-    label: "30 Days",
-    value: "30d",
-  },
-  {
-    label: "All",
-    value: "all",
-  },
-];
-
-function getDateRangeStart(range: string) {
-  const now = new Date();
-
-  if (range === "today") {
-    const start = new Date(now);
-    start.setHours(0, 0, 0, 0);
-    return start;
-  }
-
-  if (range === "7d") {
-    const start = new Date(now);
-    start.setDate(start.getDate() - 7);
-    return start;
-  }
-
-  if (range === "30d") {
-    const start = new Date(now);
-    start.setDate(start.getDate() - 30);
-    return start;
-  }
-
-  return null;
-}
-
 const eventFilters = [
   {
     label: "All",
@@ -182,7 +139,7 @@ const eventFilters = [
 export default async function AdminEventsPage({
   searchParams,
 }: {
-  searchParams?: Promise<{ type?: string; range?: string }>;
+  searchParams?: Promise<{ type?: string }>;
 }) {
   const params = searchParams ? await searchParams : {};
   const selectedType = params.type || "all";
@@ -193,43 +150,10 @@ export default async function AdminEventsPage({
     ? selectedType
     : "all";
 
-  const selectedRange = dateRangeFilters.some(
-    (filter) => filter.value === params.range
-  )
-    ? params.range || "30d"
-    : "30d";
-
-  const dateRangeStart = getDateRangeStart(selectedRange);
-
-  const dateWhere = dateRangeStart
-    ? {
-        createdAt: {
-          gte: dateRangeStart,
-        },
-      }
-    : {};
-
-  function buildEventsHref(type: string, range = selectedRange) {
-    const params = new URLSearchParams();
-
-    if (type !== "all") {
-      params.set("type", type);
-    }
-
-    if (range !== "30d") {
-      params.set("range", range);
-    }
-
-    const query = params.toString();
-
-    return query ? `/admin/events?${query}` : "/admin/events";
-  }
-
   const eventWhere =
     selectedFilter === "all"
-      ? dateWhere
+      ? {}
       : {
-          ...dateWhere,
           eventType: selectedFilter,
         };
 
@@ -248,7 +172,6 @@ export default async function AdminEventsPage({
 
   const checkoutEmailEvents = await prisma.customerEvent.findMany({
     where: {
-      ...dateWhere,
       eventType: "checkout_email_entered",
       sessionId: {
         not: null,
@@ -301,7 +224,6 @@ export default async function AdminEventsPage({
 
   const knownVisitorProductViews = await prisma.customerEvent.findMany({
     where: {
-      ...dateWhere,
       eventType: "product_view",
       customerId: {
         not: null,
@@ -368,7 +290,6 @@ export default async function AdminEventsPage({
 
   const sentMarketingEmailEvents = await prisma.customerEvent.findMany({
     where: {
-      ...dateWhere,
       eventType: {
         in: ["abandoned_checkout_email_sent", "product_interest_email_sent"],
       },
@@ -385,7 +306,6 @@ export default async function AdminEventsPage({
 
   const marketingEmailClicksCount = await prisma.customerEvent.count({
     where: {
-      ...dateWhere,
       eventType: "marketing_email_clicked",
     },
   });
@@ -442,18 +362,10 @@ export default async function AdminEventsPage({
     });
   }
 
-  const knownVisitorsCount = await prisma.customerEvent.count({
-    where: {
-      ...dateWhere,
-      customerId: {
-        not: null,
-      },
-    },
-  });
+  const knownVisitorsCount = await prisma.customer.count();
 
   const marketingEmailsSentCount = await prisma.customerEvent.count({
     where: {
-      ...dateWhere,
       eventType: {
         in: ["abandoned_checkout_email_sent", "product_interest_email_sent"],
       },
@@ -462,7 +374,6 @@ export default async function AdminEventsPage({
 
   const conversionEventsCount = await prisma.customerEvent.count({
     where: {
-      ...dateWhere,
       eventType: "purchase_completed",
     },
   });
@@ -512,38 +423,6 @@ export default async function AdminEventsPage({
           <TestEmailButton />
         </div>
       </div>
-
-      <section className="mb-8 rounded-[2rem] bg-white p-5 shadow-xl shadow-blue-50 ring-1 ring-blue-50">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div>
-            <p className="text-sm font-black uppercase tracking-wide text-blue-600">
-              Date Range
-            </p>
-            <h2 className="mt-1 text-2xl font-black text-slate-950">
-              Dashboard date range
-            </h2>
-            <p className="mt-1 text-sm text-slate-600">
-              Filters summary, opportunities, marketing performance and raw events.
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-            {dateRangeFilters.map((filter) => (
-              <a
-                key={filter.value}
-                href={buildEventsHref(selectedFilter, filter.value)}
-                className={`rounded-full px-5 py-3 text-sm font-black transition ${
-                  selectedRange === filter.value
-                    ? "bg-blue-600 text-white shadow-lg shadow-blue-100"
-                    : "bg-slate-50 text-slate-600 ring-1 ring-slate-200 hover:bg-blue-50"
-                }`}
-              >
-                {filter.label}
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
 
       <section className="mb-8 rounded-[2rem] bg-slate-950 p-6 text-white shadow-2xl shadow-slate-200">
         <div className="mb-5 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
@@ -1079,7 +958,7 @@ export default async function AdminEventsPage({
               </h2>
 
               <p className="mt-2 text-sm text-slate-600">
-                Technical event log. Showing the latest 100 matching events for the selected date range.
+                Technical event log. Showing the latest 100 matching events.
               </p>
             </div>
 
@@ -1087,7 +966,7 @@ export default async function AdminEventsPage({
               {eventFilters.map((filter) => (
                 <a
                   key={filter.value}
-                  href={buildEventsHref(filter.value)}
+                  href={filter.href}
                   className={`rounded-full px-4 py-2 text-xs font-black transition ${
                     selectedFilter === filter.value
                       ? "bg-blue-600 text-white"
