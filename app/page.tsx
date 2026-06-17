@@ -179,104 +179,114 @@ export default function Home() {
             </p>
 
             <div className="overflow-hidden rounded-[2rem] border border-white bg-white/90 shadow-2xl shadow-blue-100 backdrop-blur">
-              <div className="grid gap-0 md:grid-cols-[0.95fr_1.05fr]">
-                <div className="bg-gradient-to-br from-blue-600 to-slate-950 p-6 text-white">
-                  <div className="text-sm font-bold uppercase tracking-wide text-blue-100">
-                    How DALO works
+              <div className="grid gap-0 md:grid-cols-[1.05fr_0.95fr]">
+                <div className="p-6">
+                  <div className="mb-6">
+                    <div className="text-sm font-bold uppercase tracking-wide text-blue-600">
+                      How DALO works
+                    </div>
+
+                    <h4 className="mt-2 text-3xl font-black leading-tight text-slate-950">
+                      Your travel eSIM, matched properly.
+                    </h4>
+
+                    <p className="mt-3 text-base leading-relaxed text-slate-600">
+                      Tell us your trip once. DALO compares available plans and
+                      brings the strongest match to the top.
+                    </p>
                   </div>
 
-                  <h3 className="mt-3 text-3xl font-black leading-tight tracking-tight">
-                    One clear eSIM match.
-                  </h3>
-
-                  <p className="mt-4 text-base leading-relaxed text-blue-100">
-                    DALO compares plans using your destination, trip length and
-                    phone usage.
-                  </p>
-
-                  <div className="mt-6 rounded-[1.5rem] bg-white p-5 text-slate-950 shadow-xl">
-                    <div className="mb-3 flex items-center justify-between gap-3">
-                      <div className="text-sm font-bold text-slate-500">
-                        Example result
+                  <div className="space-y-3">
+                    <div className="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-100">
+                      <div className="text-sm font-black text-blue-600">
+                        01
                       </div>
-
-                      <div className="rounded-full bg-green-100 px-3 py-1 text-xs font-bold text-green-700">
-                        Best match
+                      <div className="mt-1 font-black text-slate-950">
+                        Share your trip
                       </div>
+                      <p className="mt-1 text-sm text-slate-600">
+                        Destination, duration and data style.
+                      </p>
                     </div>
 
-                    <div className="text-2xl font-black">
-                      Europe Smart
+                    <div className="rounded-2xl bg-slate-50 p-4 ring-1 ring-slate-100">
+                      <div className="text-sm font-black text-blue-600">
+                        02
+                      </div>
+                      <div className="mt-1 font-black text-slate-950">
+                        DALO compares plans
+                      </div>
+                      <p className="mt-1 text-sm text-slate-600">
+                        We rank available eSIMs by fit, value and coverage.
+                      </p>
                     </div>
 
-                    <div className="mt-3 flex items-end justify-between gap-4">
-                      <div>
-                        <div className="text-4xl font-black tracking-tight text-blue-600">
-                          5GB
-                        </div>
-                        <div className="text-sm font-bold text-slate-500">
-                          15 Days · Everyday usage
-                        </div>
+                    <div className="rounded-2xl bg-blue-50 p-4 ring-1 ring-blue-100">
+                      <div className="text-sm font-black text-blue-600">
+                        03
                       </div>
-
-                      <div className="text-right">
-                        <div className="text-sm font-semibold text-blue-100/80">
-                          from
-                        </div>
-                        <div className="text-3xl font-black">
-                          €7.99
-                        </div>
+                      <div className="mt-1 font-black text-slate-950">
+                        Choose the best match
                       </div>
+                      <p className="mt-1 text-sm text-slate-600">
+                        See the strongest option first.
+                      </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="p-6">
-                  <div className="mb-5">
-                    <div className="text-sm font-bold uppercase tracking-wide text-blue-600">
-                      3 quick steps
-                    </div>
-
-                    <h4 className="mt-2 text-2xl font-black leading-tight text-slate-950">
-                      No plan tables. No guessing.
-                    </h4>
+                <div className="bg-gradient-to-br from-blue-600 to-slate-950 p-6 text-white">
+                  <div className="text-sm font-bold uppercase tracking-wide text-blue-100">
+                    Example result
                   </div>
 
-                  <div className="space-y-3">
-                    <div className="rounded-2xl bg-slate-50 p-4">
-                      <div className="text-sm font-bold text-blue-600">
-                        01
-                      </div>
-                      <div className="mt-1 font-bold text-slate-950">
-                        Choose destination
-                      </div>
-                      <p className="mt-1 text-sm text-slate-600">
-                        Pick where you are going.
-                      </p>
-                    </div>
+                  <h3 className="mt-3 text-3xl font-black leading-tight tracking-tight">
+                    Best match found.
+                  </h3>
 
-                    <div className="rounded-2xl bg-slate-50 p-4">
-                      <div className="text-sm font-bold text-blue-600">
-                        02
+                  <p className="mt-4 text-base leading-relaxed text-blue-100">
+                    A result card like this appears after DALO compares the
+                    available plans for your trip.
+                  </p>
+
+                  <div className="mt-6 rounded-[1.75rem] bg-white p-5 text-slate-950 shadow-2xl shadow-blue-950/20">
+                    <div className="mb-4 flex items-start justify-between gap-3">
+                      <div>
+                        <div className="text-xs font-black uppercase tracking-wide text-blue-600">
+                          Recommended plan
+                        </div>
+                        <div className="mt-1 text-2xl font-black">
+                          Europe Smart
+                        </div>
                       </div>
-                      <div className="mt-1 font-bold text-slate-950">
-                        Tell us usage
+
+                      <div className="rounded-full bg-green-100 px-3 py-1 text-xs font-black text-green-700">
+                        Best match
                       </div>
-                      <p className="mt-1 text-sm text-slate-600">
-                        Essential, Everyday or Power User.
-                      </p>
                     </div>
 
                     <div className="rounded-2xl bg-blue-50 p-4">
-                      <div className="text-sm font-bold text-blue-600">
-                        03
+                      <div className="text-5xl font-black tracking-tight text-blue-600">
+                        5GB
                       </div>
-                      <div className="mt-1 font-bold text-slate-950">
-                        Get the best match
+                      <div className="mt-1 text-sm font-bold text-slate-600">
+                        15 Days · Everyday usage
                       </div>
-                      <p className="mt-1 text-sm text-slate-600">
-                        DALO shows the strongest plan first.
-                      </p>
+                    </div>
+
+                    <div className="mt-4 flex items-end justify-between gap-4">
+                      <div>
+                        <div className="text-sm font-bold text-slate-500">
+                          from
+                        </div>
+                        <div className="text-4xl font-black text-slate-950">
+                          €7.99
+                        </div>
+                      </div>
+
+                      <div className="rounded-2xl bg-blue-600 px-5 py-3 text-sm font-black text-white shadow-lg shadow-blue-100">
+                        Continue →
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -287,23 +297,36 @@ export default function Home() {
           {/* QUIZ */}
           <div
             id="quiz"
-            className="rounded-[2rem] border border-white bg-white/95 p-5 shadow-2xl shadow-blue-200 ring-1 ring-blue-100 backdrop-blur md:p-7"
+            className="rounded-[2rem] border border-white bg-white/95 p-7 shadow-2xl shadow-blue-200 ring-1 ring-blue-100 backdrop-blur md:p-10"
           >
-            <div className="mb-6">
-              <p className="text-sm font-semibold text-blue-600">
-                FIND YOUR PLAN
-              </p>
+            <div className="mb-5">
+              <div className="mb-5 rounded-[1.5rem] bg-blue-600 p-5 text-white shadow-xl shadow-blue-100">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-100">
+                    Start here
+                  </p>
 
-              <h2 className="mt-2 text-3xl font-bold text-slate-950">
-                Your trip. Your eSIM.
-              </h2>
+                  <p className="rounded-full bg-white px-3 py-1 text-xs font-black text-blue-700">
+                    Takes 20 seconds
+                  </p>
+                </div>
 
-              <p className="mt-2 text-slate-500">
-                Answer 3 quick questions and we’ll recommend the best plan.
-              </p>
+                <h2 className="mt-2 text-2xl font-black leading-tight">
+                  Get your eSIM recommendation
+                </h2>
+
+                <p className="mt-2 text-sm leading-relaxed text-blue-50">
+                  Answer the questions below. DALO compares the available plans
+                  and shows your strongest match.
+                </p>
+              </div>
+
+              <div className="rounded-2xl bg-blue-50 px-4 py-3 text-sm font-black text-blue-700 ring-1 ring-blue-100">
+                ↓ Start by choosing your destination
+              </div>
             </div>
 
-            <div className="space-y-5">
+            <div className="flex flex-1 flex-col justify-between space-y-6">
               <div>
                 <label className="mb-2 block font-semibold">
                   🌍 Where are you going?
@@ -461,7 +484,7 @@ export default function Home() {
         </div>
 
         <div className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
-          <div className="space-y-5">
+          <div className="space-y-6">
             <div className="rounded-[2rem] bg-white p-6 shadow-xl shadow-blue-100 ring-1 ring-blue-50">
               <div className="grid gap-5 md:grid-cols-[160px_1fr]">
                 <img
