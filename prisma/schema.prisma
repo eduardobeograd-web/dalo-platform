@@ -26,6 +26,13 @@ model Product {
   providerProductId String   @unique
   image             String
   description       String
+
+  slug              String?  @unique
+  seoTitle          String?
+  seoDescription    String?
+  seoKeywords       String?
+  seoText           String?
+
   active            Boolean  @default(true)
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt

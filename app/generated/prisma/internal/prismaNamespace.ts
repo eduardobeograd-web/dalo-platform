@@ -907,6 +907,11 @@ export const ProductScalarFieldEnum = {
   providerProductId: 'providerProductId',
   image: 'image',
   description: 'description',
+  slug: 'slug',
+  seoTitle: 'seoTitle',
+  seoDescription: 'seoDescription',
+  seoKeywords: 'seoKeywords',
+  seoText: 'seoText',
   active: 'active',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

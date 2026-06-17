@@ -58,6 +58,11 @@ export type ProductMinAggregateOutputType = {
   providerProductId: string | null
   image: string | null
   description: string | null
+  slug: string | null
+  seoTitle: string | null
+  seoDescription: string | null
+  seoKeywords: string | null
+  seoText: string | null
   active: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -81,6 +86,11 @@ export type ProductMaxAggregateOutputType = {
   providerProductId: string | null
   image: string | null
   description: string | null
+  slug: string | null
+  seoTitle: string | null
+  seoDescription: string | null
+  seoKeywords: string | null
+  seoText: string | null
   active: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -104,6 +114,11 @@ export type ProductCountAggregateOutputType = {
   providerProductId: number
   image: number
   description: number
+  slug: number
+  seoTitle: number
+  seoDescription: number
+  seoKeywords: number
+  seoText: number
   active: number
   createdAt: number
   updatedAt: number
@@ -143,6 +158,11 @@ export type ProductMinAggregateInputType = {
   providerProductId?: true
   image?: true
   description?: true
+  slug?: true
+  seoTitle?: true
+  seoDescription?: true
+  seoKeywords?: true
+  seoText?: true
   active?: true
   createdAt?: true
   updatedAt?: true
@@ -166,6 +186,11 @@ export type ProductMaxAggregateInputType = {
   providerProductId?: true
   image?: true
   description?: true
+  slug?: true
+  seoTitle?: true
+  seoDescription?: true
+  seoKeywords?: true
+  seoText?: true
   active?: true
   createdAt?: true
   updatedAt?: true
@@ -189,6 +214,11 @@ export type ProductCountAggregateInputType = {
   providerProductId?: true
   image?: true
   description?: true
+  slug?: true
+  seoTitle?: true
+  seoDescription?: true
+  seoKeywords?: true
+  seoText?: true
   active?: true
   createdAt?: true
   updatedAt?: true
@@ -299,6 +329,11 @@ export type ProductGroupByOutputType = {
   providerProductId: string
   image: string
   description: string
+  slug: string | null
+  seoTitle: string | null
+  seoDescription: string | null
+  seoKeywords: string | null
+  seoText: string | null
   active: boolean
   createdAt: Date
   updatedAt: Date
@@ -345,6 +380,11 @@ export type ProductWhereInput = {
   providerProductId?: Prisma.StringFilter<"Product"> | string
   image?: Prisma.StringFilter<"Product"> | string
   description?: Prisma.StringFilter<"Product"> | string
+  slug?: Prisma.StringNullableFilter<"Product"> | string | null
+  seoTitle?: Prisma.StringNullableFilter<"Product"> | string | null
+  seoDescription?: Prisma.StringNullableFilter<"Product"> | string | null
+  seoKeywords?: Prisma.StringNullableFilter<"Product"> | string | null
+  seoText?: Prisma.StringNullableFilter<"Product"> | string | null
   active?: Prisma.BoolFilter<"Product"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
@@ -369,6 +409,11 @@ export type ProductOrderByWithRelationInput = {
   providerProductId?: Prisma.SortOrder
   image?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  slug?: Prisma.SortOrderInput | Prisma.SortOrder
+  seoTitle?: Prisma.SortOrderInput | Prisma.SortOrder
+  seoDescription?: Prisma.SortOrderInput | Prisma.SortOrder
+  seoKeywords?: Prisma.SortOrderInput | Prisma.SortOrder
+  seoText?: Prisma.SortOrderInput | Prisma.SortOrder
   active?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -378,6 +423,7 @@ export type ProductOrderByWithRelationInput = {
 export type ProductWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   providerProductId?: string
+  slug?: string
   AND?: Prisma.ProductWhereInput | Prisma.ProductWhereInput[]
   OR?: Prisma.ProductWhereInput[]
   NOT?: Prisma.ProductWhereInput | Prisma.ProductWhereInput[]
@@ -396,11 +442,15 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   provider?: Prisma.StringFilter<"Product"> | string
   image?: Prisma.StringFilter<"Product"> | string
   description?: Prisma.StringFilter<"Product"> | string
+  seoTitle?: Prisma.StringNullableFilter<"Product"> | string | null
+  seoDescription?: Prisma.StringNullableFilter<"Product"> | string | null
+  seoKeywords?: Prisma.StringNullableFilter<"Product"> | string | null
+  seoText?: Prisma.StringNullableFilter<"Product"> | string | null
   active?: Prisma.BoolFilter<"Product"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   customerEvents?: Prisma.CustomerEventListRelationFilter
-}, "id" | "providerProductId">
+}, "id" | "providerProductId" | "slug">
 
 export type ProductOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -420,6 +470,11 @@ export type ProductOrderByWithAggregationInput = {
   providerProductId?: Prisma.SortOrder
   image?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  slug?: Prisma.SortOrderInput | Prisma.SortOrder
+  seoTitle?: Prisma.SortOrderInput | Prisma.SortOrder
+  seoDescription?: Prisma.SortOrderInput | Prisma.SortOrder
+  seoKeywords?: Prisma.SortOrderInput | Prisma.SortOrder
+  seoText?: Prisma.SortOrderInput | Prisma.SortOrder
   active?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -451,6 +506,11 @@ export type ProductScalarWhereWithAggregatesInput = {
   providerProductId?: Prisma.StringWithAggregatesFilter<"Product"> | string
   image?: Prisma.StringWithAggregatesFilter<"Product"> | string
   description?: Prisma.StringWithAggregatesFilter<"Product"> | string
+  slug?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
+  seoTitle?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
+  seoDescription?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
+  seoKeywords?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
+  seoText?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   active?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Product"> | Date | string
@@ -474,6 +534,11 @@ export type ProductCreateInput = {
   providerProductId: string
   image: string
   description: string
+  slug?: string | null
+  seoTitle?: string | null
+  seoDescription?: string | null
+  seoKeywords?: string | null
+  seoText?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -498,6 +563,11 @@ export type ProductUncheckedCreateInput = {
   providerProductId: string
   image: string
   description: string
+  slug?: string | null
+  seoTitle?: string | null
+  seoDescription?: string | null
+  seoKeywords?: string | null
+  seoText?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -522,6 +592,11 @@ export type ProductUpdateInput = {
   providerProductId?: Prisma.StringFieldUpdateOperationsInput | string
   image?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -546,6 +621,11 @@ export type ProductUncheckedUpdateInput = {
   providerProductId?: Prisma.StringFieldUpdateOperationsInput | string
   image?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -570,6 +650,11 @@ export type ProductCreateManyInput = {
   providerProductId: string
   image: string
   description: string
+  slug?: string | null
+  seoTitle?: string | null
+  seoDescription?: string | null
+  seoKeywords?: string | null
+  seoText?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -593,6 +678,11 @@ export type ProductUpdateManyMutationInput = {
   providerProductId?: Prisma.StringFieldUpdateOperationsInput | string
   image?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -616,6 +706,11 @@ export type ProductUncheckedUpdateManyInput = {
   providerProductId?: Prisma.StringFieldUpdateOperationsInput | string
   image?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -639,6 +734,11 @@ export type ProductCountOrderByAggregateInput = {
   providerProductId?: Prisma.SortOrder
   image?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
+  seoTitle?: Prisma.SortOrder
+  seoDescription?: Prisma.SortOrder
+  seoKeywords?: Prisma.SortOrder
+  seoText?: Prisma.SortOrder
   active?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -669,6 +769,11 @@ export type ProductMaxOrderByAggregateInput = {
   providerProductId?: Prisma.SortOrder
   image?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
+  seoTitle?: Prisma.SortOrder
+  seoDescription?: Prisma.SortOrder
+  seoKeywords?: Prisma.SortOrder
+  seoText?: Prisma.SortOrder
   active?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -692,6 +797,11 @@ export type ProductMinOrderByAggregateInput = {
   providerProductId?: Prisma.SortOrder
   image?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  slug?: Prisma.SortOrder
+  seoTitle?: Prisma.SortOrder
+  seoDescription?: Prisma.SortOrder
+  seoKeywords?: Prisma.SortOrder
+  seoText?: Prisma.SortOrder
   active?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -783,6 +893,11 @@ export type ProductCreateWithoutCustomerEventsInput = {
   providerProductId: string
   image: string
   description: string
+  slug?: string | null
+  seoTitle?: string | null
+  seoDescription?: string | null
+  seoKeywords?: string | null
+  seoText?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -806,6 +921,11 @@ export type ProductUncheckedCreateWithoutCustomerEventsInput = {
   providerProductId: string
   image: string
   description: string
+  slug?: string | null
+  seoTitle?: string | null
+  seoDescription?: string | null
+  seoKeywords?: string | null
+  seoText?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -845,6 +965,11 @@ export type ProductUpdateWithoutCustomerEventsInput = {
   providerProductId?: Prisma.StringFieldUpdateOperationsInput | string
   image?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -868,6 +993,11 @@ export type ProductUncheckedUpdateWithoutCustomerEventsInput = {
   providerProductId?: Prisma.StringFieldUpdateOperationsInput | string
   image?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoKeywords?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  seoText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -922,6 +1052,11 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   providerProductId?: boolean
   image?: boolean
   description?: boolean
+  slug?: boolean
+  seoTitle?: boolean
+  seoDescription?: boolean
+  seoKeywords?: boolean
+  seoText?: boolean
   active?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -947,6 +1082,11 @@ export type ProductSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   providerProductId?: boolean
   image?: boolean
   description?: boolean
+  slug?: boolean
+  seoTitle?: boolean
+  seoDescription?: boolean
+  seoKeywords?: boolean
+  seoText?: boolean
   active?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -970,6 +1110,11 @@ export type ProductSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   providerProductId?: boolean
   image?: boolean
   description?: boolean
+  slug?: boolean
+  seoTitle?: boolean
+  seoDescription?: boolean
+  seoKeywords?: boolean
+  seoText?: boolean
   active?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -993,12 +1138,17 @@ export type ProductSelectScalar = {
   providerProductId?: boolean
   image?: boolean
   description?: boolean
+  slug?: boolean
+  seoTitle?: boolean
+  seoDescription?: boolean
+  seoKeywords?: boolean
+  seoText?: boolean
   active?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "country" | "isoCode" | "region" | "name" | "data" | "validityDays" | "planType" | "usageFit" | "role" | "buyPrice" | "sellPrice" | "oldPrice" | "provider" | "providerProductId" | "image" | "description" | "active" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
+export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "country" | "isoCode" | "region" | "name" | "data" | "validityDays" | "planType" | "usageFit" | "role" | "buyPrice" | "sellPrice" | "oldPrice" | "provider" | "providerProductId" | "image" | "description" | "slug" | "seoTitle" | "seoDescription" | "seoKeywords" | "seoText" | "active" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
 export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   customerEvents?: boolean | Prisma.Product$customerEventsArgs<ExtArgs>
   _count?: boolean | Prisma.ProductCountOutputTypeDefaultArgs<ExtArgs>
@@ -1029,6 +1179,11 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     providerProductId: string
     image: string
     description: string
+    slug: string | null
+    seoTitle: string | null
+    seoDescription: string | null
+    seoKeywords: string | null
+    seoText: string | null
     active: boolean
     createdAt: Date
     updatedAt: Date
@@ -1473,6 +1628,11 @@ export interface ProductFieldRefs {
   readonly providerProductId: Prisma.FieldRef<"Product", 'String'>
   readonly image: Prisma.FieldRef<"Product", 'String'>
   readonly description: Prisma.FieldRef<"Product", 'String'>
+  readonly slug: Prisma.FieldRef<"Product", 'String'>
+  readonly seoTitle: Prisma.FieldRef<"Product", 'String'>
+  readonly seoDescription: Prisma.FieldRef<"Product", 'String'>
+  readonly seoKeywords: Prisma.FieldRef<"Product", 'String'>
+  readonly seoText: Prisma.FieldRef<"Product", 'String'>
   readonly active: Prisma.FieldRef<"Product", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Product", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Product", 'DateTime'>
