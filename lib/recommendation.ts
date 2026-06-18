@@ -507,10 +507,6 @@ function pickComfortOption<TProduct extends ProductLike>({
     );
   });
 
-  if (strongCandidates.length > 0) {
-    return sortByCheapest(strongCandidates)[0] || null;
-  }
-
   const fallbackCandidates = products.filter((product) => {
     if (product.id === bestMatch.id) return false;
     if (product.validityDays < tripDays) return false;
@@ -523,7 +519,13 @@ function pickComfortOption<TProduct extends ProductLike>({
     );
   });
 
-  return sortByCheapest(fallbackCandidates)[0] || null;
+  const sortedFallbackCandidates = sortByCheapest(fallbackCandidates);
+
+  if (sortedFallbackCandidates.length > 0) {
+    return sortedFallbackCandidates[0] || null;
+  }
+
+  return sortByCheapest(strongCandidates)[0] || null;
 }
 
 function pickHeavyDataOption<TProduct extends ProductLike>({
@@ -603,14 +605,22 @@ function buildUpsellOffer({
 
   if (priceDifference <= 0) return null;
 
+  const attractiveDifference =
+    priceDifference <=
+    Math.min(12, Math.max(5, bestMatch.sellPrice * 0.45));
+
   const bestGb = parseDataGb(bestMatch.data);
   const upsellGb = parseDataGb(upsellProduct.data);
 
   if (upsellType === "regional") {
     return {
       type: "regional",
-      badge: "Multi-country upgrade",
-      title: `Travel across Europe for only +${formatPrice(priceDifference)}`,
+      badge: attractiveDifference
+        ? "Multi-country upgrade"
+        : "Regional alternative",
+      title: attractiveDifference
+        ? `Travel across Europe for only +${formatPrice(priceDifference)}`
+        : `Europe-wide plan available for +${formatPrice(priceDifference)}`,
       subtitle:
         "Choose this if you visit more than one country on your trip.",
       priceDifference,
@@ -621,10 +631,12 @@ function buildUpsellOffer({
   if (bestGb === null || upsellGb === null) {
     return {
       type: "heavy",
-      badge: "Unlimited upgrade",
-      title: `Upgrade to unlimited data for only +${formatPrice(
-        priceDifference
-      )}`,
+      badge: attractiveDifference
+        ? "Unlimited upgrade"
+        : "Unlimited option",
+      title: attractiveDifference
+        ? `Upgrade to unlimited data for only +${formatPrice(priceDifference)}`
+        : `Unlimited data available for +${formatPrice(priceDifference)}`,
       subtitle:
         "Best if you use hotspot, video calls, streaming or work while travelling.",
       priceDifference,
@@ -639,10 +651,12 @@ function buildUpsellOffer({
   if (upsellType === "heavy") {
     return {
       type: "heavy",
-      badge: "Heavy data upgrade",
-      title: `Get ${formatGb(extraDataGb)}GB more for only +${formatPrice(
-        priceDifference
-      )}`,
+      badge: attractiveDifference
+        ? "Heavy data upgrade"
+        : "More data option",
+      title: attractiveDifference
+        ? `Upgrade to ${upsellProduct.data} for only +${formatPrice(priceDifference)}`
+        : `Upgrade to ${upsellProduct.data} for +${formatPrice(priceDifference)}`,
       subtitle:
         "Best if you use hotspot, video calls, streaming or heavier travel days.",
       priceDifference,
@@ -652,10 +666,10 @@ function buildUpsellOffer({
 
   return {
     type: "comfort",
-    badge: "Smart upgrade",
-    title: `Get ${formatGb(extraDataGb)}GB more for only +${formatPrice(
-      priceDifference
-    )}`,
+    badge: attractiveDifference ? "Smart upgrade" : "More data option",
+    title: attractiveDifference
+      ? `Upgrade to ${upsellProduct.data} for only +${formatPrice(priceDifference)}`
+      : `Upgrade to ${upsellProduct.data} for +${formatPrice(priceDifference)}`,
     subtitle:
       "A safer data buffer for maps, social media, browsing and longer days outside.",
     priceDifference,
