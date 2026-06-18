@@ -85,6 +85,7 @@ export async function POST(request: NextRequest) {
         active: customer.active,
       },
       session: {
+        token,
         expiresAt,
       },
     });

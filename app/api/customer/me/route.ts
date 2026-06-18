@@ -1,9 +1,9 @@
-import { NextResponse } from "next/server";
-import { getCurrentCustomer } from "@/lib/customer-auth";
+import { NextRequest, NextResponse } from "next/server";
+import { getCurrentCustomerFromRequest } from "@/lib/customer-auth";
 
-export async function GET() {
+export async function GET(request: NextRequest) {
   try {
-    const customer = await getCurrentCustomer();
+    const customer = await getCurrentCustomerFromRequest(request);
 
     if (!customer) {
       return NextResponse.json(

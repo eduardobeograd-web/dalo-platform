@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentCustomer } from "@/lib/customer-auth";
+import { getCurrentCustomerFromRequest } from "@/lib/customer-auth";
 import { prisma } from "@/lib/db";
 
 const allowedReasons = new Set([
@@ -18,7 +18,7 @@ function normalizeString(value: unknown) {
 
 export async function POST(request: NextRequest) {
   try {
-    const customer = await getCurrentCustomer();
+    const customer = await getCurrentCustomerFromRequest(request);
 
     if (!customer) {
       return NextResponse.json(

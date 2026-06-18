@@ -26,10 +26,7 @@ export async function clearCustomerSessionCookie() {
   cookieStore.delete(CUSTOMER_SESSION_COOKIE);
 }
 
-export async function getCurrentCustomer() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(CUSTOMER_SESSION_COOKIE)?.value;
-
+export async function getCustomerBySessionToken(token?: string | null) {
   if (!token) return null;
 
   const session = await prisma.customerSession.findUnique({
@@ -52,4 +49,32 @@ export async function getCurrentCustomer() {
   }
 
   return session.customer;
+}
+
+export async function getCurrentCustomer() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get(CUSTOMER_SESSION_COOKIE)?.value;
+
+  return getCustomerBySessionToken(token);
+}
+
+export async function getCurrentCustomerFromRequest(request: Request) {
+  const authorization = request.headers.get("authorization") || "";
+
+  if (authorization.toLowerCase().startsWith("bearer ")) {
+    const token = authorization.slice(7).trim();
+    return getCustomerBySessionToken(token);
+  }
+
+  return getCurrentCustomer();
+}
+
+export function getBearerTokenFromRequest(request: Request) {
+  const authorization = request.headers.get("authorization") || "";
+
+  if (!authorization.toLowerCase().startsWith("bearer ")) {
+    return null;
+  }
+
+  return authorization.slice(7).trim() || null;
 }

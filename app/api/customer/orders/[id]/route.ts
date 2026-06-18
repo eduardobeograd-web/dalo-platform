@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getCurrentCustomer } from "@/lib/customer-auth";
+import { getCurrentCustomerFromRequest } from "@/lib/customer-auth";
 import { prisma } from "@/lib/db";
 
 type ProductLike = {
@@ -95,7 +95,7 @@ export async function GET(
   }
 ) {
   try {
-    const customer = await getCurrentCustomer();
+    const customer = await getCurrentCustomerFromRequest(request);
 
     if (!customer) {
       return NextResponse.json(
