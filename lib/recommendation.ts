@@ -224,19 +224,16 @@ function getDestinationProducts<TProduct extends ProductLike>(
   products: TProduct[],
   destination: string
 ) {
+  if (cleanText(destination) === "europe") {
+    return products.filter(isRegionalEuropeProduct);
+  }
+
   const directMatches = products.filter((product) =>
     productMatchesDestination(product, destination)
   );
 
   if (directMatches.length > 0) {
     return directMatches;
-  }
-
-  if (cleanText(destination) === "europe") {
-    const europeMatches = products.filter(isRegionalEuropeProduct);
-    if (europeMatches.length > 0) {
-      return europeMatches;
-    }
   }
 
   return [];
@@ -782,8 +779,7 @@ export async function buildRecommendation(input: RecommendationInput) {
   });
 
   const destinationProducts = getDestinationProducts(activeProducts, country);
-  const productPool =
-    destinationProducts.length > 0 ? destinationProducts : activeProducts;
+  const productPool = destinationProducts;
 
   const safeProducts = getSafeProducts(productPool, tripDays);
 
