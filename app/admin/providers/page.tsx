@@ -1,28 +1,216 @@
+import Link from "next/link";
 import AdminShell from "../../../components/AdminShell";
 import { prisma } from "../../../lib/db";
 
-const providers = [
-  {
-    name: "Wholesale API",
-    baseUrl: "https://api.wholesale-provider.com",
-    status: "Connected",
-    mode: "Test Mode",
-    lastSync: "Not synced yet",
-  },
-];
+export const dynamic = "force-dynamic";
 
-export default async function ProvidersPage() {
+type ProviderStatus = "configured" | "missing" | "mock" | "planned" | "manual";
+
+type ProductForProviderStats = {
+  provider: string | null;
+  providerProductId: string | null;
+  active: boolean;
+};
+
+type ProviderOverview = {
+  name: string;
+  slug: string;
+  type: string;
+  status: ProviderStatus;
+  statusLabel: string;
+  baseUrl: string;
+  description: string;
+  products: number;
+  activeProducts: number;
+  mappedProducts: number;
+  fulfillment: boolean;
+  catalogue: boolean;
+  usageSync: boolean;
+  detailsHref: string;
+  primaryActionLabel: string;
+  primaryActionHref: string;
+  secondaryActionLabel: string;
+  secondaryActionHref: string;
+};
+
+function StatusBadge({ status, label }: { status: ProviderStatus; label: string }) {
+  const styles =
+    status === "configured"
+      ? "bg-green-100 text-green-700"
+      : status === "mock"
+      ? "bg-blue-100 text-blue-700"
+      : status === "missing"
+      ? "bg-red-100 text-red-700"
+      : status === "planned"
+      ? "bg-yellow-100 text-yellow-700"
+      : "bg-slate-100 text-slate-600";
+
+  return (
+    <span className={`rounded-full px-3 py-1 text-sm font-bold ${styles}`}>
+      {label}
+    </span>
+  );
+}
+
+function CapabilityBadge({
+  enabled,
+  label,
+}: {
+  enabled: boolean;
+  label: string;
+}) {
+  return (
+    <span
+      className={`rounded-full px-3 py-1 text-sm font-bold ${
+        enabled
+          ? "bg-green-100 text-green-700"
+          : "bg-slate-100 text-slate-500"
+      }`}
+    >
+      {enabled ? "Yes" : "No"} · {label}
+    </span>
+  );
+}
+
+function providerMatches(product: ProductForProviderStats, terms: string[]) {
+  const provider = (product.provider || "").toLowerCase();
+
+  return terms.some((term) => provider.includes(term.toLowerCase()));
+}
+
+function getProviderStats(
+  products: ProductForProviderStats[],
+  terms: string[]
+) {
+  const providerProducts = products.filter((product) =>
+    providerMatches(product, terms)
+  );
+
+  return {
+    products: providerProducts.length,
+    activeProducts: providerProducts.filter((product) => product.active).length,
+    mappedProducts: providerProducts.filter(
+      (product) => product.providerProductId?.trim()
+    ).length,
+  };
+}
+
+export default async function AdminProvidersPage() {
   const products = await prisma.product.findMany({
-    orderBy: {
-      createdAt: "asc",
+    select: {
+      provider: true,
+      providerProductId: true,
+      active: true,
     },
   });
 
-  const mappedProducts = products.filter(
-    (product) => product.providerProductId
-  );
+  const esimGoConfigured = Boolean(process.env.ESIM_GO_API_KEY);
+  const esimGoBaseUrl =
+    process.env.ESIM_GO_BASE_URL || "https://api.esim-go.com/v2.5";
 
-  const activeProducts = products.filter((product) => product.active);
+  const esimGoStats = getProviderStats(products, [
+    "esim go",
+    "esim-go",
+    "esimgo",
+  ]);
+
+  const mockStats = getProviderStats(products, ["mock", "dalo mock"]);
+
+  const providers: ProviderOverview[] = [
+    {
+      name: "eSIM Go",
+      slug: "esim-go",
+      type: "Wholesaler API",
+      status: esimGoConfigured ? "configured" : "missing",
+      statusLabel: esimGoConfigured ? "Configured" : "Missing API Key",
+      baseUrl: esimGoBaseUrl,
+      description:
+        "Main live provider candidate for catalogue sync, bundle application, QR retrieval and later usage checks.",
+      products: esimGoStats.products,
+      activeProducts: esimGoStats.activeProducts,
+      mappedProducts: esimGoStats.mappedProducts,
+      fulfillment: esimGoConfigured,
+      catalogue: esimGoConfigured,
+      usageSync: esimGoConfigured,
+      detailsHref: "/admin/providers/esim-go",
+      primaryActionLabel: "Provider Details",
+      primaryActionHref: "/admin/providers/esim-go",
+      secondaryActionLabel: "View Products",
+      secondaryActionHref: "/admin/products?q=esim",
+    },
+    {
+      name: "DALO Mock Provider",
+      slug: "dalo-mock",
+      type: "Internal Test Provider",
+      status: "mock",
+      statusLabel: "Mock Ready",
+      baseUrl: "Local admin fulfillment action",
+      description:
+        "Safe provider for local testing. Creates fake ICCID, activation code, install links and QR URL without placing a real eSIM order.",
+      products: mockStats.products,
+      activeProducts: mockStats.activeProducts,
+      mappedProducts: mockStats.mappedProducts,
+      fulfillment: true,
+      catalogue: false,
+      usageSync: false,
+      detailsHref: "/admin/providers/dalo-mock",
+      primaryActionLabel: "Provider Details",
+      primaryActionHref: "/admin/providers/dalo-mock",
+      secondaryActionLabel: "Needs Fulfillment",
+      secondaryActionHref: "/admin/orders",
+    },
+    {
+      name: "Airalo Partner API",
+      slug: "airalo",
+      type: "Future Wholesaler API",
+      status: "planned",
+      statusLabel: "Planned",
+      baseUrl: "Not configured yet",
+      description:
+        "Future provider integration. Product mapping and fulfillment routing should stay provider-neutral so Airalo can be added later.",
+      products: 0,
+      activeProducts: 0,
+      mappedProducts: 0,
+      fulfillment: false,
+      catalogue: false,
+      usageSync: false,
+      detailsHref: "/admin/providers/airalo",
+      primaryActionLabel: "Provider Details",
+      primaryActionHref: "/admin/providers/airalo",
+      secondaryActionLabel: "Add Later",
+      secondaryActionHref: "/admin/providers/new",
+    },
+    {
+      name: "Manual Fulfillment",
+      slug: "manual",
+      type: "Operational Fallback",
+      status: "manual",
+      statusLabel: "Manual",
+      baseUrl: "Admin workflow",
+      description:
+        "Fallback for paid orders that cannot be fulfilled automatically yet. Admin can find paid but undelivered orders and handle them manually.",
+      products: 0,
+      activeProducts: 0,
+      mappedProducts: 0,
+      fulfillment: true,
+      catalogue: false,
+      usageSync: false,
+      detailsHref: "/admin/providers/manual",
+      primaryActionLabel: "Provider Details",
+      primaryActionHref: "/admin/providers/manual",
+      secondaryActionLabel: "Open Orders",
+      secondaryActionHref: "/admin/orders",
+    },
+  ];
+
+  const readyProviders = providers.filter(
+    (provider) => provider.status === "configured" || provider.status === "mock"
+  ).length;
+
+  const mappedProducts = providers.reduce(
+    (total, provider) => total + provider.mappedProducts,
+    0
+  );
 
   return (
     <AdminShell activePage="providers">
@@ -37,269 +225,290 @@ export default async function ProvidersPage() {
           </h1>
 
           <p className="mt-2 text-slate-600">
-            Manage provider mappings for products stored in the DALO database.
+            Manage wholesalers, fulfillment readiness and provider product mapping.
           </p>
         </div>
 
-        <button className="rounded-2xl bg-blue-600 px-6 py-4 font-bold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700">
-          Add Provider
-        </button>
+        <div className="flex gap-3">
+          <Link
+            href="/admin"
+            className="rounded-2xl border border-slate-300 px-6 py-4 font-bold text-slate-700 transition hover:bg-white"
+          >
+            Back to Dashboard
+          </Link>
+
+          <Link
+            href="/admin/providers/new"
+            className="rounded-2xl bg-blue-600 px-6 py-4 font-bold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700"
+          >
+            Add API Provider
+          </Link>
+        </div>
       </div>
 
       <div className="mb-8 grid gap-6 md:grid-cols-4">
-        <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
+        <Link
+          href="/admin/providers"
+          className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50 transition hover:-translate-y-1 hover:shadow-xl"
+        >
           <p className="text-sm font-semibold text-slate-500">Providers</p>
           <h2 className="mt-3 text-3xl font-bold">{providers.length}</h2>
-        </div>
-
-        <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
-          <p className="text-sm font-semibold text-slate-500">Connected</p>
-          <h2 className="mt-3 text-3xl font-bold text-green-700">1</h2>
-        </div>
-
-        <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
-          <p className="text-sm font-semibold text-slate-500">
-            Mapped Products
+          <p className="mt-2 text-sm text-slate-500">
+            API, mock and manual paths
           </p>
-          <h2 className="mt-3 text-3xl font-bold">{mappedProducts.length}</h2>
-        </div>
+        </Link>
 
-        <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
-          <p className="text-sm font-semibold text-slate-500">
-            Active Products
+        <Link
+          href="/admin/providers"
+          className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50 transition hover:-translate-y-1 hover:shadow-xl"
+        >
+          <p className="text-sm font-semibold text-slate-500">Ready Paths</p>
+          <h2 className="mt-3 text-3xl font-bold text-green-700">
+            {readyProviders}
+          </h2>
+          <p className="mt-2 text-sm text-slate-500">
+            Configured or safe for testing
           </p>
-          <h2 className="mt-3 text-3xl font-bold">{activeProducts.length}</h2>
-        </div>
+        </Link>
+
+        <Link
+          href="/admin/products"
+          className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50 transition hover:-translate-y-1 hover:shadow-xl"
+        >
+          <p className="text-sm font-semibold text-slate-500">Mapped Products</p>
+          <h2 className="mt-3 text-3xl font-bold">{mappedProducts}</h2>
+          <p className="mt-2 text-sm text-slate-500">
+            Products with provider IDs
+          </p>
+        </Link>
+
+        <Link
+          href="/admin/providers/esim-go"
+          className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50 transition hover:-translate-y-1 hover:shadow-xl"
+        >
+          <p className="text-sm font-semibold text-slate-500">eSIM Go Key</p>
+          <h2
+            className={`mt-3 text-3xl font-bold ${
+              esimGoConfigured ? "text-green-700" : "text-red-700"
+            }`}
+          >
+            {esimGoConfigured ? "Ready" : "Missing"}
+          </h2>
+          <p className="mt-2 text-sm text-slate-500">
+            ESIM_GO_API_KEY environment
+          </p>
+        </Link>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_420px]">
-        <div className="space-y-6">
-          <div className="overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-blue-50">
-            <div className="border-b border-slate-100 p-6">
-              <h2 className="text-2xl font-bold text-slate-950">
-                Provider Connections
-              </h2>
+      <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
+        <div className="overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-blue-50">
+          <div className="border-b border-slate-100 p-6">
+            <h2 className="text-2xl font-bold text-slate-950">
+              Provider List
+            </h2>
 
-              <p className="mt-1 text-slate-600">
-                Provider setup is still demo-only. Product mappings are real.
-              </p>
-            </div>
-
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[850px] text-left">
-                <thead className="bg-slate-50 text-sm text-slate-500">
-                  <tr>
-                    <th className="px-6 py-4 font-semibold">Provider</th>
-                    <th className="px-6 py-4 font-semibold">Base URL</th>
-                    <th className="px-6 py-4 font-semibold">Mode</th>
-                    <th className="px-6 py-4 font-semibold">Products</th>
-                    <th className="px-6 py-4 font-semibold">Last Sync</th>
-                    <th className="px-6 py-4 font-semibold">Status</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {providers.map((provider) => (
-                    <tr
-                      key={provider.name}
-                      className="border-t border-slate-100"
-                    >
-                      <td className="px-6 py-5">
-                        <div className="font-bold">{provider.name}</div>
-                        <div className="text-sm text-slate-500">
-                          Primary provider
-                        </div>
-                      </td>
-
-                      <td className="px-6 py-5 font-mono text-xs text-slate-500">
-                        {provider.baseUrl}
-                      </td>
-
-                      <td className="px-6 py-5">
-                        <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-bold text-blue-700">
-                          {provider.mode}
-                        </span>
-                      </td>
-
-                      <td className="px-6 py-5 font-bold">
-                        {mappedProducts.length}
-                      </td>
-
-                      <td className="px-6 py-5 text-slate-600">
-                        {provider.lastSync}
-                      </td>
-
-                      <td className="px-6 py-5">
-                        <span className="rounded-full bg-green-100 px-3 py-1 text-sm font-bold text-green-700">
-                          {provider.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <p className="mt-1 text-slate-600">
+              Click a provider to open details. Keep real fulfillment disabled until credentials and delivery mapping are verified.
+            </p>
           </div>
 
-          <div className="overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-blue-50">
-            <div className="border-b border-slate-100 p-6">
-              <h2 className="text-2xl font-bold text-slate-950">
-                Product Mappings
-              </h2>
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[1150px] text-left">
+              <thead className="bg-slate-50 text-sm text-slate-500">
+                <tr>
+                  <th className="px-6 py-4 font-semibold">Provider</th>
+                  <th className="px-6 py-4 font-semibold">Status</th>
+                  <th className="px-6 py-4 font-semibold">Base URL / Route</th>
+                  <th className="px-6 py-4 font-semibold">Products</th>
+                  <th className="px-6 py-4 font-semibold">Capabilities</th>
+                  <th className="px-6 py-4 font-semibold">Actions</th>
+                </tr>
+              </thead>
 
-              <p className="mt-1 text-slate-600">
-                These real database products are connected to provider product IDs.
-              </p>
-            </div>
+              <tbody>
+                {providers.map((provider) => (
+                  <tr
+                    key={provider.name}
+                    className="border-b border-slate-100 align-top last:border-b-0 hover:bg-slate-50"
+                  >
+                    <td className="px-6 py-5">
+                      <Link
+                        href={provider.detailsHref}
+                        className="font-bold text-slate-950 underline-offset-4 hover:text-blue-700 hover:underline"
+                      >
+                        {provider.name}
+                      </Link>
 
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[950px] text-left">
-                <thead className="bg-slate-50 text-sm text-slate-500">
-                  <tr>
-                    <th className="px-6 py-4 font-semibold">DALO Product</th>
-                    <th className="px-6 py-4 font-semibold">Country</th>
-                    <th className="px-6 py-4 font-semibold">Plan</th>
-                    <th className="px-6 py-4 font-semibold">Usage</th>
-                    <th className="px-6 py-4 font-semibold">
-                      Provider Product ID
-                    </th>
-                    <th className="px-6 py-4 font-semibold">Status</th>
-                  </tr>
-                </thead>
+                      <p className="mt-1 text-sm font-semibold text-slate-500">
+                        {provider.type}
+                      </p>
 
-                <tbody>
-                  {mappedProducts.map((product) => (
-                    <tr key={product.id} className="border-t border-slate-100">
-                      <td className="px-6 py-5">
-                        <div className="font-bold">{product.name}</div>
-                        <div className="text-sm text-slate-500">
-                          {product.id}
-                        </div>
-                      </td>
+                      <p className="mt-3 max-w-md text-sm leading-6 text-slate-600">
+                        {provider.description}
+                      </p>
+                    </td>
 
-                      <td className="px-6 py-5 font-semibold">
-                        {product.country}
-                      </td>
+                    <td className="px-6 py-5">
+                      <StatusBadge
+                        status={provider.status}
+                        label={provider.statusLabel}
+                      />
+                    </td>
 
-                      <td className="px-6 py-5">
-                        {product.data} / {product.validityDays} Days
-                      </td>
+                    <td className="px-6 py-5">
+                      <p className="max-w-xs break-all text-sm font-semibold text-slate-700">
+                        {provider.baseUrl}
+                      </p>
+                    </td>
 
-                      <td className="px-6 py-5">
-                        <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-bold text-blue-700">
-                          {product.usageFit}
-                        </span>
-                      </td>
+                    <td className="px-6 py-5">
+                      <div className="space-y-2 text-sm">
+                        <p>
+                          <span className="font-bold">{provider.products}</span>{" "}
+                          total
+                        </p>
+                        <p>
+                          <span className="font-bold text-green-700">
+                            {provider.activeProducts}
+                          </span>{" "}
+                          active
+                        </p>
+                        <p>
+                          <span className="font-bold text-blue-700">
+                            {provider.mappedProducts}
+                          </span>{" "}
+                          mapped
+                        </p>
+                      </div>
+                    </td>
 
-                      <td className="px-6 py-5 font-mono text-xs text-slate-500">
-                        {product.providerProductId}
-                      </td>
+                    <td className="px-6 py-5">
+                      <div className="flex max-w-xs flex-wrap gap-2">
+                        <CapabilityBadge
+                          enabled={provider.fulfillment}
+                          label="Fulfillment"
+                        />
+                        <CapabilityBadge
+                          enabled={provider.catalogue}
+                          label="Catalogue"
+                        />
+                        <CapabilityBadge
+                          enabled={provider.usageSync}
+                          label="Usage Sync"
+                        />
+                      </div>
+                    </td>
 
-                      <td className="px-6 py-5">
-                        <span
-                          className={`rounded-full px-3 py-1 text-sm font-bold ${
-                            product.active
-                              ? "bg-green-100 text-green-700"
-                              : "bg-slate-100 text-slate-600"
-                          }`}
+                    <td className="px-6 py-5">
+                      <div className="flex flex-col gap-2">
+                        <Link
+                          href={provider.primaryActionHref}
+                          className="rounded-xl bg-blue-600 px-4 py-3 text-center text-sm font-bold text-white shadow-lg shadow-blue-100 transition hover:bg-blue-700"
                         >
-                          {product.active ? "Mapped + Active" : "Mapped + Paused"}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                          {provider.primaryActionLabel}
+                        </Link>
+
+                        <Link
+                          href={provider.secondaryActionHref}
+                          className="rounded-xl border border-slate-300 px-4 py-3 text-center text-sm font-bold text-slate-700 transition hover:bg-white"
+                        >
+                          {provider.secondaryActionLabel}
+                        </Link>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
 
         <div className="space-y-6">
-          <div className="rounded-[2rem] bg-slate-950 p-8 text-white shadow-xl">
-            <h2 className="text-2xl font-bold">Provider Setup</h2>
+          <div className="rounded-[2rem] bg-white p-6 shadow-xl shadow-blue-50">
+            <h2 className="text-2xl font-bold text-slate-950">
+              Quick Actions
+            </h2>
 
-            <p className="mt-2 text-slate-300">
-              API credentials will later be stored securely as environment
-              variables.
-            </p>
+            <div className="mt-6 grid gap-3">
+              <Link
+                href="/admin/providers/new"
+                className="rounded-2xl bg-blue-600 p-4 font-bold text-white shadow-lg shadow-blue-100 transition hover:bg-blue-700"
+              >
+                + Add API Provider
+              </Link>
 
-            <div className="mt-6 space-y-4">
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-slate-300">
-                  Provider Name
-                </label>
-                <input
-                  value="Wholesale API"
-                  readOnly
-                  className="w-full rounded-2xl border border-white/10 bg-white/10 p-4 text-white outline-none"
-                />
-              </div>
+              <Link
+                href="/admin/products"
+                className="rounded-2xl border border-slate-300 p-4 font-bold text-slate-700 transition hover:bg-white"
+              >
+                Product Mapping
+              </Link>
 
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-slate-300">
-                  API Base URL
-                </label>
-                <input
-                  value="https://api.wholesale-provider.com"
-                  readOnly
-                  className="w-full rounded-2xl border border-white/10 bg-white/10 p-4 text-white outline-none"
-                />
-              </div>
+              <Link
+                href="/admin/orders"
+                className="rounded-2xl border border-slate-300 p-4 font-bold text-slate-700 transition hover:bg-white"
+              >
+                Orders / Fulfillment
+              </Link>
 
-              <div>
-                <label className="mb-2 block text-sm font-semibold text-slate-300">
-                  API Key
-                </label>
-                <input
-                  value="••••••••••••••••••••"
-                  readOnly
-                  className="w-full rounded-2xl border border-white/10 bg-white/10 p-4 text-white outline-none"
-                />
-              </div>
-
-              <div className="grid gap-3 sm:grid-cols-2">
-                <button className="rounded-2xl bg-blue-600 px-5 py-4 font-bold text-white">
-                  Test Connection
-                </button>
-
-                <button className="rounded-2xl bg-white/10 px-5 py-4 font-bold text-white">
-                  Sync Products
-                </button>
-              </div>
+              <Link
+                href="/api/admin/providers/esim-go/status"
+                className="rounded-2xl border border-slate-300 p-4 font-bold text-slate-700 transition hover:bg-white"
+              >
+                eSIM Go Status JSON
+              </Link>
             </div>
           </div>
 
-          <div className="rounded-[2rem] bg-white p-8 shadow-xl shadow-blue-50">
+          <div className="rounded-[2rem] bg-white p-6 shadow-xl shadow-blue-50">
             <h2 className="text-2xl font-bold text-slate-950">
-              Fulfillment Logic
+              Environment Status
             </h2>
 
-            <p className="mt-3 text-slate-600">
-              When a customer pays, DALO reads the selected product’s
-              providerProductId and sends it to the wholesale API.
-            </p>
-
-            <div className="mt-6 space-y-3">
-              <div className="rounded-2xl bg-slate-50 p-4">
-                <div className="text-sm text-slate-500">Customer buys</div>
-                <div className="font-bold">Europe Smart 5GB</div>
-              </div>
-
-              <div className="text-center text-2xl text-slate-400">↓</div>
-
-              <div className="rounded-2xl bg-blue-50 p-4 text-blue-700">
-                <div className="text-sm">DALO sends Provider ID</div>
-                <div className="break-all font-mono text-sm font-bold">
-                  esim_5GB_15D_EU
+            <div className="mt-6 space-y-4">
+              <Link
+                href="/admin/providers/esim-go"
+                className={`block rounded-2xl p-4 transition hover:-translate-y-1 ${
+                  esimGoConfigured ? "bg-green-50" : "bg-red-50"
+                }`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold">ESIM_GO_API_KEY</span>
+                  <span
+                    className={`font-bold ${
+                      esimGoConfigured ? "text-green-700" : "text-red-700"
+                    }`}
+                  >
+                    {esimGoConfigured ? "Configured" : "Missing"}
+                  </span>
                 </div>
-              </div>
+              </Link>
 
-              <div className="text-center text-2xl text-slate-400">↓</div>
+              <Link
+                href="/admin/providers/esim-go"
+                className="block rounded-2xl bg-blue-50 p-4 transition hover:-translate-y-1"
+              >
+                <p className="font-semibold">ESIM_GO_BASE_URL</p>
+                <p className="mt-2 break-all text-sm font-bold text-blue-700">
+                  {esimGoBaseUrl}
+                </p>
+              </Link>
 
-              <div className="rounded-2xl bg-green-50 p-4 text-green-700">
-                <div className="text-sm">Provider returns</div>
-                <div className="font-bold">QR Code + activation data</div>
-              </div>
+              <Link
+                href="/admin/providers/dalo-mock"
+                className="flex items-center justify-between rounded-2xl bg-green-50 p-4 transition hover:-translate-y-1"
+              >
+                <span className="font-semibold">Mock Fulfillment</span>
+                <span className="font-bold text-green-700">Ready</span>
+              </Link>
+
+              <Link
+                href="/admin/providers/airalo"
+                className="flex items-center justify-between rounded-2xl bg-yellow-50 p-4 transition hover:-translate-y-1"
+              >
+                <span className="font-semibold">Airalo API</span>
+                <span className="font-bold text-yellow-700">Planned</span>
+              </Link>
             </div>
           </div>
         </div>
