@@ -1,9 +1,4 @@
 import { prisma } from "./db";
-import {
-  getFallbackSetting,
-  getRecommendationSettingForUsage,
-  type RecommendationUsageSetting,
-} from "./recommendation-settings";
 
 type RecommendationInput = {
   country?: string;
@@ -162,7 +157,20 @@ export function normalizeUsage(type?: string): NormalizedUsage {
   return "normal";
 }
 
-function roundNeededGb(rawNeed: number) {
+export function getEstimatedNeededGb(
+  tripDays: number,
+  type?: string
+): number {
+  const usage = normalizeUsage(type);
+
+  const gbPerDay =
+    usage === "light" ? 0.3 : usage === "heavy" ? 1.5 : 0.7;
+
+  const minimum =
+    usage === "light" ? 1 : usage === "heavy" ? 5 : 3;
+
+  const rawNeed = Math.max(minimum, tripDays * gbPerDay);
+
   if (rawNeed <= 1) return 1;
   if (rawNeed <= 3) return 3;
   if (rawNeed <= 5) return 5;
@@ -172,25 +180,6 @@ function roundNeededGb(rawNeed: number) {
   if (rawNeed <= 50) return 50;
 
   return Math.ceil(rawNeed / 10) * 10;
-}
-
-function getRawEstimatedNeededGb(
-  tripDays: number,
-  setting: RecommendationUsageSetting
-) {
-  return Math.max(setting.minimumGb, tripDays * setting.gbPerDay);
-}
-
-export function getEstimatedNeededGb(
-  tripDays: number,
-  type?: string,
-  setting?: RecommendationUsageSetting
-): number {
-  const usage = normalizeUsage(type);
-  const effectiveSetting = setting || getFallbackSetting(usage);
-  const rawNeed = getRawEstimatedNeededGb(tripDays, effectiveSetting);
-
-  return roundNeededGb(rawNeed);
 }
 
 function productMatchesDestination(
@@ -442,21 +431,15 @@ function pickBudgetOption<TProduct extends ProductLike>({
   tripDays,
   neededGb,
   usage,
-  budgetMinNeedMultiple,
 }: {
   products: TProduct[];
   bestMatch: TProduct | null;
   tripDays: number;
   neededGb: number;
   usage: NormalizedUsage;
-  budgetMinNeedMultiple: number;
 }) {
   const minimumBudgetGb =
-    usage === "light"
-      ? Math.max(1, neededGb * budgetMinNeedMultiple)
-      : usage === "heavy"
-        ? Math.max(5, neededGb * budgetMinNeedMultiple)
-        : Math.max(1, neededGb * budgetMinNeedMultiple);
+    usage === "light" ? 1 : usage === "heavy" ? Math.max(5, neededGb * 0.5) : Math.max(1, neededGb * 0.45);
 
   const candidates = products.filter((product) => {
     if (bestMatch && product.id === bestMatch.id) return false;
@@ -478,40 +461,16 @@ function pickComfortOption<TProduct extends ProductLike>({
   products,
   bestMatch,
   tripDays,
-  neededGb,
-  comfortMinNeedMultiple,
 }: {
   products: TProduct[];
   bestMatch: TProduct | null;
   tripDays: number;
-  neededGb: number;
-  comfortMinNeedMultiple: number;
 }) {
   if (!bestMatch) return null;
 
   const bestDataGb = getEffectiveDataGb(bestMatch.data);
-  const comfortTargetGb = Math.max(
-    bestDataGb + 0.5,
-    neededGb * comfortMinNeedMultiple
-  );
 
-  const strongCandidates = products.filter((product) => {
-    if (product.id === bestMatch.id) return false;
-    if (product.validityDays < tripDays) return false;
-
-    const productDataGb = getEffectiveDataGb(product.data);
-
-    return (
-      productDataGb >= comfortTargetGb &&
-      product.sellPrice > bestMatch.sellPrice
-    );
-  });
-
-  if (strongCandidates.length > 0) {
-    return sortByCheapest(strongCandidates)[0] || null;
-  }
-
-  const fallbackCandidates = products.filter((product) => {
+  const candidates = products.filter((product) => {
     if (product.id === bestMatch.id) return false;
     if (product.validityDays < tripDays) return false;
 
@@ -519,25 +478,25 @@ function pickComfortOption<TProduct extends ProductLike>({
 
     return (
       productDataGb > bestDataGb &&
-      product.sellPrice > bestMatch.sellPrice
+      product.sellPrice >= bestMatch.sellPrice
     );
   });
 
-  return sortByCheapest(fallbackCandidates)[0] || null;
+  return sortByCheapest(candidates)[0] || null;
 }
 
 function pickHeavyDataOption<TProduct extends ProductLike>({
   products,
   bestMatch,
   tripDays,
-  heavyMinGb,
+  usage,
 }: {
   products: TProduct[];
   bestMatch: TProduct | null;
   tripDays: number;
-  heavyMinGb: number;
+  usage: NormalizedUsage;
 }) {
-  const minimumHeavyGb = heavyMinGb;
+  const minimumHeavyGb = usage === "heavy" ? 20 : 10;
 
   const candidates = products.filter((product) => {
     if (bestMatch && product.id === bestMatch.id) return false;
@@ -749,9 +708,7 @@ export async function buildRecommendation(input: RecommendationInput) {
   const country = input.country || "Europe";
   const tripDays = parseDays(input.days);
   const usage = normalizeUsage(input.type);
-  const setting = await getRecommendationSettingForUsage(usage);
-  const rawEstimatedDataGb = getRawEstimatedNeededGb(tripDays, setting);
-  const minimumDataGb = getEstimatedNeededGb(tripDays, input.type, setting);
+  const minimumDataGb = getEstimatedNeededGb(tripDays, input.type);
 
   const activeProducts = await prisma.product.findMany({
     where: {
@@ -783,28 +740,7 @@ export async function buildRecommendation(input: RecommendationInput) {
     })
   );
 
-  const maxReasonableBestDataGb = Math.max(
-    minimumDataGb,
-    rawEstimatedDataGb * setting.maxBestMatchMultiple
-  );
-
-  const reasonableBestCandidates = scoredProducts.filter((scoredProduct) => {
-    if (scoredProduct.effectiveDataGb < minimumDataGb) return false;
-    if (scoredProduct.product.validityDays < tripDays) return false;
-
-    if (parseDataGb(scoredProduct.product.data) === null) {
-      return usage === "heavy";
-    }
-
-    return scoredProduct.effectiveDataGb <= maxReasonableBestDataGb;
-  });
-
-  const bestMatch =
-    sortByBestScore(
-      reasonableBestCandidates.length > 0
-        ? reasonableBestCandidates
-        : scoredProducts
-    )[0]?.product || null;
+  const bestMatch = sortByBestScore(scoredProducts)[0]?.product || null;
 
   const budgetOption = pickBudgetOption({
     products: safeProducts,
@@ -812,22 +748,19 @@ export async function buildRecommendation(input: RecommendationInput) {
     tripDays,
     neededGb: minimumDataGb,
     usage,
-    budgetMinNeedMultiple: setting.budgetMinNeedMultiple,
   });
 
   const comfortOption = pickComfortOption({
     products: safeProducts,
     bestMatch,
     tripDays,
-    neededGb: minimumDataGb,
-    comfortMinNeedMultiple: setting.comfortMinNeedMultiple,
   });
 
   const heavyDataOption = pickHeavyDataOption({
     products: safeProducts,
     bestMatch,
     tripDays,
-    heavyMinGb: setting.heavyMinGb,
+    usage,
   });
 
   const regionalUpsell = pickRegionalUpsell({
@@ -866,10 +799,7 @@ export async function buildRecommendation(input: RecommendationInput) {
     country,
     tripDays,
     usage,
-    setting,
-    rawEstimatedDataGb,
     minimumDataGb,
-    maxReasonableBestDataGb,
     scoredProducts: sortByBestScore(scoredProducts),
   };
 }
@@ -891,9 +821,6 @@ export async function getDaloRecommendation(input: RecommendationInput) {
           ? "Heavy"
           : "Standard",
     minimumDataGb: result.minimumDataGb,
-    rawEstimatedDataGb: result.rawEstimatedDataGb,
-    maxReasonableBestDataGb: result.maxReasonableBestDataGb,
-    setting: result.setting,
 
     bestMatch: result.bestMatch,
     budgetOption: result.budgetOption,
@@ -954,9 +881,6 @@ export async function getRecommendationRulesPreview() {
         recommendedProduct: result.recommendedProduct,
         upsellProduct: result.upsellProduct,
         minimumDataGb: result.minimumDataGb,
-        rawEstimatedDataGb: result.rawEstimatedDataGb,
-        maxReasonableBestDataGb: result.maxReasonableBestDataGb,
-        setting: result.setting,
         budgetOption: result.budgetOption,
         comfortOption: result.comfortOption,
         heavyDataOption: result.heavyDataOption,

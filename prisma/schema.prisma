@@ -8,6 +8,25 @@ datasource db {
 
 }
 
+
+model RecommendationSetting {
+  id                      String   @id @default(cuid())
+  usageType               String   @unique
+  label                   String
+
+  gbPerDay                Float
+  minimumGb               Float
+  maxBestMatchMultiple    Float    @default(2.5)
+
+  budgetMinNeedMultiple   Float    @default(0.5)
+  comfortMinNeedMultiple  Float    @default(1.5)
+  heavyMinGb              Float    @default(20)
+
+  active                  Boolean  @default(true)
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+}
+
 model Product {
   id                String   @id @default(cuid())
   country           String

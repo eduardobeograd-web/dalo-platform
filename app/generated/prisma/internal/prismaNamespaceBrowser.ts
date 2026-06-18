@@ -51,6 +51,7 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
+  RecommendationSetting: 'RecommendationSetting',
   Product: 'Product',
   Customer: 'Customer',
   CustomerSession: 'CustomerSession',
@@ -70,6 +71,24 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 } as const)
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
+
+
+export const RecommendationSettingScalarFieldEnum = {
+  id: 'id',
+  usageType: 'usageType',
+  label: 'label',
+  gbPerDay: 'gbPerDay',
+  minimumGb: 'minimumGb',
+  maxBestMatchMultiple: 'maxBestMatchMultiple',
+  budgetMinNeedMultiple: 'budgetMinNeedMultiple',
+  comfortMinNeedMultiple: 'comfortMinNeedMultiple',
+  heavyMinGb: 'heavyMinGb',
+  active: 'active',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type RecommendationSettingScalarFieldEnum = (typeof RecommendationSettingScalarFieldEnum)[keyof typeof RecommendationSettingScalarFieldEnum]
 
 
 export const ProductScalarFieldEnum = {

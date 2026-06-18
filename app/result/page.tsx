@@ -109,6 +109,7 @@ export default async function ResultPage({
   const {
     recommendedProduct: plan,
     upsellProduct: upsell,
+    upsellOffer,
     minimumDataGb,
     tripDays,
   } = await getDaloRecommendation({
@@ -164,11 +165,12 @@ export default async function ResultPage({
 
   const hasUpsell =
     upsell &&
+    upsellOffer &&
     upsell.id !== plan.id &&
-    upsell.sellPrice >= plan.sellPrice;
+    upsell.sellPrice > plan.sellPrice;
 
   const upsellPriceDifference = hasUpsell
-    ? upsell.sellPrice - plan.sellPrice
+    ? upsellOffer.priceDifference
     : 0;
 
   return (
@@ -187,6 +189,9 @@ export default async function ResultPage({
           provider: plan.provider,
           hasUpsell: Boolean(hasUpsell),
           upsellProductId: hasUpsell ? upsell.id : null,
+          upsellOfferType: hasUpsell ? upsellOffer.type : null,
+          upsellPriceDifference: hasUpsell ? upsellOffer.priceDifference : null,
+          upsellExtraDataGb: hasUpsell ? upsellOffer.extraDataGb : null,
         }}
       />
 
@@ -324,7 +329,7 @@ export default async function ResultPage({
               <div className="mt-5 rounded-[2rem] border-2 border-blue-500 bg-gradient-to-br from-blue-600 to-blue-800 p-5 text-white shadow-2xl shadow-blue-200">
                 <div className="mb-4 flex items-center justify-between gap-3">
                   <div className="rounded-full bg-white px-4 py-2 text-xs font-black uppercase tracking-wide text-blue-700">
-                    Hot deal
+                    {upsellOffer.badge}
                   </div>
 
                   {upsellPriceDifference > 0 && (
@@ -337,7 +342,7 @@ export default async function ResultPage({
                 <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
                   <div>
                     <h3 className="text-2xl font-black">
-                      More data, more safety
+                      {upsellOffer.title}
                     </h3>
 
                     <div className="mt-2 text-lg font-bold text-blue-100">
@@ -345,8 +350,7 @@ export default async function ResultPage({
                     </div>
 
                     <p className="mt-3 max-w-md text-sm leading-relaxed text-blue-100">
-                      Recommended if you use hotspot, video calls, navigation,
-                      social media or heavier travel days.
+                      {upsellOffer.subtitle}
                     </p>
                   </div>
 
@@ -372,9 +376,12 @@ export default async function ResultPage({
                         originalProductId: plan.id,
                         originalProductName: plan.name,
                         priceDifference: upsellPriceDifference,
+                        upsellOfferType: upsellOffer.type,
+                        upsellExtraDataGb: upsellOffer.extraDataGb,
+                        upsellTitle: upsellOffer.title,
                       }}
                     >
-                      Choose hot deal →
+                      Choose smart upgrade →
                     </CheckoutStartedLink>
                   </div>
                 </div>

@@ -384,6 +384,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 
 export const ModelName = {
+  RecommendationSetting: 'RecommendationSetting',
   Product: 'Product',
   Customer: 'Customer',
   CustomerSession: 'CustomerSession',
@@ -405,10 +406,84 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "product" | "customer" | "customerSession" | "order" | "supportRequest" | "customerEvent"
+    modelProps: "recommendationSetting" | "product" | "customer" | "customerSession" | "order" | "supportRequest" | "customerEvent"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
+    RecommendationSetting: {
+      payload: Prisma.$RecommendationSettingPayload<ExtArgs>
+      fields: Prisma.RecommendationSettingFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.RecommendationSettingFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecommendationSettingPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.RecommendationSettingFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecommendationSettingPayload>
+        }
+        findFirst: {
+          args: Prisma.RecommendationSettingFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecommendationSettingPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.RecommendationSettingFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecommendationSettingPayload>
+        }
+        findMany: {
+          args: Prisma.RecommendationSettingFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecommendationSettingPayload>[]
+        }
+        create: {
+          args: Prisma.RecommendationSettingCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecommendationSettingPayload>
+        }
+        createMany: {
+          args: Prisma.RecommendationSettingCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.RecommendationSettingCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecommendationSettingPayload>[]
+        }
+        delete: {
+          args: Prisma.RecommendationSettingDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecommendationSettingPayload>
+        }
+        update: {
+          args: Prisma.RecommendationSettingUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecommendationSettingPayload>
+        }
+        deleteMany: {
+          args: Prisma.RecommendationSettingDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.RecommendationSettingUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.RecommendationSettingUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecommendationSettingPayload>[]
+        }
+        upsert: {
+          args: Prisma.RecommendationSettingUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RecommendationSettingPayload>
+        }
+        aggregate: {
+          args: Prisma.RecommendationSettingAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateRecommendationSetting>
+        }
+        groupBy: {
+          args: Prisma.RecommendationSettingGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RecommendationSettingGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.RecommendationSettingCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RecommendationSettingCountAggregateOutputType> | number
+        }
+      }
+    }
     Product: {
       payload: Prisma.$ProductPayload<ExtArgs>
       fields: Prisma.ProductFieldRefs
@@ -889,6 +964,24 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
+export const RecommendationSettingScalarFieldEnum = {
+  id: 'id',
+  usageType: 'usageType',
+  label: 'label',
+  gbPerDay: 'gbPerDay',
+  minimumGb: 'minimumGb',
+  maxBestMatchMultiple: 'maxBestMatchMultiple',
+  budgetMinNeedMultiple: 'budgetMinNeedMultiple',
+  comfortMinNeedMultiple: 'comfortMinNeedMultiple',
+  heavyMinGb: 'heavyMinGb',
+  active: 'active',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type RecommendationSettingScalarFieldEnum = (typeof RecommendationSettingScalarFieldEnum)[keyof typeof RecommendationSettingScalarFieldEnum]
+
+
 export const ProductScalarFieldEnum = {
   id: 'id',
   country: 'country',
@@ -1058,13 +1151,6 @@ export type StringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 
 
 
 /**
- * Reference to a field of type 'Int'
- */
-export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -1082,6 +1168,13 @@ export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
  * Reference to a field of type 'DateTime'
  */
 export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
+    
+
+
+/**
+ * Reference to a field of type 'Int'
+ */
+export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
     
 
 
@@ -1208,6 +1301,7 @@ export type PrismaClientOptions = ({
   queryPlanCacheMaxSize?: number
 }
 export type GlobalOmitConfig = {
+  recommendationSetting?: Prisma.RecommendationSettingOmit
   product?: Prisma.ProductOmit
   customer?: Prisma.CustomerOmit
   customerSession?: Prisma.CustomerSessionOmit
