@@ -1,5 +1,6 @@
 import Link from "next/link";
 import AdminShell from "../../../../components/AdminShell";
+import { createProviderConfig } from "../actions";
 
 export default function NewProviderPage() {
   return (
@@ -15,7 +16,7 @@ export default function NewProviderPage() {
           </h1>
 
           <p className="mt-2 text-slate-600">
-            Prepare a new wholesaler connection for DALO.
+            Add a new wholesaler, mock provider or manual fulfillment path.
           </p>
         </div>
 
@@ -29,17 +30,14 @@ export default function NewProviderPage() {
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
+      <form
+        action={createProviderConfig}
+        className="grid gap-6 lg:grid-cols-[1fr_380px]"
+      >
         <div className="rounded-[2rem] bg-white p-8 shadow-xl shadow-blue-50">
           <h2 className="text-2xl font-bold text-slate-950">
-            Provider setup is not connected to the database yet
+            Provider Details
           </h2>
-
-          <p className="mt-3 leading-7 text-slate-600">
-            This page is clickable now, but saving is intentionally disabled.
-            The next clean step is to add a ProviderConfig model to Prisma.
-            After that, this form can create real API providers without changing code.
-          </p>
 
           <div className="mt-8 grid gap-5">
             <div>
@@ -47,9 +45,10 @@ export default function NewProviderPage() {
                 Provider Name
               </label>
               <input
-                disabled
+                name="name"
+                required
                 placeholder="Example: Airalo Partner API"
-                className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-4 font-semibold text-slate-500"
+                className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-4 font-semibold outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
               />
             </div>
 
@@ -58,10 +57,42 @@ export default function NewProviderPage() {
                 Provider Slug
               </label>
               <input
-                disabled
+                name="slug"
                 placeholder="example: airalo"
-                className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-4 font-semibold text-slate-500"
+                className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-4 font-semibold outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
               />
+              <p className="mt-2 text-sm text-slate-500">
+                Leave empty to auto-generate from name.
+              </p>
+            </div>
+
+            <div>
+              <label className="text-sm font-bold text-slate-700">Type</label>
+              <select
+                name="type"
+                defaultValue="Wholesaler API"
+                className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-4 font-semibold outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+              >
+                <option>Wholesaler API</option>
+                <option>Internal Test Provider</option>
+                <option>Operational Fallback</option>
+                <option>Future Wholesaler API</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="text-sm font-bold text-slate-700">Status</label>
+              <select
+                name="status"
+                defaultValue="planned"
+                className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-4 font-semibold outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+              >
+                <option value="planned">Planned</option>
+                <option value="live_candidate">Live Candidate</option>
+                <option value="configured">Configured</option>
+                <option value="mock">Mock</option>
+                <option value="manual">Manual</option>
+              </select>
             </div>
 
             <div>
@@ -69,9 +100,9 @@ export default function NewProviderPage() {
                 Base URL
               </label>
               <input
-                disabled
+                name="baseUrl"
                 placeholder="https://api.provider.com"
-                className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-4 font-semibold text-slate-500"
+                className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-4 font-semibold outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
               />
             </div>
 
@@ -80,70 +111,95 @@ export default function NewProviderPage() {
                 API Key Env Name
               </label>
               <input
-                disabled
+                name="apiKeyEnvName"
                 placeholder="AIRALO_API_KEY"
-                className="mt-2 w-full rounded-2xl border border-slate-300 bg-slate-50 px-4 py-4 font-semibold text-slate-500"
+                className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-4 font-semibold outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
               />
             </div>
 
-            <button
-              disabled
-              className="rounded-2xl bg-blue-600 px-6 py-4 font-bold text-white opacity-60 shadow-lg shadow-blue-200"
-            >
-              Save Provider after ProviderConfig model exists
-            </button>
+            <div>
+              <label className="text-sm font-bold text-slate-700">
+                Product Search Query
+              </label>
+              <input
+                name="productSearchQuery"
+                placeholder="airalo,airalo partner"
+                className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-4 font-semibold outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+              />
+              <p className="mt-2 text-sm text-slate-500">
+                Comma-separated keywords used to map products by provider field.
+              </p>
+            </div>
+
+            <div>
+              <label className="text-sm font-bold text-slate-700">
+                Priority
+              </label>
+              <input
+                name="priority"
+                type="number"
+                defaultValue={100}
+                className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-4 font-semibold outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-bold text-slate-700">Notes</label>
+              <textarea
+                name="notes"
+                rows={5}
+                placeholder="Internal notes about this provider..."
+                className="mt-2 w-full rounded-2xl border border-slate-300 px-4 py-4 font-semibold outline-none transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+              />
+            </div>
           </div>
         </div>
 
         <div className="space-y-6">
           <div className="rounded-[2rem] bg-white p-6 shadow-xl shadow-blue-50">
             <h2 className="text-2xl font-bold text-slate-950">
-              Required next step
+              Capabilities
             </h2>
 
-            <p className="mt-3 text-slate-600">
-              Add a Prisma model first. Without that, providers are still hardcoded in the Admin Providers page.
-            </p>
+            <div className="mt-6 space-y-4">
+              <label className="flex items-center gap-3 rounded-2xl bg-slate-50 p-4 font-bold">
+                <input name="active" type="checkbox" defaultChecked />
+                Active
+              </label>
 
-            <div className="mt-6 rounded-2xl bg-blue-50 p-4">
-              <p className="font-bold text-slate-950">ProviderConfig</p>
-              <p className="mt-2 text-sm leading-6 text-slate-600">
-                name, slug, type, baseUrl, apiKeyEnvName, fulfillmentEnabled,
-                catalogueEnabled, usageSyncEnabled, active, priority.
-              </p>
+              <label className="flex items-center gap-3 rounded-2xl bg-slate-50 p-4 font-bold">
+                <input name="fulfillmentEnabled" type="checkbox" />
+                Fulfillment enabled
+              </label>
+
+              <label className="flex items-center gap-3 rounded-2xl bg-slate-50 p-4 font-bold">
+                <input name="catalogueEnabled" type="checkbox" />
+                Catalogue sync enabled
+              </label>
+
+              <label className="flex items-center gap-3 rounded-2xl bg-slate-50 p-4 font-bold">
+                <input name="usageSyncEnabled" type="checkbox" />
+                Usage sync enabled
+              </label>
             </div>
           </div>
 
           <div className="rounded-[2rem] bg-white p-6 shadow-xl shadow-blue-50">
-            <h2 className="text-2xl font-bold text-slate-950">
-              Planned providers
-            </h2>
+            <h2 className="text-2xl font-bold text-slate-950">Save</h2>
 
-            <div className="mt-6 space-y-3">
-              <Link
-                href="/admin/providers/airalo"
-                className="block rounded-2xl bg-yellow-50 p-4 font-bold text-yellow-700 transition hover:-translate-y-1"
-              >
-                Airalo Partner API
-              </Link>
+            <p className="mt-3 text-slate-600">
+              This now saves a real ProviderConfig row in SQLite.
+            </p>
 
-              <Link
-                href="/admin/providers/esim-go"
-                className="block rounded-2xl bg-blue-50 p-4 font-bold text-blue-700 transition hover:-translate-y-1"
-              >
-                eSIM Go
-              </Link>
-
-              <Link
-                href="/admin/providers/manual"
-                className="block rounded-2xl bg-slate-50 p-4 font-bold text-slate-700 transition hover:-translate-y-1"
-              >
-                Manual Fulfillment
-              </Link>
-            </div>
+            <button
+              type="submit"
+              className="mt-6 w-full rounded-2xl bg-blue-600 px-6 py-4 font-bold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700"
+            >
+              Save Provider
+            </button>
           </div>
         </div>
-      </div>
+      </form>
     </AdminShell>
   );
 }

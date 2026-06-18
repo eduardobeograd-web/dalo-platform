@@ -76,3 +76,8 @@ export type SupportRequest = Prisma.SupportRequestModel
  * 
  */
 export type CustomerEvent = Prisma.CustomerEventModel
+/**
+ * Model ProviderConfig
+ * 
+ */
+export type ProviderConfig = Prisma.ProviderConfigModel
