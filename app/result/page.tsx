@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { getDaloRecommendation } from "../../lib/recommendation";
 import TravelTicketCard from "../../components/result/TravelTicketCard";
 import ProductViewTracker from "../../components/tracking/ProductViewTracker";
@@ -9,86 +10,17 @@ function formatPrice(value: number) {
 }
 
 function getFitLabel(type: string) {
-  if (type === "essential") return "Maps, messaging and email";
-  if (type === "power") return "Streaming, hotspot and work";
-  if (type === "long_stay") return "Long trips and multi-country travel";
-  return "Social media, calls and navigation";
+  if (type === "essential") return "Maps and messages";
+  if (type === "power") return "Streaming and hotspot";
+  if (type === "long_stay") return "Long stay";
+  return "Everyday use";
 }
 
-function getBadge(usageFit: string) {
-  if (usageFit === "essential") return "Best for light use";
-  if (usageFit === "power") return "Best for heavy use";
-  if (usageFit === "long_stay") return "Best for long trips";
-  return "Most popular";
-}
-
-function getDestinationFlag(destination: string) {
-  const flags: Record<string, string> = {
-    Europe: "🇪🇺",
-    Spain: "🇪🇸",
-    Italy: "🇮🇹",
-    Japan: "🇯🇵",
-    Thailand: "🇹🇭",
-    "United States": "🇺🇸",
-    "United States of America": "🇺🇸",
-    "United Kingdom": "🇬🇧",
-    Germany: "🇩🇪",
-    France: "🇫🇷",
-    Portugal: "🇵🇹",
-    Greece: "🇬🇷",
-    Turkey: "🇹🇷",
-    Switzerland: "🇨🇭",
-    Austria: "🇦🇹",
-    Netherlands: "🇳🇱",
-    Croatia: "🇭🇷",
-    Serbia: "🇷🇸",
-    Montenegro: "🇲🇪",
-    Albania: "🇦🇱",
-    Dubai: "🇦🇪",
-    "United Arab Emirates": "🇦🇪",
-  };
-
-  return flags[destination] || "🌍";
-}
-
-function getDestinationImage(destination: string) {
-  const images: Record<string, string> = {
-    Europe:
-      "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?q=80&w=1400&auto=format&fit=crop",
-    Spain:
-      "https://images.unsplash.com/photo-1543783207-ec64e4d95325?q=80&w=1400&auto=format&fit=crop",
-    Italy:
-      "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?q=80&w=1400&auto=format&fit=crop",
-    Japan:
-      "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=1400&auto=format&fit=crop",
-    Thailand:
-      "https://images.unsplash.com/photo-1508009603885-50cf7c579365?q=80&w=1400&auto=format&fit=crop",
-    "United States":
-      "https://images.unsplash.com/photo-1485738422979-f5c462d49f74?q=80&w=1400&auto=format&fit=crop",
-    "United States of America":
-      "https://images.unsplash.com/photo-1485738422979-f5c462d49f74?q=80&w=1400&auto=format&fit=crop",
-    "United Kingdom":
-      "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=1400&auto=format&fit=crop",
-    Germany:
-      "https://images.unsplash.com/photo-1467269204594-9661b134dd2b?q=80&w=1400&auto=format&fit=crop",
-    France:
-      "https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=1400&auto=format&fit=crop",
-    Portugal:
-      "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?q=80&w=1400&auto=format&fit=crop",
-    Greece:
-      "https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=1400&auto=format&fit=crop",
-    Turkey:
-      "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?q=80&w=1400&auto=format&fit=crop",
-    Dubai:
-      "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=1400&auto=format&fit=crop",
-    "United Arab Emirates":
-      "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=1400&auto=format&fit=crop",
-  };
-
-  return (
-    images[destination] ||
-    "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1400&auto=format&fit=crop"
-  );
+function getUsageLabel(type: string) {
+  if (type === "essential") return "Light use";
+  if (type === "power") return "Heavy use";
+  if (type === "long_stay") return "Long stay";
+  return "Everyday use";
 }
 
 export default async function ResultPage({
@@ -122,29 +54,29 @@ export default async function ResultPage({
   if (!plan) {
     return (
       <main className="min-h-screen bg-[#F6F8FF] text-slate-900">
-        <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
-          <a href="/">
+        <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6">
+          <Link href="/">
             <Image
               src="/dalo-logo-horizontal.png"
               alt="DALO"
               width={180}
               height={80}
-              className="h-20 w-auto"
+              className="h-12 w-auto"
               priority
             />
-          </a>
+          </Link>
 
-          <a
+          <Link
             href="/#quiz"
-            className="rounded-xl bg-blue-600 px-5 py-3 font-medium text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700"
+            className="rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700"
           >
             New Search
-          </a>
+          </Link>
         </nav>
 
-        <section className="mx-auto max-w-3xl px-6 py-20 text-center">
-          <div className="rounded-[2rem] bg-white p-10 shadow-xl shadow-blue-50">
-            <h1 className="text-4xl font-bold text-slate-950">
+        <section className="mx-auto max-w-3xl px-4 py-14 text-center sm:px-6">
+          <div className="rounded-[2rem] bg-white p-8 shadow-xl shadow-blue-50">
+            <h1 className="text-3xl font-bold text-slate-950">
               No product found
             </h1>
 
@@ -152,12 +84,12 @@ export default async function ResultPage({
               Add active products in the admin area first.
             </p>
 
-            <a
+            <Link
               href="/admin/products/new"
               className="mt-8 inline-block rounded-2xl bg-blue-600 px-8 py-4 font-bold text-white"
             >
               Add Product
-            </a>
+            </Link>
           </div>
         </section>
       </main>
@@ -170,9 +102,7 @@ export default async function ResultPage({
     upsell.id !== plan.id &&
     upsell.sellPrice > plan.sellPrice;
 
-  const upsellPriceDifference = hasUpsell
-    ? upsellOffer.priceDifference
-    : 0;
+  const upsellPriceDifference = hasUpsell ? upsellOffer.priceDifference : 0;
 
   const hasRegionalSuggestion =
     regionalUpsell &&
@@ -184,7 +114,7 @@ export default async function ResultPage({
     : 0;
 
   return (
-    <main className="min-h-screen bg-[#F6F8FF] text-slate-900">
+    <main className="min-h-screen bg-[#F6F8FF] pb-28 text-slate-900 md:pb-0">
       <ProductViewTracker
         productId={plan.id}
         metadata={{
@@ -205,120 +135,129 @@ export default async function ResultPage({
         }}
       />
 
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
-        <a href="/">
+      <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6">
+        <Link href="/" className="shrink-0">
           <Image
             src="/dalo-logo-horizontal.png"
             alt="DALO"
-            width={260}
+            width={240}
             height={80}
-            className="h-14 w-auto"
+            className="h-11 w-auto sm:h-14"
             priority
           />
-        </a>
+        </Link>
 
-        <div className="flex gap-3">
-          <a
-            href="/"
-            className="rounded-xl border border-slate-300 px-5 py-3 font-medium text-slate-700 transition hover:bg-white"
-          >
-            ← Home
-          </a>
-
-          <a
+        <div className="flex items-center gap-2">
+          <Link
             href="/#quiz"
-            className="rounded-xl bg-blue-600 px-5 py-3 font-medium text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700"
+            className="rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-50"
+          >
+            Edit trip
+          </Link>
+
+          <Link
+            href="/"
+            className="hidden rounded-xl bg-blue-600 px-4 py-3 text-sm font-bold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700 sm:inline-flex"
           >
             New Search
-          </a>
+          </Link>
         </div>
       </nav>
 
-      <section className="mx-auto max-w-7xl px-6 pb-10 pt-4">
-        <div className="mb-6 text-center">
-          <div className="inline-flex items-center gap-3 rounded-full bg-white px-5 py-3 text-sm font-bold text-slate-800 shadow-lg shadow-blue-100 ring-1 ring-blue-100">
-            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-green-500 text-white">
-              ✓
+      <section className="mx-auto max-w-6xl px-4 pb-10 pt-2 sm:px-6">
+        <div className="mb-4 rounded-[1.5rem] bg-white p-4 shadow-lg shadow-blue-50 sm:mb-6 sm:p-5">
+          <p className="text-xs font-black uppercase tracking-wide text-blue-600">
+            Your result
+          </p>
+
+          <div className="mt-2 flex flex-wrap items-center gap-2 text-sm font-bold text-slate-700">
+            <span className="rounded-full bg-slate-100 px-3 py-1">
+              {country}
             </span>
-            <span>Your recommendation is ready</span>
+            <span className="rounded-full bg-slate-100 px-3 py-1">
+              {tripDays} days
+            </span>
+            <span className="rounded-full bg-slate-100 px-3 py-1">
+              {getUsageLabel(type)}
+            </span>
+            <span className="rounded-full bg-blue-50 px-3 py-1 text-blue-700">
+              Need: {minimumDataGb}GB+
+            </span>
           </div>
         </div>
 
-        <div className="grid overflow-hidden rounded-[2.5rem] bg-white shadow-2xl shadow-blue-100 lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="relative min-h-[360px]">
-            <TravelTicketCard
-              country={country}
-              planName={plan.name}
-              data={plan.data}
-              validityDays={plan.validityDays}
-              usageLabel={getFitLabel(type)}
-            />
+        <div className="grid gap-5 lg:grid-cols-[0.78fr_1.22fr]">
+          <div className="hidden lg:block">
+            <div className="overflow-hidden rounded-[2.5rem] bg-white shadow-2xl shadow-blue-100">
+              <div className="relative min-h-[520px]">
+                <TravelTicketCard
+                  country={country}
+                  planName={plan.name}
+                  data={plan.data}
+                  validityDays={plan.validityDays}
+                  usageLabel={getFitLabel(type)}
+                />
+              </div>
+            </div>
           </div>
 
-          <div className="p-6 md:p-8">
-            <p className="mb-2 text-sm font-bold uppercase tracking-wide text-blue-600">
-              Recommended eSIM
-            </p>
+          <div className="space-y-5">
+            <section className="rounded-[2rem] bg-white p-5 shadow-2xl shadow-blue-100 sm:p-7">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-wide text-blue-600">
+                    Best match
+                  </p>
 
-            <h2 className="text-2xl font-bold text-slate-950 md:text-3xl">
-              Best eSIM for your trip
-            </h2>
+                  <h1 className="mt-2 text-3xl font-black leading-tight text-slate-950 sm:text-4xl">
+                    {plan.data} for {country}
+                  </h1>
 
-            <div className="mt-4 inline-flex rounded-2xl bg-blue-50 px-5 py-3 text-xl font-black text-blue-700">
-              {plan.data} / {plan.validityDays} Days
-            </div>
-
-            <div className="mt-5 grid gap-3 rounded-2xl bg-slate-50 p-4 sm:grid-cols-3">
-              <div>
-                <div className="text-sm text-slate-500">Destination</div>
-                <div className="mt-1 font-bold">{country}</div>
-              </div>
-
-              <div>
-                <div className="text-sm text-slate-500">Trip length</div>
-                <div className="mt-1 font-bold">{tripDays} days</div>
-              </div>
-
-              <div>
-                <div className="text-sm text-slate-500">Estimated need</div>
-                <div className="mt-1 font-bold">At least {minimumDataGb}GB</div>
-              </div>
-            </div>
-
-            <div className="mt-4 rounded-2xl border border-blue-100 bg-blue-50 p-4">
-              <div className="text-sm font-black uppercase tracking-wide text-blue-700">
-                Why DALO picked this plan
-              </div>
-
-              <p className="mt-2 text-sm leading-relaxed text-slate-700">
-                Based on your destination, trip length and usage type, DALO
-                estimates that you need at least {minimumDataGb}GB. This plan
-                gives you a safer travel buffer for maps, WhatsApp, taxis,
-                browsing and travel apps.
-              </p>
-            </div>
-
-            <div className="mt-6 flex flex-wrap items-end gap-4">
-              <div className="text-4xl font-bold text-slate-950">
-                {formatPrice(plan.sellPrice)}
-              </div>
-
-              {plan.oldPrice && (
-                <div className="pb-2 text-xl text-slate-400 line-through">
-                  {formatPrice(plan.oldPrice)}
+                  <p className="mt-2 text-sm font-semibold text-slate-600">
+                    Valid for {plan.validityDays} days · {getFitLabel(type)}
+                  </p>
                 </div>
-              )}
 
-              <div className="mb-1 rounded-full bg-green-100 px-3 py-1 text-sm font-bold text-green-700">
-                Best match
+                <div className="rounded-full bg-green-100 px-3 py-1 text-xs font-black text-green-700">
+                  Recommended
+                </div>
               </div>
-            </div>
 
-            <div className="mt-6">
+              <div className="mt-5 flex flex-wrap items-end gap-3">
+                <div className="text-5xl font-black text-slate-950">
+                  {formatPrice(plan.sellPrice)}
+                </div>
+
+                {plan.oldPrice && (
+                  <div className="pb-2 text-xl text-slate-400 line-through">
+                    {formatPrice(plan.oldPrice)}
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-5 grid gap-2 sm:grid-cols-3">
+                <div className="rounded-2xl bg-green-50 px-4 py-3 text-sm font-bold text-green-700">
+                  Instant delivery
+                </div>
+
+                <div className="rounded-2xl bg-blue-50 px-4 py-3 text-sm font-bold text-blue-700">
+                  eSIM ready
+                </div>
+
+                <div className="rounded-2xl bg-slate-50 px-4 py-3 text-sm font-bold text-slate-700">
+                  No physical SIM
+                </div>
+              </div>
+
+              <p className="mt-4 text-sm leading-6 text-slate-600">
+                DALO picked this because your trip needs at least {minimumDataGb}GB.
+                This plan gives you a safe buffer for maps, WhatsApp, taxis and travel apps.
+              </p>
+
               <CheckoutStartedLink
                 href={`/checkout?productId=${plan.id}`}
                 productId={plan.id}
-                className="block rounded-2xl bg-blue-600 px-6 py-4 text-center text-lg font-bold text-white shadow-xl shadow-blue-200 transition hover:bg-blue-700"
+                className="mt-5 block rounded-2xl bg-blue-600 px-6 py-4 text-center text-lg font-black text-white shadow-xl shadow-blue-200 transition hover:bg-blue-700"
                 metadata={{
                   source: "result_page_main_cta",
                   destination: country,
@@ -331,50 +270,48 @@ export default async function ResultPage({
                   provider: plan.provider,
                 }}
               >
-                Continue with this plan →
+                Continue with best match →
               </CheckoutStartedLink>
-            </div>
+            </section>
 
             {hasUpsell && (
-              <div className="mt-5 rounded-[2rem] border-2 border-blue-500 bg-gradient-to-br from-blue-600 to-blue-800 p-5 text-white shadow-2xl shadow-blue-200">
-                <div className="mb-4 flex items-center justify-between gap-3">
+              <section className="rounded-[2rem] border-2 border-blue-500 bg-gradient-to-br from-blue-600 to-blue-900 p-5 text-white shadow-2xl shadow-blue-200 sm:p-7">
+                <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="rounded-full bg-white px-4 py-2 text-xs font-black uppercase tracking-wide text-blue-700">
-                    {upsellOffer.badge}
+                    Better value upgrade
                   </div>
 
                   {upsellPriceDifference > 0 && (
                     <div className="rounded-full bg-cyan-300 px-4 py-2 text-xs font-black uppercase tracking-wide text-blue-950">
-                      {upsellOffer.badge === "Smart upgrade"
-                        ? `Only +${formatPrice(upsellPriceDifference)}`
-                        : `+${formatPrice(upsellPriceDifference)}`}
+                      Only +{formatPrice(upsellPriceDifference)}
                     </div>
                   )}
                 </div>
 
-                <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+                <div className="mt-5 grid gap-5 sm:grid-cols-[1fr_auto] sm:items-end">
                   <div>
-                    <h3 className="text-2xl font-black">
-                      {upsellOffer.title}
-                    </h3>
+                    <h2 className="text-3xl font-black leading-tight">
+                      Get {upsell.data} instead
+                    </h2>
 
-                    <div className="mt-2 text-lg font-bold text-blue-100">
-                      Upgrade to {upsell.data} / {upsell.validityDays} Days
-                    </div>
+                    <p className="mt-2 text-base font-bold text-blue-100">
+                      {upsell.validityDays} days · more room for hotspot, video and travel apps
+                    </p>
 
-                    <p className="mt-3 max-w-md text-sm leading-relaxed text-blue-100">
+                    <p className="mt-3 max-w-xl text-sm leading-6 text-blue-100">
                       {upsellOffer.subtitle}
                     </p>
                   </div>
 
-                  <div className="shrink-0 text-left sm:text-right">
-                    <div className="text-3xl font-black">
+                  <div className="sm:text-right">
+                    <div className="text-4xl font-black">
                       {formatPrice(upsell.sellPrice)}
                     </div>
 
                     <CheckoutStartedLink
                       href={`/checkout?productId=${upsell.id}`}
                       productId={upsell.id}
-                      className="mt-3 inline-block rounded-2xl bg-white px-5 py-3 text-sm font-black text-blue-700 shadow-lg transition hover:bg-blue-50"
+                      className="mt-3 block rounded-2xl bg-white px-5 py-4 text-center text-sm font-black text-blue-700 shadow-lg transition hover:bg-blue-50"
                       metadata={{
                         source: "result_page_upsell_cta",
                         destination: country,
@@ -393,49 +330,43 @@ export default async function ResultPage({
                         upsellTitle: upsellOffer.title,
                       }}
                     >
-                      Choose smart upgrade →
+                      Choose upgrade →
                     </CheckoutStartedLink>
                   </div>
                 </div>
-              </div>
+              </section>
             )}
 
-          </div>
-        </div>
+            {hasRegionalSuggestion && (
+              <section className="rounded-[2rem] border border-purple-200 bg-white p-5 shadow-xl shadow-purple-100 sm:p-7">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <div className="inline-flex rounded-full bg-purple-600 px-4 py-2 text-xs font-black uppercase tracking-wide text-white">
+                      Regional option
+                    </div>
 
-        {hasRegionalSuggestion && (
-          <div className="mt-8 overflow-hidden rounded-[2rem] border border-purple-200 bg-white shadow-xl shadow-purple-100">
-            <div className="border-b border-purple-100 bg-purple-50 px-6 py-5">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <div className="inline-flex rounded-full bg-purple-600 px-4 py-2 text-xs font-black uppercase tracking-wide text-white">
-                    Regional travel option
+                    <h2 className="mt-4 text-2xl font-black text-slate-950">
+                      Visiting more than {country}?
+                    </h2>
+
+                    <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+                      Choose this if your trip includes nearby countries or border crossings.
+                    </p>
                   </div>
 
-                  <h3 className="mt-4 text-2xl font-black text-slate-950">
-                    Visiting more than {country}?
-                  </h3>
+                  <div className="text-right">
+                    <div className="text-3xl font-black text-slate-950">
+                      {formatPrice(regionalUpsell.sellPrice)}
+                    </div>
 
-                  <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-700">
-                    This is separate from your data upgrade. Choose a regional bundle
-                    if your trip includes nearby countries or border crossings.
-                  </p>
-                </div>
-
-                <div className="rounded-full bg-white px-4 py-2 text-xs font-black uppercase tracking-wide text-purple-700 shadow-sm">
-                  More country coverage
-                </div>
-              </div>
-            </div>
-
-            <div className="grid gap-6 p-6 lg:grid-cols-[1fr_260px] lg:items-center">
-              <div className="min-w-0">
-                <div className="text-lg font-black text-purple-800">
-                  {regionalUpsell.region || regionalUpsell.country} eSIM
-                </div>
-
-                <div className="mt-2 text-3xl font-black text-slate-950">
-                  {regionalUpsell.data} / {regionalUpsell.validityDays} Days
+                    <div className="mt-1 text-xs font-bold text-purple-700">
+                      {regionalPriceDifference > 0
+                        ? `+${formatPrice(regionalPriceDifference)} vs best match`
+                        : regionalPriceDifference < 0
+                          ? `${formatPrice(Math.abs(regionalPriceDifference))} cheaper`
+                          : "Same price"}
+                    </div>
+                  </div>
                 </div>
 
                 <div className="mt-4 grid gap-3 sm:grid-cols-3">
@@ -462,44 +393,15 @@ export default async function ResultPage({
                       Validity
                     </div>
                     <div className="mt-1 font-black text-slate-900">
-                      {regionalUpsell.validityDays} Days
+                      {regionalUpsell.validityDays} days
                     </div>
                   </div>
-                </div>
-
-                {regionalUpsell.isoCode && (
-                  <div className="mt-4 rounded-2xl bg-purple-50 p-4 text-xs font-semibold leading-relaxed text-slate-600">
-                    <div className="mb-2 font-black uppercase tracking-wide text-purple-700">
-                      Coverage codes
-                    </div>
-                    <div className="break-words">
-                      {regionalUpsell.isoCode}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="rounded-[2rem] bg-purple-600 p-5 text-white">
-                <div className="text-sm font-bold text-purple-100">
-                  Regional bundle price
-                </div>
-
-                <div className="mt-2 text-4xl font-black">
-                  {formatPrice(regionalUpsell.sellPrice)}
-                </div>
-
-                <div className="mt-2 text-sm font-bold text-purple-100">
-                  {regionalPriceDifference > 0
-                    ? `+${formatPrice(regionalPriceDifference)} vs country plan`
-                    : regionalPriceDifference < 0
-                      ? `${formatPrice(Math.abs(regionalPriceDifference))} cheaper than country plan`
-                      : "Same price as country plan"}
                 </div>
 
                 <CheckoutStartedLink
                   href={`/checkout?productId=${regionalUpsell.id}`}
                   productId={regionalUpsell.id}
-                  className="mt-5 block rounded-2xl bg-white px-5 py-3 text-center text-sm font-black text-purple-700 shadow-lg transition hover:bg-purple-50"
+                  className="mt-5 block rounded-2xl bg-purple-600 px-5 py-4 text-center text-sm font-black text-white shadow-lg shadow-purple-200 transition hover:bg-purple-700"
                   metadata={{
                     source: "result_page_regional_option_cta",
                     destination: country,
@@ -518,12 +420,43 @@ export default async function ResultPage({
                 >
                   Choose regional bundle →
                 </CheckoutStartedLink>
-              </div>
-            </div>
+              </section>
+            )}
           </div>
-        )}
-
+        </div>
       </section>
+
+      <div className="fixed inset-x-0 bottom-0 z-50 border-t border-slate-200 bg-white/95 px-4 py-3 shadow-2xl backdrop-blur md:hidden">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="truncate text-xs font-bold text-slate-500">
+              Best match · {plan.data}
+            </p>
+            <p className="text-xl font-black text-slate-950">
+              {formatPrice(plan.sellPrice)}
+            </p>
+          </div>
+
+          <CheckoutStartedLink
+            href={`/checkout?productId=${plan.id}`}
+            productId={plan.id}
+            className="shrink-0 rounded-2xl bg-blue-600 px-5 py-4 text-sm font-black text-white shadow-lg shadow-blue-200"
+            metadata={{
+              source: "result_page_mobile_sticky_cta",
+              destination: country,
+              days,
+              userType: type,
+              productName: plan.name,
+              data: plan.data,
+              validityDays: plan.validityDays,
+              price: plan.sellPrice,
+              provider: plan.provider,
+            }}
+          >
+            Continue →
+          </CheckoutStartedLink>
+        </div>
+      </div>
     </main>
   );
 }
