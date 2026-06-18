@@ -4,6 +4,7 @@ import AdminShell from "../../../../components/AdminShell";
 import { prisma } from "../../../../lib/db";
 import {
   deleteTestOrder,
+  fulfillOrderMock,
   markOrderDelivered,
   markOrderFailed,
   markOrderPaid,
@@ -117,6 +118,7 @@ export default async function OrderDetailPage({
   const markFailedWithId = markOrderFailed.bind(null, order.id);
   const markWaitingWithId = markOrderWaiting.bind(null, order.id);
   const deleteTestOrderWithId = deleteTestOrder.bind(null, order.id);
+  const fulfillOrderMockWithId = fulfillOrderMock.bind(null, order.id);
   const updateOrderFulfillmentWithId = updateOrderFulfillment.bind(null, order.id);
 
   return (
@@ -378,6 +380,23 @@ export default async function OrderDetailPage({
             </div>
 
             <div>
+              <p className="mb-3 font-bold text-slate-700">Provider Fulfillment</p>
+
+              <div className="mb-6 rounded-2xl border border-orange-200 bg-orange-50 p-4">
+                <p className="font-bold text-orange-800">
+                  Mock Fulfillment
+                </p>
+                <p className="mt-1 text-sm text-orange-700">
+                  Creates fake eSIM install data for testing. No real provider order is placed.
+                </p>
+
+                <form action={fulfillOrderMockWithId} className="mt-4">
+                  <button className="w-full rounded-2xl bg-orange-600 px-5 py-4 font-bold text-white transition hover:bg-orange-700">
+                    Fulfill with eSIM Go Mock
+                  </button>
+                </form>
+              </div>
+
               <p className="mb-3 font-bold text-slate-700">eSIM Delivery</p>
 
               <div className="grid gap-3">
