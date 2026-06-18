@@ -850,7 +850,7 @@ export async function buildRecommendation(input: RecommendationInput) {
 
   const finalUpsell = pickFinalUpsell({
     bestMatch,
-    regionalUpsell,
+    regionalUpsell: null,
     comfortOption,
     heavyDataOption,
   });

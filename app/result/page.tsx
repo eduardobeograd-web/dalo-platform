@@ -110,6 +110,7 @@ export default async function ResultPage({
     recommendedProduct: plan,
     upsellProduct: upsell,
     upsellOffer,
+    regionalUpsell,
     minimumDataGb,
     tripDays,
   } = await getDaloRecommendation({
@@ -171,6 +172,15 @@ export default async function ResultPage({
 
   const upsellPriceDifference = hasUpsell
     ? upsellOffer.priceDifference
+    : 0;
+
+  const hasRegionalSuggestion =
+    regionalUpsell &&
+    regionalUpsell.id !== plan.id &&
+    regionalUpsell.active;
+
+  const regionalPriceDifference = hasRegionalSuggestion
+    ? Number((regionalUpsell.sellPrice - plan.sellPrice).toFixed(2))
     : 0;
 
   return (
@@ -334,7 +344,9 @@ export default async function ResultPage({
 
                   {upsellPriceDifference > 0 && (
                     <div className="rounded-full bg-cyan-300 px-4 py-2 text-xs font-black uppercase tracking-wide text-blue-950">
-                      Only +{formatPrice(upsellPriceDifference)}
+                      {upsellOffer.badge === "Smart upgrade"
+                        ? `Only +${formatPrice(upsellPriceDifference)}`
+                        : `+${formatPrice(upsellPriceDifference)}`}
                     </div>
                   )}
                 </div>
@@ -390,6 +402,126 @@ export default async function ResultPage({
 
           </div>
         </div>
+
+        {hasRegionalSuggestion && (
+          <div className="mt-8 overflow-hidden rounded-[2rem] border border-purple-200 bg-white shadow-xl shadow-purple-100">
+            <div className="border-b border-purple-100 bg-purple-50 px-6 py-5">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <div className="inline-flex rounded-full bg-purple-600 px-4 py-2 text-xs font-black uppercase tracking-wide text-white">
+                    Regional travel option
+                  </div>
+
+                  <h3 className="mt-4 text-2xl font-black text-slate-950">
+                    Visiting more than {country}?
+                  </h3>
+
+                  <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-700">
+                    This is separate from your data upgrade. Choose a regional bundle
+                    if your trip includes nearby countries or border crossings.
+                  </p>
+                </div>
+
+                <div className="rounded-full bg-white px-4 py-2 text-xs font-black uppercase tracking-wide text-purple-700 shadow-sm">
+                  More country coverage
+                </div>
+              </div>
+            </div>
+
+            <div className="grid gap-6 p-6 lg:grid-cols-[1fr_260px] lg:items-center">
+              <div className="min-w-0">
+                <div className="text-lg font-black text-purple-800">
+                  {regionalUpsell.region || regionalUpsell.country} eSIM
+                </div>
+
+                <div className="mt-2 text-3xl font-black text-slate-950">
+                  {regionalUpsell.data} / {regionalUpsell.validityDays} Days
+                </div>
+
+                <div className="mt-4 grid gap-3 sm:grid-cols-3">
+                  <div className="rounded-2xl bg-slate-50 p-4">
+                    <div className="text-xs font-bold uppercase tracking-wide text-slate-500">
+                      Region
+                    </div>
+                    <div className="mt-1 font-black text-slate-900">
+                      {regionalUpsell.region || regionalUpsell.country}
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl bg-slate-50 p-4">
+                    <div className="text-xs font-bold uppercase tracking-wide text-slate-500">
+                      Data
+                    </div>
+                    <div className="mt-1 font-black text-slate-900">
+                      {regionalUpsell.data}
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl bg-slate-50 p-4">
+                    <div className="text-xs font-bold uppercase tracking-wide text-slate-500">
+                      Validity
+                    </div>
+                    <div className="mt-1 font-black text-slate-900">
+                      {regionalUpsell.validityDays} Days
+                    </div>
+                  </div>
+                </div>
+
+                {regionalUpsell.isoCode && (
+                  <div className="mt-4 rounded-2xl bg-purple-50 p-4 text-xs font-semibold leading-relaxed text-slate-600">
+                    <div className="mb-2 font-black uppercase tracking-wide text-purple-700">
+                      Coverage codes
+                    </div>
+                    <div className="break-words">
+                      {regionalUpsell.isoCode}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="rounded-[2rem] bg-purple-600 p-5 text-white">
+                <div className="text-sm font-bold text-purple-100">
+                  Regional bundle price
+                </div>
+
+                <div className="mt-2 text-4xl font-black">
+                  {formatPrice(regionalUpsell.sellPrice)}
+                </div>
+
+                <div className="mt-2 text-sm font-bold text-purple-100">
+                  {regionalPriceDifference > 0
+                    ? `+${formatPrice(regionalPriceDifference)} vs country plan`
+                    : regionalPriceDifference < 0
+                      ? `${formatPrice(Math.abs(regionalPriceDifference))} cheaper than country plan`
+                      : "Same price as country plan"}
+                </div>
+
+                <CheckoutStartedLink
+                  href={`/checkout?productId=${regionalUpsell.id}`}
+                  productId={regionalUpsell.id}
+                  className="mt-5 block rounded-2xl bg-white px-5 py-3 text-center text-sm font-black text-purple-700 shadow-lg transition hover:bg-purple-50"
+                  metadata={{
+                    source: "result_page_regional_option_cta",
+                    destination: country,
+                    days,
+                    userType: type,
+                    productName: regionalUpsell.name,
+                    data: regionalUpsell.data,
+                    validityDays: regionalUpsell.validityDays,
+                    price: regionalUpsell.sellPrice,
+                    provider: regionalUpsell.provider,
+                    originalProductId: plan.id,
+                    originalProductName: plan.name,
+                    regionalCoverage: regionalUpsell.region,
+                    priceDifference: regionalPriceDifference,
+                  }}
+                >
+                  Choose regional bundle →
+                </CheckoutStartedLink>
+              </div>
+            </div>
+          </div>
+        )}
 
       </section>
     </main>
