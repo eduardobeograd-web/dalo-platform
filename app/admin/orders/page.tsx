@@ -34,17 +34,37 @@ function StatusBadge({ status }: { status: string }) {
 }
 
 function OrderTypeBadge({ payment }: { payment: string }) {
-  const isCheckoutTest = payment === "Pending";
+  const isPendingPayment = payment === "Pending";
 
   return (
     <span
       className={`rounded-full px-3 py-1 text-sm font-bold ${
-        isCheckoutTest
+        isPendingPayment
           ? "bg-yellow-100 text-yellow-700"
           : "bg-green-100 text-green-700"
       }`}
     >
-      {isCheckoutTest ? "Checkout Test" : "Demo / Paid"}
+      {isPendingPayment ? "Pending Payment" : "Paid Order"}
+    </span>
+  );
+}
+
+function FulfillmentAlertBadge({
+  payment,
+  fulfillment,
+}: {
+  payment: string;
+  fulfillment: string;
+}) {
+  const needsFulfillment =
+    payment === "Paid" &&
+    (fulfillment === "pending_manual" || fulfillment === "Waiting");
+
+  if (!needsFulfillment) return null;
+
+  return (
+    <span className="mt-2 inline-flex rounded-full bg-orange-100 px-3 py-1 text-xs font-black uppercase tracking-wide text-orange-700">
+      Needs fulfillment
     </span>
   );
 }
@@ -89,8 +109,10 @@ export default async function OrdersPage() {
     0
   );
 
-  const pendingOrders = orderRows.filter(
-    (order) => order.payment === "Pending"
+  const needsFulfillmentOrders = orderRows.filter(
+    (order) =>
+      order.payment === "Paid" &&
+      (order.fulfillment === "pending_manual" || order.fulfillment === "Waiting")
   ).length;
 
   return (
@@ -113,12 +135,12 @@ export default async function OrdersPage() {
             Export CSV
           </button>
 
-          <a
+          <Link
             href="/admin/orders"
             className="rounded-2xl bg-blue-600 px-6 py-4 font-bold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700"
           >
             Refresh Orders
-          </a>
+          </Link>
         </div>
       </div>
 
@@ -144,11 +166,14 @@ export default async function OrdersPage() {
 
         <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
           <p className="text-sm font-semibold text-slate-500">
-            Pending Checkout
+            Needs Fulfillment
           </p>
-          <h2 className="mt-3 text-3xl font-bold text-yellow-600">
-            {pendingOrders}
+          <h2 className="mt-3 text-3xl font-bold text-orange-600">
+            {needsFulfillmentOrders}
           </h2>
+          <p className="mt-2 text-sm text-slate-500">
+            Paid but not delivered
+          </p>
         </div>
       </div>
 
@@ -158,7 +183,7 @@ export default async function OrdersPage() {
             <h2 className="text-2xl font-bold text-slate-950">Order List</h2>
 
             <p className="mt-1 text-slate-600">
-              Test orders can be deleted only while payment is still pending.
+              Paid orders with pending_manual delivery need manual fulfillment or provider API fulfillment.
             </p>
           </div>
 
@@ -174,6 +199,7 @@ export default async function OrdersPage() {
                   <th className="px-6 py-4 font-semibold">Profit</th>
                   <th className="px-6 py-4 font-semibold">Payment Status</th>
                   <th className="px-6 py-4 font-semibold">eSIM Delivery</th>
+                  <th className="px-6 py-4 font-semibold">Provider Product</th>
                   <th className="px-6 py-4 font-semibold">Order Type</th>
                   <th className="px-6 py-4 font-semibold">Created</th>
                   <th className="px-6 py-4 font-semibold">Actions</th>
@@ -254,6 +280,21 @@ export default async function OrdersPage() {
 
                       <td className="px-6 py-5">
                         <StatusBadge status={order.fulfillment} />
+                        <FulfillmentAlertBadge
+                          payment={order.payment}
+                          fulfillment={order.fulfillment}
+                        />
+                      </td>
+
+                      <td className="px-6 py-5">
+                        <div className="max-w-[240px] truncate font-mono text-xs text-slate-500">
+                          {order.product?.providerProductId || "—"}
+                        </div>
+                        {order.product?.region ? (
+                          <div className="mt-2 rounded-full bg-purple-100 px-3 py-1 text-xs font-bold text-purple-700">
+                            {order.product.region}
+                          </div>
+                        ) : null}
                       </td>
 
                       <td className="px-6 py-5">
