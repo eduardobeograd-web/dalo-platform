@@ -57,6 +57,12 @@ const DEFAULT_COUNTRY = "Europe";
 const DEFAULT_DAYS = "8-14";
 const DEFAULT_TYPE: UsageType = "everyday";
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
 const allowedDays = new Set(["1-3", "4-7", "8-14", "15-30", "30+"]);
 const allowedTypes = new Set(["essential", "everyday", "power"]);
 
@@ -218,6 +224,13 @@ async function getRecommendationResponse(input: RecommendationApiInput) {
   };
 }
 
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 204,
+    headers: corsHeaders,
+  });
+}
+
 export async function POST(request: NextRequest) {
   try {
     let body: RecommendationApiInput = {};
@@ -230,7 +243,7 @@ export async function POST(request: NextRequest) {
 
     const response = await getRecommendationResponse(body);
 
-    return NextResponse.json(response);
+    return NextResponse.json(response, { headers: corsHeaders });
   } catch (error) {
     console.error("Recommendation API POST error:", error);
 
@@ -240,6 +253,7 @@ export async function POST(request: NextRequest) {
       },
       {
         status: 500,
+        headers: corsHeaders,
       }
     );
   }
@@ -256,7 +270,7 @@ export async function GET(request: NextRequest) {
       debug: searchParams.get("debug"),
     });
 
-    return NextResponse.json(response);
+    return NextResponse.json(response, { headers: corsHeaders });
   } catch (error) {
     console.error("Recommendation API GET error:", error);
 
@@ -266,6 +280,7 @@ export async function GET(request: NextRequest) {
       },
       {
         status: 500,
+        headers: corsHeaders,
       }
     );
   }
