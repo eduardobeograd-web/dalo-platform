@@ -18,6 +18,8 @@ type CheckoutBody = {
   email?: unknown;
   platform?: unknown;
   source?: unknown;
+  successUrl?: unknown;
+  cancelUrl?: unknown;
 };
 
 function normalizeString(value: unknown) {
@@ -27,6 +29,31 @@ function normalizeString(value: unknown) {
 
 function normalizeEmail(value: unknown) {
   return normalizeString(value).toLowerCase();
+}
+
+function normalizeOptionalUrl(value: unknown) {
+  const url = normalizeString(value);
+
+  if (!url) return "";
+
+  if (
+    url.startsWith("http://localhost:") ||
+    url.startsWith("https://localhost:") ||
+    url.startsWith("http://127.0.0.1:") ||
+    url.startsWith("https://127.0.0.1:") ||
+    url.startsWith("dalo://")
+  ) {
+    return url;
+  }
+
+  return "";
+}
+
+function appendCheckoutParams(url: string, params: Record<string, string>) {
+  const separator = url.includes("?") ? "&" : "?";
+  const query = new URLSearchParams(params).toString();
+
+  return `${url}${separator}${query}`;
 }
 
 function extractDataGb(dataText: string) {
@@ -124,6 +151,8 @@ export async function POST(request: NextRequest) {
     const productId = normalizeString(body.productId);
     const platform = normalizeString(body.platform) || "unknown";
     const source = normalizeString(body.source) || "mobile_app";
+    const requestedSuccessUrl = normalizeOptionalUrl(body.successUrl);
+    const requestedCancelUrl = normalizeOptionalUrl(body.cancelUrl);
 
     const sessionCustomer = await getCurrentCustomerFromRequest(request);
 
@@ -237,6 +266,26 @@ export async function POST(request: NextRequest) {
       process.env.NEXT_PUBLIC_SITE_URL ||
       "http://localhost:3000";
 
+    const successUrl = requestedSuccessUrl
+      ? appendCheckoutParams(requestedSuccessUrl, {
+          session_id: "{CHECKOUT_SESSION_ID}",
+          source,
+          platform,
+        })
+      : `${siteUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}&source=${encodeURIComponent(
+          source
+        )}&platform=${encodeURIComponent(platform)}`;
+
+    const cancelUrl = requestedCancelUrl
+      ? appendCheckoutParams(requestedCancelUrl, {
+          source,
+          platform,
+          canceled: "true",
+        })
+      : `${siteUrl}/checkout?productId=${product.id}&source=${encodeURIComponent(
+          source
+        )}&platform=${encodeURIComponent(platform)}`;
+
     const stripeSession = await stripe.checkout.sessions.create({
       mode: "payment",
       customer_email: email,
@@ -263,12 +312,8 @@ export async function POST(request: NextRequest) {
         platform,
         checkoutType: "app_checkout",
       },
-      success_url: `${siteUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}&source=${encodeURIComponent(
-        source
-      )}&platform=${encodeURIComponent(platform)}`,
-      cancel_url: `${siteUrl}/checkout?productId=${product.id}&source=${encodeURIComponent(
-        source
-      )}&platform=${encodeURIComponent(platform)}`,
+      success_url: successUrl,
+      cancel_url: cancelUrl,
     });
 
     if (!stripeSession.url) {
