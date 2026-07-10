@@ -2,6 +2,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { getCurrentCustomerFromRequest } from "@/lib/customer-auth";
 import { prisma } from "@/lib/db";
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 204,
+    headers: corsHeaders,
+  });
+}
+
 type ProductLike = {
   id: string;
   country: string;
@@ -104,6 +117,7 @@ export async function GET(
         },
         {
           status: 401,
+          headers: corsHeaders,
         }
       );
     }
@@ -131,6 +145,7 @@ export async function GET(
         },
         {
           status: 404,
+          headers: corsHeaders,
         }
       );
     }
@@ -141,13 +156,18 @@ export async function GET(
       },
     });
 
-    return NextResponse.json({
-      customer: {
-        id: customer.id,
-        email: customer.email,
+    return NextResponse.json(
+      {
+        customer: {
+          id: customer.id,
+          email: customer.email,
+        },
+        order: safeOrderDetail(order, product),
       },
-      order: safeOrderDetail(order, product),
-    });
+      {
+        headers: corsHeaders,
+      }
+    );
   } catch (error) {
     console.error("GET /api/customer/orders/[id] failed:", error);
 

@@ -6,6 +6,19 @@ import {
 } from "@/lib/customer-auth";
 import { prisma } from "@/lib/db";
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 204,
+    headers: corsHeaders,
+  });
+}
+
 function normalizeEmail(value: unknown) {
   if (typeof value !== "string") return "";
   return value.trim().toLowerCase();
@@ -30,6 +43,7 @@ export async function POST(request: NextRequest) {
         },
         {
           status: 400,
+          headers: corsHeaders,
         }
       );
     }
@@ -47,6 +61,7 @@ export async function POST(request: NextRequest) {
         },
         {
           status: 401,
+          headers: corsHeaders,
         }
       );
     }
@@ -60,6 +75,7 @@ export async function POST(request: NextRequest) {
         },
         {
           status: 401,
+          headers: corsHeaders,
         }
       );
     }
@@ -77,18 +93,23 @@ export async function POST(request: NextRequest) {
 
     await setCustomerSessionCookie(token);
 
-    return NextResponse.json({
-      success: true,
-      customer: {
-        id: customer.id,
-        email: customer.email,
-        active: customer.active,
+    return NextResponse.json(
+      {
+        success: true,
+        customer: {
+          id: customer.id,
+          email: customer.email,
+          active: customer.active,
+        },
+        session: {
+          token,
+          expiresAt,
+        },
       },
-      session: {
-        token,
-        expiresAt,
-      },
-    });
+      {
+        headers: corsHeaders,
+      }
+    );
   } catch (error) {
     console.error("POST /api/customer/login failed:", error);
 
