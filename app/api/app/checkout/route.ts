@@ -6,6 +6,12 @@ import { stripe } from "@/lib/stripe";
 
 const ORDER_NUMBER_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
 type CheckoutBody = {
   productId?: unknown;
   customerEmail?: unknown;
@@ -104,6 +110,13 @@ function safeProduct(product: {
   };
 }
 
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 204,
+    headers: corsHeaders,
+  });
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json().catch(() => ({}))) as CheckoutBody;
@@ -126,6 +139,7 @@ export async function POST(request: NextRequest) {
         },
         {
           status: 400,
+          headers: corsHeaders,
         }
       );
     }
@@ -137,6 +151,7 @@ export async function POST(request: NextRequest) {
         },
         {
           status: 400,
+          headers: corsHeaders,
         }
       );
     }
@@ -151,6 +166,7 @@ export async function POST(request: NextRequest) {
         },
         {
           status: 503,
+          headers: corsHeaders,
         }
       );
     }
@@ -169,6 +185,7 @@ export async function POST(request: NextRequest) {
         },
         {
           status: 404,
+          headers: corsHeaders,
         }
       );
     }
@@ -261,26 +278,32 @@ export async function POST(request: NextRequest) {
         },
         {
           status: 500,
+          headers: corsHeaders,
         }
       );
     }
 
-    return NextResponse.json({
-      success: true,
-      checkoutUrl: stripeSession.url,
-      order: {
-        id: order.id,
-        orderNumber: order.orderNumber,
-        payment: order.payment,
-        fulfillment: order.fulfillment,
-        esimStatus: order.esimStatus,
+    return NextResponse.json(
+      {
+        success: true,
+        checkoutUrl: stripeSession.url,
+        order: {
+          id: order.id,
+          orderNumber: order.orderNumber,
+          payment: order.payment,
+          fulfillment: order.fulfillment,
+          esimStatus: order.esimStatus,
+        },
+        product: safeProduct(product),
+        customer: {
+          id: customer.id,
+          email: customer.email,
+        },
       },
-      product: safeProduct(product),
-      customer: {
-        id: customer.id,
-        email: customer.email,
-      },
-    });
+      {
+        headers: corsHeaders,
+      }
+    );
   } catch (error) {
     console.error("POST /api/app/checkout failed:", error);
 
