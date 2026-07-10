@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "../../../lib/db";
+import { fulfillOrderMockById } from "@/lib/mock-fulfillment";
 
 function revalidateOrderPages(orderId: string) {
   revalidatePath("/admin/orders");
@@ -149,42 +150,6 @@ export async function deleteTestOrder(orderId: string) {
   revalidateOrderPages(orderId);
 }
 export async function fulfillOrderMock(orderId: string) {
-  const order = await prisma.order.findUnique({
-    where: {
-      id: orderId,
-    },
-    include: {
-      customerAccount: true,
-    },
-  });
-
-  if (!order) {
-    revalidateOrderPages(orderId);
-    return;
-  }
-
-  const orderNumber = order.orderNumber || order.id;
-  const shortId = order.id.slice(-8).toUpperCase();
-
-  await prisma.order.update({
-    where: {
-      id: order.id,
-    },
-    data: {
-      payment: "Paid",
-      fulfillment: "Delivered",
-      esimStatus: "ready",
-      providerOrderId: `esimgo_mock_${orderNumber}`,
-      iccid: `89314404${Date.now().toString().slice(-10)}`,
-      activationCode: `LPA:1$mock.getdalo.com$${orderNumber}-${shortId}`,
-      iosInstallUrl: `https://getdalo.com/mock-install/ios/${order.id}`,
-      androidInstallUrl: `https://getdalo.com/mock-install/android/${order.id}`,
-      qrCodeUrl: `https://getdalo.com/mock-qr/${order.id}`,
-      usedDataGb: 0,
-      remainingDataGb: order.totalDataGb,
-      lastUsageSyncAt: new Date(),
-    },
-  });
-
-  revalidateOrderPages(order.id);
+  await fulfillOrderMockById(orderId);
+  revalidateOrderPages(orderId);
 }

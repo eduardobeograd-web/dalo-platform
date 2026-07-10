@@ -156,6 +156,21 @@ export async function POST(request: NextRequest) {
 
     const sessionCustomer = await getCurrentCustomerFromRequest(request);
 
+    const isMobileCheckout =
+      platform === "mobile_app" || platform === "mobile_web";
+
+    if (isMobileCheckout && !sessionCustomer) {
+      return NextResponse.json(
+        {
+          error: "Authentication required",
+        },
+        {
+          status: 401,
+          headers: corsHeaders,
+        }
+      );
+    }
+
     const email =
       sessionCustomer?.email ||
       normalizeEmail(body.customerEmail) ||
@@ -296,7 +311,7 @@ export async function POST(request: NextRequest) {
             currency: "eur",
             product_data: {
               name: product.name,
-              description: `${product.data} / ${product.validityDays} Days`,
+              description: "Prepaid travel eSIM · Digital delivery",
             },
             unit_amount: Math.round(product.sellPrice * 100),
           },

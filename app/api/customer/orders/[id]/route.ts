@@ -50,7 +50,6 @@ type OrderDetailLike = {
   expiresAt: Date | null;
   lastUsageSyncAt: Date | null;
   createdAt: Date;
-  updatedAt: Date;
 };
 
 function safeProduct(product?: ProductLike | null) {
@@ -93,7 +92,6 @@ function safeOrderDetail(order: OrderDetailLike, product?: ProductLike | null) {
     expiresAt: order.expiresAt,
     lastUsageSyncAt: order.lastUsageSyncAt,
     createdAt: order.createdAt,
-    updatedAt: order.updatedAt,
 
     product: safeProduct(product),
   };

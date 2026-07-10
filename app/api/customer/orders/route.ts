@@ -41,7 +41,6 @@ type OrderLike = {
   expiresAt: Date | null;
   lastUsageSyncAt: Date | null;
   createdAt: Date;
-  updatedAt: Date;
   iosInstallUrl: string | null;
   androidInstallUrl: string | null;
   qrCodeUrl: string | null;
@@ -82,7 +81,6 @@ function safeOrder(order: OrderLike, product?: ProductLike | null) {
     expiresAt: order.expiresAt,
     lastUsageSyncAt: order.lastUsageSyncAt,
     createdAt: order.createdAt,
-    updatedAt: order.updatedAt,
 
     hasInstallDetails: Boolean(
       order.iosInstallUrl ||

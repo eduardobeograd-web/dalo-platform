@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 import { prisma } from "@/lib/db";
 import { stripe } from "@/lib/stripe";
+import { fulfillOrderMockById } from "@/lib/mock-fulfillment";
 
 export const runtime = "nodejs";
 
@@ -126,10 +127,21 @@ export async function POST(request: NextRequest) {
       const session = event.data.object as Stripe.Checkout.Session;
       const result = await markOrderPaid(session);
 
+      let fulfillmentResult = null;
+
+      if (
+        result.updated &&
+        result.orderId &&
+        process.env.DALO_AUTO_MOCK_FULFILLMENT === "true"
+      ) {
+        fulfillmentResult = await fulfillOrderMockById(result.orderId);
+      }
+
       return NextResponse.json({
         received: true,
         eventType: event.type,
         result,
+        fulfillmentResult,
       });
     }
 
