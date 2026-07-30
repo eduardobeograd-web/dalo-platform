@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../lib/db";
-
-const CUSTOMER_SESSION_COOKIE = "dalo_customer_session";
+import { CUSTOMER_SESSION_COOKIE } from "../../../lib/customer-auth";
 
 export async function GET(request: NextRequest) {
   const token = request.nextUrl.searchParams.get("token");

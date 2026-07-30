@@ -2,7 +2,7 @@ import crypto from "crypto";
 import { cookies } from "next/headers";
 import { prisma } from "./db";
 
-const CUSTOMER_SESSION_COOKIE = "dalo_customer_session";
+export const CUSTOMER_SESSION_COOKIE = "dalo_customer_session_v2";
 
 export function createCustomerToken() {
   return crypto.randomBytes(32).toString("hex");

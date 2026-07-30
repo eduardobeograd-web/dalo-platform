@@ -5,8 +5,7 @@ import crypto from "crypto";
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { prisma } from "../../../lib/db";
-
-const CUSTOMER_SESSION_COOKIE = "dalo_customer_session";
+import { CUSTOMER_SESSION_COOKIE } from "../../../lib/customer-auth";
 
 function normalizeEmail(value: FormDataEntryValue | null) {
   return String(value || "").trim().toLowerCase();

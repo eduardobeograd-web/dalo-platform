@@ -136,6 +136,13 @@ export const CustomerScalarFieldEnum = {
   email: 'email',
   name: 'name',
   passwordHash: 'passwordHash',
+  billingCompany: 'billingCompany',
+  billingAddressLine1: 'billingAddressLine1',
+  billingAddressLine2: 'billingAddressLine2',
+  billingCity: 'billingCity',
+  billingState: 'billingState',
+  billingPostalCode: 'billingPostalCode',
+  billingCountry: 'billingCountry',
   active: 'active',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

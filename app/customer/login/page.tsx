@@ -1,14 +1,17 @@
-import { loginCustomer } from "./actions";
 import SiteFooter from "../../../components/SiteFooter";
 import SiteHeader from "../../../components/SiteHeader";
 
 export default async function CustomerLoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; next?: string }>;
 }) {
   const params = await searchParams;
   const error = params.error;
+  const nextPath =
+    params.next?.startsWith("/") && !params.next.startsWith("//")
+      ? params.next
+      : "/customer/dashboard";
 
   return (
     <main className="dalo-page min-h-screen bg-[#F6F8FF] text-slate-950">
@@ -32,7 +35,12 @@ export default async function CustomerLoginPage({
             </div>
           ) : null}
 
-          <form action={loginCustomer} className="mt-8 space-y-5">
+          <form
+            action="/api/customer/login-form"
+            method="post"
+            className="mt-8 space-y-5"
+          >
+            <input type="hidden" name="next" value={nextPath} />
             <div>
               <label className="mb-2 block font-semibold">Email address</label>
               <input

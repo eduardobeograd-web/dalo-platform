@@ -81,9 +81,17 @@ export default async function CustomerDashboardPage() {
             Your eSIMs
           </h1>
 
-          <p className="mt-2 break-all text-sm text-blue-50 sm:mt-4 sm:max-w-2xl sm:text-lg">
-            Logged in as {customer.email}
-          </p>
+          <div className="mt-2 flex flex-col gap-3 sm:mt-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="break-all text-sm text-blue-50 sm:max-w-2xl sm:text-lg">
+              Logged in as {customer.email}
+            </p>
+            <a
+              href="/customer/settings"
+              className="inline-flex min-h-10 w-fit items-center justify-center rounded-xl border border-white/20 bg-white/10 px-4 text-sm font-bold text-white transition hover:bg-white/20"
+            >
+              Account settings
+            </a>
+          </div>
 
           <div className="mt-5 grid grid-cols-2 gap-2 border-t border-white/15 pt-4 sm:max-w-md sm:gap-4">
             <div>

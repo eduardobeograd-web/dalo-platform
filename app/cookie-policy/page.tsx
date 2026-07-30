@@ -30,7 +30,7 @@ const storageItems = [
       "Stores your analytics and marketing choices so DALO can respect them across pages and future visits.",
   },
   {
-    name: "dalo_customer_session",
+    name: "dalo_customer_session_v2",
     type: "HTTP-only first-party cookie",
     category: "Necessary",
     duration: "30 days",

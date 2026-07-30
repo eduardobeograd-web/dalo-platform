@@ -29,6 +29,13 @@ export type CustomerMinAggregateOutputType = {
   email: string | null
   name: string | null
   passwordHash: string | null
+  billingCompany: string | null
+  billingAddressLine1: string | null
+  billingAddressLine2: string | null
+  billingCity: string | null
+  billingState: string | null
+  billingPostalCode: string | null
+  billingCountry: string | null
   active: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -39,6 +46,13 @@ export type CustomerMaxAggregateOutputType = {
   email: string | null
   name: string | null
   passwordHash: string | null
+  billingCompany: string | null
+  billingAddressLine1: string | null
+  billingAddressLine2: string | null
+  billingCity: string | null
+  billingState: string | null
+  billingPostalCode: string | null
+  billingCountry: string | null
   active: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -49,6 +63,13 @@ export type CustomerCountAggregateOutputType = {
   email: number
   name: number
   passwordHash: number
+  billingCompany: number
+  billingAddressLine1: number
+  billingAddressLine2: number
+  billingCity: number
+  billingState: number
+  billingPostalCode: number
+  billingCountry: number
   active: number
   createdAt: number
   updatedAt: number
@@ -61,6 +82,13 @@ export type CustomerMinAggregateInputType = {
   email?: true
   name?: true
   passwordHash?: true
+  billingCompany?: true
+  billingAddressLine1?: true
+  billingAddressLine2?: true
+  billingCity?: true
+  billingState?: true
+  billingPostalCode?: true
+  billingCountry?: true
   active?: true
   createdAt?: true
   updatedAt?: true
@@ -71,6 +99,13 @@ export type CustomerMaxAggregateInputType = {
   email?: true
   name?: true
   passwordHash?: true
+  billingCompany?: true
+  billingAddressLine1?: true
+  billingAddressLine2?: true
+  billingCity?: true
+  billingState?: true
+  billingPostalCode?: true
+  billingCountry?: true
   active?: true
   createdAt?: true
   updatedAt?: true
@@ -81,6 +116,13 @@ export type CustomerCountAggregateInputType = {
   email?: true
   name?: true
   passwordHash?: true
+  billingCompany?: true
+  billingAddressLine1?: true
+  billingAddressLine2?: true
+  billingCity?: true
+  billingState?: true
+  billingPostalCode?: true
+  billingCountry?: true
   active?: true
   createdAt?: true
   updatedAt?: true
@@ -164,6 +206,13 @@ export type CustomerGroupByOutputType = {
   email: string
   name: string | null
   passwordHash: string | null
+  billingCompany: string | null
+  billingAddressLine1: string | null
+  billingAddressLine2: string | null
+  billingCity: string | null
+  billingState: string | null
+  billingPostalCode: string | null
+  billingCountry: string | null
   active: boolean
   createdAt: Date
   updatedAt: Date
@@ -195,6 +244,13 @@ export type CustomerWhereInput = {
   email?: Prisma.StringFilter<"Customer"> | string
   name?: Prisma.StringNullableFilter<"Customer"> | string | null
   passwordHash?: Prisma.StringNullableFilter<"Customer"> | string | null
+  billingCompany?: Prisma.StringNullableFilter<"Customer"> | string | null
+  billingAddressLine1?: Prisma.StringNullableFilter<"Customer"> | string | null
+  billingAddressLine2?: Prisma.StringNullableFilter<"Customer"> | string | null
+  billingCity?: Prisma.StringNullableFilter<"Customer"> | string | null
+  billingState?: Prisma.StringNullableFilter<"Customer"> | string | null
+  billingPostalCode?: Prisma.StringNullableFilter<"Customer"> | string | null
+  billingCountry?: Prisma.StringNullableFilter<"Customer"> | string | null
   active?: Prisma.BoolFilter<"Customer"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
@@ -210,6 +266,13 @@ export type CustomerOrderByWithRelationInput = {
   email?: Prisma.SortOrder
   name?: Prisma.SortOrderInput | Prisma.SortOrder
   passwordHash?: Prisma.SortOrderInput | Prisma.SortOrder
+  billingCompany?: Prisma.SortOrderInput | Prisma.SortOrder
+  billingAddressLine1?: Prisma.SortOrderInput | Prisma.SortOrder
+  billingAddressLine2?: Prisma.SortOrderInput | Prisma.SortOrder
+  billingCity?: Prisma.SortOrderInput | Prisma.SortOrder
+  billingState?: Prisma.SortOrderInput | Prisma.SortOrder
+  billingPostalCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  billingCountry?: Prisma.SortOrderInput | Prisma.SortOrder
   active?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -228,6 +291,13 @@ export type CustomerWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.CustomerWhereInput | Prisma.CustomerWhereInput[]
   name?: Prisma.StringNullableFilter<"Customer"> | string | null
   passwordHash?: Prisma.StringNullableFilter<"Customer"> | string | null
+  billingCompany?: Prisma.StringNullableFilter<"Customer"> | string | null
+  billingAddressLine1?: Prisma.StringNullableFilter<"Customer"> | string | null
+  billingAddressLine2?: Prisma.StringNullableFilter<"Customer"> | string | null
+  billingCity?: Prisma.StringNullableFilter<"Customer"> | string | null
+  billingState?: Prisma.StringNullableFilter<"Customer"> | string | null
+  billingPostalCode?: Prisma.StringNullableFilter<"Customer"> | string | null
+  billingCountry?: Prisma.StringNullableFilter<"Customer"> | string | null
   active?: Prisma.BoolFilter<"Customer"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
@@ -243,6 +313,13 @@ export type CustomerOrderByWithAggregationInput = {
   email?: Prisma.SortOrder
   name?: Prisma.SortOrderInput | Prisma.SortOrder
   passwordHash?: Prisma.SortOrderInput | Prisma.SortOrder
+  billingCompany?: Prisma.SortOrderInput | Prisma.SortOrder
+  billingAddressLine1?: Prisma.SortOrderInput | Prisma.SortOrder
+  billingAddressLine2?: Prisma.SortOrderInput | Prisma.SortOrder
+  billingCity?: Prisma.SortOrderInput | Prisma.SortOrder
+  billingState?: Prisma.SortOrderInput | Prisma.SortOrder
+  billingPostalCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  billingCountry?: Prisma.SortOrderInput | Prisma.SortOrder
   active?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -259,6 +336,13 @@ export type CustomerScalarWhereWithAggregatesInput = {
   email?: Prisma.StringWithAggregatesFilter<"Customer"> | string
   name?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
   passwordHash?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
+  billingCompany?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
+  billingAddressLine1?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
+  billingAddressLine2?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
+  billingCity?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
+  billingState?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
+  billingPostalCode?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
+  billingCountry?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
   active?: Prisma.BoolWithAggregatesFilter<"Customer"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Customer"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Customer"> | Date | string
@@ -269,6 +353,13 @@ export type CustomerCreateInput = {
   email: string
   name?: string | null
   passwordHash?: string | null
+  billingCompany?: string | null
+  billingAddressLine1?: string | null
+  billingAddressLine2?: string | null
+  billingCity?: string | null
+  billingState?: string | null
+  billingPostalCode?: string | null
+  billingCountry?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -284,6 +375,13 @@ export type CustomerUncheckedCreateInput = {
   email: string
   name?: string | null
   passwordHash?: string | null
+  billingCompany?: string | null
+  billingAddressLine1?: string | null
+  billingAddressLine2?: string | null
+  billingCity?: string | null
+  billingState?: string | null
+  billingPostalCode?: string | null
+  billingCountry?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -299,6 +397,13 @@ export type CustomerUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCompany?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingAddressLine1?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingAddressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingState?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -314,6 +419,13 @@ export type CustomerUncheckedUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCompany?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingAddressLine1?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingAddressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingState?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -329,6 +441,13 @@ export type CustomerCreateManyInput = {
   email: string
   name?: string | null
   passwordHash?: string | null
+  billingCompany?: string | null
+  billingAddressLine1?: string | null
+  billingAddressLine2?: string | null
+  billingCity?: string | null
+  billingState?: string | null
+  billingPostalCode?: string | null
+  billingCountry?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -339,6 +458,13 @@ export type CustomerUpdateManyMutationInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCompany?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingAddressLine1?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingAddressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingState?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -349,6 +475,13 @@ export type CustomerUncheckedUpdateManyInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCompany?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingAddressLine1?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingAddressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingState?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -359,6 +492,13 @@ export type CustomerCountOrderByAggregateInput = {
   email?: Prisma.SortOrder
   name?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
+  billingCompany?: Prisma.SortOrder
+  billingAddressLine1?: Prisma.SortOrder
+  billingAddressLine2?: Prisma.SortOrder
+  billingCity?: Prisma.SortOrder
+  billingState?: Prisma.SortOrder
+  billingPostalCode?: Prisma.SortOrder
+  billingCountry?: Prisma.SortOrder
   active?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -369,6 +509,13 @@ export type CustomerMaxOrderByAggregateInput = {
   email?: Prisma.SortOrder
   name?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
+  billingCompany?: Prisma.SortOrder
+  billingAddressLine1?: Prisma.SortOrder
+  billingAddressLine2?: Prisma.SortOrder
+  billingCity?: Prisma.SortOrder
+  billingState?: Prisma.SortOrder
+  billingPostalCode?: Prisma.SortOrder
+  billingCountry?: Prisma.SortOrder
   active?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -379,6 +526,13 @@ export type CustomerMinOrderByAggregateInput = {
   email?: Prisma.SortOrder
   name?: Prisma.SortOrder
   passwordHash?: Prisma.SortOrder
+  billingCompany?: Prisma.SortOrder
+  billingAddressLine1?: Prisma.SortOrder
+  billingAddressLine2?: Prisma.SortOrder
+  billingCity?: Prisma.SortOrder
+  billingState?: Prisma.SortOrder
+  billingPostalCode?: Prisma.SortOrder
+  billingCountry?: Prisma.SortOrder
   active?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -475,6 +629,13 @@ export type CustomerCreateWithoutSessionsInput = {
   email: string
   name?: string | null
   passwordHash?: string | null
+  billingCompany?: string | null
+  billingAddressLine1?: string | null
+  billingAddressLine2?: string | null
+  billingCity?: string | null
+  billingState?: string | null
+  billingPostalCode?: string | null
+  billingCountry?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -489,6 +650,13 @@ export type CustomerUncheckedCreateWithoutSessionsInput = {
   email: string
   name?: string | null
   passwordHash?: string | null
+  billingCompany?: string | null
+  billingAddressLine1?: string | null
+  billingAddressLine2?: string | null
+  billingCity?: string | null
+  billingState?: string | null
+  billingPostalCode?: string | null
+  billingCountry?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -519,6 +687,13 @@ export type CustomerUpdateWithoutSessionsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCompany?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingAddressLine1?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingAddressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingState?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -533,6 +708,13 @@ export type CustomerUncheckedUpdateWithoutSessionsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCompany?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingAddressLine1?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingAddressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingState?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -547,6 +729,13 @@ export type CustomerCreateWithoutPasswordResetTokensInput = {
   email: string
   name?: string | null
   passwordHash?: string | null
+  billingCompany?: string | null
+  billingAddressLine1?: string | null
+  billingAddressLine2?: string | null
+  billingCity?: string | null
+  billingState?: string | null
+  billingPostalCode?: string | null
+  billingCountry?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -561,6 +750,13 @@ export type CustomerUncheckedCreateWithoutPasswordResetTokensInput = {
   email: string
   name?: string | null
   passwordHash?: string | null
+  billingCompany?: string | null
+  billingAddressLine1?: string | null
+  billingAddressLine2?: string | null
+  billingCity?: string | null
+  billingState?: string | null
+  billingPostalCode?: string | null
+  billingCountry?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -591,6 +787,13 @@ export type CustomerUpdateWithoutPasswordResetTokensInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCompany?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingAddressLine1?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingAddressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingState?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -605,6 +808,13 @@ export type CustomerUncheckedUpdateWithoutPasswordResetTokensInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCompany?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingAddressLine1?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingAddressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingState?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -619,6 +829,13 @@ export type CustomerCreateWithoutOrdersInput = {
   email: string
   name?: string | null
   passwordHash?: string | null
+  billingCompany?: string | null
+  billingAddressLine1?: string | null
+  billingAddressLine2?: string | null
+  billingCity?: string | null
+  billingState?: string | null
+  billingPostalCode?: string | null
+  billingCountry?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -633,6 +850,13 @@ export type CustomerUncheckedCreateWithoutOrdersInput = {
   email: string
   name?: string | null
   passwordHash?: string | null
+  billingCompany?: string | null
+  billingAddressLine1?: string | null
+  billingAddressLine2?: string | null
+  billingCity?: string | null
+  billingState?: string | null
+  billingPostalCode?: string | null
+  billingCountry?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -663,6 +887,13 @@ export type CustomerUpdateWithoutOrdersInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCompany?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingAddressLine1?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingAddressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingState?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -677,6 +908,13 @@ export type CustomerUncheckedUpdateWithoutOrdersInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCompany?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingAddressLine1?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingAddressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingState?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -691,6 +929,13 @@ export type CustomerCreateWithoutSupportRequestsInput = {
   email: string
   name?: string | null
   passwordHash?: string | null
+  billingCompany?: string | null
+  billingAddressLine1?: string | null
+  billingAddressLine2?: string | null
+  billingCity?: string | null
+  billingState?: string | null
+  billingPostalCode?: string | null
+  billingCountry?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -705,6 +950,13 @@ export type CustomerUncheckedCreateWithoutSupportRequestsInput = {
   email: string
   name?: string | null
   passwordHash?: string | null
+  billingCompany?: string | null
+  billingAddressLine1?: string | null
+  billingAddressLine2?: string | null
+  billingCity?: string | null
+  billingState?: string | null
+  billingPostalCode?: string | null
+  billingCountry?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -735,6 +987,13 @@ export type CustomerUpdateWithoutSupportRequestsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCompany?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingAddressLine1?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingAddressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingState?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -749,6 +1008,13 @@ export type CustomerUncheckedUpdateWithoutSupportRequestsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCompany?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingAddressLine1?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingAddressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingState?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -763,6 +1029,13 @@ export type CustomerCreateWithoutCustomerEventsInput = {
   email: string
   name?: string | null
   passwordHash?: string | null
+  billingCompany?: string | null
+  billingAddressLine1?: string | null
+  billingAddressLine2?: string | null
+  billingCity?: string | null
+  billingState?: string | null
+  billingPostalCode?: string | null
+  billingCountry?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -777,6 +1050,13 @@ export type CustomerUncheckedCreateWithoutCustomerEventsInput = {
   email: string
   name?: string | null
   passwordHash?: string | null
+  billingCompany?: string | null
+  billingAddressLine1?: string | null
+  billingAddressLine2?: string | null
+  billingCity?: string | null
+  billingState?: string | null
+  billingPostalCode?: string | null
+  billingCountry?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -807,6 +1087,13 @@ export type CustomerUpdateWithoutCustomerEventsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCompany?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingAddressLine1?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingAddressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingState?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -821,6 +1108,13 @@ export type CustomerUncheckedUpdateWithoutCustomerEventsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCompany?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingAddressLine1?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingAddressLine2?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCity?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingState?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  billingCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -902,6 +1196,13 @@ export type CustomerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   email?: boolean
   name?: boolean
   passwordHash?: boolean
+  billingCompany?: boolean
+  billingAddressLine1?: boolean
+  billingAddressLine2?: boolean
+  billingCity?: boolean
+  billingState?: boolean
+  billingPostalCode?: boolean
+  billingCountry?: boolean
   active?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -918,6 +1219,13 @@ export type CustomerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   email?: boolean
   name?: boolean
   passwordHash?: boolean
+  billingCompany?: boolean
+  billingAddressLine1?: boolean
+  billingAddressLine2?: boolean
+  billingCity?: boolean
+  billingState?: boolean
+  billingPostalCode?: boolean
+  billingCountry?: boolean
   active?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -928,6 +1236,13 @@ export type CustomerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   email?: boolean
   name?: boolean
   passwordHash?: boolean
+  billingCompany?: boolean
+  billingAddressLine1?: boolean
+  billingAddressLine2?: boolean
+  billingCity?: boolean
+  billingState?: boolean
+  billingPostalCode?: boolean
+  billingCountry?: boolean
   active?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -938,12 +1253,19 @@ export type CustomerSelectScalar = {
   email?: boolean
   name?: boolean
   passwordHash?: boolean
+  billingCompany?: boolean
+  billingAddressLine1?: boolean
+  billingAddressLine2?: boolean
+  billingCity?: boolean
+  billingState?: boolean
+  billingPostalCode?: boolean
+  billingCountry?: boolean
   active?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type CustomerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "name" | "passwordHash" | "active" | "createdAt" | "updatedAt", ExtArgs["result"]["customer"]>
+export type CustomerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "name" | "passwordHash" | "billingCompany" | "billingAddressLine1" | "billingAddressLine2" | "billingCity" | "billingState" | "billingPostalCode" | "billingCountry" | "active" | "createdAt" | "updatedAt", ExtArgs["result"]["customer"]>
 export type CustomerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | Prisma.Customer$sessionsArgs<ExtArgs>
   passwordResetTokens?: boolean | Prisma.Customer$passwordResetTokensArgs<ExtArgs>
@@ -969,6 +1291,13 @@ export type $CustomerPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     email: string
     name: string | null
     passwordHash: string | null
+    billingCompany: string | null
+    billingAddressLine1: string | null
+    billingAddressLine2: string | null
+    billingCity: string | null
+    billingState: string | null
+    billingPostalCode: string | null
+    billingCountry: string | null
     active: boolean
     createdAt: Date
     updatedAt: Date
@@ -1404,6 +1733,13 @@ export interface CustomerFieldRefs {
   readonly email: Prisma.FieldRef<"Customer", 'String'>
   readonly name: Prisma.FieldRef<"Customer", 'String'>
   readonly passwordHash: Prisma.FieldRef<"Customer", 'String'>
+  readonly billingCompany: Prisma.FieldRef<"Customer", 'String'>
+  readonly billingAddressLine1: Prisma.FieldRef<"Customer", 'String'>
+  readonly billingAddressLine2: Prisma.FieldRef<"Customer", 'String'>
+  readonly billingCity: Prisma.FieldRef<"Customer", 'String'>
+  readonly billingState: Prisma.FieldRef<"Customer", 'String'>
+  readonly billingPostalCode: Prisma.FieldRef<"Customer", 'String'>
+  readonly billingCountry: Prisma.FieldRef<"Customer", 'String'>
   readonly active: Prisma.FieldRef<"Customer", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Customer", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Customer", 'DateTime'>
