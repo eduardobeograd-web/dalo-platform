@@ -56,12 +56,14 @@ export default function SiteHeader({ mode = "public" }: SiteHeaderProps) {
             >
               Support
             </Link>
-            <Link
-              href="/customer/logout"
-              className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#10233a] px-3 py-2 text-xs font-bold text-white transition hover:bg-[#2148c0] sm:rounded-xl sm:px-4 sm:text-sm"
-            >
-              Logout
-            </Link>
+            <form action="/customer/logout" method="post">
+              <button
+                type="submit"
+                className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#10233a] px-3 py-2 text-xs font-bold text-white transition hover:bg-[#2148c0] sm:rounded-xl sm:px-4 sm:text-sm"
+              >
+                Logout
+              </button>
+            </form>
           </div>
         ) : mode === "checkout" ? (
           <div className="flex items-center gap-3">

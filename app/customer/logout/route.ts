@@ -1,8 +1,8 @@
-import { redirect } from "next/navigation";
+import { NextResponse } from "next/server";
 import { clearCustomerSessionCookie } from "../../../lib/customer-auth";
 
-export async function GET() {
+export async function POST(request: Request) {
   await clearCustomerSessionCookie();
 
-  redirect("/");
+  return NextResponse.redirect(new URL("/", request.url), 303);
 }
