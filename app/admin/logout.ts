@@ -1,17 +1,22 @@
 "use server";
 
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import {
+  destroyCurrentAdminSession,
+  getCurrentAdmin,
+  writeAdminAuditLog,
+} from "../../lib/admin-auth";
 
 export async function adminLogout() {
-  const cookieStore = await cookies();
-
-  cookieStore.set("dalo_admin", "", {
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/",
-    maxAge: 0,
-  });
+  const admin = await getCurrentAdmin();
+  await destroyCurrentAdminSession();
+  if (admin) {
+    await writeAdminAuditLog({
+      adminUserId: admin.id,
+      action: "LOGOUT",
+      resource: "ADMIN_SESSION",
+    });
+  }
 
   redirect("/admin/login");
 }

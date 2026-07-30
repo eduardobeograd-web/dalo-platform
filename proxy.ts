@@ -1,24 +1,57 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { createTestAccessToken, safeTokenEqual } from "./lib/test-access";
 
-export function proxy(request: NextRequest) {
-  const isAdminRoute = request.nextUrl.pathname.startsWith("/admin");
-  const isLoginRoute = request.nextUrl.pathname === "/admin/login";
+const ACCESS_COOKIE = "dalo_test_access";
+
+export async function proxy(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+  const testPassword = process.env.DALO_TEST_PASSWORD;
+  const isAccessRoute =
+    pathname === "/test-access" || pathname === "/api/test-access";
+  const isExternalServiceRoute = pathname === "/api/stripe/webhook";
+
+  if (testPassword && !isAccessRoute && !isExternalServiceRoute) {
+    const expectedToken = await createTestAccessToken(testPassword);
+    const suppliedToken = request.cookies.get(ACCESS_COOKIE)?.value;
+
+    if (!suppliedToken || !safeTokenEqual(suppliedToken, expectedToken)) {
+      const accessUrl = new URL("/test-access", request.url);
+      accessUrl.searchParams.set(
+        "next",
+        `${pathname}${request.nextUrl.search}`,
+      );
+      return NextResponse.redirect(accessUrl);
+    }
+  }
+
+  const isAdminRoute = pathname.startsWith("/admin");
+  const isLoginRoute = pathname === "/admin/login";
+  const isPasswordRoute =
+    pathname === "/admin/change-password";
 
   if (!isAdminRoute || isLoginRoute) {
     return NextResponse.next();
   }
 
-  const isLoggedIn = request.cookies.get("dalo_admin")?.value === "true";
+  const isLoggedIn = Boolean(
+    request.cookies.get("dalo_admin_session")?.value,
+  );
 
   if (!isLoggedIn) {
     const loginUrl = new URL("/admin/login", request.url);
     return NextResponse.redirect(loginUrl);
   }
 
+  if (isPasswordRoute) {
+    return NextResponse.next();
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|dalo-logo.webp|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico|woff2?)$).*)",
+  ],
 };

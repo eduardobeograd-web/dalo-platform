@@ -1,34 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
-
-function getDestinationFlag(destination: string) {
-  const flags: Record<string, string> = {
-    Europe: "🇪🇺",
-    Spain: "🇪🇸",
-    Italy: "🇮🇹",
-    Japan: "🇯🇵",
-    Thailand: "🇹🇭",
-    "United States": "🇺🇸",
-    "United Kingdom": "🇬🇧",
-    Germany: "🇩🇪",
-    France: "🇫🇷",
-    Portugal: "🇵🇹",
-    Greece: "🇬🇷",
-    Turkey: "🇹🇷",
-    Switzerland: "🇨🇭",
-    Austria: "🇦🇹",
-    Netherlands: "🇳🇱",
-    Croatia: "🇭🇷",
-    Serbia: "🇷🇸",
-    Montenegro: "🇲🇪",
-    Albania: "🇦🇱",
-    Dubai: "🇦🇪",
-    "United Arab Emirates": "🇦🇪",
-  };
-
-  return flags[destination] || "🌍";
-}
+import SiteFooter from "../components/SiteFooter";
+import SiteHeader from "../components/SiteHeader";
 
 export default function Home() {
   const [country, setCountry] = useState("");
@@ -37,24 +12,31 @@ export default function Home() {
   const [destinations, setDestinations] = useState<string[]>([]);
 
   useEffect(() => {
+    let updateTimer: number | undefined;
+
     async function loadDestinations() {
       const response = await fetch("/api/destinations");
       const data = await response.json();
 
       if (Array.isArray(data.destinations)) {
-        setDestinations(data.destinations);
-
-        if (data.destinations.length > 0) {
-          setCountry(data.destinations[0]);
-        }
+        updateTimer = window.setTimeout(() => {
+          setDestinations(data.destinations);
+        }, 1200);
       }
     }
 
     loadDestinations();
+
+    return () => {
+      if (updateTimer !== undefined) {
+        window.clearTimeout(updateTimer);
+      }
+    };
   }, []);
 
   const selectedDestinationIsAvailable =
-    destinations.length === 0 || destinations.includes(country);
+    country.trim().length > 0 &&
+    (destinations.length === 0 || destinations.includes(country));
 
   const searchingUrl = selectedDestinationIsAvailable
     ? `/searching?country=${encodeURIComponent(
@@ -67,17 +49,19 @@ export default function Home() {
       Europe:
         "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?q=80&w=1200&auto=format&fit=crop",
       Spain:
-        "https://images.unsplash.com/photo-1543783207-ec64e4d95325?q=80&w=1200&auto=format&fit=crop",
+        "/travel/spain-home.webp",
       Italy:
-        "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?q=80&w=1200&auto=format&fit=crop",
+        "/travel/italy-home.webp",
       Japan:
-        "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?q=80&w=1200&auto=format&fit=crop",
+        "/travel/japan-home.webp",
       Thailand:
-        "https://images.unsplash.com/photo-1508009603885-50cf7c579365?q=80&w=1200&auto=format&fit=crop",
+        "/travel/thailand-home.webp",
       "United States":
-        "https://images.unsplash.com/photo-1485738422979-f5c462d49f74?q=80&w=1200&auto=format&fit=crop",
+        "/travel/united-states-home.webp",
       "United Kingdom":
         "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=1200&auto=format&fit=crop",
+      Germany:
+        "/travel/germany-home.webp",
     };
 
     return (
@@ -86,187 +70,252 @@ export default function Home() {
     );
   }
 
-  const availableDestinationCards =
-    destinations.length > 0 ? destinations : ["Europe"];
+  const popularDestinationNames = [
+    "Germany",
+    "Spain",
+    "Italy",
+    "United States",
+    "Japan",
+    "Thailand",
+  ];
+  const popularDestinationCards =
+    destinations.length > 0
+      ? popularDestinationNames.filter((destination) =>
+          destinations.includes(
+            destination === "United States"
+              ? "United States of America"
+              : destination
+          )
+        )
+      : popularDestinationNames;
 
   return (
-    <main className="min-h-screen bg-[#F6F8FF] text-slate-900">
-      {/* NAV */}
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
-        <a href="/" className="flex items-center">
-          <img src="/dalo-logo.png" alt="DALO" className="h-24 w-auto" />
-        </a>
-
-        <div className="hidden gap-8 text-sm font-medium text-slate-600 md:flex">
-          <a href="#how">How it works</a>
-          <a href="#destinations">Destinations</a>
-          <a href="#faq">FAQ</a>
+    <main className="dalo-home min-h-screen bg-[#F6F8FF] text-slate-900">
+      <section className="relative overflow-hidden bg-[#f7fafc] pb-10 sm:pb-14">
+        <div className="pointer-events-none absolute bottom-0 left-[8%] top-0 w-[86%]">
+          <Image
+            src="/travel/dalo-hero-sicily.webp"
+            alt=""
+            fill
+            preload
+            quality={72}
+            sizes="100vw"
+            className="object-cover object-[48%_center] saturate-[1.08]"
+          />
         </div>
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,#f7fafc_0%,rgba(247,250,252,0.94)_22%,rgba(247,250,252,0.16)_49%,rgba(247,250,252,0.46)_74%,#f7fafc_100%)]" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#f7fafc] via-[#f7fafc]/90 to-transparent" />
 
-        <a
-          href="#quiz"
-          className="rounded-full bg-blue-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:bg-blue-700"
-        >
-          Find my eSIM
-        </a>
-      </nav>
+        <SiteHeader />
 
-      {/* HERO */}
-      <section className="mx-auto max-w-7xl px-6 pb-12 pt-4">
-        <div className="grid items-start gap-8 lg:grid-cols-[1fr_540px]">
-          <div>
-            <div className="mb-4 inline-flex rounded-full bg-white px-4 py-2 text-sm font-semibold text-blue-700 shadow-sm">
-              Travel eSIM Recommendation Engine
-            </div>
-
-            <h1 className="mb-4 max-w-3xl text-4xl font-bold leading-tight tracking-tight text-slate-950 md:text-6xl">
-              Smarter travel starts here.
-            </h1>
-
-            <p className="mb-5 max-w-2xl text-lg leading-relaxed text-slate-600 md:text-xl">
-              DALO helps you find the right travel eSIM without comparing dozens
-              of confusing plans. Tell us your destination, trip length and
-              phone usage — we recommend the best match for your trip.
-            </p>
-
-            <div className="mb-6 grid max-w-2xl gap-3 sm:grid-cols-3">
-              <div className="rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm">
-                🌍 Choose destination
-              </div>
-
-              <div className="rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm">
-                📱 Tell us usage
-              </div>
-
-              <div className="rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm">
-                🎯 Get best match
-              </div>
-            </div>
-
-            <div className="mb-6 grid max-w-xl gap-3 sm:grid-cols-3">
-              <div className="rounded-2xl bg-white p-3 shadow-sm">
-                <div className="text-2xl">⚡</div>
-                <p className="mt-2 text-sm font-semibold">Instant delivery</p>
-              </div>
-
-              <div className="rounded-2xl bg-white p-3 shadow-sm">
-                <div className="text-2xl">🌍</div>
-                <p className="mt-2 text-sm font-semibold">
-                  Available destinations
-                </p>
-              </div>
-
-              <div className="rounded-2xl bg-white p-3 shadow-sm">
-                <div className="text-2xl">🎯</div>
-                <p className="mt-2 text-sm font-semibold">Smart match</p>
-              </div>
-            </div>
-
-            <div className="overflow-hidden rounded-[2rem] bg-white shadow-2xl shadow-blue-100">
-              <img
-                src="https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?q=80&w=1600&auto=format&fit=crop"
-                alt="Travel destination"
-                className="h-48 w-full object-cover"
-              />
-            </div>
+        {/* HERO */}
+        <div className="relative mx-auto max-w-7xl px-5 pt-1 sm:px-6 sm:pt-3">
+          <div className="pointer-events-none absolute left-[43%] top-6 hidden items-center gap-2 rounded-full border border-white/80 bg-white/75 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-700 shadow-sm backdrop-blur-md xl:flex">
+            <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" className="h-3.5 w-3.5 text-[#2148c0]"><path d="M16 8.5c0 4.25-6 8-6 8s-6-3.75-6-8a6 6 0 1 1 12 0Z" stroke="currentColor" strokeWidth="1.5" /><circle cx="10" cy="8.5" r="2" fill="currentColor" /></svg>
+            Cefalù, Sicily
           </div>
+          <div className="grid items-start gap-3 sm:gap-5 lg:grid-cols-[minmax(0,1fr)_580px] lg:gap-5">
+            <div className="self-center py-2 pr-0 sm:py-5 sm:pr-4 lg:py-8 lg:pr-7">
+              <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-blue-700 sm:mb-4 sm:text-xs">
+                The travel eSIM matching engine
+              </p>
+
+              <h1 className="max-w-[37rem] text-[2.05rem] font-bold leading-[0.98] tracking-[-0.045em] text-slate-950 sm:text-5xl lg:text-[3.45rem]">
+                <span className="block">DALO finds your</span>
+                <span className="block text-[#2148c0]">right eSIM.</span>
+                <span className="mt-3 hidden text-[0.52em] font-semibold tracking-[-0.01em] text-slate-700 sm:block">
+                  Built around your trip.
+                </span>
+              </h1>
+
+              <p className="mt-2 max-w-md text-[13px] leading-relaxed text-slate-700 sm:mt-5 sm:text-lg">
+                Tell us where you&apos;re going and how you use your phone.
+                DALO turns that into one clear recommendation.
+              </p>
+
+              <div className="mt-5 hidden max-w-xl rounded-2xl border border-white/80 bg-white/80 p-4 shadow-[0_16px_35px_rgba(15,80,110,0.1)] backdrop-blur-sm sm:block">
+                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-blue-700">
+                  Why DALO is different
+                </p>
+                <p className="mt-2 max-w-lg text-lg font-bold leading-snug text-slate-950">
+                  Other eSIM shops make you compare plans. DALO recommends the one that fits your trip.
+                </p>
+                <div className="mt-3 grid gap-3 border-t border-slate-200 pt-3 sm:grid-cols-3">
+                  <div className="border-b border-slate-200 pb-3 sm:border-b-0 sm:border-r sm:pb-0 sm:pr-3">
+                    <span className="mb-2 block h-2 w-2 rounded-full bg-blue-600" />
+                    <p className="text-sm font-bold leading-snug text-slate-900">Matched to your destination</p>
+                  </div>
+                  <div className="border-b border-slate-200 pb-3 sm:border-b-0 sm:border-r sm:pb-0 sm:pr-3">
+                    <span className="mb-2 block h-2 w-2 rounded-full bg-cyan-500" />
+                    <p className="text-sm font-bold leading-snug text-slate-900">Matched to your usage</p>
+                  </div>
+                  <div>
+                    <span className="mb-2 block h-2 w-2 rounded-full bg-amber-500" />
+                    <p className="text-sm font-bold leading-snug text-slate-900">Ready in minutes</p>
+                  </div>
+                </div>
+              </div>
+            </div>
 
           {/* QUIZ */}
           <div
             id="quiz"
-            className="rounded-[2rem] border border-white bg-white/95 p-5 shadow-2xl shadow-blue-100 backdrop-blur md:p-7"
+            className="relative overflow-hidden rounded-[1.5rem] border border-white/80 bg-white/[0.82] p-3 shadow-[0_24px_65px_rgba(37,66,88,0.16)] backdrop-blur-md sm:rounded-[2rem] sm:p-4 md:p-5 lg:mt-10"
           >
-            <div className="mb-6">
-              <p className="text-sm font-semibold text-blue-600">
-                FIND YOUR PLAN
-              </p>
-              <h2 className="mt-2 text-3xl font-bold text-slate-950">
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#2148c0_0%,#2148c0_85%,#e98b3a_85%,#e98b3a_100%)]" />
+            <div className="pointer-events-none absolute -left-2 top-1/2 h-4 w-4 rounded-full bg-[#f7fafc]" />
+            <div className="pointer-events-none absolute -right-2 top-1/2 h-4 w-4 rounded-full bg-[#f7fafc]" />
+            <div className="mb-2 flex items-end justify-between border-b border-dashed border-slate-300/80 pb-2 sm:mb-3 sm:pb-3">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#2148c0]">
+                  Find your plan
+                </p>
+                <h2 className="mt-1 text-xl font-extrabold tracking-[-0.035em] text-[#10233a] sm:text-2xl md:text-[1.7rem]">
                 Your trip. Your eSIM.
-              </h2>
-              <p className="mt-2 text-slate-500">
-                Answer 3 quick questions and we’ll recommend the best plan.
-              </p>
+                </h2>
+              </div>
+              <div className="hidden items-center gap-2 pb-1 sm:flex">
+                <span className="h-2 w-2 rounded-full bg-[#e98b3a]" />
+                <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">Matching engine live</p>
+              </div>
             </div>
 
-            <div className="space-y-5">
-              <div>
-                <label className="mb-2 block font-semibold">
-                  🌍 Where are you going?
+            <div>
+              <div className="pb-2 sm:pb-3">
+                <label className="mb-1.5 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-700 sm:mb-2 sm:text-[11px]">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-md bg-[#2148c0] text-[10px] text-white">1</span>
+                  Destination
                 </label>
 
-                <div className="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 transition focus-within:border-blue-500 focus-within:bg-white">
-                  <div className="text-3xl">{getDestinationFlag(country)}</div>
-
+                <div className="flex items-center gap-2.5 rounded-xl border border-white/80 bg-white/55 px-3 py-2 transition focus-within:border-[#2148c0] focus-within:bg-white/85 focus-within:ring-4 focus-within:ring-[#dbe6ff]/80 sm:px-3.5 sm:py-2.5">
+                  <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" className="h-5 w-5 shrink-0 text-[#2148c0]"><path d="M16 8.5c0 4.25-6 8-6 8s-6-3.75-6-8a6 6 0 1 1 12 0Z" stroke="currentColor" strokeWidth="1.5" /><circle cx="10" cy="8.5" r="2" stroke="currentColor" strokeWidth="1.5" /></svg>
                   <input
                     value={country}
                     onChange={(e) => setCountry(e.target.value)}
                     list="available-destinations"
-                    placeholder="Search destination..."
-                    className="w-full bg-transparent outline-none"
+                    placeholder="Where are you going?"
+                    className="w-full bg-transparent text-sm font-semibold text-slate-900 outline-none placeholder:font-normal placeholder:text-slate-400"
                   />
 
                   <datalist id="available-destinations">
                     {destinations.map((destination) => (
                       <option key={destination} value={destination}>
-                        {getDestinationFlag(destination)} {destination}
+                        {destination}
                       </option>
                     ))}
                   </datalist>
                 </div>
 
-                {!selectedDestinationIsAvailable && (
-                  <p className="mt-2 text-sm font-semibold text-red-600">
+                {country.trim().length > 0 && !selectedDestinationIsAvailable && (
+                  <p className="mt-1.5 text-xs font-semibold text-red-600">
                     Please choose an available destination from the list.
                   </p>
                 )}
 
-                {selectedDestinationIsAvailable && (
-                  <p className="mt-2 text-sm text-slate-500">
+                {country.trim().length === 0 && (
+                  <p className="mt-1.5 hidden text-xs text-slate-500 sm:block">
+                    Start typing to see destinations with active eSIM products.
+                  </p>
+                )}
+
+                {country.trim().length > 0 && selectedDestinationIsAvailable && (
+                  <p className="mt-1.5 text-xs text-slate-500">
                     Only destinations with active eSIM products are shown.
                   </p>
                 )}
               </div>
 
-              <div>
-                <label className="mb-2 block font-semibold">
-                  📅 How long are you staying?
+              <div className="border-t border-dashed border-slate-300/80 py-2 sm:py-3">
+                <label className="mb-1.5 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-700 sm:mb-2 sm:text-[11px]">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-md bg-[#2148c0] text-[10px] text-white">2</span>
+                  Trip length
                 </label>
 
-                <select
-                  value={days}
-                  onChange={(e) => setDays(e.target.value)}
-                  className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 outline-none transition focus:border-blue-500 focus:bg-white"
-                >
-                  <option value="1-3">1–3 Days</option>
-                  <option value="4-7">4–7 Days</option>
-                  <option value="8-14">8–14 Days</option>
-                  <option value="15-30">15–30 Days</option>
-                  <option value="30+">30+ Days</option>
-                </select>
+                <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-[repeat(4,minmax(0,1fr))_1.2fr]">
+                  {[
+                    { value: "1-3", label: "1–3", detail: "days" },
+                    { value: "4-7", label: "4–7", detail: "days" },
+                    { value: "8-14", label: "8–14", detail: "days" },
+                    { value: "15-30", label: "15–30", detail: "days" },
+                  ].map((option) => (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => setDays(option.value)}
+                      className={`rounded-lg border px-1 py-1.5 text-center transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b8c9ff] ${
+                        days === option.value
+                          ? "border-[#2148c0] bg-[#2148c0] text-white"
+                          : "border-white/80 bg-white/50 text-slate-700 hover:border-[#8aa3ed] hover:bg-white/80"
+                      }`}
+                    >
+                      <span className="block text-xs font-bold">{option.label}</span>
+                      <span className={`block text-[9px] ${days === option.value ? "text-[#dbe6ff]" : "text-slate-400"}`}>{option.detail}</span>
+                    </button>
+                  ))}
+
+                  <label
+                    className={`col-span-2 flex min-h-[42px] flex-col items-center justify-center rounded-lg border px-2 transition focus-within:ring-2 focus-within:ring-[#b8c9ff] sm:col-span-1 sm:min-h-[46px] ${
+                      !["1-3", "4-7", "8-14", "15-30"].includes(days)
+                        ? "border-[#2148c0] bg-[#eef3ff] text-[#2148c0]"
+                        : "border-slate-200 bg-white/75 text-slate-700 hover:border-[#8aa3ed] hover:bg-white"
+                    }`}
+                  >
+                    <span className="text-[9px] font-bold uppercase tracking-[0.08em]">
+                      Exact
+                    </span>
+                    <span className="flex items-baseline justify-center gap-1">
+                      <input
+                        type="number"
+                        min="1"
+                        max="30"
+                        inputMode="numeric"
+                        aria-label="Exact trip duration in days"
+                        placeholder="#"
+                        value={
+                          ["1-3", "4-7", "8-14", "15-30"].includes(days)
+                            ? ""
+                            : days
+                        }
+                        onChange={(e) => {
+                          if (e.target.value === "") {
+                            setDays("8-14");
+                            return;
+                          }
+
+                          const exactDays = Math.min(
+                            30,
+                            Math.max(1, Math.ceil(Number(e.target.value)))
+                          );
+                          setDays(String(exactDays));
+                        }}
+                        className="w-5 bg-transparent text-center text-xs font-bold text-slate-900 outline-none placeholder:text-slate-400"
+                      />
+                      <span className="text-[9px] text-slate-400">days</span>
+                    </span>
+                  </label>
+                </div>
               </div>
 
-              <div>
-                <label className="mb-4 block font-semibold">
-                  📱 How do you use your phone?
+              <div className="border-t border-dashed border-slate-300/80 pt-2 sm:pt-3">
+                <label className="mb-1.5 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-700 sm:mb-2 sm:text-[11px]">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-md bg-[#2148c0] text-[10px] text-white">3</span>
+                  Data usage
                 </label>
 
-                <div className="grid gap-3">
+                <div className="grid gap-1.5 sm:grid-cols-3 sm:gap-2">
                   {[
                     {
                       id: "essential",
-                      icon: "🗺",
                       title: "Essential",
                       text: "Maps, WhatsApp, Email",
                     },
                     {
                       id: "everyday",
-                      icon: "📸",
                       title: "Everyday",
                       text: "Social media, calls, navigation",
                     },
                     {
                       id: "power",
-                      icon: "🎥",
                       title: "Power User",
                       text: "Streaming, hotspot, remote work",
                     },
@@ -275,26 +324,44 @@ export default function Home() {
                       key={item.id}
                       type="button"
                       onClick={() => setUserType(item.id)}
-                      className={`flex items-center gap-4 rounded-2xl border p-4 text-left transition ${
+                      className={`relative flex items-start gap-2 rounded-xl border p-2 text-left transition duration-200 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#dbe6ff] sm:min-h-24 sm:flex-col sm:p-2.5 ${
                         userType === item.id
-                          ? "border-blue-600 bg-blue-50"
-                          : "border-slate-200 bg-white hover:border-blue-400"
+                          ? "border-[#2148c0] bg-[#eef3ff]"
+                          : "border-white/80 bg-white/50 hover:border-[#8aa3ed] hover:bg-white/80"
                       }`}
                     >
-                      <div className="text-3xl">{item.icon}</div>
-                      <div>
-                        <div className="font-bold">
+                      <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border ${userType === item.id ? "border-[#b8c9ff] bg-white text-[#2148c0]" : "border-slate-200 bg-white/70 text-slate-500"}`} aria-hidden="true">
+                        {item.id === "essential" && (
+                          <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4"><path d="M3.5 5.5 8 3l4 2.5L16.5 3v11L12 16.5 8 14l-4.5 2.5v-11Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" /><path d="M8 5.5v8.5m4-8.5v8.5" stroke="currentColor" strokeWidth="1.5" /></svg>
+                        )}
+                        {item.id === "everyday" && (
+                          <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4"><rect x="5" y="2.75" width="10" height="14.5" rx="2" stroke="currentColor" strokeWidth="1.5" /><path d="M8 14.5h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+                        )}
+                        {item.id === "power" && (
+                          <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4"><path d="M11.5 2.5 5.75 10h3.75L8.5 17.5l5.75-7.5h-3.75l1-7.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" /></svg>
+                        )}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="pr-3 text-sm font-bold text-slate-900">
                           {item.title}
                           {item.id === "everyday" && (
-                            <span className="ml-2 rounded-full bg-blue-600 px-2 py-1 text-xs text-white">
+                            <span className="mt-1 block w-fit rounded-md border border-[#f4c69b] bg-[#fff7ef] px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-[0.08em] text-[#b45411]">
                               Most popular
                             </span>
                           )}
                         </div>
-                        <div className="text-sm text-slate-500">
+                        <div className="mt-0.5 text-[11px] leading-snug text-slate-500">
                           {item.text}
                         </div>
                       </div>
+                      <span
+                        className={`absolute right-3 top-3 h-2.5 w-2.5 shrink-0 rounded-full border-2 ${
+                          userType === item.id
+                            ? "border-[#2148c0] bg-[#2148c0] ring-2 ring-[#dbe6ff]"
+                            : "border-slate-300 bg-white"
+                        }`}
+                        aria-hidden="true"
+                      />
                     </button>
                   ))}
                 </div>
@@ -303,331 +370,379 @@ export default function Home() {
               <a
                 href={searchingUrl}
                 aria-disabled={!selectedDestinationIsAvailable}
-                className={`block w-full rounded-2xl p-5 text-center text-lg font-bold shadow-xl transition ${
+                className={`mt-2.5 block w-full rounded-xl px-5 py-3 text-center text-sm font-bold transition duration-200 focus:outline-none focus:ring-4 focus:ring-[#dbe6ff] active:translate-y-px sm:mt-3 sm:py-3.5 ${
                   selectedDestinationIsAvailable
-                    ? "bg-blue-600 text-white shadow-blue-200 hover:bg-blue-700"
+                    ? "bg-[#2148c0] text-white hover:bg-[#17389b]"
                     : "cursor-not-allowed bg-slate-300 text-slate-500 shadow-none"
                 }`}
               >
-                Find My eSIM →
+                Find My eSIM <span aria-hidden="true">→</span>
               </a>
+              <p className="hidden text-center text-[10px] font-medium text-slate-500 sm:block">
+                No contracts <span className="mx-1.5 text-slate-300">•</span> Instant recommendation <span className="mx-1.5 text-slate-300">•</span> Secure checkout
+              </p>
+            </div>
+          </div>
+          </div>
+        </div>
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(to_bottom,transparent,rgba(246,248,255,0.98))]" />
+      </section>
+
+      <section className="relative z-10 mx-auto -mt-10 max-w-7xl px-5 sm:px-6">
+        <div className="grid overflow-hidden rounded-[1.5rem] border border-white bg-white shadow-[0_20px_55px_rgba(30,64,120,0.14)] sm:grid-cols-3 lg:grid-cols-[0.85fr_repeat(3,1fr)]">
+          <div className="relative bg-[#2148c0] px-6 py-5 text-white sm:col-span-3 lg:col-span-1">
+            <div className="pointer-events-none absolute -right-8 -top-12 h-32 w-32 rounded-full border border-white/15" />
+            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-blue-100">
+              Travel with clarity
+            </p>
+            <p className="mt-1.5 max-w-xs text-lg font-bold leading-snug">
+              From recommendation to connection.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-4 border-b border-slate-200 px-5 py-4 sm:border-b-0 sm:border-r">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-blue-100 bg-[#eef3ff] text-[#2148c0]">
+              <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" className="h-4 w-4"><path d="m4 10 3.5 3.5L16 5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            </span>
+            <div>
+              <p className="text-sm font-bold text-slate-950">Clear before checkout</p>
+              <p className="mt-0.5 text-xs leading-relaxed text-slate-500">Review your matched plan first.</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4 border-b border-slate-200 px-5 py-4 sm:border-b-0 sm:border-r">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-blue-100 bg-[#eef3ff] text-[#2148c0]">
+              <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" className="h-4 w-4"><path d="M3 10h11m0 0-4-4m4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /><path d="M14.5 4H16a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1h-1.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" /></svg>
+            </span>
+            <div>
+              <p className="text-sm font-bold text-slate-950">Delivered digitally</p>
+              <p className="mt-0.5 text-xs leading-relaxed text-slate-500">No shop or physical SIM required.</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4 px-5 py-4">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-blue-100 bg-[#eef3ff] text-[#2148c0]">
+              <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" className="h-4 w-4"><rect x="5" y="2.5" width="10" height="15" rx="2" stroke="currentColor" strokeWidth="1.5" /><path d="M8 14.5h4M8 6.5h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+            </span>
+            <div>
+              <p className="text-sm font-bold text-slate-950">Guided setup</p>
+              <p className="mt-0.5 text-xs leading-relaxed text-slate-500">Installation instructions included.</p>
             </div>
           </div>
         </div>
       </section>
+
+      {/* WHY DALO */}
+      <section className="mx-auto max-w-7xl px-6 pb-5 pt-12">
+        <div className="relative overflow-hidden rounded-[2rem] bg-[#10233a] text-white shadow-[0_24px_70px_rgba(16,35,58,0.18)]">
+          <div className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full border border-white/10" />
+          <div className="pointer-events-none absolute -right-10 -top-10 h-52 w-52 rounded-full border border-white/10" />
+
+          <div className="grid lg:grid-cols-[1.05fr_0.95fr]">
+            <div className="p-8 sm:p-9 lg:p-10">
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#f2a45f]">
+                Why DALO
+              </p>
+              <h2 className="mt-3 max-w-xl text-4xl font-bold tracking-[-0.035em] sm:text-[2.7rem]">
+                Built for choosing, not browsing.
+              </h2>
+              <p className="mt-4 max-w-xl text-base leading-relaxed text-slate-300">
+                Most eSIM stores start with a catalogue. DALO starts with your trip, then narrows the choice to a recommendation you can understand.
+              </p>
+
+              <div className="mt-6 overflow-hidden rounded-2xl border border-white/10">
+                <div className="grid grid-cols-[1fr_0.85fr_0.85fr] bg-white/[0.06] px-4 py-3 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400 sm:px-5">
+                  <span>Decision point</span>
+                  <span>Typical store</span>
+                  <span className="text-white">DALO</span>
+                </div>
+                {[
+                  ["Starting point", "Plan catalogue", "Your trip"],
+                  ["What you compare", "GB and validity", "Travel needs"],
+                  ["What you receive", "More options", "One clear match"],
+                ].map(([label, typical, dalo]) => (
+                  <div key={label} className="grid grid-cols-[1fr_0.85fr_0.85fr] border-t border-white/10 px-4 py-3 text-sm sm:px-5">
+                    <span className="font-semibold text-white">{label}</span>
+                    <span className="text-slate-400">{typical}</span>
+                    <span className="flex items-center gap-2 font-bold text-white">
+                      <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#f2a45f]" />
+                      {dalo}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="border-t border-white/10 bg-white/[0.05] p-8 sm:p-9 lg:border-l lg:border-t-0 lg:p-10">
+              <div className="rounded-[1.5rem] bg-white p-6 text-slate-900 shadow-[0_18px_50px_rgba(0,0,0,0.16)]">
+                <div className="flex items-center justify-between border-b border-slate-200 pb-5">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#2148c0]">Before checkout</p>
+                    <h3 className="mt-1 text-2xl font-bold tracking-tight">Know what fits and why.</h3>
+                  </div>
+                  <span className="hidden h-11 w-11 items-center justify-center rounded-full bg-[#eef3ff] text-[#2148c0] sm:flex">
+                    <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" className="h-5 w-5"><path d="m4 10 3.5 3.5L16 5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  </span>
+                </div>
+
+                <div className="divide-y divide-slate-200">
+                  {[
+                    ["Destination fit", "Available plans for where you are going"],
+                    ["Trip-length fit", "Validity aligned with your stay"],
+                    ["Usage fit", "Data matched to how you use your phone"],
+                    ["Plan clarity", "Review the recommendation before payment"],
+                  ].map(([title, description]) => (
+                    <div key={title} className="flex gap-3 py-3">
+                      <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2148c0] text-white">
+                        <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" className="h-3 w-3"><path d="m5 10 3 3 7-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                      </span>
+                      <div>
+                        <p className="text-sm font-bold text-slate-950">{title}</p>
+                        <p className="mt-0.5 text-sm leading-relaxed text-slate-500">{description}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <a
+                  href="#quiz"
+                  className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#2148c0] px-5 py-3.5 text-sm font-bold text-white transition hover:bg-[#17389b] focus:outline-none focus:ring-4 focus:ring-[#dbe6ff]"
+                >
+                  Find my eSIM <span aria-hidden="true">→</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
 
       {/* HOW IT WORKS */}
-      <section id="how" className="mx-auto max-w-7xl px-6 py-16">
-        <div className="mb-12 text-center">
-          <h2 className="text-4xl font-bold text-slate-950">
-            How DALO works
-          </h2>
-          <p className="mt-4 text-xl text-slate-600">
-            Three questions. One perfect eSIM recommendation.
-          </p>
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-3">
-          <div className="rounded-[2rem] bg-white p-8 shadow-lg shadow-blue-50">
-            <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-3xl">
-              🌍
+      <section id="how" className="relative rounded-t-[2.5rem] bg-[#F6F8FF] pb-14 pt-12">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#2148c0]">
+                From planning to connected
+              </p>
+              <h2 className="mt-2 max-w-xl text-4xl font-bold tracking-tight text-slate-950">
+                Three simple moments. One smoother trip.
+              </h2>
             </div>
-            <h3 className="mb-3 text-xl font-bold">Choose destination</h3>
-            <p className="text-slate-600">
-              Search and select one of the destinations currently available in
-              the DALO product database.
+            <p className="max-w-md text-sm leading-relaxed text-slate-600 md:text-right">
+              No technical comparison and no airport SIM counter. DALO guides you from trip details to installation.
             </p>
           </div>
 
-          <div className="rounded-[2rem] bg-white p-8 shadow-lg shadow-blue-50">
-            <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-3xl">
-              📱
-            </div>
-            <h3 className="mb-3 text-xl font-bold">Describe usage</h3>
-            <p className="text-slate-600">
-              Essential, Everyday or Power User — no technical knowledge needed.
-            </p>
-          </div>
+          <div className="grid gap-5 md:grid-cols-3">
+            <article className="group overflow-hidden rounded-[1.75rem] bg-white shadow-[0_16px_40px_rgba(30,64,120,0.1)]">
+              <div className="relative h-56 overflow-hidden">
+                <Image
+                  src="/travel/how-match-v2.webp"
+                  alt="Traveler photographing a city with a smartphone"
+                  fill
+                  loading="lazy"
+                  quality={68}
+                  sizes="(max-width: 767px) 100vw, 33vw"
+                  className="object-cover transition duration-500 group-hover:scale-105"
+                />
+                <span className="absolute left-5 top-5 flex h-9 w-9 items-center justify-center rounded-full bg-white text-sm font-extrabold text-[#2148c0] shadow-md">1</span>
+              </div>
+              <div className="p-6">
+                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#2148c0]">Tell us about the trip</p>
+                <h3 className="mt-2 text-xl font-bold text-slate-950">Share where and how you travel</h3>
+                <p className="mt-3 text-sm leading-relaxed text-slate-600">
+                  Choose your destination, trip length and everyday data habits.
+                </p>
+              </div>
+            </article>
 
-          <div className="rounded-[2rem] bg-white p-8 shadow-lg shadow-blue-50">
-            <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 text-3xl">
-              🎯
-            </div>
-            <h3 className="mb-3 text-xl font-bold">Get your match</h3>
-            <p className="text-slate-600">
-              DALO recommends the plan that best fits your trip.
-            </p>
-          </div>
-        </div>
-      </section>
+            <article className="group overflow-hidden rounded-[1.75rem] bg-white shadow-[0_16px_40px_rgba(30,64,120,0.1)]">
+              <div className="relative h-56 overflow-hidden">
+                <Image
+                  src="/travel/how-recommend-v2.webp"
+                  alt="Traveler preparing luggage with a smartphone"
+                  fill
+                  loading="lazy"
+                  quality={68}
+                  sizes="(max-width: 767px) 100vw, 33vw"
+                  className="object-cover transition duration-500 group-hover:scale-105"
+                />
+                <span className="absolute left-5 top-5 flex h-9 w-9 items-center justify-center rounded-full bg-white text-sm font-extrabold text-[#2148c0] shadow-md">2</span>
+              </div>
+              <div className="p-6">
+                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#2148c0]">Get your recommendation</p>
+                <h3 className="mt-2 text-xl font-bold text-slate-950">See the plan that fits</h3>
+                <p className="mt-3 text-sm leading-relaxed text-slate-600">
+                  DALO turns your answers into one clear match instead of another long product list.
+                </p>
+              </div>
+            </article>
 
-      {/* RESULT PREVIEW */}
-      <section className="mx-auto max-w-7xl px-6 py-16">
-        <div className="grid items-center gap-10 lg:grid-cols-2">
-          <div>
-            <div className="mb-5 inline-block rounded-full bg-blue-100 px-4 py-2 text-sm font-bold text-blue-700">
-              RECOMMENDED FOR YOU
-            </div>
-
-            <h2 className="mb-6 text-4xl font-bold tracking-tight text-slate-950 md:text-5xl">
-              We don’t show you 50 plans.
-              <br />
-              We show you the right one.
-            </h2>
-
-            <p className="text-xl leading-relaxed text-slate-600">
-              DALO turns your trip details into a clear recommendation — so you
-              can buy with confidence instead of comparing gigabytes.
-            </p>
-          </div>
-
-          <div className="rounded-[2rem] bg-white p-6 shadow-2xl shadow-blue-100">
-            <img
-              src="https://images.unsplash.com/photo-1499856871958-5b9627545d1a?q=80&w=1200&auto=format&fit=crop"
-              alt="Europe travel"
-              className="mb-6 h-56 w-full rounded-[1.5rem] object-cover"
-            />
-
-            <div className="mb-4 inline-block rounded-full bg-green-100 px-4 py-2 text-sm font-bold text-green-700">
-              Best match
-            </div>
-
-            <h3 className="text-3xl font-bold text-slate-950">
-              Europe Smart
-            </h3>
-            <p className="mt-2 text-2xl font-bold text-blue-600">
-              5GB / 15 Days
-            </p>
-
-            <p className="mt-4 text-slate-600">
-              Perfect for social media, navigation, WhatsApp calls and everyday
-              travel.
-            </p>
-
-            <div className="mt-6 flex items-end gap-3">
-              <div className="text-4xl font-bold">€7.99</div>
-              <div className="pb-1 text-slate-400 line-through">€12.99</div>
-            </div>
+            <article className="group overflow-hidden rounded-[1.75rem] bg-white shadow-[0_16px_40px_rgba(30,64,120,0.1)]">
+              <div className="relative h-56 overflow-hidden">
+                <Image
+                  src="/travel/how-install-v2.webp"
+                  alt="Traveler using a smartphone beside an airplane window"
+                  fill
+                  loading="lazy"
+                  quality={68}
+                  sizes="(max-width: 767px) 100vw, 33vw"
+                  className="object-cover transition duration-500 group-hover:scale-105"
+                />
+                <span className="absolute left-5 top-5 flex h-9 w-9 items-center justify-center rounded-full bg-white text-sm font-extrabold text-[#2148c0] shadow-md">3</span>
+              </div>
+              <div className="p-6">
+                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#2148c0]">Install before takeoff</p>
+                <h3 className="mt-2 text-xl font-bold text-slate-950">Land ready to connect</h3>
+                <p className="mt-3 text-sm leading-relaxed text-slate-600">
+                  Receive your eSIM digitally, install it in minutes and activate it when you arrive.
+                </p>
+              </div>
+            </article>
           </div>
         </div>
       </section>
 
       {/* DESTINATIONS */}
       <section id="destinations" className="mx-auto max-w-7xl px-6 py-16">
-        <div className="mb-12 text-center">
-          <h2 className="text-4xl font-bold text-slate-950">
-            Available destinations
-          </h2>
-          <p className="mt-4 text-xl text-slate-600">
-            These destinations are currently available from active products in
-            the DALO database.
+        <div className="mb-9 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-700">
+              Explore with DALO
+            </p>
+            <h2 className="mt-2 text-4xl font-bold tracking-tight text-slate-950">
+              Popular destinations
+            </h2>
+          </div>
+          <p className="max-w-sm text-sm leading-relaxed text-slate-600 sm:text-right">
+            Start with the places our travelers search for most.
           </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
-          {availableDestinationCards.map((destination) => (
+        <div className="grid gap-4 md:grid-cols-3">
+          {popularDestinationCards.map((destination) => (
             <button
               key={destination}
               type="button"
               onClick={() => {
-                setCountry(destination);
+                setCountry(
+                  destination === "United States"
+                    ? "United States of America"
+                    : destination
+                );
                 document.getElementById("quiz")?.scrollIntoView({
                   behavior: "smooth",
                 });
               }}
-              className="overflow-hidden rounded-[2rem] bg-white text-left shadow-lg shadow-blue-50 transition hover:-translate-y-1 hover:shadow-2xl"
+              className="group overflow-hidden rounded-2xl border border-slate-200 bg-white text-left shadow-[0_8px_24px_rgba(30,64,120,0.06)] transition hover:-translate-y-1 hover:border-blue-300 hover:shadow-[0_14px_34px_rgba(30,64,120,0.12)]"
             >
-              <img
-                src={getDestinationImage(destination)}
-                alt={destination}
-                className="h-44 w-full object-cover"
-              />
-              <div className="p-6">
-                <div className="text-4xl">{getDestinationFlag(destination)}</div>
-                <h3 className="mt-3 text-xl font-bold">{destination}</h3>
-                <p className="mt-2 text-slate-600">
-                  Find the right eSIM for your trip.
-                </p>
+              <div className="relative h-48 overflow-hidden">
+                <Image
+                  src={getDestinationImage(destination)}
+                  alt={destination}
+                  fill
+                  loading="lazy"
+                  quality={68}
+                  sizes="(max-width: 767px) 100vw, 33vw"
+                  className="object-cover transition duration-500 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/5 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 flex items-end justify-between p-5 text-white">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/70">Destination</p>
+                    <h3 className="mt-1 text-xl font-bold">{destination}</h3>
+                  </div>
+                  <span className="flex h-9 w-9 items-center justify-center rounded-full border border-white/40 bg-white/15 text-lg backdrop-blur-sm transition group-hover:translate-x-1 group-hover:bg-white group-hover:text-[#2148c0]">→</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 px-5 py-3.5 text-sm font-semibold text-slate-600">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#e98b3a]" />
+                Match a plan for this trip
               </div>
             </button>
           ))}
         </div>
-      </section>
 
-      {/* TRAVELER TYPES */}
-      <section className="mx-auto max-w-7xl px-6 py-16">
-        <div className="mb-12 text-center">
-          <h2 className="text-4xl font-bold text-slate-950">
-            Travelers don’t think in gigabytes.
-          </h2>
-          <p className="mt-4 text-xl text-slate-600">
-            That’s why DALO asks how you actually use your phone.
-          </p>
-        </div>
-
-        <div className="grid gap-6 md:grid-cols-3">
-          <div className="rounded-[2rem] bg-white p-8 shadow-lg shadow-blue-50">
-            <div className="text-5xl">🗺</div>
-            <h3 className="mt-5 text-2xl font-bold">Essential</h3>
-            <p className="mt-3 text-slate-600">
-              Maps, WhatsApp messages, email and light browsing.
-            </p>
-          </div>
-
-          <div className="rounded-[2rem] border-2 border-blue-600 bg-white p-8 shadow-2xl shadow-blue-100">
-            <div className="text-5xl">📸</div>
-            <h3 className="mt-5 text-2xl font-bold">
-              Everyday{" "}
-              <span className="rounded-full bg-blue-600 px-3 py-1 text-sm text-white">
-                Most popular
-              </span>
-            </h3>
-            <p className="mt-3 text-slate-600">
-              Social media, navigation, WhatsApp calls and daily usage.
-            </p>
-          </div>
-
-          <div className="rounded-[2rem] bg-white p-8 shadow-lg shadow-blue-50">
-            <div className="text-5xl">🎥</div>
-            <h3 className="mt-5 text-2xl font-bold">Power User</h3>
-            <p className="mt-3 text-slate-600">
-              Streaming, hotspot, remote work and video calls.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* TRUST */}
-      <section className="mx-auto max-w-7xl px-6 py-16">
-        <div className="rounded-[2.5rem] bg-slate-950 p-10 text-white md:p-14">
-          <div className="grid items-center gap-10 md:grid-cols-[1fr_1.2fr]">
-            <div>
-              <h2 className="text-4xl font-bold">
-                Built for travelers who want clarity.
-              </h2>
-              <p className="mt-4 text-lg text-slate-300">
-                DALO helps travelers stop guessing and start connected.
-              </p>
-            </div>
-
-            <div className="grid gap-4 sm:grid-cols-3">
-              <div className="rounded-3xl bg-white/10 p-6">
-                <div className="text-3xl font-bold">Smart</div>
-                <div className="mt-2 text-slate-300">Recommendations</div>
-              </div>
-
-              <div className="rounded-3xl bg-white/10 p-6">
-                <div className="text-3xl font-bold">Instant</div>
-                <div className="mt-2 text-slate-300">Delivery</div>
-              </div>
-
-              <div className="rounded-3xl bg-white/10 p-6">
-                <div className="text-3xl font-bold">24/7</div>
-                <div className="mt-2 text-slate-300">Support-ready</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-5xl px-6 py-16">
-        <div className="mb-12 text-center">
-          <h2 className="text-4xl font-bold text-slate-950">
-            Frequently asked questions
-          </h2>
-        </div>
-
-        <div className="space-y-4">
-          <div className="rounded-2xl bg-white p-6 shadow-lg shadow-blue-50">
-            <h3 className="mb-2 font-bold">What is an eSIM?</h3>
-            <p className="text-slate-600">
-              An eSIM is a digital SIM card that lets you activate mobile data
-              without a physical SIM.
-            </p>
-          </div>
-
-          <div className="rounded-2xl bg-white p-6 shadow-lg shadow-blue-50">
-            <h3 className="mb-2 font-bold">Can I keep my phone number?</h3>
-            <p className="text-slate-600">
-              Yes. Your physical SIM and your travel eSIM can work together on
-              most modern phones.
-            </p>
-          </div>
-
-          <div className="rounded-2xl bg-white p-6 shadow-lg shadow-blue-50">
-            <h3 className="mb-2 font-bold">How long does installation take?</h3>
-            <p className="text-slate-600">
-              Usually less than 2 minutes after purchase. You receive your eSIM
-              digitally.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* FINAL CTA */}
-      <section className="mx-auto max-w-7xl px-6 py-16">
-        <div className="rounded-[2.5rem] bg-blue-600 p-10 text-center text-white shadow-2xl shadow-blue-200 md:p-16">
-          <h2 className="text-4xl font-bold md:text-5xl">
-            Ready to travel smarter?
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-blue-100">
-            Find your perfect eSIM recommendation in under 20 seconds.
-          </p>
-
+        <div className="mt-7 text-center">
           <a
-            href="#quiz"
-            className="mt-8 inline-block rounded-full bg-white px-8 py-4 font-bold text-blue-600"
+            href="/esim"
+            className="inline-flex rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-800 transition hover:border-blue-600 hover:text-blue-700"
           >
-            Find My eSIM →
+            View all destinations
           </a>
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="border-t border-slate-200 bg-white">
-        <div className="mx-auto max-w-7xl px-6 py-16">
-          <div className="grid gap-10 md:grid-cols-4">
-            <div>
-              <img src="/dalo-logo.png" alt="DALO" className="h-20 w-auto" />
-              <p className="mt-4 text-slate-600">
-                The travel eSIM recommendation engine.
-              </p>
-            </div>
-
-            <div>
-              <h4 className="mb-4 font-bold">Destinations</h4>
-              <div className="space-y-2 text-slate-600">
-                {availableDestinationCards.slice(0, 4).map((destination) => (
-                  <div key={destination}>{destination}</div>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <h4 className="mb-4 font-bold">Support</h4>
-              <div className="space-y-2 text-slate-600">
-                <div>FAQ</div>
-                <div>Contact</div>
-                <div>Help Center</div>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="mb-4 font-bold">Company</h4>
-              <div className="space-y-2 text-slate-600">
-                <div>About</div>
-                <div>Privacy</div>
-                <div>Terms</div>
-              </div>
-            </div>
+      {/* FAQ */}
+      <section id="faq" className="mx-auto max-w-6xl px-6 py-16">
+        <div className="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#2148c0]">Travel with confidence</p>
+            <h2 className="mt-2 text-4xl font-bold tracking-tight text-slate-950">
+              Questions, answered.
+            </h2>
           </div>
-
-          <div className="mt-12 border-t pt-6 text-sm text-slate-500">
-            © 2026 DALO. All rights reserved.
-          </div>
+          <p className="max-w-sm text-sm leading-relaxed text-slate-600 md:text-right">
+            The essentials to know before choosing and installing your travel eSIM.
+          </p>
         </div>
-      </footer>
+
+        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+          {[
+            {
+              label: "Basics",
+              question: "What is an eSIM?",
+              answer:
+                "An eSIM is a digital SIM card that lets you activate mobile data without replacing your physical SIM.",
+            },
+            {
+              label: "Your number",
+              question: "Can I keep my phone number?",
+              answer:
+                "Yes. Your physical SIM and travel eSIM can work together on most modern compatible phones.",
+            },
+            {
+              label: "Payment",
+              question: "Is checkout secure?",
+              answer:
+                "Recommendation questions never request payment details. Payment happens only after you review your matched plan.",
+            },
+            {
+              label: "Installation",
+              question: "How long does installation take?",
+              answer:
+                "Usually only a few minutes after purchase. Your eSIM is delivered digitally with setup instructions.",
+            },
+          ].map((item, index) => (
+            <details key={item.question} className="group border-b border-slate-200 last:border-b-0">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-5 px-5 py-5 marker:hidden sm:px-7">
+                <span className="flex items-center gap-4">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#2148c0]">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span>
+                    <span className="block text-[9px] font-bold uppercase tracking-[0.12em] text-slate-400">
+                      {item.label}
+                    </span>
+                    <span className="mt-0.5 block font-bold text-slate-950">
+                      {item.question}
+                    </span>
+                  </span>
+                </span>
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#eef3ff] text-lg text-[#2148c0] transition group-open:rotate-45">
+                  +
+                </span>
+              </summary>
+              <p className="px-5 pb-5 pl-[4.75rem] text-sm leading-relaxed text-slate-600 sm:px-7 sm:pl-[5.5rem]">
+                {item.answer}
+              </p>
+            </details>
+          ))}
+        </div>
+      </section>
+
+      <SiteFooter />
     </main>
   );
 } 

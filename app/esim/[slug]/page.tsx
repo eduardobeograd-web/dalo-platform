@@ -1,15 +1,25 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
+import { notFound, redirect } from "next/navigation";
+import SiteHeader from "../../../components/SiteHeader";
+import SiteFooter from "../../../components/SiteFooter";
+import { parseDestinationFaq } from "../../../lib/destination-pages";
 import { prisma } from "../../../lib/db";
-import { getSeoLandingPage } from "../../../lib/seo-pages";
-
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+import {
+  getSeoLandingPage,
+  seoLandingPages,
+} from "../../../lib/seo-pages";
+import { siteUrl as baseUrl } from "../../../lib/site-url";
 
 type PageProps = {
   params: Promise<{
     slug: string;
   }>;
 };
+
+export const dynamicParams = true;
+export const revalidate = 3600;
 
 const popularDestinations = [
   { name: "Turkey", href: "/esim/turkey" },
@@ -79,15 +89,34 @@ const landingPages: Record<
 };
 
 function getPage(slug: string) {
-  return landingPages[slug] || {
-    name: slug
-      .split("-")
-      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-      .join(" "),
-    countryMatches: [slug],
-    title: `${slug} eSIM | Compare Travel eSIM Plans | DALO`,
-    description: `Compare eSIM plans for ${slug}. Find travel data plans with transparent pricing on DALO.`,
+  const landingPage = landingPages[slug];
+
+  if (landingPage) return landingPage;
+
+  const seoPage = getSeoLandingPage(slug);
+
+  if (!seoPage) return null;
+
+  return {
+    name: seoPage.name,
+    countryMatches: [seoPage.name],
+    title: seoPage.title,
+    description: seoPage.description,
   };
+}
+
+export async function generateStaticParams() {
+  const managedPages = await prisma.destinationPage.findMany({
+    where: { published: true },
+    select: { slug: true },
+  });
+  const slugs = new Set([
+    ...Object.keys(landingPages),
+    ...Object.keys(seoLandingPages),
+    ...managedPages.map((page) => page.slug),
+  ]);
+
+  return Array.from(slugs).map((slug) => ({ slug }));
 }
 
 function slugify(value: string) {
@@ -117,8 +146,13 @@ function getPlanHint(dataAmount: string) {
   return "Best for light travel use";
 }
 
-async function getProducts(slug: string) {
+async function getProducts(
+  slug: string,
+  managedPage?: { countryName: string; displayName: string } | null,
+) {
   const page = getPage(slug);
+
+  if (!page && !managedPage) return [];
 
   const products = await prisma.product.findMany({
     where: {
@@ -137,8 +171,11 @@ async function getProducts(slug: string) {
       product.slug === slug ||
       countrySlug === slug ||
       regionSlug === slug ||
-      page.countryMatches.includes(product.country) ||
-      page.countryMatches.includes(product.region || "")
+      page?.countryMatches.includes(product.country) ||
+      page?.countryMatches.includes(product.region || "") ||
+      managedPage?.countryName === product.country ||
+      managedPage?.countryName === product.region ||
+      managedPage?.displayName === product.country
     );
   });
 }
@@ -147,9 +184,23 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const page = getPage(slug);
   const seoPage = getSeoLandingPage(slug);
+  const managedPage = await prisma.destinationPage.findFirst({
+    where: { slug, published: true },
+  });
 
-  const title = seoPage?.title || page.title;
-  const description = seoPage?.description || page.description;
+  if (!page && !seoPage && !managedPage) {
+    return {
+      title: "Destination not found | DALO",
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
+  }
+
+  const title = managedPage?.seoTitle || seoPage?.title || page!.title;
+  const description =
+    managedPage?.seoDescription || seoPage?.description || page!.description;
 
   const pageUrl = `${baseUrl}/esim/${slug}`;
 
@@ -159,11 +210,25 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     alternates: {
       canonical: pageUrl,
     },
+    robots: managedPage
+      ? {
+          index: managedPage.indexable,
+          follow: true,
+        }
+      : undefined,
     openGraph: {
       title,
       description,
       url: pageUrl,
       type: "website",
+      images: managedPage?.heroImage
+        ? [
+            {
+              url: managedPage.heroImage,
+              alt: managedPage.heroImageAlt || managedPage.displayName,
+            },
+          ]
+        : undefined,
     },
     twitter: {
       card: "summary_large_image",
@@ -175,15 +240,33 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function EsimLandingPage({ params }: PageProps) {
   const { slug } = await params;
+
+  if (slug === "usa") {
+    redirect("/esim/united-states-of-america");
+  }
+
   const page = getPage(slug);
   const seoPage = getSeoLandingPage(slug);
-  const displayName = seoPage?.name || page.name;
+  const managedPage = await prisma.destinationPage.findFirst({
+    where: { slug, published: true },
+  });
+
+  if (!page && !seoPage && !managedPage) notFound();
+
+  const displayName =
+    managedPage?.displayName || seoPage?.name || page!.name;
   const pageUrl = `${baseUrl}/esim/${slug}`;
-  const headline = seoPage?.headline || `${displayName} eSIM plans for your trip`;
+  const headline =
+    managedPage?.headline ||
+    seoPage?.headline ||
+    `${displayName} eSIM plans for your trip`;
   const introText =
+    managedPage?.intro ||
     seoPage?.intro ||
     `Find available eSIM plans for ${displayName}. DALO helps travelers find simple mobile data options with transparent prices, validity, and data volume.`;
+  const managedFaqs = parseDestinationFaq(managedPage?.faq);
   const faqs =
+    (managedFaqs.length ? managedFaqs : null) ||
     seoPage?.faq || [
       {
         question: `Does the ${displayName} eSIM work with iPhone?`,
@@ -201,8 +284,10 @@ export default async function EsimLandingPage({ params }: PageProps) {
       },
     ];
 
-  const products = await getProducts(slug);
+  const products = await getProducts(slug, managedPage);
   const bestProduct = products[0];
+
+  if (!bestProduct) notFound();
 
   const productSchema = bestProduct
     ? {
@@ -210,14 +295,17 @@ export default async function EsimLandingPage({ params }: PageProps) {
         "@type": "Product",
         name: bestProduct.name,
         description: bestProduct.seoDescription || bestProduct.description,
+        url: pageUrl,
+        sku: String(bestProduct.id),
+        category: "Travel eSIM",
         brand: {
           "@type": "Brand",
-          name: bestProduct.provider,
+          name: "DALO",
         },
         offers: {
           "@type": "Offer",
           price: bestProduct.sellPrice,
-          priceCurrency: "EUR",
+          priceCurrency: "USD",
           availability: "https://schema.org/InStock",
         },
       }
@@ -277,12 +365,12 @@ export default async function EsimLandingPage({ params }: PageProps) {
           `${product.data} mobile data for ${displayName}. Valid for ${product.validityDays} days.`,
         brand: {
           "@type": "Brand",
-          name: product.provider,
+          name: "DALO",
         },
         offers: {
           "@type": "Offer",
           price: product.sellPrice,
-          priceCurrency: "EUR",
+          priceCurrency: "USD",
           availability: "https://schema.org/InStock",
         },
       },
@@ -290,7 +378,8 @@ export default async function EsimLandingPage({ params }: PageProps) {
   };
 
   return (
-    <main className="min-h-screen bg-[#F6F8FF] text-slate-900">
+    <main className="dalo-page dalo-content-page min-h-screen bg-[#F6F8FF] text-slate-900">
+      <SiteHeader />
       {productSchema ? (
         <script
           type="application/ld+json"
@@ -313,10 +402,10 @@ export default async function EsimLandingPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
       />
 
-      <section className="mx-auto max-w-6xl px-6 py-12">
+      <section className="mx-auto max-w-6xl px-4 pb-8 pt-5 sm:px-6 sm:py-12">
         <nav
           aria-label="Breadcrumb"
-          className="mb-8 flex flex-wrap items-center gap-2 text-sm font-semibold text-slate-500"
+          className="mb-4 flex flex-wrap items-center gap-2 text-sm font-semibold text-slate-500 sm:mb-8"
         >
           <Link href="/" className="text-blue-700 hover:text-blue-900">
             DALO
@@ -333,36 +422,73 @@ export default async function EsimLandingPage({ params }: PageProps) {
           <span className="text-slate-900">{displayName}</span>
         </nav>
 
-        <div className="rounded-[2rem] bg-white p-8 shadow-xl shadow-blue-100">
-          <p className="mb-3 text-sm font-bold uppercase tracking-wide text-blue-600">
-            Travel eSIM recommendation
-          </p>
+        <div className="dalo-content-hero dalo-country-hero overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-blue-100">
+          <div
+            className={`grid ${managedPage?.heroImage ? "lg:grid-cols-[1.15fr_0.85fr]" : ""}`}
+          >
+            <div className="p-5 sm:p-8">
+              <p className="mb-2 text-xs font-bold uppercase tracking-wide text-blue-600 sm:mb-3 sm:text-sm">
+                Travel eSIM recommendation
+              </p>
 
-          <h1 className="max-w-3xl text-4xl font-black tracking-tight text-slate-950 md:text-6xl">
-            {headline}
-          </h1>
+              <h1 className="max-w-3xl text-[2rem] font-black leading-[1.05] tracking-tight text-slate-950 sm:text-4xl md:text-6xl">
+                {headline}
+              </h1>
 
-          <p className="mt-5 max-w-3xl text-lg leading-8 text-slate-600">
-            {introText}
-          </p>
+              <p className="mt-3 line-clamp-4 max-w-3xl text-base leading-7 text-slate-600 sm:mt-5 sm:line-clamp-none sm:text-lg sm:leading-8">
+                {introText}
+              </p>
 
-          {bestProduct?.seoText ? (
-            <p className="mt-5 max-w-3xl text-base leading-7 text-slate-600">
-              {bestProduct.seoText}
-            </p>
-          ) : null}
+              {bestProduct ? (
+                <div className="mt-4 flex items-center justify-between gap-3 rounded-2xl border border-blue-100 bg-blue-50/80 p-3 sm:hidden">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-wide text-blue-700">
+                      Recommended plan
+                    </p>
+                    <p className="mt-1 text-xl font-black text-slate-950">
+                      ${bestProduct.sellPrice.toFixed(2)}
+                    </p>
+                  </div>
+                  <Link
+                    href={`/checkout?productId=${bestProduct.id}`}
+                    className="inline-flex min-h-11 items-center justify-center rounded-xl bg-blue-700 px-4 text-sm font-bold text-white"
+                  >
+                    View best plan →
+                  </Link>
+                </div>
+              ) : null}
+
+              {bestProduct?.seoText ? (
+                <p className="mt-4 line-clamp-3 max-w-3xl text-sm leading-6 text-slate-600 sm:mt-5 sm:line-clamp-none sm:text-base sm:leading-7">
+                  {bestProduct.seoText}
+                </p>
+              ) : null}
+            </div>
+            {managedPage?.heroImage ? (
+              <Image
+                width={640}
+                height={320}
+                preload
+                quality={60}
+                sizes="(max-width: 639px) 100vw, 320px"
+                src={managedPage.heroImage}
+                alt={managedPage.heroImageAlt || displayName}
+                className="h-40 min-h-0 w-full object-cover sm:h-60 lg:h-full lg:min-h-72"
+              />
+            ) : null}
+          </div>
         </div>
 
         {products.length ? (
-          <section className="mt-10 grid gap-6 md:grid-cols-3">
+          <section id="plans" className="mt-6 grid gap-4 sm:mt-10 sm:gap-6 md:grid-cols-3">
             {products.map((product) => {
               return (
               <article
                 key={product.id}
                 className={
                   product.data.toLowerCase().includes("5gb")
-                    ? "rounded-[1.5rem] border-2 border-blue-600 bg-white p-6 shadow-xl shadow-blue-200"
-                    : "rounded-[1.5rem] bg-white p-6 shadow-lg shadow-blue-100"
+                    ? "rounded-[1.5rem] border-2 border-blue-600 bg-white p-5 shadow-xl shadow-blue-200 sm:p-6"
+                    : "rounded-[1.5rem] border border-white/90 bg-white/90 p-5 shadow-[0_16px_38px_rgba(30,64,120,0.1)] transition hover:-translate-y-1 hover:shadow-[0_22px_48px_rgba(30,64,120,0.14)] sm:p-6"
                 }
               >
                 {product.data.toLowerCase().includes("5gb") ? (
@@ -371,7 +497,7 @@ export default async function EsimLandingPage({ params }: PageProps) {
                   </p>
                 ) : null}
                 <p className="text-sm font-semibold text-blue-700">
-                  {product.provider}
+                  DALO travel plan
                 </p>
 
                 <h2 className="mt-2 text-2xl font-black text-slate-950">
@@ -398,19 +524,19 @@ export default async function EsimLandingPage({ params }: PageProps) {
                   <div>
                     {product.oldPrice ? (
                       <p className="text-sm text-slate-400 line-through">
-                        €{product.oldPrice.toFixed(2)}
+                        ${product.oldPrice.toFixed(2)}
                       </p>
                     ) : null}
                     <p className="text-3xl font-black text-slate-950">
-                      €{product.sellPrice.toFixed(2)}
+                      ${product.sellPrice.toFixed(2)}
                     </p>
                   </div>
 
                   <Link
-                    href="/#quiz"
+                    href={`/checkout?productId=${product.id}`}
                     className="rounded-full bg-blue-700 px-5 py-3 text-sm font-bold text-white"
                   >
-                    Find best match
+                    Get this eSIM →
                   </Link>
                 </div>
               </article>
@@ -435,6 +561,33 @@ export default async function EsimLandingPage({ params }: PageProps) {
             </Link>
           </section>
         )}
+
+        {managedPage &&
+        [
+          managedPage.coverageText,
+          managedPage.activationText,
+          managedPage.compatibilityText,
+          managedPage.hotspotText,
+        ].some(Boolean) ? (
+          <section className="mt-10 grid gap-4 md:grid-cols-2">
+            {[
+              ["Coverage and networks", managedPage.coverageText],
+              ["Activation", managedPage.activationText],
+              ["Device compatibility", managedPage.compatibilityText],
+              ["Hotspot and tethering", managedPage.hotspotText],
+            ]
+              .filter((item): item is [string, string] => Boolean(item[1]))
+              .map(([title, text]) => (
+                <article
+                  key={title}
+                  className="rounded-[1.5rem] border border-blue-100 bg-white p-6 shadow-sm"
+                >
+                  <h2 className="text-xl font-black text-slate-950">{title}</h2>
+                  <p className="mt-3 leading-7 text-slate-600">{text}</p>
+                </article>
+              ))}
+          </section>
+        ) : null}
 
         <section className="mt-10 rounded-[2rem] bg-white p-8 shadow-xl shadow-blue-100">
           <h2 className="text-3xl font-black text-slate-950">
@@ -476,6 +629,7 @@ export default async function EsimLandingPage({ params }: PageProps) {
           </div>
         </section>
       </section>
+      <SiteFooter />
     </main>
   );
 }

@@ -7,6 +7,12 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
 
+const destinationHeaders = {
+  ...corsHeaders,
+  "Cache-Control":
+    "public, max-age=60, s-maxage=300, stale-while-revalidate=3600",
+};
+
 export async function OPTIONS() {
   return new Response(null, {
     status: 204,
@@ -46,7 +52,7 @@ export async function GET() {
         destinations: Array.from(destinations).sort(),
       },
       {
-        headers: corsHeaders,
+        headers: destinationHeaders,
       }
     );
   } catch (error) {

@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "../../../lib/db";
+import { ADMIN_PERMISSIONS } from "../../../lib/admin-permissions";
+import { requireAdminPermission } from "../../../lib/admin-auth";
 
 function getString(formData: FormData, key: string) {
   const value = formData.get(key);
@@ -31,6 +33,7 @@ function slugify(value: string) {
 }
 
 export async function createProviderConfig(formData: FormData) {
+  await requireAdminPermission(ADMIN_PERMISSIONS.PROVIDERS_WRITE);
   const name = getString(formData, "name");
   const manualSlug = getString(formData, "slug");
   const slug = slugify(manualSlug || name);
@@ -62,6 +65,7 @@ export async function createProviderConfig(formData: FormData) {
 }
 
 export async function updateProviderConfig(id: string, formData: FormData) {
+  await requireAdminPermission(ADMIN_PERMISSIONS.PROVIDERS_WRITE);
   const name = getString(formData, "name");
   const manualSlug = getString(formData, "slug");
   const slug = slugify(manualSlug || name);

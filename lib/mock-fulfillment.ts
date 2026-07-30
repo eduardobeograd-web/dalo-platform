@@ -14,6 +14,20 @@ export async function fulfillOrderMockById(orderId: string) {
     };
   }
 
+  if (
+    order.fulfillment === "Delivered" &&
+    order.esimStatus === "ready" &&
+    order.providerOrderId &&
+    order.iccid
+  ) {
+    return {
+      fulfilled: false as const,
+      reason: "already_fulfilled",
+      orderId: order.id,
+      orderNumber: order.orderNumber,
+    };
+  }
+
   const orderNumber = order.orderNumber || order.id;
   const shortId = order.id.slice(-8).toUpperCase();
 

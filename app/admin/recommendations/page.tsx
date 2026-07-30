@@ -7,10 +7,12 @@ import {
   parseSettingNumber,
   updateRecommendationSettingById,
 } from "../../../lib/recommendation-settings";
+import { ADMIN_PERMISSIONS } from "../../../lib/admin-permissions";
+import { requireAdminPermission } from "../../../lib/admin-auth";
 
 function formatPrice(value: number | null | undefined) {
   if (typeof value !== "number") return "—";
-  return `€${value.toFixed(2)}`;
+  return `$${value.toFixed(2)}`;
 }
 
 function formatNumber(value: number | null | undefined) {
@@ -64,6 +66,7 @@ function SmallPlanBox({
 
 async function updateRecommendationSetting(formData: FormData) {
   "use server";
+  await requireAdminPermission(ADMIN_PERMISSIONS.RECOMMENDATIONS_WRITE);
 
   const id = String(formData.get("id") || "");
   const gbPerDay = parseSettingNumber(formData.get("gbPerDay"));
@@ -287,7 +290,7 @@ export default async function RecommendationsPage() {
                     className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 font-semibold outline-none ring-blue-200 focus:ring-4"
                   />
                   <span className="mt-1 block text-xs text-slate-500">
-                    Used for offers like “Get 10GB more for only €4 extra”.
+                    Used for offers like “Get 10GB more for only $4 extra”.
                   </span>
                 </label>
 
@@ -451,7 +454,7 @@ export default async function RecommendationsPage() {
               <div className="rounded-2xl bg-blue-600 p-4">
                 <div className="text-sm text-blue-100">Example</div>
                 <div className="mt-1 font-bold">
-                  “Get 10GB more for only €4 extra”
+                  “Get 10GB more for only $4 extra”
                 </div>
               </div>
             </div>

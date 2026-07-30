@@ -50,7 +50,7 @@ function formatPrice(value: string | null) {
     return "—";
   }
 
-  return value.startsWith("€") ? value : `€${value}`;
+  return value.startsWith("$") ? value : `$${value}`;
 }
 
 function getEventBadgeClass(eventType: string) {
@@ -479,7 +479,7 @@ export default async function AdminEventsPage({
         return sum;
       }
 
-      const numericPrice = Number(price.replace("€", ""));
+      const numericPrice = Number(price.replace("$", ""));
 
       if (Number.isNaN(numericPrice)) {
         return sum;
@@ -632,7 +632,7 @@ export default async function AdminEventsPage({
               Marketing Revenue
             </div>
             <div className="mt-2 text-3xl font-black text-yellow-100">
-              €{marketingAttributedRevenue.toFixed(2)}
+              ${marketingAttributedRevenue.toFixed(2)}
             </div>
           </div>
         </div>
@@ -661,7 +661,7 @@ export default async function AdminEventsPage({
                 Attributed Revenue
               </div>
               <div className="text-3xl font-black text-emerald-700">
-                €{marketingAttributedRevenue.toFixed(2)}
+                ${marketingAttributedRevenue.toFixed(2)}
               </div>
             </div>
           </div>

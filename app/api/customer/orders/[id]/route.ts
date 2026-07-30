@@ -25,6 +25,7 @@ type ProductLike = {
   planType: string;
   usageFit: string;
   provider: string;
+  sellPrice: number;
   image: string;
   description: string;
 };
@@ -49,6 +50,17 @@ type OrderDetailLike = {
 
   expiresAt: Date | null;
   lastUsageSyncAt: Date | null;
+  amount: number | null;
+  currency: string | null;
+  productNameAtPurchase: string | null;
+  countryAtPurchase: string | null;
+  dataAtPurchase: string | null;
+  validityDaysAtPurchase: number | null;
+  providerAtPurchase: string | null;
+  providerProductIdAtPurchase: string | null;
+  stripeSessionId: string | null;
+  stripePaymentIntentId: string | null;
+  paidAt: Date | null;
   createdAt: Date;
 };
 
@@ -92,6 +104,20 @@ function safeOrderDetail(order: OrderDetailLike, product?: ProductLike | null) {
     expiresAt: order.expiresAt,
     lastUsageSyncAt: order.lastUsageSyncAt,
     createdAt: order.createdAt,
+    purchase: {
+      amount: order.amount ?? product?.sellPrice ?? null,
+      currency: order.currency || "USD",
+      productName: order.productNameAtPurchase || product?.name || null,
+      country: order.countryAtPurchase || product?.country || null,
+      data: order.dataAtPurchase || product?.data || null,
+      validityDays:
+        order.validityDaysAtPurchase ?? product?.validityDays ?? null,
+      provider: order.providerAtPurchase || product?.provider || null,
+      providerProductId: order.providerProductIdAtPurchase,
+      stripeSessionId: order.stripeSessionId,
+      stripePaymentIntentId: order.stripePaymentIntentId,
+      paidAt: order.paidAt,
+    },
 
     product: safeProduct(product),
   };

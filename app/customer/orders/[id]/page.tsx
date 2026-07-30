@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 import { getCurrentCustomer } from "../../../../lib/customer-auth";
 import { prisma } from "../../../../lib/db";
+import SiteFooter from "../../../../components/SiteFooter";
+import SiteHeader from "../../../../components/SiteHeader";
 
 function formatDate(date?: Date | null) {
   if (!date) return "Not available yet";
@@ -25,7 +27,18 @@ function getUsagePercent(total?: number | null, used?: number | null) {
 function getCustomerStatus(order: {
   esimStatus: string | null;
   fulfillment: string;
+  payment: string;
 }) {
+  if (order.payment === "Refunded") {
+    return {
+      label: "This order was refunded",
+      description:
+        "The refund has been confirmed. Installation actions are no longer available through DALO.",
+      badge: "Refunded",
+      badgeStyle: "bg-amber-100 text-amber-800",
+    };
+  }
+
   const status = (order.esimStatus || order.fulfillment || "").toLowerCase();
 
   if (status === "ready" || status === "active" || status === "delivered") {
@@ -90,9 +103,15 @@ export default async function CustomerOrderDetailPage({
   }
 
   const status = getCustomerStatus(order);
+  const isRefunded = order.payment === "Refunded";
+  const canDownloadInvoice =
+    Boolean(order.stripeSessionId) &&
+    (order.payment === "Paid" || order.payment === "Refunded");
 
-  const hasInstallButtons = order.iosInstallUrl || order.androidInstallUrl;
-  const hasAlternativeSetup = order.qrCodeUrl || order.activationCode;
+  const hasInstallButtons =
+    !isRefunded && (order.iosInstallUrl || order.androidInstallUrl);
+  const hasAlternativeSetup =
+    !isRefunded && (order.qrCodeUrl || order.activationCode);
 
   const hasUsageData =
     order.totalDataGb !== null &&
@@ -103,97 +122,83 @@ export default async function CustomerOrderDetailPage({
   const usagePercent = getUsagePercent(order.totalDataGb, order.usedDataGb);
 
   return (
-    <main className="min-h-screen bg-[#F6F8FF] px-6 py-8 text-slate-950">
-      <div className="mx-auto max-w-6xl">
-        <nav className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-          <a href="/" className="inline-block">
-            <img src="/dalo-logo-horizontal.png" alt="DALO" className="h-14 w-auto" />
-          </a>
-
-          <div className="flex flex-wrap items-center gap-3">
-            <a
-              href="/customer/dashboard"
-              className="rounded-2xl border border-slate-200 bg-white px-5 py-3 font-bold text-slate-700 shadow-sm"
-            >
-              Dashboard
-            </a>
-
-            <a
-              href={`/customer/support?orderId=${order.id}`}
-              className="rounded-2xl border border-slate-200 bg-white px-5 py-3 font-bold text-slate-700 shadow-sm"
-            >
-              Support
-            </a>
-
-            <a
-              href="/customer/logout"
-              className="rounded-2xl bg-slate-950 px-5 py-3 font-bold text-white"
-            >
-              Logout
-            </a>
-          </div>
-        </nav>
-
-        <section className="mt-10">
+    <main className="dalo-page min-h-screen bg-[#F6F8FF] text-slate-950">
+      <SiteHeader mode="account" />
+      <div className="mx-auto max-w-6xl px-4 pb-8 pt-3 sm:px-6 sm:py-8">
+        <section className="mt-2 sm:mt-10">
           <a
             href="/customer/dashboard"
-            className="font-bold text-blue-600 hover:text-blue-700"
+            className="inline-flex min-h-11 items-center font-bold text-blue-600 hover:text-blue-700"
           >
             ← Back to dashboard
           </a>
 
-          <div className="mt-6 overflow-hidden rounded-[2.5rem] bg-white shadow-2xl shadow-blue-100">
-            <div className="bg-gradient-to-br from-blue-600 to-slate-950 p-8 text-white md:p-10">
-              <div className="flex flex-col justify-between gap-6 md:flex-row md:items-start">
+          <div className="mt-3 overflow-hidden rounded-[2rem] bg-white shadow-[0_20px_55px_rgba(30,64,120,0.14)] sm:mt-6 sm:rounded-[2.5rem] sm:shadow-2xl sm:shadow-blue-100">
+            <div className="bg-gradient-to-br from-[#2148c0] via-[#173f91] to-[#10233a] p-5 text-white sm:p-8 md:p-10">
+              <div className="flex flex-col justify-between gap-4 sm:gap-6 md:flex-row md:items-start">
                 <div>
                   <div
-                    className={`inline-flex rounded-full px-4 py-2 text-sm font-bold ${status.badgeStyle}`}
+                    className={`inline-flex rounded-full px-3 py-1.5 text-xs font-bold sm:px-4 sm:py-2 sm:text-sm ${status.badgeStyle}`}
                   >
                     {status.badge}
                   </div>
 
-                  <h1 className="mt-5 text-4xl font-bold md:text-5xl">
+                  <h1 className="mt-3 text-3xl font-black leading-tight tracking-tight sm:mt-5 sm:text-4xl md:text-5xl">
                     {status.label}
                   </h1>
 
-                  <p className="mt-4 max-w-2xl text-lg leading-relaxed text-blue-50">
+                  <p className="mt-2 max-w-2xl text-sm leading-6 text-blue-50 sm:mt-4 sm:text-lg sm:leading-relaxed">
                     {status.description}
                   </p>
                 </div>
 
-                <div className="rounded-[2rem] bg-white/10 p-5 backdrop-blur">
-                  <p className="text-sm text-blue-100">DALO Order Number</p>
-                  <p className="mt-1 font-mono text-2xl font-bold">
+                <div className="rounded-2xl border border-white/10 bg-white/10 p-4 backdrop-blur sm:rounded-[2rem] sm:p-5">
+                  <p className="text-xs text-blue-100 sm:text-sm">DALO Order Number</p>
+                  <p className="mt-1 break-all font-mono text-lg font-bold sm:text-2xl">
                     {order.orderNumber || "Not assigned"}
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="grid gap-8 p-8 md:p-10 lg:grid-cols-[1fr_360px]">
+            <div className="grid gap-4 p-4 sm:gap-8 sm:p-8 md:p-10 lg:grid-cols-[1fr_360px]">
               <div>
-                <p className="text-sm font-bold uppercase tracking-wide text-blue-600">
+                <p className="text-xs font-bold uppercase tracking-wide text-blue-600 sm:text-sm">
                   Your eSIM
                 </p>
 
-                <h2 className="mt-3 text-3xl font-bold">{product.name}</h2>
+                <h2 className="mt-2 text-2xl font-black tracking-tight sm:mt-3 sm:text-3xl">
+                  {product.name}
+                </h2>
 
-                <p className="mt-3 text-slate-600">
+                <p className="mt-2 text-sm text-slate-600 sm:mt-3 sm:text-base">
                   {product.country} · {product.data} · {product.validityDays}{" "}
                   days
                 </p>
 
-                <div className="mt-8 rounded-[2rem] bg-slate-50 p-6">
-                  <h3 className="text-2xl font-bold">Install your eSIM</h3>
+                <div className="mt-4 rounded-[1.5rem] bg-slate-50 p-4 sm:mt-8 sm:rounded-[2rem] sm:p-6">
+                  <h3 className="text-xl font-black sm:text-2xl">
+                    {isRefunded ? "Installation unavailable" : "Install your eSIM"}
+                  </h3>
 
-                  {hasInstallButtons ? (
-                    <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                  {isRefunded ? (
+                    <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-5 text-amber-950 sm:mt-6">
+                      <p className="font-black">Order refunded</p>
+                      <p className="mt-2 text-sm leading-6 text-amber-900">
+                        This purchase has been refunded, so installation links,
+                        QR codes and activation details are no longer shown.
+                        Contact DALO support if you have questions about an eSIM
+                        that was installed before the refund.
+                      </p>
+                    </div>
+                  ) : hasInstallButtons ? (
+                    <div className="mt-4 grid grid-cols-2 gap-2 sm:mt-6 sm:gap-4">
                       {order.iosInstallUrl ? (
                         <a
                           href={order.iosInstallUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="rounded-2xl bg-blue-600 px-6 py-5 text-center font-bold text-white shadow-lg shadow-blue-100"
+                          className="inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-600 px-3 py-3 text-center text-xs font-bold text-white shadow-lg shadow-blue-100 sm:rounded-2xl sm:px-6 sm:py-5 sm:text-base"
                         >
                           Install on iPhone
                         </a>
@@ -204,7 +209,7 @@ export default async function CustomerOrderDetailPage({
                           href={order.androidInstallUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="rounded-2xl bg-slate-950 px-6 py-5 text-center font-bold text-white shadow-lg shadow-slate-100"
+                          className="inline-flex min-h-12 items-center justify-center rounded-xl bg-slate-950 px-3 py-3 text-center text-xs font-bold text-white shadow-lg shadow-slate-100 sm:rounded-2xl sm:px-6 sm:py-5 sm:text-base"
                         >
                           Install on Android
                         </a>
@@ -217,29 +222,36 @@ export default async function CustomerOrderDetailPage({
                     </div>
                   )}
 
-                  <div className="mt-6 grid gap-4 md:grid-cols-2">
-                    <div className="rounded-2xl bg-white p-5">
-                      <p className="text-sm font-semibold text-slate-500">
-                        ICCID
-                      </p>
-                      <p className="mt-2 break-all font-mono text-sm font-bold">
-                        {order.iccid || "Not available yet"}
-                      </p>
-                    </div>
+                  {!isRefunded ? (
+                    <div className="mt-4 grid grid-cols-2 gap-2 sm:mt-6 sm:gap-4">
+                      <div className="min-w-0 rounded-xl bg-white p-3 sm:rounded-2xl sm:p-5">
+                        <p className="text-xs font-semibold text-slate-500 sm:text-sm">
+                          ICCID
+                        </p>
+                        <p className="mt-1 break-all font-mono text-[11px] font-bold sm:mt-2 sm:text-sm">
+                          {order.iccid || "Not available yet"}
+                        </p>
+                      </div>
 
-                    <div className="rounded-2xl bg-white p-5">
-                      <p className="text-sm font-semibold text-slate-500">
-                        eSIM Status
-                      </p>
-                      <p className="mt-2 font-bold">
-                        {order.esimStatus || "Pending"}
-                      </p>
+                      <div className="min-w-0 rounded-xl bg-white p-3 sm:rounded-2xl sm:p-5">
+                        <p className="text-xs font-semibold text-slate-500 sm:text-sm">
+                          eSIM Status
+                        </p>
+                        <p className="mt-1 text-sm font-bold capitalize sm:mt-2 sm:text-base">
+                          {order.esimStatus || "Pending"}
+                        </p>
+                      </div>
                     </div>
-                  </div>
+                  ) : null}
 
                   {hasAlternativeSetup ? (
-                    <div className="mt-6 rounded-2xl bg-white p-5">
-                      <h4 className="text-lg font-bold">Alternative setup</h4>
+                    <details className="mt-4 rounded-xl bg-white p-4 sm:mt-6 sm:rounded-2xl sm:p-5">
+                      <summary className="cursor-pointer list-none text-sm font-bold text-blue-700 marker:hidden sm:text-lg">
+                        QR code &amp; manual setup
+                        <span className="float-right text-slate-400" aria-hidden="true">
+                          +
+                        </span>
+                      </summary>
 
                       {order.qrCodeUrl ? (
                         <div className="mt-4">
@@ -250,7 +262,7 @@ export default async function CustomerOrderDetailPage({
                           <img
                             src={order.qrCodeUrl}
                             alt="eSIM QR Code"
-                            className="mt-3 h-48 w-48 rounded-xl bg-slate-50 object-contain p-3"
+                            className="mt-3 h-40 w-40 rounded-xl bg-slate-50 object-contain p-3 sm:h-48 sm:w-48"
                           />
                         </div>
                       ) : null}
@@ -266,15 +278,15 @@ export default async function CustomerOrderDetailPage({
                           </p>
                         </div>
                       ) : null}
-                    </div>
+                    </details>
                   ) : null}
                 </div>
 
-                <div className="mt-6 rounded-[2rem] bg-white p-6 shadow-xl shadow-blue-50">
-                  <h3 className="text-2xl font-bold">Data usage</h3>
+                <div className="mt-4 rounded-[1.5rem] bg-white p-4 shadow-xl shadow-blue-50 sm:mt-6 sm:rounded-[2rem] sm:p-6">
+                  <h3 className="text-xl font-bold sm:text-2xl">Data usage</h3>
 
                   {hasUsageData ? (
-                    <div className="mt-5">
+                    <div className="mt-4 sm:mt-5">
                       <div className="flex items-center justify-between gap-4">
                         <p className="font-bold">
                           {formatData(order.usedDataGb)} used
@@ -309,70 +321,79 @@ export default async function CustomerOrderDetailPage({
                 </div>
               </div>
 
-              <aside className="space-y-6">
-                <div className="rounded-[2rem] bg-slate-950 p-6 text-white">
-                  <h3 className="text-2xl font-bold">Order details</h3>
+              <aside className="space-y-4 sm:space-y-6">
+                <div className="rounded-[1.5rem] bg-slate-950 p-4 text-white sm:rounded-[2rem] sm:p-6">
+                  <h3 className="text-xl font-bold sm:text-2xl">Order details</h3>
 
-                  <div className="mt-6 space-y-4">
-                    <div>
-                      <p className="text-sm text-slate-400">
+                  {canDownloadInvoice ? (
+                    <a
+                      href={`/customer/orders/${order.id}/invoice`}
+                      className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-white px-4 py-3 text-sm font-bold text-slate-950 transition hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-blue-300 sm:mt-5"
+                    >
+                      Download invoice
+                    </a>
+                  ) : null}
+
+                  <div className="mt-4 grid grid-cols-2 gap-3 sm:mt-6 sm:block sm:space-y-4">
+                    <div className="min-w-0">
+                      <p className="text-xs text-slate-400 sm:text-sm">
                         DALO Order Number
                       </p>
-                      <p className="mt-1 break-all font-mono text-sm font-bold">
+                      <p className="mt-1 break-all font-mono text-xs font-bold sm:text-sm">
                         {order.orderNumber || "Not assigned"}
                       </p>
                     </div>
 
-                    <div>
-                      <p className="text-sm text-slate-400">Customer Email</p>
-                      <p className="mt-1 break-all font-bold">
+                    <div className="col-span-2 min-w-0 sm:col-auto">
+                      <p className="text-xs text-slate-400 sm:text-sm">Customer Email</p>
+                      <p className="mt-1 break-all text-sm font-bold sm:text-base">
                         {order.customer}
                       </p>
                     </div>
 
                     <div>
-                      <p className="text-sm text-slate-400">Payment</p>
-                      <p className="mt-1 font-bold">{order.payment}</p>
+                      <p className="text-xs text-slate-400 sm:text-sm">Payment</p>
+                      <p className="mt-1 text-sm font-bold sm:text-base">{order.payment}</p>
                     </div>
 
                     <div>
-                      <p className="text-sm text-slate-400">Delivery</p>
-                      <p className="mt-1 font-bold">{order.fulfillment}</p>
+                      <p className="text-xs text-slate-400 sm:text-sm">Delivery</p>
+                      <p className="mt-1 text-sm font-bold capitalize sm:text-base">{order.fulfillment}</p>
                     </div>
 
                     <div>
-                      <p className="text-sm text-slate-400">Ordered on</p>
-                      <p className="mt-1 font-bold">
+                      <p className="text-xs text-slate-400 sm:text-sm">Ordered on</p>
+                      <p className="mt-1 text-sm font-bold sm:text-base">
                         {formatDate(order.createdAt)}
                       </p>
                     </div>
 
                     <div>
-                      <p className="text-sm text-slate-400">Valid until</p>
-                      <p className="mt-1 font-bold">
+                      <p className="text-xs text-slate-400 sm:text-sm">Valid until</p>
+                      <p className="mt-1 text-sm font-bold sm:text-base">
                         {formatDate(order.expiresAt)}
                       </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="rounded-[2rem] bg-white p-6 shadow-xl shadow-blue-50">
-                  <h3 className="text-2xl font-bold">Need help?</h3>
+                <div className="rounded-[1.5rem] bg-white p-4 shadow-xl shadow-blue-50 sm:rounded-[2rem] sm:p-6">
+                  <h3 className="text-xl font-bold sm:text-2xl">Need help?</h3>
 
-                  <p className="mt-3 text-slate-600">
+                  <p className="mt-2 text-sm leading-6 text-slate-600 sm:mt-3 sm:text-base">
                     If installation or mobile data does not work, contact DALO
                     support with this order attached automatically.
                   </p>
 
                   <a
                     href={`/customer/support?orderId=${order.id}`}
-                    className="mt-6 block rounded-2xl bg-blue-600 px-5 py-4 text-center font-bold text-white shadow-lg shadow-blue-100"
+                    className="mt-4 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-blue-600 px-4 text-center text-sm font-bold text-white shadow-lg shadow-blue-100 sm:mt-6 sm:rounded-2xl sm:px-5 sm:text-base"
                   >
                     Get help with this eSIM
                   </a>
                 </div>
 
-                <div className="rounded-[2rem] bg-blue-50 p-6">
+                <div className="hidden rounded-[2rem] bg-blue-50 p-6 sm:block">
                   <h3 className="text-2xl font-bold text-blue-950">
                     Top-up coming soon
                   </h3>
@@ -394,6 +415,7 @@ export default async function CustomerOrderDetailPage({
           </div>
         </section>
       </div>
+      <SiteFooter />
     </main>
   );
 }

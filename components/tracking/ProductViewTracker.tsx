@@ -2,6 +2,10 @@
 
 import { useEffect, useRef } from "react";
 import { trackClientEvent } from "@/lib/track-client-event";
+import {
+  CONSENT_CHANGED_EVENT,
+  hasConsent,
+} from "@/lib/consent";
 
 type ProductViewTrackerProps = {
   productId: string;
@@ -15,29 +19,33 @@ export default function ProductViewTracker({
   const trackedRef = useRef(false);
 
   useEffect(() => {
-    if (trackedRef.current) {
-      return;
-    }
+    function trackProductView() {
+      if (trackedRef.current || !hasConsent("analytics")) {
+        return;
+      }
 
-    trackedRef.current = true;
-
-    const dedupeKey = `dalo_product_view_${productId}`;
-
-    if (typeof window !== "undefined") {
+      const dedupeKey = `dalo_product_view_${productId}`;
       const alreadyTracked = window.sessionStorage.getItem(dedupeKey);
 
       if (alreadyTracked) {
+        trackedRef.current = true;
         return;
       }
 
       window.sessionStorage.setItem(dedupeKey, "true");
+      trackedRef.current = true;
+
+      trackClientEvent({
+        eventType: "product_view",
+        productId,
+        metadata,
+      });
     }
 
-    trackClientEvent({
-      eventType: "product_view",
-      productId,
-      metadata,
-    });
+    trackProductView();
+    window.addEventListener(CONSENT_CHANGED_EVENT, trackProductView);
+    return () =>
+      window.removeEventListener(CONSENT_CHANGED_EVENT, trackProductView);
   }, [productId, metadata]);
 
   return null;

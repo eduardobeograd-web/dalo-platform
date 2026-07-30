@@ -4,7 +4,7 @@ import { getRecommendationSettings } from "../../../lib/recommendation-settings"
 
 function formatPrice(value: number | null | undefined) {
   if (typeof value !== "number") return "—";
-  return `€${value.toFixed(2)}`;
+  return `$${value.toFixed(2)}`;
 }
 
 function formatNumber(value: number | null | undefined) {
@@ -355,7 +355,7 @@ export default async function UpsellsPage() {
               <div className="rounded-2xl bg-blue-600 p-4">
                 <div className="text-sm text-blue-100">Customer Copy</div>
                 <div className="mt-1 font-bold">
-                  “Get 10GB more for only €4 extra”
+                  “Get 10GB more for only $4 extra”
                 </div>
               </div>
             </div>

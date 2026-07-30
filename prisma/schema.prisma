@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 
 }
 
@@ -69,6 +69,7 @@ model Customer {
   updatedAt    DateTime @updatedAt
 
   sessions        CustomerSession[]
+  passwordResetTokens PasswordResetToken[]
   orders          Order[]
   supportRequests SupportRequest[]
   customerEvents  CustomerEvent[]
@@ -85,6 +86,20 @@ model CustomerSession {
   customer Customer @relation(fields: [customerId], references: [id])
 }
 
+model PasswordResetToken {
+  id         String    @id @default(cuid())
+  customerId String
+  tokenHash  String    @unique
+  expiresAt  DateTime
+  usedAt     DateTime?
+  createdAt  DateTime  @default(now())
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([customerId])
+  @@index([expiresAt])
+}
+
 model Order {
   id          String  @id @default(cuid())
   orderNumber String? @unique
@@ -92,6 +107,22 @@ model Order {
   customerId  String?
 
   productId   String
+  amount      Float?
+  currency    String?
+  buyPriceAtPurchase Float?
+  productNameAtPurchase String?
+  countryAtPurchase String?
+  dataAtPurchase String?
+  validityDaysAtPurchase Int?
+  providerAtPurchase String?
+  providerProductIdAtPurchase String?
+  stripeSessionId String? @unique
+  stripePaymentIntentId String?
+  paidAt DateTime?
+  legalAcceptedAt DateTime?
+  legalVersion String?
+  immediateDeliveryAcceptedAt DateTime?
+  immediateDeliveryVersion String?
   payment     String
   fulfillment String
 
@@ -188,4 +219,75 @@ model ProviderConfig {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model DestinationPage {
+  id                String   @id @default(cuid())
+  slug              String   @unique
+  countryName       String
+  displayName       String
+  seoTitle          String
+  seoDescription    String
+  headline          String
+  intro             String
+  heroImage         String?
+  heroImageAlt      String?
+  coverageText      String?
+  activationText    String?
+  compatibilityText String?
+  hotspotText       String?
+  faq               Json?
+  published         Boolean  @default(false)
+  indexable         Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model AdminUser {
+  id                 String   @id @default(cuid())
+  email              String   @unique
+  name               String
+  passwordHash       String
+  role               String   @default("READ_ONLY")
+  permissions        Json
+  active             Boolean  @default(true)
+  mustChangePassword Boolean  @default(true)
+  lastLoginAt        DateTime?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  sessions AdminSession[]
+  auditLogs AdminAuditLog[]
+
+  @@index([active])
+  @@index([role])
+}
+
+model AdminSession {
+  id          String   @id @default(cuid())
+  adminUserId String
+  tokenHash   String   @unique
+  expiresAt   DateTime
+  createdAt   DateTime @default(now())
+
+  adminUser AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
+
+  @@index([adminUserId])
+  @@index([expiresAt])
+}
+
+model AdminAuditLog {
+  id          String   @id @default(cuid())
+  adminUserId String?
+  action      String
+  resource    String
+  resourceId  String?
+  metadata    Json?
+  createdAt   DateTime @default(now())
+
+  adminUser AdminUser? @relation(fields: [adminUserId], references: [id], onDelete: SetNull)
+
+  @@index([adminUserId])
+  @@index([resource])
+  @@index([createdAt])
 }

@@ -7,7 +7,7 @@ type ProductsPageProps = {
 };
 
 function formatPrice(value: number) {
-  return `€${value.toFixed(2)}`;
+  return `$${value.toFixed(2)}`;
 }
 
 function getMargin(buyPrice: number, sellPrice: number) {
@@ -191,6 +191,13 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
         </div>
 
         <div className="flex gap-3">
+          <Link
+            href="/admin/products/margins"
+            className="rounded-2xl border border-amber-300 bg-amber-50 px-6 py-4 font-bold text-amber-900 transition hover:bg-amber-100"
+          >
+            Margin Check
+          </Link>
+
           <Link
             href="/admin/products/import"
             className="rounded-2xl border border-slate-300 px-6 py-4 font-bold text-slate-700 transition hover:bg-white"

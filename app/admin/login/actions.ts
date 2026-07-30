@@ -1,24 +1,50 @@
 "use server";
 
-import { cookies } from "next/headers";
+import bcrypt from "bcryptjs";
 import { redirect } from "next/navigation";
+import { prisma } from "../../../lib/db";
+import {
+  createAdminSession,
+  getFirstAllowedAdminPath,
+  writeAdminAuditLog,
+} from "../../../lib/admin-auth";
 
 export async function adminLogin(formData: FormData) {
-  const email = String(formData.get("email") || "");
+  const email = String(formData.get("email") || "").trim().toLowerCase();
   const password = String(formData.get("password") || "");
 
-  if (email !== "admin@dalo.com" || password !== "dalo123") {
+  const admin = await prisma.adminUser.findUnique({ where: { email } });
+
+  if (
+    !admin ||
+    !admin.active ||
+    !(await bcrypt.compare(password, admin.passwordHash))
+  ) {
     redirect("/admin/login?error=1");
   }
 
-  const cookieStore = await cookies();
-
-  cookieStore.set("dalo_admin", "true", {
-    httpOnly: true,
-    sameSite: "lax",
-    path: "/",
-    maxAge: 60 * 60 * 24,
+  await prisma.adminSession.deleteMany({
+    where: {
+      OR: [{ expiresAt: { lte: new Date() } }, { adminUserId: admin.id }],
+    },
   });
 
-  redirect("/admin");
+  await Promise.all([
+    createAdminSession(admin.id),
+    prisma.adminUser.update({
+      where: { id: admin.id },
+      data: { lastLoginAt: new Date() },
+    }),
+    writeAdminAuditLog({
+      adminUserId: admin.id,
+      action: "LOGIN",
+      resource: "ADMIN_SESSION",
+    }),
+  ]);
+
+  if (admin.mustChangePassword) {
+    redirect("/admin/change-password");
+  }
+
+  redirect(getFirstAllowedAdminPath(admin));
 }

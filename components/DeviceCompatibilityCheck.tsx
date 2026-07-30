@@ -1,0 +1,223 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import {
+  CONSENT_CHANGED_EVENT,
+  readConsent,
+} from "@/lib/consent";
+
+const hiddenPrefixes = ["/admin", "/customer"];
+type DevicePlatform = "ios" | "android" | "other";
+
+export default function DeviceCompatibilityCheck() {
+  const pathname = usePathname();
+  const [open, setOpen] = useState(false);
+  const [platform, setPlatform] = useState<DevicePlatform>("other");
+  const [consentDecided, setConsentDecided] = useState(false);
+
+  useEffect(() => {
+    const userAgent = navigator.userAgent;
+    const isIPadOs =
+      navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
+
+    if (/iPhone|iPad|iPod/i.test(userAgent) || isIPadOs) {
+      setPlatform("ios");
+    } else if (/Android/i.test(userAgent)) {
+      setPlatform("android");
+    }
+  }, []);
+
+  useEffect(() => {
+    setConsentDecided(Boolean(readConsent()));
+
+    function showAfterConsentChoice() {
+      setConsentDecided(true);
+    }
+
+    window.addEventListener(CONSENT_CHANGED_EVENT, showAfterConsentChoice);
+    return () =>
+      window.removeEventListener(
+        CONSENT_CHANGED_EVENT,
+        showAfterConsentChoice
+      );
+  }, []);
+
+  useEffect(() => {
+    if (!open) return;
+
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") setOpen(false);
+    }
+
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [open]);
+
+  if (
+    !consentDecided ||
+    hiddenPrefixes.some((prefix) => pathname.startsWith(prefix))
+  ) {
+    return null;
+  }
+
+  const platformLabel =
+    platform === "ios"
+      ? "Apple device detected"
+      : platform === "android"
+        ? "Android device detected"
+        : "Check your phone";
+  const settingsStep =
+    platform === "ios"
+      ? {
+          title: "Open Cellular settings",
+          text: "Go to Settings → Cellular or Mobile Data. Look for “Add eSIM” or “Add Cellular Plan”.",
+        }
+      : platform === "android"
+        ? {
+            title: "Open SIM settings",
+            text: "Go to Settings → Network & internet or Connections → SIM Manager. Look for “Add eSIM”.",
+          }
+        : {
+            title: "Look for “Add eSIM”",
+            text: "Open your phone’s Mobile Data, Cellular or SIM Manager settings. An “Add eSIM” option is the clearest sign of support.",
+          };
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        aria-haspopup="dialog"
+        aria-label="Check device compatibility"
+        className="group fixed bottom-24 right-3 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-blue-400 bg-blue-800 p-0 text-left text-white shadow-[0_14px_35px_rgba(13,54,140,0.32)] transition hover:-translate-y-1 hover:bg-blue-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 sm:bottom-5 sm:right-5 sm:h-auto sm:w-auto sm:min-w-[330px] sm:justify-start sm:gap-3 sm:rounded-2xl sm:px-4 sm:py-3.5"
+      >
+        <span className="relative grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-blue-800 sm:h-11 sm:w-11 sm:rounded-xl">
+          <span className="absolute -right-1 -top-1 h-3.5 w-3.5 rounded-full border-2 border-blue-800 bg-amber-400" />
+          <svg
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            className="h-5 w-5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+          >
+            <rect x="7" y="2.75" width="10" height="18.5" rx="2.2" />
+            <path d="M10 5.75h4M10.25 17.25l1.35 1.35 2.65-3" />
+          </svg>
+        </span>
+        <span className="hidden min-w-0 flex-1 sm:block">
+          <span className="block truncate text-[11px] font-bold uppercase tracking-[0.16em] text-blue-100">
+            {platformLabel}
+          </span>
+          <span className="block text-[15px] font-extrabold text-white">
+            Check device compatibility
+          </span>
+        </span>
+        <span className="hidden shrink-0 rounded-lg bg-white/15 px-2.5 py-1.5 text-xs font-black uppercase tracking-wide transition group-hover:bg-white group-hover:text-blue-900 sm:block">
+          Check now
+        </span>
+      </button>
+
+      {open ? (
+        <div
+          className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/35 p-3 backdrop-blur-sm sm:items-center sm:p-6"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.currentTarget === event.target) setOpen(false);
+          }}
+        >
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="device-check-title"
+            className="w-full max-w-xl overflow-hidden rounded-[1.75rem] border border-white/80 bg-[#f8fbff] shadow-[0_28px_90px_rgba(15,38,79,0.28)]"
+          >
+            <div className="flex items-start justify-between border-b border-blue-100 bg-white px-5 py-5 sm:px-7">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.18em] text-blue-700">
+                  DALO device check · {platformLabel}
+                </p>
+                <h2
+                  id="device-check-title"
+                  className="mt-1 text-2xl font-black tracking-tight text-slate-950"
+                >
+                  Is your phone eSIM ready?
+                </h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => setOpen(false)}
+                aria-label="Close device compatibility check"
+                className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-slate-200 bg-white text-xl text-slate-600 transition hover:border-slate-400 hover:text-slate-950 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="space-y-3 px-5 py-5 sm:px-7 sm:py-6">
+              {[
+                {
+                  number: "01",
+                  title: settingsStep.title,
+                  text: settingsStep.text,
+                },
+                {
+                  number: "02",
+                  title: "Check for an EID",
+                  text: "Dial *#06#. If an EID number appears, your device includes eSIM hardware.",
+                },
+                {
+                  number: "03",
+                  title: "Confirm it is unlocked",
+                  text: "Your phone must not be restricted to one mobile carrier. Ask your carrier if you are unsure.",
+                },
+              ].map((item) => (
+                <div
+                  key={item.number}
+                  className="grid grid-cols-[2.5rem_1fr] gap-3 rounded-2xl border border-slate-200 bg-white p-4"
+                >
+                  <span className="grid h-10 w-10 place-items-center rounded-xl bg-blue-50 text-xs font-black text-blue-700">
+                    {item.number}
+                  </span>
+                  <div>
+                    <h3 className="font-extrabold text-slate-950">
+                      {item.title}
+                    </h3>
+                    <p className="mt-1 text-sm leading-6 text-slate-600">
+                      {item.text}
+                    </p>
+                  </div>
+                </div>
+              ))}
+
+              <p className="rounded-2xl bg-blue-50 px-4 py-3 text-xs leading-5 text-blue-950">
+                Browser detection cannot reliably confirm a specific phone
+                model or regional variant. Complete all three checks before
+                purchasing.
+              </p>
+
+              <div className="flex flex-col gap-3 pt-1 sm:flex-row">
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  className="inline-flex min-h-12 flex-1 items-center justify-center rounded-xl bg-blue-700 px-5 font-bold text-white transition hover:bg-blue-800 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200"
+                >
+                  My device is compatible
+                </button>
+                <Link
+                  href="/support"
+                  onClick={() => setOpen(false)}
+                  className="inline-flex min-h-12 flex-1 items-center justify-center rounded-xl border border-slate-300 bg-white px-5 font-bold text-slate-800 transition hover:border-blue-400 hover:text-blue-800 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200"
+                >
+                  Get compatibility help
+                </Link>
+              </div>
+            </div>
+          </section>
+        </div>
+      ) : null}
+    </>
+  );
+}

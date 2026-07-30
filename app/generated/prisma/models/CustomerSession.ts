@@ -408,6 +408,7 @@ export type CustomerSessionCreateOrConnectWithoutCustomerInput = {
 
 export type CustomerSessionCreateManyCustomerInputEnvelope = {
   data: Prisma.CustomerSessionCreateManyCustomerInput | Prisma.CustomerSessionCreateManyCustomerInput[]
+  skipDuplicates?: boolean
 }
 
 export type CustomerSessionUpsertWithWhereUniqueWithoutCustomerInput = {
@@ -1198,6 +1199,7 @@ export type CustomerSessionCreateManyArgs<ExtArgs extends runtime.Types.Extensio
    * The data used to create many CustomerSessions.
    */
   data: Prisma.CustomerSessionCreateManyInput | Prisma.CustomerSessionCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1216,6 +1218,7 @@ export type CustomerSessionCreateManyAndReturnArgs<ExtArgs extends runtime.Types
    * The data used to create many CustomerSessions.
    */
   data: Prisma.CustomerSessionCreateManyInput | Prisma.CustomerSessionCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

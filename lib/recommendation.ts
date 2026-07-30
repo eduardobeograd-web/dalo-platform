@@ -580,7 +580,7 @@ function pickRegionalUpsell<TProduct extends ProductLike>({
 }
 
 function formatPrice(value: number) {
-  return `€${value.toFixed(2)}`;
+  return `$${value.toFixed(2)}`;
 }
 
 function formatGb(value: number) {
@@ -756,27 +756,65 @@ function createExplanation({
   };
 }
 
+const ACTIVE_PRODUCTS_CACHE_MS = 15_000;
+let activeProductsCache:
+  | {
+      expiresAt: number;
+      products: ProductLike[];
+    }
+  | undefined;
+let activeProductsRequest: Promise<ProductLike[]> | undefined;
+
+async function getActiveRecommendationProducts() {
+  const now = Date.now();
+
+  if (activeProductsCache && activeProductsCache.expiresAt > now) {
+    return activeProductsCache.products;
+  }
+
+  if (activeProductsRequest) {
+    return activeProductsRequest;
+  }
+
+  activeProductsRequest = prisma.product
+    .findMany({
+      where: {
+        active: true,
+      },
+      orderBy: [
+        {
+          sellPrice: "asc",
+        },
+        {
+          validityDays: "asc",
+        },
+      ],
+    })
+    .then((products) => {
+      activeProductsCache = {
+        expiresAt: Date.now() + ACTIVE_PRODUCTS_CACHE_MS,
+        products,
+      };
+
+      return products;
+    })
+    .finally(() => {
+      activeProductsRequest = undefined;
+    });
+
+  return activeProductsRequest;
+}
+
 export async function buildRecommendation(input: RecommendationInput) {
   const country = input.country || "Europe";
   const tripDays = parseDays(input.days);
   const usage = normalizeUsage(input.type);
-  const setting = await getRecommendationSettingForUsage(usage);
+  const [setting, activeProducts] = await Promise.all([
+    getRecommendationSettingForUsage(usage),
+    getActiveRecommendationProducts(),
+  ]);
   const rawEstimatedDataGb = getRawEstimatedNeededGb(tripDays, setting);
   const minimumDataGb = getEstimatedNeededGb(tripDays, input.type, setting);
-
-  const activeProducts = await prisma.product.findMany({
-    where: {
-      active: true,
-    },
-    orderBy: [
-      {
-        sellPrice: "asc",
-      },
-      {
-        validityDays: "asc",
-      },
-    ],
-  });
 
   const destinationProducts = getDestinationProducts(activeProducts, country);
   const productPool = destinationProducts;

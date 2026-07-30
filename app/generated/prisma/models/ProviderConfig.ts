@@ -1340,6 +1340,7 @@ export type ProviderConfigCreateManyArgs<ExtArgs extends runtime.Types.Extension
    * The data used to create many ProviderConfigs.
    */
   data: Prisma.ProviderConfigCreateManyInput | Prisma.ProviderConfigCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1358,6 +1359,7 @@ export type ProviderConfigCreateManyAndReturnArgs<ExtArgs extends runtime.Types.
    * The data used to create many ProviderConfigs.
    */
   data: Prisma.ProviderConfigCreateManyInput | Prisma.ProviderConfigCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**

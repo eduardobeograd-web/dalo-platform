@@ -1,10 +1,12 @@
-import Image from "next/image";
 import { prisma } from "../../../lib/db";
 import { stripe } from "../../../lib/stripe";
 import { trackCustomerEvent } from "../../../lib/customer-events";
+import { fulfillOrderMockById } from "../../../lib/mock-fulfillment";
+import SiteFooter from "../../../components/SiteFooter";
+import SiteHeader from "../../../components/SiteHeader";
 
 function formatPrice(value: number) {
-  return `€${value.toFixed(2)}`;
+  return `$${value.toFixed(2)}`;
 }
 
 async function finalizeStripeCheckout(sessionId: string) {
@@ -69,10 +71,65 @@ async function finalizeStripeCheckout(sessionId: string) {
       customer: email,
       customerId: customer.id,
       payment: "Paid",
-      fulfillment: "pending_manual",
-      esimStatus: "pending",
+      amount:
+        existingOrder.amount ??
+        (typeof stripeSession.amount_total === "number"
+          ? stripeSession.amount_total / 100
+          : product.sellPrice),
+      currency:
+        existingOrder.currency ||
+        stripeSession.currency?.toUpperCase() ||
+        "USD",
+      buyPriceAtPurchase:
+        existingOrder.buyPriceAtPurchase ?? product.buyPrice,
+      productNameAtPurchase:
+        existingOrder.productNameAtPurchase || product.name,
+      countryAtPurchase:
+        existingOrder.countryAtPurchase || product.country,
+      dataAtPurchase: existingOrder.dataAtPurchase || product.data,
+      validityDaysAtPurchase:
+        existingOrder.validityDaysAtPurchase || product.validityDays,
+      providerAtPurchase:
+        existingOrder.providerAtPurchase || product.provider,
+      providerProductIdAtPurchase:
+        existingOrder.providerProductIdAtPurchase ||
+        product.providerProductId,
+      stripeSessionId: existingOrder.stripeSessionId || stripeSession.id,
+      stripePaymentIntentId:
+        existingOrder.stripePaymentIntentId ||
+        (typeof stripeSession.payment_intent === "string"
+          ? stripeSession.payment_intent
+          : stripeSession.payment_intent?.id || null),
+      paidAt: existingOrder.paidAt || new Date(),
+      fulfillment:
+        existingOrder.fulfillment === "Waiting"
+          ? "pending_manual"
+          : existingOrder.fulfillment,
+      esimStatus: existingOrder.esimStatus || "pending",
     },
   });
+
+  let finalizedOrder = updatedOrder;
+
+  if (
+    process.env.DALO_AUTO_MOCK_FULFILLMENT === "true" &&
+    updatedOrder.fulfillment === "pending_manual" &&
+    updatedOrder.esimStatus !== "ready"
+  ) {
+    const fulfillmentResult = await fulfillOrderMockById(updatedOrder.id);
+
+    if (fulfillmentResult.fulfilled) {
+      const fulfilledOrder = await prisma.order.findUnique({
+        where: {
+          id: updatedOrder.id,
+        },
+      });
+
+      if (fulfilledOrder) {
+        finalizedOrder = fulfilledOrder;
+      }
+    }
+  }
 
   const existingPurchaseEvent = await prisma.customerEvent.findFirst({
     where: {
@@ -97,10 +154,10 @@ async function finalizeStripeCheckout(sessionId: string) {
         source: "stripe_checkout_success",
         sessionId: daloSessionId || null,
         paymentMode: "stripe_checkout",
-        paymentStatus: updatedOrder.payment,
-        fulfillmentStatus: updatedOrder.fulfillment,
+        paymentStatus: finalizedOrder.payment,
+        fulfillmentStatus: finalizedOrder.fulfillment,
         stripeCheckoutSessionId: stripeSession.id,
-        orderNumber: updatedOrder.orderNumber,
+        orderNumber: finalizedOrder.orderNumber,
         customerEmail: email,
         productName: product.name,
         destination: product.country,
@@ -117,7 +174,7 @@ async function finalizeStripeCheckout(sessionId: string) {
     });
   }
 
-  return updatedOrder;
+  return finalizedOrder;
 }
 
 export default async function CheckoutSuccessPage({
@@ -166,26 +223,8 @@ export default async function CheckoutSuccessPage({
 
   if (!order || !product) {
     return (
-      <main className="min-h-screen bg-[#F6F8FF] text-slate-900">
-        <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
-          <a href="/">
-            <Image
-              src="/dalo-logo-horizontal.png"
-              alt="DALO"
-              width={180}
-              height={80}
-              className="h-16 w-auto"
-              priority
-            />
-          </a>
-
-          <a
-            href="/"
-            className="rounded-xl border border-slate-300 px-5 py-3 font-medium text-slate-700 transition hover:bg-white"
-          >
-            Back Home
-          </a>
-        </nav>
+      <main className="dalo-page min-h-screen bg-[#F6F8FF] text-slate-900">
+        <SiteHeader mode="checkout" />
 
         <section className="mx-auto max-w-3xl px-6 py-20 text-center">
           <div className="rounded-[2rem] bg-white p-10 shadow-xl shadow-blue-50">
@@ -205,6 +244,7 @@ export default async function CheckoutSuccessPage({
             </a>
           </div>
         </section>
+        <SiteFooter />
       </main>
     );
   }
@@ -213,26 +253,8 @@ export default async function CheckoutSuccessPage({
   const encodedEmail = encodeURIComponent(order.customer);
 
   return (
-    <main className="min-h-screen bg-[#F6F8FF] text-slate-900">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
-        <a href="/">
-          <Image
-            src="/dalo-logo-horizontal.png"
-            alt="DALO"
-            width={180}
-            height={80}
-            className="h-16 w-auto"
-            priority
-          />
-        </a>
-
-        <a
-          href="/"
-          className="rounded-xl border border-slate-300 px-5 py-3 font-medium text-slate-700 transition hover:bg-white"
-        >
-          Back Home
-        </a>
-      </nav>
+    <main className="dalo-page min-h-screen bg-[#F6F8FF] text-slate-900">
+      <SiteHeader mode="checkout" />
 
       <section className="mx-auto max-w-4xl px-6 py-16">
         <div className="rounded-[2.5rem] bg-white p-10 text-center shadow-2xl shadow-blue-100">
@@ -249,8 +271,9 @@ export default async function CheckoutSuccessPage({
           </h1>
 
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-slate-600">
-            Your payment was received in test mode. eSIM delivery stays manual
-            for now, so no provider API is triggered automatically.
+            {order.esimStatus === "ready"
+              ? "Your test payment was received and your test eSIM is ready."
+              : "Your payment was received in test mode. Your eSIM is now being prepared."}
           </p>
 
           <div className="mt-8 rounded-[2rem] bg-blue-600 p-7 text-left text-white shadow-xl shadow-blue-100">
@@ -277,7 +300,7 @@ export default async function CheckoutSuccessPage({
                 </a>
               ) : (
                 <a
-                  href={`/customer/set-password?email=${encodedEmail}`}
+                  href={`/customer/forgot-password?email=${encodedEmail}`}
                   className="rounded-2xl bg-white px-6 py-4 text-center font-bold text-blue-700"
                 >
                   Create password
@@ -331,11 +354,12 @@ export default async function CheckoutSuccessPage({
 
           <div className="mt-10 rounded-2xl bg-blue-50 p-6 text-left text-blue-700">
             <div className="font-bold">
-              Total: {formatPrice(product.sellPrice)}
+              Total: {formatPrice(order.amount ?? product.sellPrice)}
             </div>
             <div className="mt-1">
-              This checkout can now be completed with Stripe test mode. eSIM
-              fulfillment remains manual until provider APIs are connected.
+              {order.esimStatus === "ready"
+                ? "Stripe test payment and test eSIM delivery completed successfully."
+                : "Stripe test payment completed. Your eSIM delivery is being prepared."}
             </div>
           </div>
 
@@ -349,6 +373,7 @@ export default async function CheckoutSuccessPage({
           </div>
         </div>
       </section>
+      <SiteFooter />
     </main>
   );
 }

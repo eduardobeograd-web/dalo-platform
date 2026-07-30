@@ -5,6 +5,8 @@ import * as XLSX from "xlsx";
 import fs from "fs";
 import path from "path";
 import { prisma } from "../../../../lib/db";
+import { ADMIN_PERMISSIONS } from "../../../../lib/admin-permissions";
+import { requireAdminPermission } from "../../../../lib/admin-auth";
 
 type SheetPreview = {
   name: string;
@@ -194,6 +196,7 @@ function normalizeFixedProducts(rows: Record<string, unknown>[]) {
 }
 
 export async function analyzeRateSheet(formData: FormData) {
+  await requireAdminPermission(ADMIN_PERMISSIONS.IMPORTS_WRITE);
   const file = formData.get("file");
 
   if (!(file instanceof File)) {
@@ -277,6 +280,7 @@ export async function analyzeRateSheet(formData: FormData) {
 }
 
 export async function confirmRateSheetImport() {
+  await requireAdminPermission(ADMIN_PERMISSIONS.IMPORTS_WRITE);
   const previewPath = path.join(process.cwd(), "data", "rate-sheet-preview.json");
 
   if (!fs.existsSync(previewPath)) {
@@ -309,7 +313,6 @@ export async function confirmRateSheetImport() {
         usageFit: product.usageFit,
         role: product.role,
         buyPrice: product.buyPrice,
-        sellPrice: product.sellPrice,
         provider: product.provider,
         image: product.image,
         description: product.description,

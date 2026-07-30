@@ -256,6 +256,15 @@ export async function POST(request: NextRequest) {
         customer: email,
         customerId: customer.id,
         productId: product.id,
+        amount: product.sellPrice,
+        currency: "USD",
+        buyPriceAtPurchase: product.buyPrice,
+        productNameAtPurchase: product.name,
+        countryAtPurchase: product.country,
+        dataAtPurchase: product.data,
+        validityDaysAtPurchase: product.validityDays,
+        providerAtPurchase: product.provider,
+        providerProductIdAtPurchase: product.providerProductId,
         payment: "Pending",
         fulfillment: "pending_manual",
 
@@ -277,9 +286,7 @@ export async function POST(request: NextRequest) {
     });
 
     const siteUrl =
-      process.env.NEXT_PUBLIC_APP_URL ||
-      process.env.NEXT_PUBLIC_SITE_URL ||
-      "http://localhost:3000";
+      process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
     const successUrl = requestedSuccessUrl
       ? appendCheckoutParams(requestedSuccessUrl, {
@@ -308,7 +315,7 @@ export async function POST(request: NextRequest) {
         {
           quantity: 1,
           price_data: {
-            currency: "eur",
+            currency: "usd",
             product_data: {
               name: product.name,
               description: "Prepaid travel eSIM · Digital delivery",
@@ -342,6 +349,11 @@ export async function POST(request: NextRequest) {
         }
       );
     }
+
+    await prisma.order.update({
+      where: { id: order.id },
+      data: { stripeSessionId: stripeSession.id },
+    });
 
     return NextResponse.json(
       {

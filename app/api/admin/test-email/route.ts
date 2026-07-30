@@ -4,8 +4,11 @@ import {
   abandonedCheckoutHtml,
   abandonedCheckoutSubject,
 } from "../../../../lib/email-templates/abandoned-checkout";
+import { ADMIN_PERMISSIONS } from "../../../../lib/admin-permissions";
+import { requireAdminPermission } from "../../../../lib/admin-auth";
 
 export async function POST() {
+  await requireAdminPermission(ADMIN_PERMISSIONS.EVENTS_WRITE);
   const testEmail = process.env.DALO_ADMIN_TEST_EMAIL;
 
   if (!testEmail) {
@@ -20,7 +23,7 @@ export async function POST() {
 
   const destination = "Armenia";
   const productName = "Armenia eSIM 10GB / 30 days";
-  const price = "€37.59";
+  const price = "$37.59";
 
   const result = await sendEmail({
     to: testEmail,

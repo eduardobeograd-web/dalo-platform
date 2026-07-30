@@ -199,6 +199,7 @@ export type CustomerWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   sessions?: Prisma.CustomerSessionListRelationFilter
+  passwordResetTokens?: Prisma.PasswordResetTokenListRelationFilter
   orders?: Prisma.OrderListRelationFilter
   supportRequests?: Prisma.SupportRequestListRelationFilter
   customerEvents?: Prisma.CustomerEventListRelationFilter
@@ -213,6 +214,7 @@ export type CustomerOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   sessions?: Prisma.CustomerSessionOrderByRelationAggregateInput
+  passwordResetTokens?: Prisma.PasswordResetTokenOrderByRelationAggregateInput
   orders?: Prisma.OrderOrderByRelationAggregateInput
   supportRequests?: Prisma.SupportRequestOrderByRelationAggregateInput
   customerEvents?: Prisma.CustomerEventOrderByRelationAggregateInput
@@ -230,6 +232,7 @@ export type CustomerWhereUniqueInput = Prisma.AtLeast<{
   createdAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   sessions?: Prisma.CustomerSessionListRelationFilter
+  passwordResetTokens?: Prisma.PasswordResetTokenListRelationFilter
   orders?: Prisma.OrderListRelationFilter
   supportRequests?: Prisma.SupportRequestListRelationFilter
   customerEvents?: Prisma.CustomerEventListRelationFilter
@@ -270,6 +273,7 @@ export type CustomerCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.CustomerSessionCreateNestedManyWithoutCustomerInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutCustomerInput
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerAccountInput
   supportRequests?: Prisma.SupportRequestCreateNestedManyWithoutCustomerInput
   customerEvents?: Prisma.CustomerEventCreateNestedManyWithoutCustomerInput
@@ -284,6 +288,7 @@ export type CustomerUncheckedCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.CustomerSessionUncheckedCreateNestedManyWithoutCustomerInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutCustomerInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerAccountInput
   supportRequests?: Prisma.SupportRequestUncheckedCreateNestedManyWithoutCustomerInput
   customerEvents?: Prisma.CustomerEventUncheckedCreateNestedManyWithoutCustomerInput
@@ -298,6 +303,7 @@ export type CustomerUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.CustomerSessionUpdateManyWithoutCustomerNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutCustomerNestedInput
   orders?: Prisma.OrderUpdateManyWithoutCustomerAccountNestedInput
   supportRequests?: Prisma.SupportRequestUpdateManyWithoutCustomerNestedInput
   customerEvents?: Prisma.CustomerEventUpdateManyWithoutCustomerNestedInput
@@ -312,6 +318,7 @@ export type CustomerUncheckedUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.CustomerSessionUncheckedUpdateManyWithoutCustomerNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutCustomerNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerAccountNestedInput
   supportRequests?: Prisma.SupportRequestUncheckedUpdateManyWithoutCustomerNestedInput
   customerEvents?: Prisma.CustomerEventUncheckedUpdateManyWithoutCustomerNestedInput
@@ -401,6 +408,20 @@ export type CustomerUpdateOneRequiredWithoutSessionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CustomerUpdateToOneWithWhereWithoutSessionsInput, Prisma.CustomerUpdateWithoutSessionsInput>, Prisma.CustomerUncheckedUpdateWithoutSessionsInput>
 }
 
+export type CustomerCreateNestedOneWithoutPasswordResetTokensInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutPasswordResetTokensInput, Prisma.CustomerUncheckedCreateWithoutPasswordResetTokensInput>
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutPasswordResetTokensInput
+  connect?: Prisma.CustomerWhereUniqueInput
+}
+
+export type CustomerUpdateOneRequiredWithoutPasswordResetTokensNestedInput = {
+  create?: Prisma.XOR<Prisma.CustomerCreateWithoutPasswordResetTokensInput, Prisma.CustomerUncheckedCreateWithoutPasswordResetTokensInput>
+  connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutPasswordResetTokensInput
+  upsert?: Prisma.CustomerUpsertWithoutPasswordResetTokensInput
+  connect?: Prisma.CustomerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CustomerUpdateToOneWithWhereWithoutPasswordResetTokensInput, Prisma.CustomerUpdateWithoutPasswordResetTokensInput>, Prisma.CustomerUncheckedUpdateWithoutPasswordResetTokensInput>
+}
+
 export type CustomerCreateNestedOneWithoutOrdersInput = {
   create?: Prisma.XOR<Prisma.CustomerCreateWithoutOrdersInput, Prisma.CustomerUncheckedCreateWithoutOrdersInput>
   connectOrCreate?: Prisma.CustomerCreateOrConnectWithoutOrdersInput
@@ -457,6 +478,7 @@ export type CustomerCreateWithoutSessionsInput = {
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutCustomerInput
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerAccountInput
   supportRequests?: Prisma.SupportRequestCreateNestedManyWithoutCustomerInput
   customerEvents?: Prisma.CustomerEventCreateNestedManyWithoutCustomerInput
@@ -470,6 +492,7 @@ export type CustomerUncheckedCreateWithoutSessionsInput = {
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutCustomerInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerAccountInput
   supportRequests?: Prisma.SupportRequestUncheckedCreateNestedManyWithoutCustomerInput
   customerEvents?: Prisma.CustomerEventUncheckedCreateNestedManyWithoutCustomerInput
@@ -499,6 +522,7 @@ export type CustomerUpdateWithoutSessionsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutCustomerNestedInput
   orders?: Prisma.OrderUpdateManyWithoutCustomerAccountNestedInput
   supportRequests?: Prisma.SupportRequestUpdateManyWithoutCustomerNestedInput
   customerEvents?: Prisma.CustomerEventUpdateManyWithoutCustomerNestedInput
@@ -512,6 +536,79 @@ export type CustomerUncheckedUpdateWithoutSessionsInput = {
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutCustomerNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerAccountNestedInput
+  supportRequests?: Prisma.SupportRequestUncheckedUpdateManyWithoutCustomerNestedInput
+  customerEvents?: Prisma.CustomerEventUncheckedUpdateManyWithoutCustomerNestedInput
+}
+
+export type CustomerCreateWithoutPasswordResetTokensInput = {
+  id?: string
+  email: string
+  name?: string | null
+  passwordHash?: string | null
+  active?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.CustomerSessionCreateNestedManyWithoutCustomerInput
+  orders?: Prisma.OrderCreateNestedManyWithoutCustomerAccountInput
+  supportRequests?: Prisma.SupportRequestCreateNestedManyWithoutCustomerInput
+  customerEvents?: Prisma.CustomerEventCreateNestedManyWithoutCustomerInput
+}
+
+export type CustomerUncheckedCreateWithoutPasswordResetTokensInput = {
+  id?: string
+  email: string
+  name?: string | null
+  passwordHash?: string | null
+  active?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.CustomerSessionUncheckedCreateNestedManyWithoutCustomerInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerAccountInput
+  supportRequests?: Prisma.SupportRequestUncheckedCreateNestedManyWithoutCustomerInput
+  customerEvents?: Prisma.CustomerEventUncheckedCreateNestedManyWithoutCustomerInput
+}
+
+export type CustomerCreateOrConnectWithoutPasswordResetTokensInput = {
+  where: Prisma.CustomerWhereUniqueInput
+  create: Prisma.XOR<Prisma.CustomerCreateWithoutPasswordResetTokensInput, Prisma.CustomerUncheckedCreateWithoutPasswordResetTokensInput>
+}
+
+export type CustomerUpsertWithoutPasswordResetTokensInput = {
+  update: Prisma.XOR<Prisma.CustomerUpdateWithoutPasswordResetTokensInput, Prisma.CustomerUncheckedUpdateWithoutPasswordResetTokensInput>
+  create: Prisma.XOR<Prisma.CustomerCreateWithoutPasswordResetTokensInput, Prisma.CustomerUncheckedCreateWithoutPasswordResetTokensInput>
+  where?: Prisma.CustomerWhereInput
+}
+
+export type CustomerUpdateToOneWithWhereWithoutPasswordResetTokensInput = {
+  where?: Prisma.CustomerWhereInput
+  data: Prisma.XOR<Prisma.CustomerUpdateWithoutPasswordResetTokensInput, Prisma.CustomerUncheckedUpdateWithoutPasswordResetTokensInput>
+}
+
+export type CustomerUpdateWithoutPasswordResetTokensInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.CustomerSessionUpdateManyWithoutCustomerNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutCustomerAccountNestedInput
+  supportRequests?: Prisma.SupportRequestUpdateManyWithoutCustomerNestedInput
+  customerEvents?: Prisma.CustomerEventUpdateManyWithoutCustomerNestedInput
+}
+
+export type CustomerUncheckedUpdateWithoutPasswordResetTokensInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.CustomerSessionUncheckedUpdateManyWithoutCustomerNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerAccountNestedInput
   supportRequests?: Prisma.SupportRequestUncheckedUpdateManyWithoutCustomerNestedInput
   customerEvents?: Prisma.CustomerEventUncheckedUpdateManyWithoutCustomerNestedInput
@@ -526,6 +623,7 @@ export type CustomerCreateWithoutOrdersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.CustomerSessionCreateNestedManyWithoutCustomerInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutCustomerInput
   supportRequests?: Prisma.SupportRequestCreateNestedManyWithoutCustomerInput
   customerEvents?: Prisma.CustomerEventCreateNestedManyWithoutCustomerInput
 }
@@ -539,6 +637,7 @@ export type CustomerUncheckedCreateWithoutOrdersInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.CustomerSessionUncheckedCreateNestedManyWithoutCustomerInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutCustomerInput
   supportRequests?: Prisma.SupportRequestUncheckedCreateNestedManyWithoutCustomerInput
   customerEvents?: Prisma.CustomerEventUncheckedCreateNestedManyWithoutCustomerInput
 }
@@ -568,6 +667,7 @@ export type CustomerUpdateWithoutOrdersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.CustomerSessionUpdateManyWithoutCustomerNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutCustomerNestedInput
   supportRequests?: Prisma.SupportRequestUpdateManyWithoutCustomerNestedInput
   customerEvents?: Prisma.CustomerEventUpdateManyWithoutCustomerNestedInput
 }
@@ -581,6 +681,7 @@ export type CustomerUncheckedUpdateWithoutOrdersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.CustomerSessionUncheckedUpdateManyWithoutCustomerNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutCustomerNestedInput
   supportRequests?: Prisma.SupportRequestUncheckedUpdateManyWithoutCustomerNestedInput
   customerEvents?: Prisma.CustomerEventUncheckedUpdateManyWithoutCustomerNestedInput
 }
@@ -594,6 +695,7 @@ export type CustomerCreateWithoutSupportRequestsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.CustomerSessionCreateNestedManyWithoutCustomerInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutCustomerInput
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerAccountInput
   customerEvents?: Prisma.CustomerEventCreateNestedManyWithoutCustomerInput
 }
@@ -607,6 +709,7 @@ export type CustomerUncheckedCreateWithoutSupportRequestsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.CustomerSessionUncheckedCreateNestedManyWithoutCustomerInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutCustomerInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerAccountInput
   customerEvents?: Prisma.CustomerEventUncheckedCreateNestedManyWithoutCustomerInput
 }
@@ -636,6 +739,7 @@ export type CustomerUpdateWithoutSupportRequestsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.CustomerSessionUpdateManyWithoutCustomerNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutCustomerNestedInput
   orders?: Prisma.OrderUpdateManyWithoutCustomerAccountNestedInput
   customerEvents?: Prisma.CustomerEventUpdateManyWithoutCustomerNestedInput
 }
@@ -649,6 +753,7 @@ export type CustomerUncheckedUpdateWithoutSupportRequestsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.CustomerSessionUncheckedUpdateManyWithoutCustomerNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutCustomerNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerAccountNestedInput
   customerEvents?: Prisma.CustomerEventUncheckedUpdateManyWithoutCustomerNestedInput
 }
@@ -662,6 +767,7 @@ export type CustomerCreateWithoutCustomerEventsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.CustomerSessionCreateNestedManyWithoutCustomerInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutCustomerInput
   orders?: Prisma.OrderCreateNestedManyWithoutCustomerAccountInput
   supportRequests?: Prisma.SupportRequestCreateNestedManyWithoutCustomerInput
 }
@@ -675,6 +781,7 @@ export type CustomerUncheckedCreateWithoutCustomerEventsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.CustomerSessionUncheckedCreateNestedManyWithoutCustomerInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutCustomerInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutCustomerAccountInput
   supportRequests?: Prisma.SupportRequestUncheckedCreateNestedManyWithoutCustomerInput
 }
@@ -704,6 +811,7 @@ export type CustomerUpdateWithoutCustomerEventsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.CustomerSessionUpdateManyWithoutCustomerNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutCustomerNestedInput
   orders?: Prisma.OrderUpdateManyWithoutCustomerAccountNestedInput
   supportRequests?: Prisma.SupportRequestUpdateManyWithoutCustomerNestedInput
 }
@@ -717,6 +825,7 @@ export type CustomerUncheckedUpdateWithoutCustomerEventsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.CustomerSessionUncheckedUpdateManyWithoutCustomerNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutCustomerNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutCustomerAccountNestedInput
   supportRequests?: Prisma.SupportRequestUncheckedUpdateManyWithoutCustomerNestedInput
 }
@@ -728,6 +837,7 @@ export type CustomerUncheckedUpdateWithoutCustomerEventsInput = {
 
 export type CustomerCountOutputType = {
   sessions: number
+  passwordResetTokens: number
   orders: number
   supportRequests: number
   customerEvents: number
@@ -735,6 +845,7 @@ export type CustomerCountOutputType = {
 
 export type CustomerCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | CustomerCountOutputTypeCountSessionsArgs
+  passwordResetTokens?: boolean | CustomerCountOutputTypeCountPasswordResetTokensArgs
   orders?: boolean | CustomerCountOutputTypeCountOrdersArgs
   supportRequests?: boolean | CustomerCountOutputTypeCountSupportRequestsArgs
   customerEvents?: boolean | CustomerCountOutputTypeCountCustomerEventsArgs
@@ -755,6 +866,13 @@ export type CustomerCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Ext
  */
 export type CustomerCountOutputTypeCountSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.CustomerSessionWhereInput
+}
+
+/**
+ * CustomerCountOutputType without action
+ */
+export type CustomerCountOutputTypeCountPasswordResetTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PasswordResetTokenWhereInput
 }
 
 /**
@@ -788,6 +906,7 @@ export type CustomerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   createdAt?: boolean
   updatedAt?: boolean
   sessions?: boolean | Prisma.Customer$sessionsArgs<ExtArgs>
+  passwordResetTokens?: boolean | Prisma.Customer$passwordResetTokensArgs<ExtArgs>
   orders?: boolean | Prisma.Customer$ordersArgs<ExtArgs>
   supportRequests?: boolean | Prisma.Customer$supportRequestsArgs<ExtArgs>
   customerEvents?: boolean | Prisma.Customer$customerEventsArgs<ExtArgs>
@@ -827,6 +946,7 @@ export type CustomerSelectScalar = {
 export type CustomerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "name" | "passwordHash" | "active" | "createdAt" | "updatedAt", ExtArgs["result"]["customer"]>
 export type CustomerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | Prisma.Customer$sessionsArgs<ExtArgs>
+  passwordResetTokens?: boolean | Prisma.Customer$passwordResetTokensArgs<ExtArgs>
   orders?: boolean | Prisma.Customer$ordersArgs<ExtArgs>
   supportRequests?: boolean | Prisma.Customer$supportRequestsArgs<ExtArgs>
   customerEvents?: boolean | Prisma.Customer$customerEventsArgs<ExtArgs>
@@ -839,6 +959,7 @@ export type $CustomerPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   name: "Customer"
   objects: {
     sessions: Prisma.$CustomerSessionPayload<ExtArgs>[]
+    passwordResetTokens: Prisma.$PasswordResetTokenPayload<ExtArgs>[]
     orders: Prisma.$OrderPayload<ExtArgs>[]
     supportRequests: Prisma.$SupportRequestPayload<ExtArgs>[]
     customerEvents: Prisma.$CustomerEventPayload<ExtArgs>[]
@@ -1246,6 +1367,7 @@ readonly fields: CustomerFieldRefs;
 export interface Prisma__CustomerClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   sessions<T extends Prisma.Customer$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CustomerSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  passwordResetTokens<T extends Prisma.Customer$passwordResetTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$passwordResetTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PasswordResetTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   orders<T extends Prisma.Customer$ordersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   supportRequests<T extends Prisma.Customer$supportRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$supportRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupportRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   customerEvents<T extends Prisma.Customer$customerEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Customer$customerEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CustomerEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -1519,6 +1641,7 @@ export type CustomerCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
    * The data used to create many Customers.
    */
   data: Prisma.CustomerCreateManyInput | Prisma.CustomerCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1537,6 +1660,7 @@ export type CustomerCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extens
    * The data used to create many Customers.
    */
   data: Prisma.CustomerCreateManyInput | Prisma.CustomerCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1697,6 +1821,30 @@ export type Customer$sessionsArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.CustomerSessionScalarFieldEnum | Prisma.CustomerSessionScalarFieldEnum[]
+}
+
+/**
+ * Customer.passwordResetTokens
+ */
+export type Customer$passwordResetTokensArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PasswordResetToken
+   */
+  select?: Prisma.PasswordResetTokenSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PasswordResetToken
+   */
+  omit?: Prisma.PasswordResetTokenOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PasswordResetTokenInclude<ExtArgs> | null
+  where?: Prisma.PasswordResetTokenWhereInput
+  orderBy?: Prisma.PasswordResetTokenOrderByWithRelationInput | Prisma.PasswordResetTokenOrderByWithRelationInput[]
+  cursor?: Prisma.PasswordResetTokenWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PasswordResetTokenScalarFieldEnum | Prisma.PasswordResetTokenScalarFieldEnum[]
 }
 
 /**

@@ -62,6 +62,11 @@ export type Customer = Prisma.CustomerModel
  */
 export type CustomerSession = Prisma.CustomerSessionModel
 /**
+ * Model PasswordResetToken
+ * 
+ */
+export type PasswordResetToken = Prisma.PasswordResetTokenModel
+/**
  * Model Order
  * 
  */
@@ -81,3 +86,23 @@ export type CustomerEvent = Prisma.CustomerEventModel
  * 
  */
 export type ProviderConfig = Prisma.ProviderConfigModel
+/**
+ * Model DestinationPage
+ * 
+ */
+export type DestinationPage = Prisma.DestinationPageModel
+/**
+ * Model AdminUser
+ * 
+ */
+export type AdminUser = Prisma.AdminUserModel
+/**
+ * Model AdminSession
+ * 
+ */
+export type AdminSession = Prisma.AdminSessionModel
+/**
+ * Model AdminAuditLog
+ * 
+ */
+export type AdminAuditLog = Prisma.AdminAuditLogModel

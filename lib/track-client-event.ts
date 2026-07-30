@@ -1,3 +1,8 @@
+import {
+  getEventConsentCategory,
+  hasConsent,
+} from "@/lib/consent";
+
 type TrackClientEventInput = {
   eventType: string;
   customerId?: string | null;
@@ -26,6 +31,15 @@ function getSessionId() {
 }
 
 export async function trackClientEvent(input: TrackClientEventInput) {
+  const consentCategory = getEventConsentCategory(input.eventType);
+
+  if (
+    consentCategory !== "necessary" &&
+    !hasConsent(consentCategory)
+  ) {
+    return;
+  }
+
   try {
     await fetch("/api/events", {
       method: "POST",
@@ -34,7 +48,9 @@ export async function trackClientEvent(input: TrackClientEventInput) {
       },
       body: JSON.stringify({
         ...input,
-        sessionId: input.sessionId ?? getSessionId(),
+        sessionId:
+          input.sessionId ??
+          (consentCategory === "necessary" ? null : getSessionId()),
       }),
     });
   } catch (error) {

@@ -2,6 +2,10 @@ import crypto from "crypto";
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../lib/db";
 import { stripe } from "../../../../lib/stripe";
+import {
+  CHECKOUT_LEGAL_VERSION,
+  hasRequiredCheckoutConsent,
+} from "../../../../lib/checkout-consent";
 
 const ORDER_NUMBER_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
@@ -64,6 +68,10 @@ export async function POST(request: Request) {
 
     const productId = String(formData.get("productId") || "");
     const email = normalizeEmail(String(formData.get("email") || ""));
+    const customerName = String(formData.get("name") || "")
+      .trim()
+      .replace(/\s+/g, " ")
+      .slice(0, 120);
     const sessionId = String(formData.get("sessionId") || "");
     const marketingCampaign = String(formData.get("marketingCampaign") || "");
     const marketingSourceEventId = String(
@@ -73,6 +81,15 @@ export async function POST(request: Request) {
     if (!productId || !email || !email.includes("@")) {
       return NextResponse.redirect(
         new URL(`/checkout?productId=${productId}&error=1`, request.url)
+      );
+    }
+
+    if (!hasRequiredCheckoutConsent(formData)) {
+      return NextResponse.redirect(
+        new URL(
+          `/checkout?productId=${productId}&consent=required`,
+          request.url
+        )
       );
     }
 
@@ -101,22 +118,42 @@ export async function POST(request: Request) {
       },
       update: {
         active: true,
+        ...(customerName ? { name: customerName } : {}),
       },
       create: {
         email,
+        name: customerName || null,
         active: true,
       },
     });
 
     const totalDataGb = extractDataGb(product.data);
     const orderNumber = await createUniqueOrderNumber();
+    const consentAcceptedAt = new Date();
 
     const order = await prisma.order.create({
       data: {
         orderNumber,
         customer: email,
-        customerId: customer.id,
+        customerAccount: {
+          connect: {
+            id: customer.id,
+          },
+        },
         productId: product.id,
+        amount: product.sellPrice,
+        currency: "USD",
+        buyPriceAtPurchase: product.buyPrice,
+        productNameAtPurchase: product.name,
+        countryAtPurchase: product.country,
+        dataAtPurchase: product.data,
+        validityDaysAtPurchase: product.validityDays,
+        providerAtPurchase: product.provider,
+        providerProductIdAtPurchase: product.providerProductId,
+        legalAcceptedAt: consentAcceptedAt,
+        legalVersion: CHECKOUT_LEGAL_VERSION,
+        immediateDeliveryAcceptedAt: consentAcceptedAt,
+        immediateDeliveryVersion: CHECKOUT_LEGAL_VERSION,
         payment: "Pending",
         fulfillment: "pending_manual",
 
@@ -138,18 +175,59 @@ export async function POST(request: Request) {
     });
 
     const siteUrl =
-      process.env.NEXT_PUBLIC_APP_URL ||
-      process.env.NEXT_PUBLIC_SITE_URL ||
-      "http://localhost:3000";
+      process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
+    const stripeMetadata = {
+      orderId: order.id,
+      orderNumber: order.orderNumber || "",
+      productId: product.id,
+      customerId: customer.id,
+      customerEmail: email,
+      customerName,
+      daloSessionId: sessionId,
+      marketingCampaign,
+      marketingSourceEventId,
+      legalVersion: CHECKOUT_LEGAL_VERSION,
+      legalAcceptedAt: consentAcceptedAt.toISOString(),
+      immediateDeliveryAcceptedAt: consentAcceptedAt.toISOString(),
+    };
 
     const stripeSession = await stripe.checkout.sessions.create({
       mode: "payment",
       customer_email: email,
+      customer_creation: "always",
+      billing_address_collection: "required",
+      tax_id_collection: {
+        enabled: true,
+      },
+      invoice_creation: {
+        enabled: true,
+        invoice_data: {
+          description: `${product.name} digital travel eSIM`,
+          metadata: stripeMetadata,
+        },
+      },
+      payment_intent_data: {
+        metadata: stripeMetadata,
+      },
+      branding_settings: {
+        display_name: "DALO",
+        background_color: "#F4F7FC",
+        button_color: "#173FC9",
+        border_style: "rounded",
+        font_family: "open_sans",
+      },
+      custom_text: {
+        submit: {
+          message:
+            "Secure payment by Stripe. Your eSIM is delivered digitally after payment.",
+        },
+      },
       line_items: [
         {
           quantity: 1,
           price_data: {
-            currency: "eur",
+            currency: "usd",
             product_data: {
               name: product.name,
               description: `${product.data} / ${product.validityDays} Days`,
@@ -158,16 +236,7 @@ export async function POST(request: Request) {
           },
         },
       ],
-      metadata: {
-        orderId: order.id,
-        orderNumber: order.orderNumber || "",
-        productId: product.id,
-        customerId: customer.id,
-        customerEmail: email,
-        daloSessionId: sessionId,
-        marketingCampaign,
-        marketingSourceEventId,
-      },
+      metadata: stripeMetadata,
       success_url: `${siteUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${siteUrl}/checkout?productId=${product.id}`,
     });
@@ -177,6 +246,11 @@ export async function POST(request: Request) {
         new URL(`/checkout?productId=${product.id}&error=1`, request.url)
       );
     }
+
+    await prisma.order.update({
+      where: { id: order.id },
+      data: { stripeSessionId: stripeSession.id },
+    });
 
     return NextResponse.redirect(stripeSession.url, 303);
   } catch (error) {

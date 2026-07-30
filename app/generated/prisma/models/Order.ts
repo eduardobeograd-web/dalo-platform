@@ -27,12 +27,18 @@ export type AggregateOrder = {
 }
 
 export type OrderAvgAggregateOutputType = {
+  amount: number | null
+  buyPriceAtPurchase: number | null
+  validityDaysAtPurchase: number | null
   totalDataGb: number | null
   usedDataGb: number | null
   remainingDataGb: number | null
 }
 
 export type OrderSumAggregateOutputType = {
+  amount: number | null
+  buyPriceAtPurchase: number | null
+  validityDaysAtPurchase: number | null
   totalDataGb: number | null
   usedDataGb: number | null
   remainingDataGb: number | null
@@ -44,6 +50,22 @@ export type OrderMinAggregateOutputType = {
   customer: string | null
   customerId: string | null
   productId: string | null
+  amount: number | null
+  currency: string | null
+  buyPriceAtPurchase: number | null
+  productNameAtPurchase: string | null
+  countryAtPurchase: string | null
+  dataAtPurchase: string | null
+  validityDaysAtPurchase: number | null
+  providerAtPurchase: string | null
+  providerProductIdAtPurchase: string | null
+  stripeSessionId: string | null
+  stripePaymentIntentId: string | null
+  paidAt: Date | null
+  legalAcceptedAt: Date | null
+  legalVersion: string | null
+  immediateDeliveryAcceptedAt: Date | null
+  immediateDeliveryVersion: string | null
   payment: string | null
   fulfillment: string | null
   esimStatus: string | null
@@ -67,6 +89,22 @@ export type OrderMaxAggregateOutputType = {
   customer: string | null
   customerId: string | null
   productId: string | null
+  amount: number | null
+  currency: string | null
+  buyPriceAtPurchase: number | null
+  productNameAtPurchase: string | null
+  countryAtPurchase: string | null
+  dataAtPurchase: string | null
+  validityDaysAtPurchase: number | null
+  providerAtPurchase: string | null
+  providerProductIdAtPurchase: string | null
+  stripeSessionId: string | null
+  stripePaymentIntentId: string | null
+  paidAt: Date | null
+  legalAcceptedAt: Date | null
+  legalVersion: string | null
+  immediateDeliveryAcceptedAt: Date | null
+  immediateDeliveryVersion: string | null
   payment: string | null
   fulfillment: string | null
   esimStatus: string | null
@@ -90,6 +128,22 @@ export type OrderCountAggregateOutputType = {
   customer: number
   customerId: number
   productId: number
+  amount: number
+  currency: number
+  buyPriceAtPurchase: number
+  productNameAtPurchase: number
+  countryAtPurchase: number
+  dataAtPurchase: number
+  validityDaysAtPurchase: number
+  providerAtPurchase: number
+  providerProductIdAtPurchase: number
+  stripeSessionId: number
+  stripePaymentIntentId: number
+  paidAt: number
+  legalAcceptedAt: number
+  legalVersion: number
+  immediateDeliveryAcceptedAt: number
+  immediateDeliveryVersion: number
   payment: number
   fulfillment: number
   esimStatus: number
@@ -110,12 +164,18 @@ export type OrderCountAggregateOutputType = {
 
 
 export type OrderAvgAggregateInputType = {
+  amount?: true
+  buyPriceAtPurchase?: true
+  validityDaysAtPurchase?: true
   totalDataGb?: true
   usedDataGb?: true
   remainingDataGb?: true
 }
 
 export type OrderSumAggregateInputType = {
+  amount?: true
+  buyPriceAtPurchase?: true
+  validityDaysAtPurchase?: true
   totalDataGb?: true
   usedDataGb?: true
   remainingDataGb?: true
@@ -127,6 +187,22 @@ export type OrderMinAggregateInputType = {
   customer?: true
   customerId?: true
   productId?: true
+  amount?: true
+  currency?: true
+  buyPriceAtPurchase?: true
+  productNameAtPurchase?: true
+  countryAtPurchase?: true
+  dataAtPurchase?: true
+  validityDaysAtPurchase?: true
+  providerAtPurchase?: true
+  providerProductIdAtPurchase?: true
+  stripeSessionId?: true
+  stripePaymentIntentId?: true
+  paidAt?: true
+  legalAcceptedAt?: true
+  legalVersion?: true
+  immediateDeliveryAcceptedAt?: true
+  immediateDeliveryVersion?: true
   payment?: true
   fulfillment?: true
   esimStatus?: true
@@ -150,6 +226,22 @@ export type OrderMaxAggregateInputType = {
   customer?: true
   customerId?: true
   productId?: true
+  amount?: true
+  currency?: true
+  buyPriceAtPurchase?: true
+  productNameAtPurchase?: true
+  countryAtPurchase?: true
+  dataAtPurchase?: true
+  validityDaysAtPurchase?: true
+  providerAtPurchase?: true
+  providerProductIdAtPurchase?: true
+  stripeSessionId?: true
+  stripePaymentIntentId?: true
+  paidAt?: true
+  legalAcceptedAt?: true
+  legalVersion?: true
+  immediateDeliveryAcceptedAt?: true
+  immediateDeliveryVersion?: true
   payment?: true
   fulfillment?: true
   esimStatus?: true
@@ -173,6 +265,22 @@ export type OrderCountAggregateInputType = {
   customer?: true
   customerId?: true
   productId?: true
+  amount?: true
+  currency?: true
+  buyPriceAtPurchase?: true
+  productNameAtPurchase?: true
+  countryAtPurchase?: true
+  dataAtPurchase?: true
+  validityDaysAtPurchase?: true
+  providerAtPurchase?: true
+  providerProductIdAtPurchase?: true
+  stripeSessionId?: true
+  stripePaymentIntentId?: true
+  paidAt?: true
+  legalAcceptedAt?: true
+  legalVersion?: true
+  immediateDeliveryAcceptedAt?: true
+  immediateDeliveryVersion?: true
   payment?: true
   fulfillment?: true
   esimStatus?: true
@@ -283,6 +391,22 @@ export type OrderGroupByOutputType = {
   customer: string
   customerId: string | null
   productId: string
+  amount: number | null
+  currency: string | null
+  buyPriceAtPurchase: number | null
+  productNameAtPurchase: string | null
+  countryAtPurchase: string | null
+  dataAtPurchase: string | null
+  validityDaysAtPurchase: number | null
+  providerAtPurchase: string | null
+  providerProductIdAtPurchase: string | null
+  stripeSessionId: string | null
+  stripePaymentIntentId: string | null
+  paidAt: Date | null
+  legalAcceptedAt: Date | null
+  legalVersion: string | null
+  immediateDeliveryAcceptedAt: Date | null
+  immediateDeliveryVersion: string | null
   payment: string
   fulfillment: string
   esimStatus: string | null
@@ -329,6 +453,22 @@ export type OrderWhereInput = {
   customer?: Prisma.StringFilter<"Order"> | string
   customerId?: Prisma.StringNullableFilter<"Order"> | string | null
   productId?: Prisma.StringFilter<"Order"> | string
+  amount?: Prisma.FloatNullableFilter<"Order"> | number | null
+  currency?: Prisma.StringNullableFilter<"Order"> | string | null
+  buyPriceAtPurchase?: Prisma.FloatNullableFilter<"Order"> | number | null
+  productNameAtPurchase?: Prisma.StringNullableFilter<"Order"> | string | null
+  countryAtPurchase?: Prisma.StringNullableFilter<"Order"> | string | null
+  dataAtPurchase?: Prisma.StringNullableFilter<"Order"> | string | null
+  validityDaysAtPurchase?: Prisma.IntNullableFilter<"Order"> | number | null
+  providerAtPurchase?: Prisma.StringNullableFilter<"Order"> | string | null
+  providerProductIdAtPurchase?: Prisma.StringNullableFilter<"Order"> | string | null
+  stripeSessionId?: Prisma.StringNullableFilter<"Order"> | string | null
+  stripePaymentIntentId?: Prisma.StringNullableFilter<"Order"> | string | null
+  paidAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  legalAcceptedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  legalVersion?: Prisma.StringNullableFilter<"Order"> | string | null
+  immediateDeliveryAcceptedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  immediateDeliveryVersion?: Prisma.StringNullableFilter<"Order"> | string | null
   payment?: Prisma.StringFilter<"Order"> | string
   fulfillment?: Prisma.StringFilter<"Order"> | string
   esimStatus?: Prisma.StringNullableFilter<"Order"> | string | null
@@ -355,6 +495,22 @@ export type OrderOrderByWithRelationInput = {
   customer?: Prisma.SortOrder
   customerId?: Prisma.SortOrderInput | Prisma.SortOrder
   productId?: Prisma.SortOrder
+  amount?: Prisma.SortOrderInput | Prisma.SortOrder
+  currency?: Prisma.SortOrderInput | Prisma.SortOrder
+  buyPriceAtPurchase?: Prisma.SortOrderInput | Prisma.SortOrder
+  productNameAtPurchase?: Prisma.SortOrderInput | Prisma.SortOrder
+  countryAtPurchase?: Prisma.SortOrderInput | Prisma.SortOrder
+  dataAtPurchase?: Prisma.SortOrderInput | Prisma.SortOrder
+  validityDaysAtPurchase?: Prisma.SortOrderInput | Prisma.SortOrder
+  providerAtPurchase?: Prisma.SortOrderInput | Prisma.SortOrder
+  providerProductIdAtPurchase?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeSessionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripePaymentIntentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  paidAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  legalAcceptedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  legalVersion?: Prisma.SortOrderInput | Prisma.SortOrder
+  immediateDeliveryAcceptedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  immediateDeliveryVersion?: Prisma.SortOrderInput | Prisma.SortOrder
   payment?: Prisma.SortOrder
   fulfillment?: Prisma.SortOrder
   esimStatus?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -378,12 +534,28 @@ export type OrderOrderByWithRelationInput = {
 export type OrderWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   orderNumber?: string
+  stripeSessionId?: string
   AND?: Prisma.OrderWhereInput | Prisma.OrderWhereInput[]
   OR?: Prisma.OrderWhereInput[]
   NOT?: Prisma.OrderWhereInput | Prisma.OrderWhereInput[]
   customer?: Prisma.StringFilter<"Order"> | string
   customerId?: Prisma.StringNullableFilter<"Order"> | string | null
   productId?: Prisma.StringFilter<"Order"> | string
+  amount?: Prisma.FloatNullableFilter<"Order"> | number | null
+  currency?: Prisma.StringNullableFilter<"Order"> | string | null
+  buyPriceAtPurchase?: Prisma.FloatNullableFilter<"Order"> | number | null
+  productNameAtPurchase?: Prisma.StringNullableFilter<"Order"> | string | null
+  countryAtPurchase?: Prisma.StringNullableFilter<"Order"> | string | null
+  dataAtPurchase?: Prisma.StringNullableFilter<"Order"> | string | null
+  validityDaysAtPurchase?: Prisma.IntNullableFilter<"Order"> | number | null
+  providerAtPurchase?: Prisma.StringNullableFilter<"Order"> | string | null
+  providerProductIdAtPurchase?: Prisma.StringNullableFilter<"Order"> | string | null
+  stripePaymentIntentId?: Prisma.StringNullableFilter<"Order"> | string | null
+  paidAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  legalAcceptedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  legalVersion?: Prisma.StringNullableFilter<"Order"> | string | null
+  immediateDeliveryAcceptedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  immediateDeliveryVersion?: Prisma.StringNullableFilter<"Order"> | string | null
   payment?: Prisma.StringFilter<"Order"> | string
   fulfillment?: Prisma.StringFilter<"Order"> | string
   esimStatus?: Prisma.StringNullableFilter<"Order"> | string | null
@@ -402,7 +574,7 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   customerAccount?: Prisma.XOR<Prisma.CustomerNullableScalarRelationFilter, Prisma.CustomerWhereInput> | null
   supportRequests?: Prisma.SupportRequestListRelationFilter
   customerEvents?: Prisma.CustomerEventListRelationFilter
-}, "id" | "orderNumber">
+}, "id" | "orderNumber" | "stripeSessionId">
 
 export type OrderOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -410,6 +582,22 @@ export type OrderOrderByWithAggregationInput = {
   customer?: Prisma.SortOrder
   customerId?: Prisma.SortOrderInput | Prisma.SortOrder
   productId?: Prisma.SortOrder
+  amount?: Prisma.SortOrderInput | Prisma.SortOrder
+  currency?: Prisma.SortOrderInput | Prisma.SortOrder
+  buyPriceAtPurchase?: Prisma.SortOrderInput | Prisma.SortOrder
+  productNameAtPurchase?: Prisma.SortOrderInput | Prisma.SortOrder
+  countryAtPurchase?: Prisma.SortOrderInput | Prisma.SortOrder
+  dataAtPurchase?: Prisma.SortOrderInput | Prisma.SortOrder
+  validityDaysAtPurchase?: Prisma.SortOrderInput | Prisma.SortOrder
+  providerAtPurchase?: Prisma.SortOrderInput | Prisma.SortOrder
+  providerProductIdAtPurchase?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeSessionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripePaymentIntentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  paidAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  legalAcceptedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  legalVersion?: Prisma.SortOrderInput | Prisma.SortOrder
+  immediateDeliveryAcceptedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  immediateDeliveryVersion?: Prisma.SortOrderInput | Prisma.SortOrder
   payment?: Prisma.SortOrder
   fulfillment?: Prisma.SortOrder
   esimStatus?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -441,6 +629,22 @@ export type OrderScalarWhereWithAggregatesInput = {
   customer?: Prisma.StringWithAggregatesFilter<"Order"> | string
   customerId?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   productId?: Prisma.StringWithAggregatesFilter<"Order"> | string
+  amount?: Prisma.FloatNullableWithAggregatesFilter<"Order"> | number | null
+  currency?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  buyPriceAtPurchase?: Prisma.FloatNullableWithAggregatesFilter<"Order"> | number | null
+  productNameAtPurchase?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  countryAtPurchase?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  dataAtPurchase?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  validityDaysAtPurchase?: Prisma.IntNullableWithAggregatesFilter<"Order"> | number | null
+  providerAtPurchase?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  providerProductIdAtPurchase?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  stripeSessionId?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  stripePaymentIntentId?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  paidAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
+  legalAcceptedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
+  legalVersion?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  immediateDeliveryAcceptedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
+  immediateDeliveryVersion?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   payment?: Prisma.StringWithAggregatesFilter<"Order"> | string
   fulfillment?: Prisma.StringWithAggregatesFilter<"Order"> | string
   esimStatus?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
@@ -463,6 +667,22 @@ export type OrderCreateInput = {
   orderNumber?: string | null
   customer: string
   productId: string
+  amount?: number | null
+  currency?: string | null
+  buyPriceAtPurchase?: number | null
+  productNameAtPurchase?: string | null
+  countryAtPurchase?: string | null
+  dataAtPurchase?: string | null
+  validityDaysAtPurchase?: number | null
+  providerAtPurchase?: string | null
+  providerProductIdAtPurchase?: string | null
+  stripeSessionId?: string | null
+  stripePaymentIntentId?: string | null
+  paidAt?: Date | string | null
+  legalAcceptedAt?: Date | string | null
+  legalVersion?: string | null
+  immediateDeliveryAcceptedAt?: Date | string | null
+  immediateDeliveryVersion?: string | null
   payment: string
   fulfillment: string
   esimStatus?: string | null
@@ -489,6 +709,22 @@ export type OrderUncheckedCreateInput = {
   customer: string
   customerId?: string | null
   productId: string
+  amount?: number | null
+  currency?: string | null
+  buyPriceAtPurchase?: number | null
+  productNameAtPurchase?: string | null
+  countryAtPurchase?: string | null
+  dataAtPurchase?: string | null
+  validityDaysAtPurchase?: number | null
+  providerAtPurchase?: string | null
+  providerProductIdAtPurchase?: string | null
+  stripeSessionId?: string | null
+  stripePaymentIntentId?: string | null
+  paidAt?: Date | string | null
+  legalAcceptedAt?: Date | string | null
+  legalVersion?: string | null
+  immediateDeliveryAcceptedAt?: Date | string | null
+  immediateDeliveryVersion?: string | null
   payment: string
   fulfillment: string
   esimStatus?: string | null
@@ -513,6 +749,22 @@ export type OrderUpdateInput = {
   orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customer?: Prisma.StringFieldUpdateOperationsInput | string
   productId?: Prisma.StringFieldUpdateOperationsInput | string
+  amount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  buyPriceAtPurchase?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  productNameAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dataAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  validityDaysAtPurchase?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  providerAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerProductIdAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  legalAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  legalVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  immediateDeliveryAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  immediateDeliveryVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payment?: Prisma.StringFieldUpdateOperationsInput | string
   fulfillment?: Prisma.StringFieldUpdateOperationsInput | string
   esimStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -539,6 +791,22 @@ export type OrderUncheckedUpdateInput = {
   customer?: Prisma.StringFieldUpdateOperationsInput | string
   customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productId?: Prisma.StringFieldUpdateOperationsInput | string
+  amount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  buyPriceAtPurchase?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  productNameAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dataAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  validityDaysAtPurchase?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  providerAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerProductIdAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  legalAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  legalVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  immediateDeliveryAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  immediateDeliveryVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payment?: Prisma.StringFieldUpdateOperationsInput | string
   fulfillment?: Prisma.StringFieldUpdateOperationsInput | string
   esimStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -564,6 +832,22 @@ export type OrderCreateManyInput = {
   customer: string
   customerId?: string | null
   productId: string
+  amount?: number | null
+  currency?: string | null
+  buyPriceAtPurchase?: number | null
+  productNameAtPurchase?: string | null
+  countryAtPurchase?: string | null
+  dataAtPurchase?: string | null
+  validityDaysAtPurchase?: number | null
+  providerAtPurchase?: string | null
+  providerProductIdAtPurchase?: string | null
+  stripeSessionId?: string | null
+  stripePaymentIntentId?: string | null
+  paidAt?: Date | string | null
+  legalAcceptedAt?: Date | string | null
+  legalVersion?: string | null
+  immediateDeliveryAcceptedAt?: Date | string | null
+  immediateDeliveryVersion?: string | null
   payment: string
   fulfillment: string
   esimStatus?: string | null
@@ -586,6 +870,22 @@ export type OrderUpdateManyMutationInput = {
   orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customer?: Prisma.StringFieldUpdateOperationsInput | string
   productId?: Prisma.StringFieldUpdateOperationsInput | string
+  amount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  buyPriceAtPurchase?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  productNameAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dataAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  validityDaysAtPurchase?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  providerAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerProductIdAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  legalAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  legalVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  immediateDeliveryAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  immediateDeliveryVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payment?: Prisma.StringFieldUpdateOperationsInput | string
   fulfillment?: Prisma.StringFieldUpdateOperationsInput | string
   esimStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -609,6 +909,22 @@ export type OrderUncheckedUpdateManyInput = {
   customer?: Prisma.StringFieldUpdateOperationsInput | string
   customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productId?: Prisma.StringFieldUpdateOperationsInput | string
+  amount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  buyPriceAtPurchase?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  productNameAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dataAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  validityDaysAtPurchase?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  providerAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerProductIdAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  legalAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  legalVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  immediateDeliveryAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  immediateDeliveryVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payment?: Prisma.StringFieldUpdateOperationsInput | string
   fulfillment?: Prisma.StringFieldUpdateOperationsInput | string
   esimStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -642,6 +958,22 @@ export type OrderCountOrderByAggregateInput = {
   customer?: Prisma.SortOrder
   customerId?: Prisma.SortOrder
   productId?: Prisma.SortOrder
+  amount?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
+  buyPriceAtPurchase?: Prisma.SortOrder
+  productNameAtPurchase?: Prisma.SortOrder
+  countryAtPurchase?: Prisma.SortOrder
+  dataAtPurchase?: Prisma.SortOrder
+  validityDaysAtPurchase?: Prisma.SortOrder
+  providerAtPurchase?: Prisma.SortOrder
+  providerProductIdAtPurchase?: Prisma.SortOrder
+  stripeSessionId?: Prisma.SortOrder
+  stripePaymentIntentId?: Prisma.SortOrder
+  paidAt?: Prisma.SortOrder
+  legalAcceptedAt?: Prisma.SortOrder
+  legalVersion?: Prisma.SortOrder
+  immediateDeliveryAcceptedAt?: Prisma.SortOrder
+  immediateDeliveryVersion?: Prisma.SortOrder
   payment?: Prisma.SortOrder
   fulfillment?: Prisma.SortOrder
   esimStatus?: Prisma.SortOrder
@@ -660,6 +992,9 @@ export type OrderCountOrderByAggregateInput = {
 }
 
 export type OrderAvgOrderByAggregateInput = {
+  amount?: Prisma.SortOrder
+  buyPriceAtPurchase?: Prisma.SortOrder
+  validityDaysAtPurchase?: Prisma.SortOrder
   totalDataGb?: Prisma.SortOrder
   usedDataGb?: Prisma.SortOrder
   remainingDataGb?: Prisma.SortOrder
@@ -671,6 +1006,22 @@ export type OrderMaxOrderByAggregateInput = {
   customer?: Prisma.SortOrder
   customerId?: Prisma.SortOrder
   productId?: Prisma.SortOrder
+  amount?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
+  buyPriceAtPurchase?: Prisma.SortOrder
+  productNameAtPurchase?: Prisma.SortOrder
+  countryAtPurchase?: Prisma.SortOrder
+  dataAtPurchase?: Prisma.SortOrder
+  validityDaysAtPurchase?: Prisma.SortOrder
+  providerAtPurchase?: Prisma.SortOrder
+  providerProductIdAtPurchase?: Prisma.SortOrder
+  stripeSessionId?: Prisma.SortOrder
+  stripePaymentIntentId?: Prisma.SortOrder
+  paidAt?: Prisma.SortOrder
+  legalAcceptedAt?: Prisma.SortOrder
+  legalVersion?: Prisma.SortOrder
+  immediateDeliveryAcceptedAt?: Prisma.SortOrder
+  immediateDeliveryVersion?: Prisma.SortOrder
   payment?: Prisma.SortOrder
   fulfillment?: Prisma.SortOrder
   esimStatus?: Prisma.SortOrder
@@ -694,6 +1045,22 @@ export type OrderMinOrderByAggregateInput = {
   customer?: Prisma.SortOrder
   customerId?: Prisma.SortOrder
   productId?: Prisma.SortOrder
+  amount?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
+  buyPriceAtPurchase?: Prisma.SortOrder
+  productNameAtPurchase?: Prisma.SortOrder
+  countryAtPurchase?: Prisma.SortOrder
+  dataAtPurchase?: Prisma.SortOrder
+  validityDaysAtPurchase?: Prisma.SortOrder
+  providerAtPurchase?: Prisma.SortOrder
+  providerProductIdAtPurchase?: Prisma.SortOrder
+  stripeSessionId?: Prisma.SortOrder
+  stripePaymentIntentId?: Prisma.SortOrder
+  paidAt?: Prisma.SortOrder
+  legalAcceptedAt?: Prisma.SortOrder
+  legalVersion?: Prisma.SortOrder
+  immediateDeliveryAcceptedAt?: Prisma.SortOrder
+  immediateDeliveryVersion?: Prisma.SortOrder
   payment?: Prisma.SortOrder
   fulfillment?: Prisma.SortOrder
   esimStatus?: Prisma.SortOrder
@@ -712,6 +1079,9 @@ export type OrderMinOrderByAggregateInput = {
 }
 
 export type OrderSumOrderByAggregateInput = {
+  amount?: Prisma.SortOrder
+  buyPriceAtPurchase?: Prisma.SortOrder
+  validityDaysAtPurchase?: Prisma.SortOrder
   totalDataGb?: Prisma.SortOrder
   usedDataGb?: Prisma.SortOrder
   remainingDataGb?: Prisma.SortOrder
@@ -764,6 +1134,14 @@ export type OrderUncheckedUpdateManyWithoutCustomerAccountNestedInput = {
   deleteMany?: Prisma.OrderScalarWhereInput | Prisma.OrderScalarWhereInput[]
 }
 
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type OrderCreateNestedOneWithoutSupportRequestsInput = {
   create?: Prisma.XOR<Prisma.OrderCreateWithoutSupportRequestsInput, Prisma.OrderUncheckedCreateWithoutSupportRequestsInput>
   connectOrCreate?: Prisma.OrderCreateOrConnectWithoutSupportRequestsInput
@@ -801,6 +1179,22 @@ export type OrderCreateWithoutCustomerAccountInput = {
   orderNumber?: string | null
   customer: string
   productId: string
+  amount?: number | null
+  currency?: string | null
+  buyPriceAtPurchase?: number | null
+  productNameAtPurchase?: string | null
+  countryAtPurchase?: string | null
+  dataAtPurchase?: string | null
+  validityDaysAtPurchase?: number | null
+  providerAtPurchase?: string | null
+  providerProductIdAtPurchase?: string | null
+  stripeSessionId?: string | null
+  stripePaymentIntentId?: string | null
+  paidAt?: Date | string | null
+  legalAcceptedAt?: Date | string | null
+  legalVersion?: string | null
+  immediateDeliveryAcceptedAt?: Date | string | null
+  immediateDeliveryVersion?: string | null
   payment: string
   fulfillment: string
   esimStatus?: string | null
@@ -825,6 +1219,22 @@ export type OrderUncheckedCreateWithoutCustomerAccountInput = {
   orderNumber?: string | null
   customer: string
   productId: string
+  amount?: number | null
+  currency?: string | null
+  buyPriceAtPurchase?: number | null
+  productNameAtPurchase?: string | null
+  countryAtPurchase?: string | null
+  dataAtPurchase?: string | null
+  validityDaysAtPurchase?: number | null
+  providerAtPurchase?: string | null
+  providerProductIdAtPurchase?: string | null
+  stripeSessionId?: string | null
+  stripePaymentIntentId?: string | null
+  paidAt?: Date | string | null
+  legalAcceptedAt?: Date | string | null
+  legalVersion?: string | null
+  immediateDeliveryAcceptedAt?: Date | string | null
+  immediateDeliveryVersion?: string | null
   payment: string
   fulfillment: string
   esimStatus?: string | null
@@ -851,6 +1261,7 @@ export type OrderCreateOrConnectWithoutCustomerAccountInput = {
 
 export type OrderCreateManyCustomerAccountInputEnvelope = {
   data: Prisma.OrderCreateManyCustomerAccountInput | Prisma.OrderCreateManyCustomerAccountInput[]
+  skipDuplicates?: boolean
 }
 
 export type OrderUpsertWithWhereUniqueWithoutCustomerAccountInput = {
@@ -878,6 +1289,22 @@ export type OrderScalarWhereInput = {
   customer?: Prisma.StringFilter<"Order"> | string
   customerId?: Prisma.StringNullableFilter<"Order"> | string | null
   productId?: Prisma.StringFilter<"Order"> | string
+  amount?: Prisma.FloatNullableFilter<"Order"> | number | null
+  currency?: Prisma.StringNullableFilter<"Order"> | string | null
+  buyPriceAtPurchase?: Prisma.FloatNullableFilter<"Order"> | number | null
+  productNameAtPurchase?: Prisma.StringNullableFilter<"Order"> | string | null
+  countryAtPurchase?: Prisma.StringNullableFilter<"Order"> | string | null
+  dataAtPurchase?: Prisma.StringNullableFilter<"Order"> | string | null
+  validityDaysAtPurchase?: Prisma.IntNullableFilter<"Order"> | number | null
+  providerAtPurchase?: Prisma.StringNullableFilter<"Order"> | string | null
+  providerProductIdAtPurchase?: Prisma.StringNullableFilter<"Order"> | string | null
+  stripeSessionId?: Prisma.StringNullableFilter<"Order"> | string | null
+  stripePaymentIntentId?: Prisma.StringNullableFilter<"Order"> | string | null
+  paidAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  legalAcceptedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  legalVersion?: Prisma.StringNullableFilter<"Order"> | string | null
+  immediateDeliveryAcceptedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  immediateDeliveryVersion?: Prisma.StringNullableFilter<"Order"> | string | null
   payment?: Prisma.StringFilter<"Order"> | string
   fulfillment?: Prisma.StringFilter<"Order"> | string
   esimStatus?: Prisma.StringNullableFilter<"Order"> | string | null
@@ -900,6 +1327,22 @@ export type OrderCreateWithoutSupportRequestsInput = {
   orderNumber?: string | null
   customer: string
   productId: string
+  amount?: number | null
+  currency?: string | null
+  buyPriceAtPurchase?: number | null
+  productNameAtPurchase?: string | null
+  countryAtPurchase?: string | null
+  dataAtPurchase?: string | null
+  validityDaysAtPurchase?: number | null
+  providerAtPurchase?: string | null
+  providerProductIdAtPurchase?: string | null
+  stripeSessionId?: string | null
+  stripePaymentIntentId?: string | null
+  paidAt?: Date | string | null
+  legalAcceptedAt?: Date | string | null
+  legalVersion?: string | null
+  immediateDeliveryAcceptedAt?: Date | string | null
+  immediateDeliveryVersion?: string | null
   payment: string
   fulfillment: string
   esimStatus?: string | null
@@ -925,6 +1368,22 @@ export type OrderUncheckedCreateWithoutSupportRequestsInput = {
   customer: string
   customerId?: string | null
   productId: string
+  amount?: number | null
+  currency?: string | null
+  buyPriceAtPurchase?: number | null
+  productNameAtPurchase?: string | null
+  countryAtPurchase?: string | null
+  dataAtPurchase?: string | null
+  validityDaysAtPurchase?: number | null
+  providerAtPurchase?: string | null
+  providerProductIdAtPurchase?: string | null
+  stripeSessionId?: string | null
+  stripePaymentIntentId?: string | null
+  paidAt?: Date | string | null
+  legalAcceptedAt?: Date | string | null
+  legalVersion?: string | null
+  immediateDeliveryAcceptedAt?: Date | string | null
+  immediateDeliveryVersion?: string | null
   payment: string
   fulfillment: string
   esimStatus?: string | null
@@ -964,6 +1423,22 @@ export type OrderUpdateWithoutSupportRequestsInput = {
   orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customer?: Prisma.StringFieldUpdateOperationsInput | string
   productId?: Prisma.StringFieldUpdateOperationsInput | string
+  amount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  buyPriceAtPurchase?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  productNameAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dataAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  validityDaysAtPurchase?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  providerAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerProductIdAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  legalAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  legalVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  immediateDeliveryAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  immediateDeliveryVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payment?: Prisma.StringFieldUpdateOperationsInput | string
   fulfillment?: Prisma.StringFieldUpdateOperationsInput | string
   esimStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -989,6 +1464,22 @@ export type OrderUncheckedUpdateWithoutSupportRequestsInput = {
   customer?: Prisma.StringFieldUpdateOperationsInput | string
   customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productId?: Prisma.StringFieldUpdateOperationsInput | string
+  amount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  buyPriceAtPurchase?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  productNameAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dataAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  validityDaysAtPurchase?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  providerAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerProductIdAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  legalAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  legalVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  immediateDeliveryAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  immediateDeliveryVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payment?: Prisma.StringFieldUpdateOperationsInput | string
   fulfillment?: Prisma.StringFieldUpdateOperationsInput | string
   esimStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1012,6 +1503,22 @@ export type OrderCreateWithoutCustomerEventsInput = {
   orderNumber?: string | null
   customer: string
   productId: string
+  amount?: number | null
+  currency?: string | null
+  buyPriceAtPurchase?: number | null
+  productNameAtPurchase?: string | null
+  countryAtPurchase?: string | null
+  dataAtPurchase?: string | null
+  validityDaysAtPurchase?: number | null
+  providerAtPurchase?: string | null
+  providerProductIdAtPurchase?: string | null
+  stripeSessionId?: string | null
+  stripePaymentIntentId?: string | null
+  paidAt?: Date | string | null
+  legalAcceptedAt?: Date | string | null
+  legalVersion?: string | null
+  immediateDeliveryAcceptedAt?: Date | string | null
+  immediateDeliveryVersion?: string | null
   payment: string
   fulfillment: string
   esimStatus?: string | null
@@ -1037,6 +1544,22 @@ export type OrderUncheckedCreateWithoutCustomerEventsInput = {
   customer: string
   customerId?: string | null
   productId: string
+  amount?: number | null
+  currency?: string | null
+  buyPriceAtPurchase?: number | null
+  productNameAtPurchase?: string | null
+  countryAtPurchase?: string | null
+  dataAtPurchase?: string | null
+  validityDaysAtPurchase?: number | null
+  providerAtPurchase?: string | null
+  providerProductIdAtPurchase?: string | null
+  stripeSessionId?: string | null
+  stripePaymentIntentId?: string | null
+  paidAt?: Date | string | null
+  legalAcceptedAt?: Date | string | null
+  legalVersion?: string | null
+  immediateDeliveryAcceptedAt?: Date | string | null
+  immediateDeliveryVersion?: string | null
   payment: string
   fulfillment: string
   esimStatus?: string | null
@@ -1076,6 +1599,22 @@ export type OrderUpdateWithoutCustomerEventsInput = {
   orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customer?: Prisma.StringFieldUpdateOperationsInput | string
   productId?: Prisma.StringFieldUpdateOperationsInput | string
+  amount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  buyPriceAtPurchase?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  productNameAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dataAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  validityDaysAtPurchase?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  providerAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerProductIdAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  legalAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  legalVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  immediateDeliveryAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  immediateDeliveryVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payment?: Prisma.StringFieldUpdateOperationsInput | string
   fulfillment?: Prisma.StringFieldUpdateOperationsInput | string
   esimStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1101,6 +1640,22 @@ export type OrderUncheckedUpdateWithoutCustomerEventsInput = {
   customer?: Prisma.StringFieldUpdateOperationsInput | string
   customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   productId?: Prisma.StringFieldUpdateOperationsInput | string
+  amount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  buyPriceAtPurchase?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  productNameAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dataAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  validityDaysAtPurchase?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  providerAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerProductIdAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  legalAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  legalVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  immediateDeliveryAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  immediateDeliveryVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payment?: Prisma.StringFieldUpdateOperationsInput | string
   fulfillment?: Prisma.StringFieldUpdateOperationsInput | string
   esimStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1124,6 +1679,22 @@ export type OrderCreateManyCustomerAccountInput = {
   orderNumber?: string | null
   customer: string
   productId: string
+  amount?: number | null
+  currency?: string | null
+  buyPriceAtPurchase?: number | null
+  productNameAtPurchase?: string | null
+  countryAtPurchase?: string | null
+  dataAtPurchase?: string | null
+  validityDaysAtPurchase?: number | null
+  providerAtPurchase?: string | null
+  providerProductIdAtPurchase?: string | null
+  stripeSessionId?: string | null
+  stripePaymentIntentId?: string | null
+  paidAt?: Date | string | null
+  legalAcceptedAt?: Date | string | null
+  legalVersion?: string | null
+  immediateDeliveryAcceptedAt?: Date | string | null
+  immediateDeliveryVersion?: string | null
   payment: string
   fulfillment: string
   esimStatus?: string | null
@@ -1146,6 +1717,22 @@ export type OrderUpdateWithoutCustomerAccountInput = {
   orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customer?: Prisma.StringFieldUpdateOperationsInput | string
   productId?: Prisma.StringFieldUpdateOperationsInput | string
+  amount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  buyPriceAtPurchase?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  productNameAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dataAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  validityDaysAtPurchase?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  providerAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerProductIdAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  legalAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  legalVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  immediateDeliveryAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  immediateDeliveryVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payment?: Prisma.StringFieldUpdateOperationsInput | string
   fulfillment?: Prisma.StringFieldUpdateOperationsInput | string
   esimStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1170,6 +1757,22 @@ export type OrderUncheckedUpdateWithoutCustomerAccountInput = {
   orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customer?: Prisma.StringFieldUpdateOperationsInput | string
   productId?: Prisma.StringFieldUpdateOperationsInput | string
+  amount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  buyPriceAtPurchase?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  productNameAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dataAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  validityDaysAtPurchase?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  providerAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerProductIdAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  legalAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  legalVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  immediateDeliveryAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  immediateDeliveryVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payment?: Prisma.StringFieldUpdateOperationsInput | string
   fulfillment?: Prisma.StringFieldUpdateOperationsInput | string
   esimStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1194,6 +1797,22 @@ export type OrderUncheckedUpdateManyWithoutCustomerAccountInput = {
   orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   customer?: Prisma.StringFieldUpdateOperationsInput | string
   productId?: Prisma.StringFieldUpdateOperationsInput | string
+  amount?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  currency?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  buyPriceAtPurchase?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  productNameAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  countryAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dataAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  validityDaysAtPurchase?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  providerAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerProductIdAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  legalAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  legalVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  immediateDeliveryAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  immediateDeliveryVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   payment?: Prisma.StringFieldUpdateOperationsInput | string
   fulfillment?: Prisma.StringFieldUpdateOperationsInput | string
   esimStatus?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1257,6 +1876,22 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   customer?: boolean
   customerId?: boolean
   productId?: boolean
+  amount?: boolean
+  currency?: boolean
+  buyPriceAtPurchase?: boolean
+  productNameAtPurchase?: boolean
+  countryAtPurchase?: boolean
+  dataAtPurchase?: boolean
+  validityDaysAtPurchase?: boolean
+  providerAtPurchase?: boolean
+  providerProductIdAtPurchase?: boolean
+  stripeSessionId?: boolean
+  stripePaymentIntentId?: boolean
+  paidAt?: boolean
+  legalAcceptedAt?: boolean
+  legalVersion?: boolean
+  immediateDeliveryAcceptedAt?: boolean
+  immediateDeliveryVersion?: boolean
   payment?: boolean
   fulfillment?: boolean
   esimStatus?: boolean
@@ -1284,6 +1919,22 @@ export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   customer?: boolean
   customerId?: boolean
   productId?: boolean
+  amount?: boolean
+  currency?: boolean
+  buyPriceAtPurchase?: boolean
+  productNameAtPurchase?: boolean
+  countryAtPurchase?: boolean
+  dataAtPurchase?: boolean
+  validityDaysAtPurchase?: boolean
+  providerAtPurchase?: boolean
+  providerProductIdAtPurchase?: boolean
+  stripeSessionId?: boolean
+  stripePaymentIntentId?: boolean
+  paidAt?: boolean
+  legalAcceptedAt?: boolean
+  legalVersion?: boolean
+  immediateDeliveryAcceptedAt?: boolean
+  immediateDeliveryVersion?: boolean
   payment?: boolean
   fulfillment?: boolean
   esimStatus?: boolean
@@ -1308,6 +1959,22 @@ export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   customer?: boolean
   customerId?: boolean
   productId?: boolean
+  amount?: boolean
+  currency?: boolean
+  buyPriceAtPurchase?: boolean
+  productNameAtPurchase?: boolean
+  countryAtPurchase?: boolean
+  dataAtPurchase?: boolean
+  validityDaysAtPurchase?: boolean
+  providerAtPurchase?: boolean
+  providerProductIdAtPurchase?: boolean
+  stripeSessionId?: boolean
+  stripePaymentIntentId?: boolean
+  paidAt?: boolean
+  legalAcceptedAt?: boolean
+  legalVersion?: boolean
+  immediateDeliveryAcceptedAt?: boolean
+  immediateDeliveryVersion?: boolean
   payment?: boolean
   fulfillment?: boolean
   esimStatus?: boolean
@@ -1332,6 +1999,22 @@ export type OrderSelectScalar = {
   customer?: boolean
   customerId?: boolean
   productId?: boolean
+  amount?: boolean
+  currency?: boolean
+  buyPriceAtPurchase?: boolean
+  productNameAtPurchase?: boolean
+  countryAtPurchase?: boolean
+  dataAtPurchase?: boolean
+  validityDaysAtPurchase?: boolean
+  providerAtPurchase?: boolean
+  providerProductIdAtPurchase?: boolean
+  stripeSessionId?: boolean
+  stripePaymentIntentId?: boolean
+  paidAt?: boolean
+  legalAcceptedAt?: boolean
+  legalVersion?: boolean
+  immediateDeliveryAcceptedAt?: boolean
+  immediateDeliveryVersion?: boolean
   payment?: boolean
   fulfillment?: boolean
   esimStatus?: boolean
@@ -1349,7 +2032,7 @@ export type OrderSelectScalar = {
   createdAt?: boolean
 }
 
-export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderNumber" | "customer" | "customerId" | "productId" | "payment" | "fulfillment" | "esimStatus" | "providerOrderId" | "iccid" | "qrCodeUrl" | "activationCode" | "iosInstallUrl" | "androidInstallUrl" | "totalDataGb" | "usedDataGb" | "remainingDataGb" | "expiresAt" | "lastUsageSyncAt" | "createdAt", ExtArgs["result"]["order"]>
+export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderNumber" | "customer" | "customerId" | "productId" | "amount" | "currency" | "buyPriceAtPurchase" | "productNameAtPurchase" | "countryAtPurchase" | "dataAtPurchase" | "validityDaysAtPurchase" | "providerAtPurchase" | "providerProductIdAtPurchase" | "stripeSessionId" | "stripePaymentIntentId" | "paidAt" | "legalAcceptedAt" | "legalVersion" | "immediateDeliveryAcceptedAt" | "immediateDeliveryVersion" | "payment" | "fulfillment" | "esimStatus" | "providerOrderId" | "iccid" | "qrCodeUrl" | "activationCode" | "iosInstallUrl" | "androidInstallUrl" | "totalDataGb" | "usedDataGb" | "remainingDataGb" | "expiresAt" | "lastUsageSyncAt" | "createdAt", ExtArgs["result"]["order"]>
 export type OrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   customerAccount?: boolean | Prisma.Order$customerAccountArgs<ExtArgs>
   supportRequests?: boolean | Prisma.Order$supportRequestsArgs<ExtArgs>
@@ -1376,6 +2059,22 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     customer: string
     customerId: string | null
     productId: string
+    amount: number | null
+    currency: string | null
+    buyPriceAtPurchase: number | null
+    productNameAtPurchase: string | null
+    countryAtPurchase: string | null
+    dataAtPurchase: string | null
+    validityDaysAtPurchase: number | null
+    providerAtPurchase: string | null
+    providerProductIdAtPurchase: string | null
+    stripeSessionId: string | null
+    stripePaymentIntentId: string | null
+    paidAt: Date | null
+    legalAcceptedAt: Date | null
+    legalVersion: string | null
+    immediateDeliveryAcceptedAt: Date | null
+    immediateDeliveryVersion: string | null
     payment: string
     fulfillment: string
     esimStatus: string | null
@@ -1822,6 +2521,22 @@ export interface OrderFieldRefs {
   readonly customer: Prisma.FieldRef<"Order", 'String'>
   readonly customerId: Prisma.FieldRef<"Order", 'String'>
   readonly productId: Prisma.FieldRef<"Order", 'String'>
+  readonly amount: Prisma.FieldRef<"Order", 'Float'>
+  readonly currency: Prisma.FieldRef<"Order", 'String'>
+  readonly buyPriceAtPurchase: Prisma.FieldRef<"Order", 'Float'>
+  readonly productNameAtPurchase: Prisma.FieldRef<"Order", 'String'>
+  readonly countryAtPurchase: Prisma.FieldRef<"Order", 'String'>
+  readonly dataAtPurchase: Prisma.FieldRef<"Order", 'String'>
+  readonly validityDaysAtPurchase: Prisma.FieldRef<"Order", 'Int'>
+  readonly providerAtPurchase: Prisma.FieldRef<"Order", 'String'>
+  readonly providerProductIdAtPurchase: Prisma.FieldRef<"Order", 'String'>
+  readonly stripeSessionId: Prisma.FieldRef<"Order", 'String'>
+  readonly stripePaymentIntentId: Prisma.FieldRef<"Order", 'String'>
+  readonly paidAt: Prisma.FieldRef<"Order", 'DateTime'>
+  readonly legalAcceptedAt: Prisma.FieldRef<"Order", 'DateTime'>
+  readonly legalVersion: Prisma.FieldRef<"Order", 'String'>
+  readonly immediateDeliveryAcceptedAt: Prisma.FieldRef<"Order", 'DateTime'>
+  readonly immediateDeliveryVersion: Prisma.FieldRef<"Order", 'String'>
   readonly payment: Prisma.FieldRef<"Order", 'String'>
   readonly fulfillment: Prisma.FieldRef<"Order", 'String'>
   readonly esimStatus: Prisma.FieldRef<"Order", 'String'>
@@ -2071,6 +2786,7 @@ export type OrderCreateManyArgs<ExtArgs extends runtime.Types.Extensions.Interna
    * The data used to create many Orders.
    */
   data: Prisma.OrderCreateManyInput | Prisma.OrderCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -2089,6 +2805,7 @@ export type OrderCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extension
    * The data used to create many Orders.
    */
   data: Prisma.OrderCreateManyInput | Prisma.OrderCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

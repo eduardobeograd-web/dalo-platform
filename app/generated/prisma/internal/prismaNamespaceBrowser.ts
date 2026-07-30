@@ -55,10 +55,15 @@ export const ModelName = {
   Product: 'Product',
   Customer: 'Customer',
   CustomerSession: 'CustomerSession',
+  PasswordResetToken: 'PasswordResetToken',
   Order: 'Order',
   SupportRequest: 'SupportRequest',
   CustomerEvent: 'CustomerEvent',
-  ProviderConfig: 'ProviderConfig'
+  ProviderConfig: 'ProviderConfig',
+  DestinationPage: 'DestinationPage',
+  AdminUser: 'AdminUser',
+  AdminSession: 'AdminSession',
+  AdminAuditLog: 'AdminAuditLog'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -68,6 +73,9 @@ export type ModelName = (typeof ModelName)[keyof typeof ModelName]
  */
 
 export const TransactionIsolationLevel = runtime.makeStrictEnum({
+  ReadUncommitted: 'ReadUncommitted',
+  ReadCommitted: 'ReadCommitted',
+  RepeatableRead: 'RepeatableRead',
   Serializable: 'Serializable'
 } as const)
 
@@ -148,12 +156,40 @@ export const CustomerSessionScalarFieldEnum = {
 export type CustomerSessionScalarFieldEnum = (typeof CustomerSessionScalarFieldEnum)[keyof typeof CustomerSessionScalarFieldEnum]
 
 
+export const PasswordResetTokenScalarFieldEnum = {
+  id: 'id',
+  customerId: 'customerId',
+  tokenHash: 'tokenHash',
+  expiresAt: 'expiresAt',
+  usedAt: 'usedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type PasswordResetTokenScalarFieldEnum = (typeof PasswordResetTokenScalarFieldEnum)[keyof typeof PasswordResetTokenScalarFieldEnum]
+
+
 export const OrderScalarFieldEnum = {
   id: 'id',
   orderNumber: 'orderNumber',
   customer: 'customer',
   customerId: 'customerId',
   productId: 'productId',
+  amount: 'amount',
+  currency: 'currency',
+  buyPriceAtPurchase: 'buyPriceAtPurchase',
+  productNameAtPurchase: 'productNameAtPurchase',
+  countryAtPurchase: 'countryAtPurchase',
+  dataAtPurchase: 'dataAtPurchase',
+  validityDaysAtPurchase: 'validityDaysAtPurchase',
+  providerAtPurchase: 'providerAtPurchase',
+  providerProductIdAtPurchase: 'providerProductIdAtPurchase',
+  stripeSessionId: 'stripeSessionId',
+  stripePaymentIntentId: 'stripePaymentIntentId',
+  paidAt: 'paidAt',
+  legalAcceptedAt: 'legalAcceptedAt',
+  legalVersion: 'legalVersion',
+  immediateDeliveryAcceptedAt: 'immediateDeliveryAcceptedAt',
+  immediateDeliveryVersion: 'immediateDeliveryVersion',
   payment: 'payment',
   fulfillment: 'fulfillment',
   esimStatus: 'esimStatus',
@@ -228,6 +264,72 @@ export const ProviderConfigScalarFieldEnum = {
 export type ProviderConfigScalarFieldEnum = (typeof ProviderConfigScalarFieldEnum)[keyof typeof ProviderConfigScalarFieldEnum]
 
 
+export const DestinationPageScalarFieldEnum = {
+  id: 'id',
+  slug: 'slug',
+  countryName: 'countryName',
+  displayName: 'displayName',
+  seoTitle: 'seoTitle',
+  seoDescription: 'seoDescription',
+  headline: 'headline',
+  intro: 'intro',
+  heroImage: 'heroImage',
+  heroImageAlt: 'heroImageAlt',
+  coverageText: 'coverageText',
+  activationText: 'activationText',
+  compatibilityText: 'compatibilityText',
+  hotspotText: 'hotspotText',
+  faq: 'faq',
+  published: 'published',
+  indexable: 'indexable',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DestinationPageScalarFieldEnum = (typeof DestinationPageScalarFieldEnum)[keyof typeof DestinationPageScalarFieldEnum]
+
+
+export const AdminUserScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  name: 'name',
+  passwordHash: 'passwordHash',
+  role: 'role',
+  permissions: 'permissions',
+  active: 'active',
+  mustChangePassword: 'mustChangePassword',
+  lastLoginAt: 'lastLoginAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AdminUserScalarFieldEnum = (typeof AdminUserScalarFieldEnum)[keyof typeof AdminUserScalarFieldEnum]
+
+
+export const AdminSessionScalarFieldEnum = {
+  id: 'id',
+  adminUserId: 'adminUserId',
+  tokenHash: 'tokenHash',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+} as const
+
+export type AdminSessionScalarFieldEnum = (typeof AdminSessionScalarFieldEnum)[keyof typeof AdminSessionScalarFieldEnum]
+
+
+export const AdminAuditLogScalarFieldEnum = {
+  id: 'id',
+  adminUserId: 'adminUserId',
+  action: 'action',
+  resource: 'resource',
+  resourceId: 'resourceId',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type AdminAuditLogScalarFieldEnum = (typeof AdminAuditLogScalarFieldEnum)[keyof typeof AdminAuditLogScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -242,6 +344,21 @@ export const NullableJsonNullValueInput = {
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
+export const QueryMode = {
+  default: 'default',
+  insensitive: 'insensitive'
+} as const
+
+export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 
 
 export const NullsOrder = {
@@ -259,12 +376,4 @@ export const JsonNullValueFilter = {
 } as const
 
 export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
-
-
-export const QueryMode = {
-  default: 'default',
-  insensitive: 'insensitive'
-} as const
-
-export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
 

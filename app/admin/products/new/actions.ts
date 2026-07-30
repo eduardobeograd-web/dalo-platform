@@ -2,8 +2,11 @@
 
 import { redirect } from "next/navigation";
 import { prisma } from "../../../../lib/db";
+import { ADMIN_PERMISSIONS } from "../../../../lib/admin-permissions";
+import { requireAdminPermission } from "../../../../lib/admin-auth";
 
 export async function createProduct(formData: FormData) {
+  await requireAdminPermission(ADMIN_PERMISSIONS.PRODUCTS_WRITE);
   const country = String(formData.get("country") || "");
   const region = String(formData.get("region") || "");
   const name = String(formData.get("name") || "");

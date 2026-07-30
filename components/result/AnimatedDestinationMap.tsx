@@ -73,7 +73,7 @@ export default function AnimatedDestinationMap({
       <div className="absolute inset-0 opacity-15 bg-[linear-gradient(rgba(255,255,255,0.16)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.16)_1px,transparent_1px)] bg-[size:42px_42px]" />
 
       <img
-        src="/world-map.jpg"
+        src="/world-map.webp"
         alt=""
         aria-hidden="true"
         className="absolute left-1/2 top-[42%] w-[125%] max-w-none -translate-x-1/2 -translate-y-1/2 opacity-75 invert brightness-0"

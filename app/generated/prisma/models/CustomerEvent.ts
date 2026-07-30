@@ -534,6 +534,7 @@ export type CustomerEventCreateOrConnectWithoutProductInput = {
 
 export type CustomerEventCreateManyProductInputEnvelope = {
   data: Prisma.CustomerEventCreateManyProductInput | Prisma.CustomerEventCreateManyProductInput[]
+  skipDuplicates?: boolean
 }
 
 export type CustomerEventUpsertWithWhereUniqueWithoutProductInput = {
@@ -593,6 +594,7 @@ export type CustomerEventCreateOrConnectWithoutCustomerInput = {
 
 export type CustomerEventCreateManyCustomerInputEnvelope = {
   data: Prisma.CustomerEventCreateManyCustomerInput | Prisma.CustomerEventCreateManyCustomerInput[]
+  skipDuplicates?: boolean
 }
 
 export type CustomerEventUpsertWithWhereUniqueWithoutCustomerInput = {
@@ -638,6 +640,7 @@ export type CustomerEventCreateOrConnectWithoutOrderInput = {
 
 export type CustomerEventCreateManyOrderInputEnvelope = {
   data: Prisma.CustomerEventCreateManyOrderInput | Prisma.CustomerEventCreateManyOrderInput[]
+  skipDuplicates?: boolean
 }
 
 export type CustomerEventUpsertWithWhereUniqueWithoutOrderInput = {
@@ -1532,6 +1535,7 @@ export type CustomerEventCreateManyArgs<ExtArgs extends runtime.Types.Extensions
    * The data used to create many CustomerEvents.
    */
   data: Prisma.CustomerEventCreateManyInput | Prisma.CustomerEventCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1550,6 +1554,7 @@ export type CustomerEventCreateManyAndReturnArgs<ExtArgs extends runtime.Types.E
    * The data used to create many CustomerEvents.
    */
   data: Prisma.CustomerEventCreateManyInput | Prisma.CustomerEventCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

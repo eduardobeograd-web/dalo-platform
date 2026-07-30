@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import { getCurrentCustomer } from "../../../lib/customer-auth";
 import { prisma } from "../../../lib/db";
 import { createSupportRequest } from "./actions";
+import SiteFooter from "../../../components/SiteFooter";
+import SiteHeader from "../../../components/SiteHeader";
 
 export default async function CustomerSupportPage({
   searchParams,
@@ -52,30 +54,9 @@ export default async function CustomerSupportPage({
     : null;
 
   return (
-    <main className="min-h-screen bg-[#F6F8FF] px-6 py-8 text-slate-950">
-      <div className="mx-auto max-w-5xl">
-        <nav className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
-          <a href="/">
-            <img src="/dalo-logo-horizontal.png" alt="DALO" className="h-14 w-auto" />
-          </a>
-
-          <div className="flex flex-wrap items-center gap-3">
-            <a
-              href="/customer/dashboard"
-              className="rounded-2xl border border-slate-200 bg-white px-5 py-3 font-bold text-slate-700 shadow-sm"
-            >
-              Dashboard
-            </a>
-
-            <a
-              href="/customer/logout"
-              className="rounded-2xl bg-slate-950 px-5 py-3 font-bold text-white"
-            >
-              Logout
-            </a>
-          </div>
-        </nav>
-
+    <main className="dalo-page min-h-screen bg-[#F6F8FF] text-slate-950">
+      <SiteHeader mode="account" />
+      <div className="mx-auto max-w-5xl px-6 py-8">
         <section className="mt-12 grid gap-8 lg:grid-cols-[1fr_380px]">
           <div className="rounded-[2.5rem] bg-white p-8 shadow-xl shadow-blue-100 md:p-10">
             <p className="text-sm font-bold uppercase tracking-wide text-blue-600">
@@ -224,6 +205,7 @@ export default async function CustomerSupportPage({
           </aside>
         </section>
       </div>
+      <SiteFooter />
     </main>
   );
 }

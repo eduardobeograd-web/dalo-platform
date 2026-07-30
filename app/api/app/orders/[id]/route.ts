@@ -125,6 +125,24 @@ export async function GET(
           expiresAt: order.expiresAt,
           lastUsageSyncAt: order.lastUsageSyncAt,
           createdAt: order.createdAt,
+          purchase: {
+            amount: order.amount ?? product?.sellPrice ?? null,
+            currency: order.currency || "USD",
+            productName:
+              order.productNameAtPurchase || product?.name || null,
+            country: order.countryAtPurchase || product?.country || null,
+            data: order.dataAtPurchase || product?.data || null,
+            validityDays:
+              order.validityDaysAtPurchase ??
+              product?.validityDays ??
+              null,
+            provider:
+              order.providerAtPurchase || product?.provider || null,
+            providerProductId: order.providerProductIdAtPurchase,
+            stripeSessionId: order.stripeSessionId,
+            stripePaymentIntentId: order.stripePaymentIntentId,
+            paidAt: order.paidAt,
+          },
 
           product: safeProduct(product),
         },

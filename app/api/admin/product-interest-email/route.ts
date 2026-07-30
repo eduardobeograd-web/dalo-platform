@@ -6,6 +6,8 @@ import {
   productInterestHtml,
   productInterestSubject,
 } from "../../../../lib/email-templates/product-interest";
+import { ADMIN_PERMISSIONS } from "../../../../lib/admin-permissions";
+import { requireAdminPermission } from "../../../../lib/admin-auth";
 
 function getMetadataValue(metadata: unknown, key: string) {
   if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) {
@@ -23,6 +25,7 @@ function getMetadataValue(metadata: unknown, key: string) {
 
 export async function POST(request: Request) {
   try {
+    await requireAdminPermission(ADMIN_PERMISSIONS.EVENTS_WRITE);
     const body = await request.json();
     const eventId = String(body.eventId || "");
 
@@ -125,10 +128,10 @@ export async function POST(request: Request) {
       getMetadataValue(productViewEvent.metadata, "price") ||
       String(productViewEvent.product?.sellPrice || "");
 
-    const price = rawPrice.startsWith("€") ? rawPrice : `€${rawPrice}`;
+    const price = rawPrice.startsWith("$") ? rawPrice : `$${rawPrice}`;
 
     const baseUrl =
-      process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+      process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
     const directCheckoutUrl = productViewEvent.productId
       ? `${baseUrl}/checkout?productId=${productViewEvent.productId}`

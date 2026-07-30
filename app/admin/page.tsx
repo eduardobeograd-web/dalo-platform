@@ -3,7 +3,7 @@ import { prisma } from "../../lib/db";
 import { adminLogout } from "./logout";
 
 function formatPrice(value: number) {
-  return `€${value.toFixed(2)}`;
+  return `$${value.toFixed(2)}`;
 }
 
 function getMargin(buyPrice: number, sellPrice: number) {
@@ -62,6 +62,35 @@ export default async function AdminDashboard() {
   ).length;
 
   const paidOrders = orders.filter((order) => order.payment === "Paid").length;
+
+  const openFulfillments = orders.filter(
+    (order) =>
+      order.payment === "Paid" &&
+      order.fulfillment !== "Delivered" &&
+      order.esimStatus !== "ready"
+  );
+
+  const failedPayments = orders.filter(
+    (order) => order.payment === "Failed"
+  );
+
+  const expiredCheckouts = orders.filter(
+    (order) => order.payment === "Expired"
+  );
+
+  const refundedOrders = orders.filter(
+    (order) => order.payment === "Refunded"
+  );
+
+  const operationalOrders = orders
+    .filter(
+      (order) =>
+        openFulfillments.some((item) => item.id === order.id) ||
+        order.payment === "Failed" ||
+        order.payment === "Expired" ||
+        order.payment === "Refunded"
+    )
+    .slice(0, 6);
 
   const openSupportRequests = supportRequests.filter(
     (request) => request.status === "open"
@@ -199,6 +228,103 @@ export default async function AdminDashboard() {
           </p>
         </a>
       </div>
+
+      <section className="mt-8 overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-lg shadow-blue-50">
+        <div className="flex flex-col gap-4 border-b border-slate-100 px-6 py-6 md:flex-row md:items-center md:justify-between md:px-8">
+          <div>
+            <p className="text-sm font-bold uppercase tracking-wide text-blue-600">
+              Operations
+            </p>
+            <h2 className="mt-1 text-2xl font-bold text-slate-950">
+              Orders that need attention
+            </h2>
+          </div>
+
+          <a
+            href="/admin/orders"
+            className="w-fit rounded-xl bg-slate-950 px-5 py-3 text-sm font-bold text-white transition hover:bg-blue-700"
+          >
+            Review all orders
+          </a>
+        </div>
+
+        <div className="grid border-b border-slate-100 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            {
+              label: "Open delivery",
+              value: openFulfillments.length,
+              color: "text-blue-700",
+            },
+            {
+              label: "Failed payments",
+              value: failedPayments.length,
+              color: "text-red-700",
+            },
+            {
+              label: "Expired checkouts",
+              value: expiredCheckouts.length,
+              color: "text-amber-700",
+            },
+            {
+              label: "Refunded",
+              value: refundedOrders.length,
+              color: "text-slate-700",
+            },
+          ].map((item) => (
+            <div
+              key={item.label}
+              className="border-b border-slate-100 px-6 py-5 last:border-b-0 sm:odd:border-r lg:border-b-0 lg:not-last:border-r"
+            >
+              <p className="text-sm font-semibold text-slate-500">
+                {item.label}
+              </p>
+              <p className={`mt-2 text-3xl font-bold ${item.color}`}>
+                {item.value}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <div className="px-6 py-6 md:px-8">
+          {operationalOrders.length === 0 ? (
+            <div className="rounded-2xl bg-emerald-50 px-5 py-4 text-sm font-semibold text-emerald-800">
+              No payment or delivery issues need attention.
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {operationalOrders.map((order) => {
+                const needsDelivery =
+                  order.payment === "Paid" &&
+                  order.fulfillment !== "Delivered" &&
+                  order.esimStatus !== "ready";
+                const status = needsDelivery
+                  ? "Open delivery"
+                  : order.payment;
+
+                return (
+                  <a
+                    key={order.id}
+                    href={`/admin/orders/${order.id}`}
+                    className="flex flex-col gap-2 rounded-2xl border border-slate-200 px-5 py-4 transition hover:border-blue-300 hover:bg-blue-50/50 sm:flex-row sm:items-center sm:justify-between"
+                  >
+                    <div>
+                      <p className="font-bold text-slate-950">
+                        {order.orderNumber || "Order without number"}
+                      </p>
+                      <p className="mt-1 text-sm text-slate-500">
+                        {order.customer}
+                      </p>
+                    </div>
+                    <span className="w-fit rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700">
+                      {status}
+                    </span>
+                  </a>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      </section>
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
         <div className="rounded-[2rem] bg-white p-8 shadow-lg shadow-blue-50">

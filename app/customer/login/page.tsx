@@ -1,4 +1,6 @@
 import { loginCustomer } from "./actions";
+import SiteFooter from "../../../components/SiteFooter";
+import SiteHeader from "../../../components/SiteHeader";
 
 export default async function CustomerLoginPage({
   searchParams,
@@ -9,13 +11,10 @@ export default async function CustomerLoginPage({
   const error = params.error;
 
   return (
-    <main className="min-h-screen bg-[#F6F8FF] px-6 py-10 text-slate-950">
-      <div className="mx-auto max-w-xl">
-        <a href="/" className="inline-block">
-          <img src="/dalo-logo-horizontal.png" alt="DALO" className="h-16 w-auto" />
-        </a>
-
-        <div className="mt-10 rounded-[2rem] bg-white p-8 shadow-xl shadow-blue-100">
+    <main className="dalo-page min-h-screen bg-[#F6F8FF] text-slate-950">
+      <SiteHeader />
+      <div className="mx-auto max-w-xl px-6 py-10">
+        <div className="rounded-[2rem] bg-white p-8 shadow-xl shadow-blue-100">
           <p className="text-sm font-bold uppercase tracking-wide text-blue-600">
             Customer Login
           </p>
@@ -66,12 +65,13 @@ export default async function CustomerLoginPage({
 
           <div className="mt-6 text-sm text-slate-500">
             No password yet?{" "}
-            <a href="/customer/set-password" className="font-bold text-blue-600">
-              Create password
+            <a href="/customer/forgot-password" className="font-bold text-blue-600">
+              Create or reset password
             </a>
           </div>
         </div>
       </div>
+      <SiteFooter />
     </main>
   );
 }

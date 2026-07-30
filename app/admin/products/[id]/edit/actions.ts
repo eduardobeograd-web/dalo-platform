@@ -2,8 +2,11 @@
 
 import { redirect } from "next/navigation";
 import { prisma } from "../../../../../lib/db";
+import { ADMIN_PERMISSIONS } from "../../../../../lib/admin-permissions";
+import { requireAdminPermission } from "../../../../../lib/admin-auth";
 
 export async function updateProduct(productId: string, formData: FormData) {
+  await requireAdminPermission(ADMIN_PERMISSIONS.PRODUCTS_WRITE);
   await prisma.product.update({
     where: {
       id: productId,
@@ -35,6 +38,7 @@ export async function updateProduct(productId: string, formData: FormData) {
 }
 
 export async function deactivateProduct(productId: string) {
+  await requireAdminPermission(ADMIN_PERMISSIONS.PRODUCTS_WRITE);
   await prisma.product.update({
     where: {
       id: productId,

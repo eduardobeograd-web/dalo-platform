@@ -14,7 +14,7 @@ import {
 } from "../actions";
 
 function formatPrice(value: number) {
-  return `€${value.toFixed(2)}`;
+  return `$${value.toFixed(2)}`;
 }
 
 function formatNumber(value?: number | null) {
@@ -109,8 +109,22 @@ export default async function OrderDetailPage({
     },
   });
 
-  const amount = product?.sellPrice || 0;
-  const profit = product ? product.sellPrice - product.buyPrice : 0;
+  const amount = order.amount ?? product?.sellPrice ?? 0;
+  const buyPrice = order.buyPriceAtPurchase ?? product?.buyPrice ?? 0;
+  const profit = amount - buyPrice;
+  const productName =
+    order.productNameAtPurchase || product?.name || "Unknown Product";
+  const destination =
+    order.countryAtPurchase || product?.country || "—";
+  const data = order.dataAtPurchase || product?.data || "—";
+  const validityDays =
+    order.validityDaysAtPurchase || product?.validityDays || 0;
+  const provider =
+    order.providerAtPurchase || product?.provider || "—";
+  const providerProductId =
+    order.providerProductIdAtPurchase ||
+    product?.providerProductId ||
+    "—";
 
   const markPaidWithId = markOrderPaid.bind(null, order.id);
   const markPendingWithId = markOrderPending.bind(null, order.id);
@@ -160,6 +174,11 @@ export default async function OrderDetailPage({
             <p className="mt-1 break-all font-mono text-sm font-bold text-slate-500">
              {order.id}
             </p>
+
+            <p className="mt-3 text-sm font-semibold text-slate-500">Purchased by</p>
+            <p className="mt-1 break-all text-lg font-bold text-slate-950">
+              {order.customer}
+            </p>
           
           </div>
 
@@ -179,6 +198,32 @@ export default async function OrderDetailPage({
           <DetailCard label="Payment Status" value={order.payment} />
           <DetailCard label="eSIM Delivery" value={order.fulfillment} />
           <DetailCard label="eSIM Status" value={order.esimStatus || "pending"} />
+        </div>
+      </div>
+
+      <div className="mb-8 rounded-[2rem] border border-blue-100 bg-blue-50 p-6">
+        <div className="flex flex-col gap-2">
+          <p className="text-sm font-bold uppercase tracking-wide text-blue-600">
+            Customer
+          </p>
+          <h2 className="text-2xl font-bold text-slate-950">
+            Buyer information
+          </h2>
+          <p className="text-slate-600">
+            The customer details connected to this purchase.
+          </p>
+        </div>
+
+        <div className="mt-5 grid gap-4 md:grid-cols-3">
+          <DetailCard label="Customer Email" value={order.customer} />
+          <DetailCard
+            label="Customer Account ID"
+            value={order.customerId || "Guest checkout"}
+          />
+          <DetailCard
+            label="Purchase Date"
+            value={order.createdAt.toLocaleString()}
+          />
         </div>
       </div>
 
@@ -329,20 +374,23 @@ export default async function OrderDetailPage({
 
             {product ? (
               <div className="mt-6 grid gap-5 md:grid-cols-2">
-                <DetailCard label="Name" value={product.name} />
-                <DetailCard label="Destination" value={product.country} />
+                <DetailCard label="Name" value={productName} />
+                <DetailCard label="Destination" value={destination} />
                 <DetailCard label="Region" value={product.region || "—"} />
-                <DetailCard label="Data" value={product.data} />
-                <DetailCard label="Validity" value={`${product.validityDays} Days`} />
+                <DetailCard label="Data" value={data} />
+                <DetailCard
+                  label="Validity"
+                  value={validityDays ? `${validityDays} Days` : "—"}
+                />
                 <DetailCard label="Plan Type" value={product.planType} />
                 <DetailCard label="Usage Fit" value={product.usageFit} />
                 <DetailCard label="Role" value={product.role} />
-                <DetailCard label="Buy Price" value={formatPrice(product.buyPrice)} />
-                <DetailCard label="Sell Price" value={formatPrice(product.sellPrice)} />
-                <DetailCard label="Provider" value={product.provider} />
+                <DetailCard label="Buy Price" value={formatPrice(buyPrice)} />
+                <DetailCard label="Sell Price" value={formatPrice(amount)} />
+                <DetailCard label="Provider" value={provider} />
                 <DetailCard
                   label="Provider Product ID"
-                  value={product.providerProductId}
+                  value={providerProductId}
                 />
               </div>
             ) : (

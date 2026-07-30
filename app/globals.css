@@ -1,26 +1,260 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f6f8ff;
+  --foreground: #10233a;
+  --dalo-blue: #2148c0;
+  --dalo-ink: #10233a;
+  --dalo-warm: #e98b3a;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), sans-serif;
+}
+
+::selection {
+  background: #dbe6ff;
+  color: var(--dalo-ink);
+}
+
+.dalo-page {
+  background-color: #f6f8ff;
+  background-image:
+    radial-gradient(circle at 8% 4%, rgba(33, 72, 192, 0.13), transparent 28rem),
+    radial-gradient(circle at 92% 18%, rgba(14, 165, 183, 0.1), transparent 25rem),
+    linear-gradient(180deg, #f7faff 0%, #f1f5fb 52%, #f7f9fc 100%);
+}
+
+@supports (content-visibility: auto) {
+  .dalo-home > section:not(:first-child),
+  .dalo-home > footer {
+    content-visibility: auto;
+    contain-intrinsic-size: auto 720px;
+  }
+}
+
+.dalo-page :is(input, select, textarea, button, a) {
+  transition-duration: 180ms;
+}
+
+.dalo-page :is(input, select, textarea):focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(33, 72, 192, 0.12);
+}
+
+.dalo-page .bg-blue-600 {
+  background-color: var(--dalo-blue);
+}
+
+.dalo-page .text-blue-600,
+.dalo-page .text-blue-700 {
+  color: var(--dalo-blue);
+}
+
+.dalo-page .border-blue-600 {
+  border-color: var(--dalo-blue);
+}
+
+.dalo-page [class*="shadow-blue-"] {
+  --tw-shadow-color: rgba(30, 64, 120, 0.12);
+}
+
+.dalo-result {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: #eaf1fb !important;
+  background-image:
+    radial-gradient(circle at 10% 8%, rgba(70, 149, 219, 0.2), transparent 28rem),
+    radial-gradient(circle at 88% 18%, rgba(103, 232, 249, 0.16), transparent 24rem),
+    linear-gradient(180deg, #e8f2fa 0, #f4f7fb 34rem, #edf3f9 100%) !important;
+  background-attachment: scroll !important;
+}
+
+.dalo-result::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  content: "";
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 82% 10%, rgba(61, 204, 225, 0.2), transparent 26rem),
+    radial-gradient(circle at 10% 34%, rgba(33, 72, 192, 0.16), transparent 30rem);
+}
+
+.dalo-result [class*="from-blue-"][class*="to-"] {
+  background-color: #10233a;
+  background-image: none;
+}
+
+.dalo-result [class*="bg-purple-"],
+.dalo-result [class*="from-purple-"],
+.dalo-result [class*="to-fuchsia-"] {
+  background-color: #2148c0;
+  background-image: none;
+}
+
+.dalo-result [class*="text-purple-"] {
+  color: #2148c0;
+}
+
+.dalo-result .dalo-upgrade-card,
+.dalo-result [class*="border-purple-"] {
+  align-self: start;
+  padding: 1.1rem !important;
+}
+
+.dalo-result .dalo-upgrade-card {
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(103, 232, 249, 0.9) !important;
+  background:
+    radial-gradient(circle at 92% 10%, rgba(103, 232, 249, 0.22), transparent 13rem),
+    linear-gradient(135deg, #0a2446 0%, #123b86 100%) !important;
+  box-shadow: 0 24px 55px rgba(8, 37, 77, 0.24) !important;
+}
+
+.dalo-result .dalo-upgrade-card::before {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  content: "";
+  background: linear-gradient(90deg, #67e8f9, #ffffff 48%, #67e8f9);
+}
+
+.dalo-result .dalo-upgrade-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 28px 65px rgba(8, 37, 77, 0.3) !important;
+}
+
+.dalo-result .dalo-upgrade-card h2,
+.dalo-result .dalo-upgrade-card h3,
+.dalo-result [class*="border-purple-"] h2,
+.dalo-result [class*="border-purple-"] h3 {
+  font-size: 1.35rem;
+  line-height: 1.2;
+}
+
+.dalo-result .dalo-upgrade-card p,
+.dalo-result [class*="border-purple-"] p {
+  line-height: 1.45;
+}
+
+.dalo-result .dalo-upgrade-card a,
+.dalo-result [class*="border-purple-"] a {
+  padding-top: 0.75rem !important;
+  padding-bottom: 0.75rem !important;
+}
+
+.dalo-result .dalo-upgrade-card a {
+  min-width: 13rem;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  background: #ffffff !important;
+  color: #1738a0 !important;
+  box-shadow: 0 12px 28px rgba(4, 20, 45, 0.24);
+}
+
+.dalo-result .dalo-upgrade-card a:hover {
+  transform: translateY(-1px);
+  background: #eaf2ff !important;
+}
+
+.dalo-result [class*="border-purple-"] {
+  border-color: rgba(148, 163, 184, 0.35) !important;
+  background: rgba(255, 255, 255, 0.82) !important;
+  box-shadow: 0 14px 35px rgba(30, 64, 120, 0.08) !important;
+}
+
+.dalo-result [class*="border-purple-"] a {
+  display: inline-flex !important;
+  width: auto !important;
+  justify-content: center;
+  border: 1px solid #cbd5e1;
+  background: #ffffff !important;
+  color: #334155 !important;
+  box-shadow: none !important;
+}
+
+.dalo-result [class*="border-purple-"] [class*="mt-5"],
+.dalo-result [class*="border-purple-"] [class*="mt-6"] {
+  margin-top: 0.8rem !important;
+}
+
+.dalo-result [class*="border-purple-"] .grid {
+  display: none !important;
+}
+
+.dalo-result .dalo-regional-card p {
+  display: none;
+}
+
+.dalo-result .dalo-regional-card h2 {
+  margin-top: 0.7rem !important;
+}
+
+.dalo-result .dalo-regional-card a {
+  margin-top: 0.85rem !important;
+}
+
+@media (max-width: 640px) {
+  .dalo-result {
+    background-image:
+      radial-gradient(circle at 20% 5%, rgba(70, 149, 219, 0.18), transparent 20rem),
+      linear-gradient(180deg, #e8f2fa 0, #f4f7fb 28rem, #edf3f9 100%);
+  }
+}
+
+.dalo-content-hero {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.92);
+  background-color: rgba(255, 255, 255, 0.94);
+  background-image:
+    linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.99) 0%,
+      rgba(255, 255, 255, 0.96) 52%,
+      rgba(255, 255, 255, 0.72) 78%,
+      rgba(255, 255, 255, 0.52) 100%
+    ),
+    url("/travel/dalo-hero-sicily.webp");
+  background-position: center, center right;
+  background-size: cover, cover;
+  box-shadow: 0 24px 60px rgba(30, 64, 120, 0.13);
+}
+
+.dalo-content-hero::after {
+  position: absolute;
+  inset: 0 0 auto;
+  height: 3px;
+  content: "";
+  background: linear-gradient(90deg, #2148c0 0%, #2148c0 86%, #e98b3a 86%);
+}
+
+.dalo-country-hero {
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.99) 0%,
+    rgba(255, 255, 255, 0.96) 58%,
+    rgba(238, 244, 255, 0.9) 100%
+  ) !important;
+}
+
+@media (max-width: 639px) {
+  .dalo-content-hero {
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.94)),
+      url("/travel/dalo-hero-sicily.webp");
+    background-position: center;
+  }
 }

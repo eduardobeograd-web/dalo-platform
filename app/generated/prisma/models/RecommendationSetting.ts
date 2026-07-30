@@ -1278,6 +1278,7 @@ export type RecommendationSettingCreateManyArgs<ExtArgs extends runtime.Types.Ex
    * The data used to create many RecommendationSettings.
    */
   data: Prisma.RecommendationSettingCreateManyInput | Prisma.RecommendationSettingCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1296,6 +1297,7 @@ export type RecommendationSettingCreateManyAndReturnArgs<ExtArgs extends runtime
    * The data used to create many RecommendationSettings.
    */
   data: Prisma.RecommendationSettingCreateManyInput | Prisma.RecommendationSettingCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**

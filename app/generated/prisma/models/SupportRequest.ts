@@ -592,6 +592,7 @@ export type SupportRequestCreateOrConnectWithoutCustomerInput = {
 
 export type SupportRequestCreateManyCustomerInputEnvelope = {
   data: Prisma.SupportRequestCreateManyCustomerInput | Prisma.SupportRequestCreateManyCustomerInput[]
+  skipDuplicates?: boolean
 }
 
 export type SupportRequestUpsertWithWhereUniqueWithoutCustomerInput = {
@@ -663,6 +664,7 @@ export type SupportRequestCreateOrConnectWithoutOrderInput = {
 
 export type SupportRequestCreateManyOrderInputEnvelope = {
   data: Prisma.SupportRequestCreateManyOrderInput | Prisma.SupportRequestCreateManyOrderInput[]
+  skipDuplicates?: boolean
 }
 
 export type SupportRequestUpsertWithWhereUniqueWithoutOrderInput = {
@@ -1565,6 +1567,7 @@ export type SupportRequestCreateManyArgs<ExtArgs extends runtime.Types.Extension
    * The data used to create many SupportRequests.
    */
   data: Prisma.SupportRequestCreateManyInput | Prisma.SupportRequestCreateManyInput[]
+  skipDuplicates?: boolean
 }
 
 /**
@@ -1583,6 +1586,7 @@ export type SupportRequestCreateManyAndReturnArgs<ExtArgs extends runtime.Types.
    * The data used to create many SupportRequests.
    */
   data: Prisma.SupportRequestCreateManyInput | Prisma.SupportRequestCreateManyInput[]
+  skipDuplicates?: boolean
   /**
    * Choose, which related nodes to fetch as well
    */

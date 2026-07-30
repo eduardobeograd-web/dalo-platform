@@ -1,34 +1,10 @@
-function getDestinationFlag(destination: string) {
-  const flags: Record<string, string> = {
-    Europe: "🇪🇺",
-    Spain: "🇪🇸",
-    Italy: "🇮🇹",
-    Japan: "🇯🇵",
-    Thailand: "🇹🇭",
-    "United States": "🇺🇸",
-    "United States of America": "🇺🇸",
-    "United Kingdom": "🇬🇧",
-    Germany: "🇩🇪",
-    France: "🇫🇷",
-    Portugal: "🇵🇹",
-    Greece: "🇬🇷",
-    Turkey: "🇹🇷",
-    Switzerland: "🇨🇭",
-    Austria: "🇦🇹",
-    Netherlands: "🇳🇱",
-    Croatia: "🇭🇷",
-    Serbia: "🇷🇸",
-    Montenegro: "🇲🇪",
-    Albania: "🇦🇱",
-    Dubai: "🇦🇪",
-    "United Arab Emirates": "🇦🇪",
-  };
-
-  return flags[destination] || "🌍";
-}
+import Image from "next/image";
 
 export default function TravelTicketCard({
   country,
+  planName,
+  data,
+  validityDays,
   usageLabel,
 }: {
   country: string;
@@ -37,103 +13,72 @@ export default function TravelTicketCard({
   validityDays: number;
   usageLabel: string;
 }) {
-  const flag = getDestinationFlag(country);
+  const destinationImage =
+    country.toLowerCase() === "argentina"
+      ? "/travel/argentina-result.webp"
+      : "/travel/dalo-hero-sicily.webp";
 
   return (
-    <div className="relative h-full min-h-[420px] overflow-hidden bg-gradient-to-br from-blue-700 via-blue-800 to-slate-950 p-6 text-white">
-      <div className="pointer-events-none absolute -left-20 -top-20 h-64 w-64 rounded-full bg-cyan-300/25 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-[-90px] right-[-90px] h-72 w-72 rounded-full bg-blue-300/25 blur-3xl" />
+    <div className="relative flex h-full min-h-[400px] overflow-hidden bg-[#0b2750] p-5 text-white">
+      <Image
+        src={destinationImage}
+        alt=""
+        fill
+        preload
+        quality={72}
+        sizes="(max-width: 1023px) 100vw, 42vw"
+        className="object-cover object-center"
+      />
+      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(7,25,55,.06),rgba(7,25,55,.38)_48%,rgba(7,25,55,.94)_100%)]" />
+      <div className="absolute left-6 top-6 rounded-full border border-white/35 bg-[#08254d]/45 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.18em] backdrop-blur-md">
+        DALO travel match
+      </div>
 
-      <div className="relative flex h-full flex-col justify-between rounded-[2rem] bg-white p-6 text-slate-950 shadow-2xl shadow-blue-950/30">
-        <div className="absolute -left-8 top-1/2 h-16 w-16 -translate-y-1/2 rounded-full bg-blue-800" />
-        <div className="absolute -right-8 top-1/2 h-16 w-16 -translate-y-1/2 rounded-full bg-blue-800" />
+      <div className="absolute right-6 top-6 flex items-center gap-2 rounded-full border border-white/35 bg-white/88 px-3 py-1.5 text-[10px] font-black uppercase tracking-[0.12em] text-[#1738a0] backdrop-blur-md">
+        <span className="h-2 w-2 rounded-full bg-cyan-500" />
+        Live match
+      </div>
 
-        <div>
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <div className="text-sm font-black uppercase tracking-[0.2em] text-blue-600">
-                DALO Travel Match
-              </div>
-
-              <h3 className="mt-3 text-4xl font-black tracking-tight text-slate-950">
-                Destination detected
-              </h3>
-            </div>
-
-            <div className="rounded-full bg-green-100 px-4 py-2 text-sm font-bold text-green-700">
-              Best match
-            </div>
-          </div>
-
-          <div className="my-10 flex items-center gap-4">
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 text-3xl">
-              🏠
-            </div>
-
-            <div className="h-px flex-1 border-t-2 border-dashed border-blue-300" />
-
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-blue-600 text-2xl text-white shadow-lg shadow-blue-200">
-              ✈️
-            </div>
-
-            <div className="h-px flex-1 border-t-2 border-dashed border-blue-300" />
-
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-50 text-3xl">
-              {flag}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <div className="text-sm font-semibold text-slate-500">From</div>
-              <div className="mt-1 text-xl font-black">Home</div>
-            </div>
-
-            <div className="text-right">
-              <div className="text-sm font-semibold text-slate-500">To</div>
-              <div className="mt-1 text-xl font-black">
-                {flag} {country}
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-8 rounded-[1.5rem] bg-slate-50 p-5">
-            <div className="text-sm font-bold uppercase tracking-wide text-blue-600">
-              Matched usage profile
-            </div>
-
-            <div className="mt-2 text-2xl font-black text-slate-950">
-              {usageLabel}
-            </div>
-
-            <p className="mt-3 text-sm leading-relaxed text-slate-600">
-              Your selected destination, trip length and phone usage were used
-              to find the strongest available eSIM match.
-            </p>
-          </div>
+      <div className="relative mt-auto w-full">
+        <div className="mb-5 flex items-center gap-3 text-xs font-bold uppercase tracking-[0.12em] text-white/75">
+          <span>Home</span>
+          <span className="h-px flex-1 border-t border-dashed border-white/50" />
+          <span>{country}</span>
         </div>
 
-        <div>
-          <div className="rounded-2xl bg-blue-50 px-5 py-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white">
-                ✓
-              </div>
+        <h3 className="max-w-sm text-4xl font-black tracking-[-0.045em]">
+          Ready for {country}.
+        </h3>
+        <p className="mt-3 max-w-sm text-sm font-medium leading-6 text-white/80">
+          One clear recommendation, matched to your trip and how you travel.
+        </p>
 
-              <div>
-                <div className="font-black text-slate-950">
-                  QR code after purchase
-                </div>
-                <div className="text-sm font-medium text-slate-500">
-                  Activation details appear after checkout.
-                </div>
-              </div>
+        <div className="mt-5 rounded-[1.35rem] border border-white/25 bg-[#08254d]/72 p-4 shadow-[0_18px_45px_rgba(0,0,0,0.2)] backdrop-blur-xl">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-200">
+                Recommended plan
+              </p>
+              <h4 className="mt-1 text-lg font-bold">{planName}</h4>
             </div>
+            <span className="rounded-full bg-cyan-300 px-3 py-1 text-[10px] font-black uppercase tracking-wide text-[#08254d]">
+              Best fit
+            </span>
           </div>
 
-          <div className="mt-5 flex items-center justify-between border-t border-dashed border-slate-200 pt-4 text-xs font-bold uppercase tracking-[0.18em] text-slate-400">
-            <span>Digital delivery</span>
-            <span>Ready for checkout</span>
+          <div className="mt-4 grid grid-cols-3 divide-x divide-white/20 text-center">
+            <div className="px-2">
+              <p className="text-[9px] font-bold uppercase tracking-wide text-white/55">Data</p>
+              <p className="mt-1 text-sm font-black">{data}</p>
+            </div>
+            <div className="px-2">
+              <p className="text-[9px] font-bold uppercase tracking-wide text-white/55">Validity</p>
+              <p className="mt-1 text-sm font-black">{validityDays} days</p>
+            </div>
+            <div className="px-2">
+              <p className="text-[9px] font-bold uppercase tracking-wide text-white/55">Usage</p>
+              <p className="mt-1 truncate text-sm font-black">{usageLabel}</p>
+            </div>
           </div>
         </div>
       </div>

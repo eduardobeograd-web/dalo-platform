@@ -1,12 +1,12 @@
+import SiteFooter from "../../../../components/SiteFooter";
+import SiteHeader from "../../../../components/SiteHeader";
+
 export default function CustomerLoginSentPage() {
   return (
-    <main className="min-h-screen bg-[#F6F8FF] px-6 py-10 text-slate-950">
-      <div className="mx-auto max-w-xl">
-        <a href="/" className="inline-block">
-          <img src="/dalo-logo-horizontal.png" alt="DALO" className="h-16 w-auto" />
-        </a>
-
-        <div className="mt-10 rounded-[2rem] bg-white p-8 shadow-xl shadow-blue-100">
+    <main className="dalo-page min-h-screen bg-[#F6F8FF] text-slate-950">
+      <SiteHeader />
+      <div className="mx-auto max-w-xl px-6 py-10">
+        <div className="rounded-[2rem] bg-white p-8 shadow-xl shadow-blue-100">
           <div className="text-5xl">📩</div>
 
           <h1 className="mt-5 text-4xl font-bold">
@@ -26,6 +26,7 @@ export default function CustomerLoginSentPage() {
           </a>
         </div>
       </div>
+      <SiteFooter />
     </main>
   );
 }

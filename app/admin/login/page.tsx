@@ -23,7 +23,7 @@ export default async function AdminLoginPage({
           </h1>
 
           <p className="mt-2 text-slate-600">
-            Sign in to manage DALO products and orders.
+            Secure access to the DALO operations platform.
           </p>
         </div>
 
@@ -40,6 +40,8 @@ export default async function AdminLoginPage({
               name="email"
               type="email"
               placeholder="admin@dalo.com"
+              required
+              autoComplete="email"
               className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 outline-none focus:border-blue-500 focus:bg-white"
             />
           </div>
@@ -50,6 +52,8 @@ export default async function AdminLoginPage({
               name="password"
               type="password"
               placeholder="••••••••"
+              required
+              autoComplete="current-password"
               className="w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 outline-none focus:border-blue-500 focus:bg-white"
             />
           </div>
@@ -62,11 +66,9 @@ export default async function AdminLoginPage({
           </button>
         </form>
 
-        <div className="mt-6 rounded-2xl bg-slate-50 p-4 text-sm text-slate-600">
-          <div className="font-bold text-slate-900">Demo Login</div>
-          <div>Email: admin@dalo.com</div>
-          <div>Password: dalo123</div>
-        </div>
+        <p className="mt-6 text-center text-xs leading-5 text-slate-500">
+          Access is limited to authorised DALO team members. Activity is logged.
+        </p>
       </div>
     </main>
   );

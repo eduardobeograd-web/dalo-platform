@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 import { prisma } from "@/lib/db";
 import { trackCustomerEvent } from "@/lib/customer-events";
+import {
+  CONSENT_COOKIE_NAME,
+  getEventConsentCategory,
+  parseConsentValue,
+} from "@/lib/consent";
 
 const allowedEvents = new Set([
   "product_view",
@@ -126,6 +132,26 @@ export async function POST(request: Request) {
         { error: "Invalid eventType" },
         { status: 400 }
       );
+    }
+
+    const consentCategory = getEventConsentCategory(eventType);
+
+    if (consentCategory !== "necessary") {
+      const cookieStore = await cookies();
+      const consent = parseConsentValue(
+        cookieStore.get(CONSENT_COOKIE_NAME)?.value
+      );
+
+      if (!consent?.[consentCategory]) {
+        return NextResponse.json(
+          {
+            success: false,
+            skipped: true,
+            reason: "consent_required",
+          },
+          { status: 202 }
+        );
+      }
     }
 
     const metadataEmail = getMetadataEmail(metadata);

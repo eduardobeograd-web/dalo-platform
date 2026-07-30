@@ -3,6 +3,12 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "../../../lib/db";
 import { fulfillOrderMockById } from "@/lib/mock-fulfillment";
+import { ADMIN_PERMISSIONS } from "../../../lib/admin-permissions";
+import { requireAdminPermission } from "../../../lib/admin-auth";
+
+async function requireOrderWrite() {
+  return requireAdminPermission(ADMIN_PERMISSIONS.ORDERS_WRITE);
+}
 
 function revalidateOrderPages(orderId: string) {
   revalidatePath("/admin/orders");
@@ -30,6 +36,7 @@ function cleanNumber(value: FormDataEntryValue | null) {
 }
 
 export async function updateOrderFulfillment(orderId: string, formData: FormData) {
+  await requireOrderWrite();
   await prisma.order.update({
     where: {
       id: orderId,
@@ -57,6 +64,7 @@ export async function updateOrderFulfillment(orderId: string, formData: FormData
 }
 
 export async function markOrderPaid(orderId: string) {
+  await requireOrderWrite();
   await prisma.order.update({
     where: {
       id: orderId,
@@ -70,6 +78,7 @@ export async function markOrderPaid(orderId: string) {
 }
 
 export async function markOrderPending(orderId: string) {
+  await requireOrderWrite();
   await prisma.order.update({
     where: {
       id: orderId,
@@ -83,6 +92,7 @@ export async function markOrderPending(orderId: string) {
 }
 
 export async function markOrderDelivered(orderId: string) {
+  await requireOrderWrite();
   await prisma.order.update({
     where: {
       id: orderId,
@@ -97,6 +107,7 @@ export async function markOrderDelivered(orderId: string) {
 }
 
 export async function markOrderFailed(orderId: string) {
+  await requireOrderWrite();
   await prisma.order.update({
     where: {
       id: orderId,
@@ -111,6 +122,7 @@ export async function markOrderFailed(orderId: string) {
 }
 
 export async function markOrderWaiting(orderId: string) {
+  await requireOrderWrite();
   await prisma.order.update({
     where: {
       id: orderId,
@@ -125,6 +137,7 @@ export async function markOrderWaiting(orderId: string) {
 }
 
 export async function deleteTestOrder(orderId: string) {
+  await requireOrderWrite();
   const order = await prisma.order.findUnique({
     where: {
       id: orderId,
@@ -150,6 +163,7 @@ export async function deleteTestOrder(orderId: string) {
   revalidateOrderPages(orderId);
 }
 export async function fulfillOrderMock(orderId: string) {
+  await requireOrderWrite();
   await fulfillOrderMockById(orderId);
   revalidateOrderPages(orderId);
 }

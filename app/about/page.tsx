@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
+import { siteUrl as baseUrl } from "../../lib/site-url";
 import Link from "next/link";
 import SiteFooter from "../../components/SiteFooter";
-
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+import SiteHeader from "../../components/SiteHeader";
 
 export const metadata: Metadata = {
   title: "About DALO | Travel eSIM Recommendations",
@@ -37,7 +37,8 @@ export default function AboutPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#F6F8FF] text-slate-900">
+    <main className="dalo-page dalo-content-page min-h-screen bg-[#F6F8FF] text-slate-900">
+      <SiteHeader />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }}
@@ -55,7 +56,7 @@ export default function AboutPage() {
           <span className="text-slate-900">About</span>
         </nav>
 
-        <div className="rounded-[2rem] bg-white p-8 shadow-xl shadow-blue-100 md:p-10">
+        <div className="dalo-content-hero rounded-[2rem] bg-white p-8 shadow-xl shadow-blue-100 md:p-10">
           <p className="mb-3 text-sm font-bold uppercase tracking-wide text-blue-600">
             About DALO
           </p>
@@ -73,7 +74,7 @@ export default function AboutPage() {
         </div>
 
         <section className="mt-10 grid gap-6 md:grid-cols-3">
-          <div className="rounded-[1.5rem] bg-white p-6 shadow-lg shadow-blue-100">
+          <div className="rounded-[1.5rem] border border-white/90 bg-white/90 p-6 shadow-[0_16px_38px_rgba(30,64,120,0.1)] transition hover:-translate-y-1 hover:shadow-[0_22px_48px_rgba(30,64,120,0.14)]">
             <h2 className="text-xl font-black text-slate-950">
               Simple recommendations
             </h2>
@@ -83,7 +84,7 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="rounded-[1.5rem] bg-white p-6 shadow-lg shadow-blue-100">
+          <div className="rounded-[1.5rem] border border-white/90 bg-white/90 p-6 shadow-[0_16px_38px_rgba(30,64,120,0.1)] transition hover:-translate-y-1 hover:shadow-[0_22px_48px_rgba(30,64,120,0.14)]">
             <h2 className="text-xl font-black text-slate-950">
               Travel-focused
             </h2>
@@ -93,7 +94,7 @@ export default function AboutPage() {
             </p>
           </div>
 
-          <div className="rounded-[1.5rem] bg-white p-6 shadow-lg shadow-blue-100">
+          <div className="rounded-[1.5rem] border border-white/90 bg-white/90 p-6 shadow-[0_16px_38px_rgba(30,64,120,0.1)] transition hover:-translate-y-1 hover:shadow-[0_22px_48px_rgba(30,64,120,0.14)]">
             <h2 className="text-xl font-black text-slate-950">
               Clear next step
             </h2>

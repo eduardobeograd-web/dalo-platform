@@ -9,7 +9,8 @@ export async function GET(request: Request) {
   const sourceEventId = url.searchParams.get("sourceEventId") || "";
   const productId = url.searchParams.get("productId") || "";
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+  const baseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
   const redirectUrl = productId
     ? `${baseUrl}/checkout?productId=${encodeURIComponent(

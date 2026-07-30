@@ -11,7 +11,7 @@ import {
 } from "./actions";
 
 function formatPrice(value: number) {
-  return `€${value.toFixed(2)}`;
+  return `$${value.toFixed(2)}`;
 }
 
 function StatusBadge({ status }: { status: string }) {
@@ -92,8 +92,22 @@ export default async function OrdersPage() {
     return {
       ...order,
       product,
-      amount: product?.sellPrice || 0,
-      profit: product ? product.sellPrice - product.buyPrice : 0,
+      displayCountry: order.countryAtPurchase || product?.country || "—",
+      displayName:
+        order.productNameAtPurchase || product?.name || "Unknown Product",
+      displayData: order.dataAtPurchase || product?.data || "—",
+      displayValidityDays:
+        order.validityDaysAtPurchase || product?.validityDays || 0,
+      displayProvider:
+        order.providerAtPurchase || product?.provider || "Unknown Provider",
+      displayProviderProductId:
+        order.providerProductIdAtPurchase ||
+        product?.providerProductId ||
+        "—",
+      amount: order.amount ?? product?.sellPrice ?? 0,
+      profit:
+        (order.amount ?? product?.sellPrice ?? 0) -
+        (order.buyPriceAtPurchase ?? product?.buyPrice ?? 0),
     };
   });
 
@@ -247,22 +261,22 @@ export default async function OrdersPage() {
                       <td className="px-6 py-5">
                         <div className="font-semibold">{order.customer}</div>
                         <div className="text-sm text-slate-500">
-                          {order.product?.provider || "Unknown Provider"}
+                          {order.displayProvider}
                         </div>
                       </td>
 
                       <td className="px-6 py-5">
-                        {order.product?.country || "—"}
+                        {order.displayCountry}
                       </td>
 
                       <td className="px-6 py-5">
                         <div className="font-bold">
-                          {order.product?.name || "Unknown Product"}
+                          {order.displayName}
                         </div>
                         <div className="text-sm text-slate-500">
-                          {order.product
-                            ? `${order.product.data} / ${order.product.validityDays} Days`
-                            : "—"}
+                          {order.displayValidityDays
+                            ? `${order.displayData} / ${order.displayValidityDays} Days`
+                            : order.displayData}
                         </div>
                       </td>
 
@@ -288,7 +302,7 @@ export default async function OrdersPage() {
 
                       <td className="px-6 py-5">
                         <div className="max-w-[240px] truncate font-mono text-xs text-slate-500">
-                          {order.product?.providerProductId || "—"}
+                          {order.displayProviderProductId}
                         </div>
                         {order.product?.region ? (
                           <div className="mt-2 rounded-full bg-purple-100 px-3 py-1 text-xs font-bold text-purple-700">

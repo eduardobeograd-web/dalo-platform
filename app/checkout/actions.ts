@@ -4,6 +4,10 @@ import crypto from "crypto";
 import { redirect } from "next/navigation";
 import { prisma } from "../../lib/db";
 import { trackCustomerEvent } from "../../lib/customer-events";
+import {
+  CHECKOUT_LEGAL_VERSION,
+  hasRequiredCheckoutConsent,
+} from "../../lib/checkout-consent";
 
 const ORDER_NUMBER_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
@@ -71,6 +75,10 @@ export async function createCheckoutOrder(formData: FormData) {
     redirect(`/checkout?productId=${productId}&error=1`);
   }
 
+  if (!hasRequiredCheckoutConsent(formData)) {
+    redirect(`/checkout?productId=${productId}&consent=required`);
+  }
+
   const product = await prisma.product.findUnique({
     where: {
       id: productId,
@@ -96,13 +104,22 @@ export async function createCheckoutOrder(formData: FormData) {
 
   const totalDataGb = extractDataGb(product.data);
   const orderNumber = await createUniqueOrderNumber();
+  const consentAcceptedAt = new Date();
 
   const order = await prisma.order.create({
     data: {
       orderNumber,
       customer: email,
-      customerId: customer.id,
+      customerAccount: {
+        connect: {
+          id: customer.id,
+        },
+      },
       productId: product.id,
+      legalAcceptedAt: consentAcceptedAt,
+      legalVersion: CHECKOUT_LEGAL_VERSION,
+      immediateDeliveryAcceptedAt: consentAcceptedAt,
+      immediateDeliveryVersion: CHECKOUT_LEGAL_VERSION,
       payment: "Pending",
       fulfillment: "Waiting",
 
@@ -146,6 +163,9 @@ export async function createCheckoutOrder(formData: FormData) {
       marketingCampaign: marketingCampaign || null,
       marketingSourceEventId: marketingSourceEventId || null,
       attributedToMarketing: Boolean(marketingCampaign || marketingSourceEventId),
+      legalVersion: CHECKOUT_LEGAL_VERSION,
+      legalAcceptedAt: consentAcceptedAt.toISOString(),
+      immediateDeliveryAcceptedAt: consentAcceptedAt.toISOString(),
     },
   });
 

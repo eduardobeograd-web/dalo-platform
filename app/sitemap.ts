@@ -1,7 +1,6 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "../lib/db";
-
-const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+import { siteUrl as baseUrl } from "../lib/site-url";
 
 const indexedCountrySlugs = new Set([
   "turkey",
@@ -41,18 +40,28 @@ function slugify(value: string) {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const products = await prisma.product.findMany({
-    where: {
-      active: true,
-    },
-    select: {
-      country: true,
-      updatedAt: true,
-    },
-    orderBy: {
-      country: "asc",
-    },
-  });
+  const [products, managedPages] = await Promise.all([
+    prisma.product.findMany({
+      where: {
+        active: true,
+      },
+      select: {
+        country: true,
+        updatedAt: true,
+      },
+      orderBy: {
+        country: "asc",
+      },
+    }),
+    prisma.destinationPage.findMany({
+      where: { published: true },
+      select: {
+        slug: true,
+        indexable: true,
+        updatedAt: true,
+      },
+    }),
+  ]);
 
   const countryMap = new Map<string, Date>();
 
@@ -70,52 +79,57 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
+  for (const page of managedPages) {
+    if (page.indexable) {
+      countryMap.set(page.slug, page.updatedAt);
+    } else {
+      countryMap.delete(page.slug);
+    }
+  }
+
   const staticRoutes: MetadataRoute.Sitemap = [
     {
       url: baseUrl,
-      lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 1,
     },
     {
       url: `${baseUrl}/esim`,
-      lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 0.9,
     },
     {
       url: `${baseUrl}/about`,
-      lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
       url: `${baseUrl}/contact`,
-      lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
       url: `${baseUrl}/support`,
-      lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
       url: `${baseUrl}/refund-policy`,
-      lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.6,
     },
     {
       url: `${baseUrl}/privacy-policy`,
-      lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.6,
     },
     {
+      url: `${baseUrl}/cookie-policy`,
+      changeFrequency: "monthly",
+      priority: 0.5,
+    },
+    {
       url: `${baseUrl}/terms`,
-      lastModified: new Date(),
       changeFrequency: "monthly",
       priority: 0.6,
     },

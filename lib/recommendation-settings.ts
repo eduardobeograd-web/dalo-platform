@@ -1,4 +1,3 @@
-import { randomUUID } from "crypto";
 import { prisma } from "./db";
 
 export type RecommendationUsageKey = "essential" | "everyday" | "power";
@@ -97,58 +96,24 @@ function normalizeSetting(row: any): RecommendationUsageSetting {
 }
 
 export async function ensureRecommendationSettings() {
-  const now = new Date().toISOString();
-
   for (const setting of DEFAULT_RECOMMENDATION_SETTINGS) {
-    const existing = await prisma.$queryRawUnsafe<any[]>(
-      `SELECT * FROM "RecommendationSetting" WHERE "usageType" = ? LIMIT 1`,
-      setting.usageType
-    );
-
-    if (existing.length > 0) {
-      continue;
-    }
-
-    await prisma.$executeRawUnsafe(
-      `
-      INSERT INTO "RecommendationSetting" (
-        "id",
-        "usageType",
-        "label",
-        "gbPerDay",
-        "minimumGb",
-        "maxBestMatchMultiple",
-        "budgetMinNeedMultiple",
-        "comfortMinNeedMultiple",
-        "heavyMinGb",
-        "active",
-        "createdAt",
-        "updatedAt"
-      )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `,
-      randomUUID(),
-      setting.usageType,
-      setting.label,
-      setting.gbPerDay,
-      setting.minimumGb,
-      setting.maxBestMatchMultiple,
-      setting.budgetMinNeedMultiple,
-      setting.comfortMinNeedMultiple,
-      setting.heavyMinGb,
-      1,
-      now,
-      now
-    );
+    await prisma.recommendationSetting.upsert({
+      where: { usageType: setting.usageType },
+      update: {},
+      create: {
+        ...setting,
+        active: true,
+      },
+    });
   }
 }
 
 export async function getRecommendationSettings() {
   await ensureRecommendationSettings();
 
-  const rows = await prisma.$queryRawUnsafe<any[]>(
-    `SELECT * FROM "RecommendationSetting" ORDER BY "gbPerDay" ASC`
-  );
+  const rows = await prisma.recommendationSetting.findMany({
+    orderBy: { gbPerDay: "asc" },
+  });
 
   return rows.map(normalizeSetting);
 }
@@ -160,16 +125,15 @@ export async function getRecommendationSettingForUsage(
 
   await ensureRecommendationSettings();
 
-  const rows = await prisma.$queryRawUnsafe<any[]>(
-    `SELECT * FROM "RecommendationSetting" WHERE "usageType" = ? LIMIT 1`,
-    usageType
-  );
+  const row = await prisma.recommendationSetting.findUnique({
+    where: { usageType },
+  });
 
-  if (rows.length === 0) {
+  if (!row) {
     return getFallbackSetting(usage);
   }
 
-  const setting = normalizeSetting(rows[0]);
+  const setting = normalizeSetting(row);
 
   if (!setting.active) {
     return getFallbackSetting(usage);
@@ -195,28 +159,17 @@ export async function updateRecommendationSettingById({
   comfortMinNeedMultiple: number;
   heavyMinGb: number;
 }) {
-  await prisma.$executeRawUnsafe(
-    `
-    UPDATE "RecommendationSetting"
-    SET
-      "gbPerDay" = ?,
-      "minimumGb" = ?,
-      "maxBestMatchMultiple" = ?,
-      "budgetMinNeedMultiple" = ?,
-      "comfortMinNeedMultiple" = ?,
-      "heavyMinGb" = ?,
-      "updatedAt" = ?
-    WHERE "id" = ?
-    `,
-    gbPerDay,
-    minimumGb,
-    maxBestMatchMultiple,
-    budgetMinNeedMultiple,
-    comfortMinNeedMultiple,
-    heavyMinGb,
-    new Date().toISOString(),
-    id
-  );
+  await prisma.recommendationSetting.update({
+    where: { id },
+    data: {
+      gbPerDay,
+      minimumGb,
+      maxBestMatchMultiple,
+      budgetMinNeedMultiple,
+      comfortMinNeedMultiple,
+      heavyMinGb,
+    },
+  });
 }
 
 export function parseSettingNumber(value: FormDataEntryValue | null) {

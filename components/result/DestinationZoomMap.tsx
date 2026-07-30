@@ -137,7 +137,7 @@ export default function DestinationZoomMap({
           }
         }
 
-        .{
+        .dalo-map-image {
           animation: daloMapZoom 2.2s ease-out forwards;
           transform-origin: var(--dalo-left) var(--dalo-top);
         }
@@ -156,10 +156,10 @@ export default function DestinationZoomMap({
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(125,211,252,0.35),transparent_32%),radial-gradient(circle_at_80%_40%,rgba(59,130,246,0.35),transparent_30%),radial-gradient(circle_at_50%_90%,rgba(14,165,233,0.18),transparent_35%)]" />
 
       <img
-        src="/world-map.jpg"
+        src="/world-map.webp"
         alt=""
         aria-hidden="true"
-        className="absolute left-1/2 top-[42%] w-[95%] max-w-none -translate-x-1/2 -translate-y-1/2 rounded-[2rem] object-contain opacity-75 grayscale contrast-125 brightness-110"
+        className="dalo-map-image absolute left-1/2 top-[42%] w-[95%] max-w-none -translate-x-1/2 -translate-y-1/2 rounded-[2rem] object-contain opacity-75 grayscale contrast-125 brightness-110"
         style={
           {
             "--dalo-left": position.left,
