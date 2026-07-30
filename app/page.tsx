@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import SiteFooter from "../components/SiteFooter";
 import SiteHeader from "../components/SiteHeader";
 
@@ -10,29 +10,23 @@ export default function Home() {
   const [days, setDays] = useState("8-14");
   const [userType, setUserType] = useState("everyday");
   const [destinations, setDestinations] = useState<string[]>([]);
+  const destinationsRequested = useRef(false);
 
-  useEffect(() => {
-    let updateTimer: number | undefined;
+  async function loadDestinations() {
+    if (destinationsRequested.current) return;
+    destinationsRequested.current = true;
 
-    async function loadDestinations() {
+    try {
       const response = await fetch("/api/destinations");
       const data = await response.json();
 
       if (Array.isArray(data.destinations)) {
-        updateTimer = window.setTimeout(() => {
-          setDestinations(data.destinations);
-        }, 1200);
+        setDestinations(data.destinations);
       }
+    } catch {
+      destinationsRequested.current = false;
     }
-
-    loadDestinations();
-
-    return () => {
-      if (updateTimer !== undefined) {
-        window.clearTimeout(updateTimer);
-      }
-    };
-  }, []);
+  }
 
   const selectedDestinationIsAvailable =
     country.trim().length > 0 &&
@@ -98,8 +92,9 @@ export default function Home() {
             alt=""
             fill
             preload
-            quality={72}
-            sizes="100vw"
+            fetchPriority="high"
+            quality={55}
+            sizes="(max-width: 767px) 86vw, 100vw"
             className="object-cover object-[48%_center] saturate-[1.08]"
           />
         </div>
@@ -192,6 +187,7 @@ export default function Home() {
                   <input
                     value={country}
                     onChange={(e) => setCountry(e.target.value)}
+                    onFocus={() => void loadDestinations()}
                     list="available-destinations"
                     placeholder="Where are you going?"
                     className="w-full bg-transparent text-sm font-semibold text-slate-900 outline-none placeholder:font-normal placeholder:text-slate-400"
@@ -722,7 +718,7 @@ export default function Home() {
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   <span>
-                    <span className="block text-[9px] font-bold uppercase tracking-[0.12em] text-slate-400">
+                    <span className="block text-[9px] font-bold uppercase tracking-[0.12em] text-slate-600">
                       {item.label}
                     </span>
                     <span className="mt-0.5 block font-bold text-slate-950">

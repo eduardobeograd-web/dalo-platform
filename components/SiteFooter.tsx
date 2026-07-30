@@ -61,7 +61,7 @@ export default function SiteFooter() {
           </div>
 
           <div>
-            <h4 className="mb-4 font-bold">Destinations</h4>
+            <h3 className="mb-4 font-bold">Destinations</h3>
 
             <div className="space-y-2 text-sm text-slate-600">
               <a className="block hover:text-[#2148c0]" href="/esim/turkey">
@@ -83,7 +83,7 @@ export default function SiteFooter() {
           </div>
 
           <div>
-            <h4 className="mb-4 font-bold">Support</h4>
+            <h3 className="mb-4 font-bold">Support</h3>
 
             <div className="space-y-2 text-sm text-slate-600">
               <a className="block hover:text-[#2148c0]" href="/support">
@@ -99,7 +99,7 @@ export default function SiteFooter() {
           </div>
 
           <div>
-            <h4 className="mb-4 font-bold">Company</h4>
+            <h3 className="mb-4 font-bold">Company</h3>
 
             <div className="space-y-2 text-sm text-slate-600">
               <a className="block hover:text-[#2148c0]" href="/about">
@@ -115,7 +115,7 @@ export default function SiteFooter() {
           </div>
 
           <div>
-            <h4 className="mb-4 font-bold">Legal</h4>
+            <h3 className="mb-4 font-bold">Legal</h3>
 
             <div className="space-y-2 text-sm text-slate-600">
               <a className="block hover:text-[#2148c0]" href="/privacy-policy">
@@ -135,7 +135,7 @@ export default function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-8 border-t border-slate-200 pt-5 text-sm text-slate-500">
+        <div className="mt-8 border-t border-slate-200 pt-5 text-sm text-slate-600">
           © 2026 DALO. All rights reserved.
         </div>
       </div>
