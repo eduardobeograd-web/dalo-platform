@@ -3,6 +3,7 @@ import SiteFooter from "./SiteFooter";
 
 export function HomeWhyDalo() {
   return (
+    <>
       {/* WHY DALO */}
       <section className="mx-auto max-w-7xl px-6 pb-5 pt-12">
         <div className="relative overflow-hidden rounded-[2rem] bg-[#10233a] text-white shadow-[0_24px_70px_rgba(16,35,58,0.18)]">
@@ -86,11 +87,13 @@ export function HomeWhyDalo() {
           </div>
         </div>
       </section>
+    </>
   );
 }
 
 export function HomeHowItWorks() {
   return (
+    <>
       {/* HOW IT WORKS */}
       <section id="how" className="relative rounded-t-[2.5rem] bg-[#F6F8FF] pb-14 pt-12">
         <div className="mx-auto max-w-7xl px-6">
@@ -177,11 +180,13 @@ export function HomeHowItWorks() {
           </div>
         </div>
       </section>
+    </>
   );
 }
 
 export function HomeFaq() {
   return (
+    <>
       {/* FAQ */}
       <section id="faq" className="mx-auto max-w-6xl px-6 py-16">
         <div className="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-end">
@@ -249,6 +254,7 @@ export function HomeFaq() {
           ))}
         </div>
       </section>
+    </>
   );
 }
 
@@ -276,6 +282,7 @@ export function HomePopularDestinations() {
   }
 
   return (
+    <>
       {/* DESTINATIONS */}
       <section id="destinations" className="mx-auto max-w-7xl px-6 py-16">
         <div className="mb-9 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
@@ -343,6 +350,7 @@ export function HomePopularDestinations() {
           </a>
         </div>
       </section>
+    </>
   );
 }
 
