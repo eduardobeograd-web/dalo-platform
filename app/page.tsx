@@ -1,18 +1,21 @@
-import HomeClient from "../components/HomeClient";
+import HomeHeroQuiz from "../components/HomeHeroQuiz";
 import {
   HomeFaq,
   HomeFooter,
   HomeHowItWorks,
+  HomePopularDestinations,
   HomeWhyDalo,
 } from "../components/HomeStaticSections";
 
 export default function Home() {
   return (
-    <HomeClient
-      whyDalo={<HomeWhyDalo />}
-      howItWorks={<HomeHowItWorks />}
-      faq={<HomeFaq />}
-      footer={<HomeFooter />}
-    />
+    <main className="dalo-home min-h-screen bg-[#F6F8FF] text-slate-900">
+      <HomeHeroQuiz />
+      <HomeWhyDalo />
+      <HomeHowItWorks />
+      <HomePopularDestinations />
+      <HomeFaq />
+      <HomeFooter />
+    </main>
   );
 }

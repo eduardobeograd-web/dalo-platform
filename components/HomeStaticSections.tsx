@@ -252,6 +252,100 @@ export function HomeFaq() {
   );
 }
 
+export function HomePopularDestinations() {
+  const popularDestinationCards = [
+    "Germany",
+    "Spain",
+    "Italy",
+    "United States",
+    "Japan",
+    "Thailand",
+  ];
+
+  function getDestinationImage(destination: string) {
+    const images: Record<string, string> = {
+      Germany: "/travel/germany-home.webp",
+      Spain: "/travel/spain-home.webp",
+      Italy: "/travel/italy-home.webp",
+      "United States": "/travel/united-states-home.webp",
+      Japan: "/travel/japan-home.webp",
+      Thailand: "/travel/thailand-home.webp",
+    };
+
+    return images[destination];
+  }
+
+  return (
+      {/* DESTINATIONS */}
+      <section id="destinations" className="mx-auto max-w-7xl px-6 py-16">
+        <div className="mb-9 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-700">
+              Explore with DALO
+            </p>
+            <h2 className="mt-2 text-4xl font-bold tracking-tight text-slate-950">
+              Popular destinations
+            </h2>
+          </div>
+          <p className="max-w-sm text-sm leading-relaxed text-slate-600 sm:text-right">
+            Start with the places our travelers search for most.
+          </p>
+        </div>
+
+        <div className="grid gap-4 md:grid-cols-3">
+          {popularDestinationCards.map((destination) => (
+            <a
+              key={destination}
+              href={
+                "/?country=" +
+                encodeURIComponent(
+                  destination === "United States"
+                    ? "United States of America"
+                    : destination
+                ) +
+                "#quiz"
+              }
+              className="group overflow-hidden rounded-2xl border border-slate-200 bg-white text-left shadow-[0_8px_24px_rgba(30,64,120,0.06)] transition hover:-translate-y-1 hover:border-blue-300 hover:shadow-[0_14px_34px_rgba(30,64,120,0.12)]"
+            >
+              <div className="relative h-48 overflow-hidden">
+                <Image
+                  src={getDestinationImage(destination)}
+                  alt={destination}
+                  fill
+                  loading="lazy"
+                  quality={68}
+                  sizes="(max-width: 767px) 100vw, 33vw"
+                  className="object-cover transition duration-500 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/5 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 flex items-end justify-between p-5 text-white">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/70">Destination</p>
+                    <h3 className="mt-1 text-xl font-bold">{destination}</h3>
+                  </div>
+                  <span className="flex h-9 w-9 items-center justify-center rounded-full border border-white/40 bg-white/15 text-lg backdrop-blur-sm transition group-hover:translate-x-1 group-hover:bg-white group-hover:text-[#2148c0]">→</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 px-5 py-3.5 text-sm font-semibold text-slate-600">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#e98b3a]" />
+                Match a plan for this trip
+              </div>
+            </a>
+          ))}
+        </div>
+
+        <div className="mt-7 text-center">
+          <a
+            href="/esim"
+            className="inline-flex rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-800 transition hover:border-blue-600 hover:text-blue-700"
+          >
+            View all destinations
+          </a>
+        </div>
+      </section>
+  );
+}
+
 export function HomeFooter() {
   return <SiteFooter />;
 }

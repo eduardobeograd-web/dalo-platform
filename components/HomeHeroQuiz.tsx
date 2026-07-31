@@ -1,23 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import type { ReactNode } from "react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SiteHeader from "./SiteHeader";
 
-type HomeClientProps = {
-  whyDalo: ReactNode;
-  howItWorks: ReactNode;
-  faq: ReactNode;
-  footer: ReactNode;
-};
-
-export default function HomeClient({
-  whyDalo,
-  howItWorks,
-  faq,
-  footer,
-}: HomeClientProps) {
+export default function HomeHeroQuiz() {
   const [country, setCountry] = useState("");
   const [days, setDays] = useState("8-14");
   const [userType, setUserType] = useState("everyday");
@@ -50,53 +37,18 @@ export default function HomeClient({
       )}&days=${encodeURIComponent(days)}&type=${encodeURIComponent(userType)}`
     : "#quiz";
 
-  function getDestinationImage(destination: string) {
-    const images: Record<string, string> = {
-      Europe:
-        "https://images.unsplash.com/photo-1499856871958-5b9627545d1a?q=80&w=1200&auto=format&fit=crop",
-      Spain:
-        "/travel/spain-home.webp",
-      Italy:
-        "/travel/italy-home.webp",
-      Japan:
-        "/travel/japan-home.webp",
-      Thailand:
-        "/travel/thailand-home.webp",
-      "United States":
-        "/travel/united-states-home.webp",
-      "United Kingdom":
-        "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?q=80&w=1200&auto=format&fit=crop",
-      Germany:
-        "/travel/germany-home.webp",
-    };
-
-    return (
-      images[destination] ||
-      "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=1200&auto=format&fit=crop"
+  useEffect(() => {
+    const selectedCountry = new URLSearchParams(window.location.search).get(
+      "country"
     );
-  }
 
-  const popularDestinationNames = [
-    "Germany",
-    "Spain",
-    "Italy",
-    "United States",
-    "Japan",
-    "Thailand",
-  ];
-  const popularDestinationCards =
-    destinations.length > 0
-      ? popularDestinationNames.filter((destination) =>
-          destinations.includes(
-            destination === "United States"
-              ? "United States of America"
-              : destination
-          )
-        )
-      : popularDestinationNames;
+    if (selectedCountry) {
+      setCountry(selectedCountry);
+    }
+  }, []);
 
   return (
-    <main className="dalo-home min-h-screen bg-[#F6F8FF] text-slate-900">
+    <>
       <section className="relative overflow-hidden bg-[#f7fafc] pb-10 sm:pb-14">
         <div className="pointer-events-none absolute bottom-0 left-[8%] top-0 w-[86%]">
           <Image
@@ -439,85 +391,6 @@ export default function HomeClient({
           </div>
         </div>
       </section>
-
-      {whyDalo}
-
-
-      {howItWorks}
-
-      {/* DESTINATIONS */}
-      <section id="destinations" className="mx-auto max-w-7xl px-6 py-16">
-        <div className="mb-9 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-700">
-              Explore with DALO
-            </p>
-            <h2 className="mt-2 text-4xl font-bold tracking-tight text-slate-950">
-              Popular destinations
-            </h2>
-          </div>
-          <p className="max-w-sm text-sm leading-relaxed text-slate-600 sm:text-right">
-            Start with the places our travelers search for most.
-          </p>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-3">
-          {popularDestinationCards.map((destination) => (
-            <button
-              key={destination}
-              type="button"
-              onClick={() => {
-                setCountry(
-                  destination === "United States"
-                    ? "United States of America"
-                    : destination
-                );
-                document.getElementById("quiz")?.scrollIntoView({
-                  behavior: "smooth",
-                });
-              }}
-              className="group overflow-hidden rounded-2xl border border-slate-200 bg-white text-left shadow-[0_8px_24px_rgba(30,64,120,0.06)] transition hover:-translate-y-1 hover:border-blue-300 hover:shadow-[0_14px_34px_rgba(30,64,120,0.12)]"
-            >
-              <div className="relative h-48 overflow-hidden">
-                <Image
-                  src={getDestinationImage(destination)}
-                  alt={destination}
-                  fill
-                  loading="lazy"
-                  quality={68}
-                  sizes="(max-width: 767px) 100vw, 33vw"
-                  className="object-cover transition duration-500 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/5 to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 flex items-end justify-between p-5 text-white">
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-white/70">Destination</p>
-                    <h3 className="mt-1 text-xl font-bold">{destination}</h3>
-                  </div>
-                  <span className="flex h-9 w-9 items-center justify-center rounded-full border border-white/40 bg-white/15 text-lg backdrop-blur-sm transition group-hover:translate-x-1 group-hover:bg-white group-hover:text-[#2148c0]">→</span>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 px-5 py-3.5 text-sm font-semibold text-slate-600">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#e98b3a]" />
-                Match a plan for this trip
-              </div>
-            </button>
-          ))}
-        </div>
-
-        <div className="mt-7 text-center">
-          <a
-            href="/esim"
-            className="inline-flex rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-bold text-slate-800 transition hover:border-blue-600 hover:text-blue-700"
-          >
-            View all destinations
-          </a>
-        </div>
-      </section>
-
-      {faq}
-
-      {footer}
-    </main>
+    </>
   );
-} 
+}
