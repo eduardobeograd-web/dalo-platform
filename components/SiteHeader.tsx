@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import PwaInstallButton from "./PwaInstallButton";
 
 type SiteHeaderProps = {
@@ -10,9 +9,8 @@ export default function SiteHeader({ mode = "public" }: SiteHeaderProps) {
   return (
     <header className="relative z-20 px-4 pt-2 sm:px-6 sm:pt-3">
       <nav className="mx-auto flex max-w-7xl items-center justify-between rounded-2xl border border-white/90 bg-white/90 px-4 py-1 shadow-[0_10px_35px_rgba(30,64,120,0.08)] backdrop-blur-xl sm:px-6 sm:py-2">
-        <Link
+        <a
           href="/"
-          prefetch={false}
           className="flex h-12 items-center overflow-visible sm:h-14"
           aria-label="DALO home"
         >
@@ -24,19 +22,19 @@ export default function SiteHeader({ mode = "public" }: SiteHeaderProps) {
             sizes="(max-width: 639px) 130px, 180px"
             className="h-13 w-auto origin-left scale-110 sm:h-[4.5rem] sm:scale-125"
           />
-        </Link>
+        </a>
 
         {mode === "public" ? (
           <div className="hidden items-center gap-8 text-sm font-semibold text-slate-700 lg:flex">
-            <Link prefetch={false} className="transition hover:text-[#2148c0]" href="/#how">
+            <a className="transition hover:text-[#2148c0]" href="/#how">
               How it works
-            </Link>
-            <Link prefetch={false} className="transition hover:text-[#2148c0]" href="/esim">
+            </a>
+            <a className="transition hover:text-[#2148c0]" href="/esim">
               Destinations
-            </Link>
-            <Link prefetch={false} className="transition hover:text-[#2148c0]" href="/#faq">
+            </a>
+            <a className="transition hover:text-[#2148c0]" href="/#faq">
               FAQ
-            </Link>
+            </a>
           </div>
         ) : (
           <div className="flex-1" />
@@ -45,20 +43,18 @@ export default function SiteHeader({ mode = "public" }: SiteHeaderProps) {
         {mode === "account" ? (
           <div className="flex items-center gap-2 sm:gap-3">
             <PwaInstallButton />
-            <Link
+            <a
               href="/customer/dashboard"
-              prefetch={false}
               className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 transition hover:border-blue-200 hover:text-[#2148c0] sm:rounded-xl sm:px-4 sm:text-sm"
             >
               Dashboard
-            </Link>
-            <Link
+            </a>
+            <a
               href="/customer/support"
-              prefetch={false}
               className="hidden rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:border-blue-200 hover:text-[#2148c0] sm:block"
             >
               Support
-            </Link>
+            </a>
             <form action="/customer/logout" method="post">
               <button
                 type="submit"
@@ -70,37 +66,33 @@ export default function SiteHeader({ mode = "public" }: SiteHeaderProps) {
           </div>
         ) : mode === "checkout" ? (
           <div className="flex items-center gap-3">
-            <Link
+            <a
               href="/"
-              prefetch={false}
               className="hidden text-sm font-semibold text-slate-600 transition hover:text-[#2148c0] sm:block"
             >
               Home
-            </Link>
-            <Link
+            </a>
+            <a
               href="/#quiz"
-              prefetch={false}
               className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#2148c0] px-3 py-2 text-xs font-bold text-white transition hover:bg-[#17389b] focus:outline-none focus:ring-4 focus:ring-blue-100 sm:rounded-xl sm:px-5 sm:py-2.5 sm:text-sm"
             >
               New search
-            </Link>
+            </a>
           </div>
         ) : (
           <div className="flex items-center gap-2 sm:gap-4">
-            <Link
+            <a
               className="inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-lg px-2 text-xs font-semibold text-slate-600 transition hover:bg-blue-50 hover:text-[#2148c0] sm:text-sm"
               href="/customer/dashboard"
-              prefetch={false}
             >
               My account
-            </Link>
-            <Link
+            </a>
+            <a
               href="/#quiz"
-              prefetch={false}
               className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#2148c0] px-3 py-2 text-xs font-bold text-white transition hover:bg-[#17389b] focus:outline-none focus:ring-4 focus:ring-blue-100 sm:rounded-xl sm:px-5 sm:py-2.5 sm:text-sm"
             >
               Start quiz
-            </Link>
+            </a>
           </div>
         )}
       </nav>

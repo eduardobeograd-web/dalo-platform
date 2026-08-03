@@ -13,7 +13,7 @@ export default function HomeHeroQuiz() {
             fill
             preload
             fetchPriority="high"
-            quality={55}
+            quality={45}
             sizes="(max-width: 767px) 86vw, 100vw"
             className="object-cover object-[48%_center] saturate-[1.08]"
           />
