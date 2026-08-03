@@ -9,7 +9,7 @@ import {
 } from "@/lib/consent";
 
 const hiddenPrefixes = ["/admin", "/customer"];
-type DevicePlatform = "ios" | "android" | "other";
+type DevicePlatform = "iphone" | "ipad" | "samsung" | "android" | "other";
 
 export default function DeviceCompatibilityCheck() {
   const pathname = usePathname();
@@ -22,8 +22,12 @@ export default function DeviceCompatibilityCheck() {
     const isIPadOs =
       navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
 
-    if (/iPhone|iPad|iPod/i.test(userAgent) || isIPadOs) {
-      setPlatform("ios");
+    if (/iPhone|iPod/i.test(userAgent)) {
+      setPlatform("iphone");
+    } else if (/iPad/i.test(userAgent) || isIPadOs) {
+      setPlatform("ipad");
+    } else if (/Android/i.test(userAgent) && /Samsung|SM-[A-Z0-9]+/i.test(userAgent)) {
+      setPlatform("samsung");
     } else if (/Android/i.test(userAgent)) {
       setPlatform("android");
     }
@@ -63,18 +67,32 @@ export default function DeviceCompatibilityCheck() {
   }
 
   const platformLabel =
-    platform === "ios"
-      ? "Apple device detected"
+    platform === "iphone"
+      ? "iPhone detected"
+      : platform === "ipad"
+        ? "iPad detected"
+      : platform === "samsung"
+        ? "Samsung Galaxy detected"
       : platform === "android"
         ? "Android device detected"
         : "Check your phone";
+  const compatibilitySignal =
+    platform === "iphone"
+      ? "Many recent iPhones are eSIM ready. Your exact model and region still need one quick check."
+      : platform === "ipad"
+        ? "Many cellular iPads support eSIM. Your exact model and carrier settings still need one quick check."
+        : platform === "samsung"
+          ? "Many recent Samsung Galaxy devices are eSIM ready. Regional variants can differ, so please confirm below."
+          : platform === "android"
+            ? "Your Android device may support eSIM. Support depends on the exact model, region and carrier."
+            : "We cannot identify your phone from this browser. You can still confirm eSIM support in a few seconds.";
   const settingsStep =
-    platform === "ios"
+    platform === "iphone" || platform === "ipad"
       ? {
           title: "Open Cellular settings",
           text: "Go to Settings → Cellular or Mobile Data. Look for “Add eSIM” or “Add Cellular Plan”.",
         }
-      : platform === "android"
+        : platform === "android" || platform === "samsung"
         ? {
             title: "Open SIM settings",
             text: "Go to Settings → Network & internet or Connections → SIM Manager. Look for “Add eSIM”.",
@@ -91,7 +109,7 @@ export default function DeviceCompatibilityCheck() {
         onClick={() => setOpen(true)}
         aria-haspopup="dialog"
         aria-label="Check device compatibility"
-        className="group fixed bottom-24 right-3 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-blue-400 bg-blue-800 p-0 text-left text-white shadow-[0_14px_35px_rgba(13,54,140,0.32)] transition hover:-translate-y-1 hover:bg-blue-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 sm:bottom-5 sm:right-5 sm:h-auto sm:w-auto sm:min-w-[330px] sm:justify-start sm:gap-3 sm:rounded-2xl sm:px-4 sm:py-3.5"
+        className="group fixed bottom-24 right-3 z-40 flex h-12 w-auto items-center justify-center gap-2 rounded-2xl border border-blue-400 bg-blue-800 px-2.5 text-left text-white shadow-[0_14px_35px_rgba(13,54,140,0.32)] transition hover:-translate-y-1 hover:bg-blue-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 sm:bottom-5 sm:right-5 sm:h-auto sm:min-w-[330px] sm:justify-start sm:gap-3 sm:px-4 sm:py-3.5"
       >
         <span className="relative grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-blue-800 sm:h-11 sm:w-11 sm:rounded-xl">
           <span className="absolute -right-1 -top-1 h-3.5 w-3.5 rounded-full border-2 border-blue-800 bg-amber-400" />
@@ -106,6 +124,9 @@ export default function DeviceCompatibilityCheck() {
             <rect x="7" y="2.75" width="10" height="18.5" rx="2.2" />
             <path d="M10 5.75h4M10.25 17.25l1.35 1.35 2.65-3" />
           </svg>
+        </span>
+        <span className="block max-w-[9rem] truncate text-xs font-extrabold sm:hidden">
+          {platformLabel}
         </span>
         <span className="hidden min-w-0 flex-1 sm:block">
           <span className="block truncate text-[11px] font-bold uppercase tracking-[0.16em] text-blue-100">
@@ -157,6 +178,15 @@ export default function DeviceCompatibilityCheck() {
             </div>
 
             <div className="space-y-3 px-5 py-5 sm:px-7 sm:py-6">
+              <div className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3.5">
+                <p className="text-xs font-black uppercase tracking-[0.14em] text-blue-700">
+                  {platformLabel}
+                </p>
+                <p className="mt-1.5 text-sm font-semibold leading-6 text-blue-950">
+                  {compatibilitySignal}
+                </p>
+              </div>
+
               {[
                 {
                   number: "01",
