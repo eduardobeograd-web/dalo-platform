@@ -25,6 +25,12 @@ export async function GET() {
     const products = await prisma.product.findMany({
       where: {
         active: true,
+        sellPrice: {
+          gt: 0,
+        },
+        validityDays: {
+          gt: 0,
+        },
       },
       select: {
         country: true,
@@ -38,12 +44,13 @@ export async function GET() {
     const destinations = new Set<string>();
 
     products.forEach((product) => {
-      if (product.region) {
-        destinations.add(product.region);
-      }
+      const region = product.region?.trim();
+      const country = product.country?.trim();
 
-      if (product.country) {
-        destinations.add(product.country);
+      if (region) {
+        destinations.add(region);
+      } else if (country) {
+        destinations.add(country);
       }
     });
 

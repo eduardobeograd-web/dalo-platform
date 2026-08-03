@@ -6,6 +6,7 @@ import { getDestinationSeoIssues } from "../../../lib/catalog-readiness";
 import SiteHeader from "../../../components/SiteHeader";
 import SiteFooter from "../../../components/SiteFooter";
 import { parseDestinationFaq } from "../../../lib/destination-pages";
+import { getDestinationImage } from "../../../lib/destination-images";
 import { prisma } from "../../../lib/db";
 import {
   getSeoLandingPage,
@@ -216,6 +217,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     managedPage?.seoDescription || seoPage?.description || page!.description;
 
   const pageUrl = `${baseUrl}/esim/${slug}`;
+  const displayName =
+    managedPage?.displayName || seoPage?.name || page!.name;
+  const socialImage =
+    managedPage?.heroImage || getDestinationImage(displayName);
 
   return {
     title,
@@ -236,14 +241,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       description,
       url: pageUrl,
       type: "website",
-      images: managedPage?.heroImage
-        ? [
-            {
-              url: managedPage.heroImage,
-              alt: managedPage.heroImageAlt || managedPage.displayName,
-            },
-          ]
-        : undefined,
+      images: [
+        {
+          url: socialImage,
+          alt:
+            managedPage?.heroImageAlt || `${displayName} travel destination`,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
@@ -270,6 +274,8 @@ export default async function EsimLandingPage({ params }: PageProps) {
 
   const displayName =
     managedPage?.displayName || seoPage?.name || page!.name;
+  const destinationImage =
+    managedPage?.heroImage || getDestinationImage(displayName);
   const pageUrl = `${baseUrl}/esim/${slug}`;
   const headline =
     managedPage?.headline ||
@@ -439,7 +445,7 @@ export default async function EsimLandingPage({ params }: PageProps) {
 
         <div className="dalo-content-hero dalo-country-hero overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-blue-100">
           <div
-            className={`grid ${managedPage?.heroImage ? "lg:grid-cols-[1.15fr_0.85fr]" : ""}`}
+            className="grid lg:grid-cols-[1.15fr_0.85fr]"
           >
             <div className="p-5 sm:p-8">
               <p className="mb-2 text-xs font-bold uppercase tracking-wide text-blue-600 sm:mb-3 sm:text-sm">
@@ -479,18 +485,19 @@ export default async function EsimLandingPage({ params }: PageProps) {
                 </p>
               ) : null}
             </div>
-            {managedPage?.heroImage ? (
-              <Image
-                width={640}
-                height={320}
-                preload
-                quality={60}
-                sizes="(max-width: 639px) 100vw, 320px"
-                src={managedPage.heroImage}
-                alt={managedPage.heroImageAlt || displayName}
-                className="h-40 min-h-0 w-full object-cover sm:h-60 lg:h-full lg:min-h-72"
-              />
-            ) : null}
+            <Image
+              width={640}
+              height={320}
+              preload
+              quality={60}
+              sizes="(max-width: 639px) 100vw, 320px"
+              src={destinationImage}
+              alt={
+                managedPage?.heroImageAlt ||
+                `${displayName} travel destination`
+              }
+              className="h-40 min-h-0 w-full object-cover sm:h-60 lg:h-full lg:min-h-72"
+            />
           </div>
         </div>
 

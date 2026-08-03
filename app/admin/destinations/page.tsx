@@ -2,6 +2,7 @@ import Link from "next/link";
 import AdminShell from "../../../components/AdminShell";
 import { slugifyDestination } from "../../../lib/destination-pages";
 import { prisma } from "../../../lib/db";
+import { prepareDestinationSeoDrafts } from "./actions";
 
 function first(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
@@ -10,7 +11,7 @@ function first(value: string | string[] | undefined) {
 export default async function AdminDestinationsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string | string[] }>;
+  searchParams: Promise<{ q?: string | string[]; prepared?: string | string[] }>;
 }) {
   const params = await searchParams;
   const query = (first(params.q) || "").trim().toLowerCase();
@@ -67,6 +68,29 @@ export default async function AdminDestinationsPage({
           Manage destination content independently from provider imports and
           product pricing.
         </p>
+      </div>
+
+      {first(params.prepared) ? (
+        <div className="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm font-bold text-emerald-900">
+          Missing SEO content was prepared for every destination with an active
+          plan. Existing complete content and indexing decisions were preserved.
+        </div>
+      ) : null}
+
+      <div className="mb-6 flex flex-col gap-4 rounded-2xl border border-blue-200 bg-blue-50 p-5 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="font-black text-blue-950">Prepare missing SEO content</p>
+          <p className="mt-1 max-w-3xl text-sm leading-6 text-blue-900/75">
+            Completes short or empty titles, descriptions, travel guidance,
+            image details and FAQs. Existing complete copy is not overwritten,
+            and no page is automatically approved for Google indexing.
+          </p>
+        </div>
+        <form action={prepareDestinationSeoDrafts}>
+          <button className="whitespace-nowrap rounded-xl bg-blue-700 px-5 py-3 text-sm font-black text-white transition hover:bg-blue-800">
+            Prepare all pages
+          </button>
+        </form>
       </div>
 
       <form className="mb-6 flex gap-3 rounded-2xl bg-white p-4 shadow-sm">

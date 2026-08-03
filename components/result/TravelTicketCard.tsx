@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { getDestinationImage } from "../../lib/destination-images";
 
 export default function TravelTicketCard({
   country,
@@ -13,16 +14,13 @@ export default function TravelTicketCard({
   validityDays: number;
   usageLabel: string;
 }) {
-  const destinationImage =
-    country.toLowerCase() === "argentina"
-      ? "/travel/argentina-result.webp"
-      : "/travel/dalo-hero-sicily.webp";
+  const destinationImage = getDestinationImage(country);
 
   return (
     <div className="relative flex h-full min-h-[400px] overflow-hidden bg-[#0b2750] p-5 text-white">
       <Image
         src={destinationImage}
-        alt=""
+        alt={`${country} travel destination`}
         fill
         preload
         quality={72}
