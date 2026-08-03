@@ -86,6 +86,17 @@ export default function DeviceCompatibilityCheck() {
           : platform === "android"
             ? "Your Android device may support eSIM. Support depends on the exact model, region and carrier."
             : "We cannot identify your phone from this browser. You can still confirm eSIM support in a few seconds.";
+  const detectionHeadline =
+    platform === "iphone"
+      ? "We detected an iPhone."
+      : platform === "ipad"
+        ? "We detected an iPad."
+        : platform === "samsung"
+          ? "We detected a Samsung Galaxy."
+          : platform === "android"
+            ? "We detected an Android device."
+            : "Let's check your device.";
+  const deviceRecognized = platform !== "other";
   const settingsStep =
     platform === "iphone" || platform === "ipad"
       ? {
@@ -112,7 +123,7 @@ export default function DeviceCompatibilityCheck() {
         className="group fixed bottom-24 right-3 z-40 flex h-12 w-auto items-center justify-center gap-2 rounded-2xl border border-blue-400 bg-blue-800 px-2.5 text-left text-white shadow-[0_14px_35px_rgba(13,54,140,0.32)] transition hover:-translate-y-1 hover:bg-blue-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 sm:bottom-5 sm:right-5 sm:h-auto sm:min-w-[330px] sm:justify-start sm:gap-3 sm:px-4 sm:py-3.5"
       >
         <span className="relative grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-blue-800 sm:h-11 sm:w-11 sm:rounded-xl">
-          <span className="absolute -right-1 -top-1 h-3.5 w-3.5 rounded-full border-2 border-blue-800 bg-amber-400" />
+          <span className={`absolute -right-1 -top-1 h-3.5 w-3.5 rounded-full border-2 border-blue-800 ${deviceRecognized ? "bg-emerald-400" : "bg-amber-400"}`} />
           <svg
             viewBox="0 0 24 24"
             aria-hidden="true"
@@ -125,8 +136,13 @@ export default function DeviceCompatibilityCheck() {
             <path d="M10 5.75h4M10.25 17.25l1.35 1.35 2.65-3" />
           </svg>
         </span>
-        <span className="block max-w-[9rem] truncate text-xs font-extrabold sm:hidden">
-          {platformLabel}
+        <span className="block min-w-0 pr-1 sm:hidden">
+          <span className="block max-w-[10rem] truncate text-[11px] font-black uppercase tracking-[0.08em] text-blue-100">
+            {platformLabel}
+          </span>
+          <span className="block text-xs font-extrabold text-white">
+            Check eSIM readiness
+          </span>
         </span>
         <span className="hidden min-w-0 flex-1 sm:block">
           <span className="block truncate text-[11px] font-bold uppercase tracking-[0.16em] text-blue-100">
@@ -178,11 +194,15 @@ export default function DeviceCompatibilityCheck() {
             </div>
 
             <div className="space-y-3 px-5 py-5 sm:px-7 sm:py-6">
-              <div className="rounded-2xl border border-blue-200 bg-blue-50 px-4 py-3.5">
-                <p className="text-xs font-black uppercase tracking-[0.14em] text-blue-700">
-                  {platformLabel}
+              <div className="rounded-2xl border border-blue-500 bg-[#173f91] px-5 py-4 text-white shadow-[0_12px_30px_rgba(23,63,145,0.2)]">
+                <div className="inline-flex items-center gap-2 rounded-full bg-emerald-400/15 px-2.5 py-1 text-xs font-black uppercase tracking-[0.12em] text-emerald-200">
+                  <span className={`h-2.5 w-2.5 rounded-full ${deviceRecognized ? "bg-emerald-400" : "bg-amber-400"}`} />
+                  {deviceRecognized ? "Positive device signal" : "Manual check needed"}
+                </div>
+                <p className="mt-1.5 text-xl font-black tracking-tight">
+                  {detectionHeadline}
                 </p>
-                <p className="mt-1.5 text-sm font-semibold leading-6 text-blue-950">
+                <p className="mt-2 text-sm font-semibold leading-6 text-blue-50">
                   {compatibilitySignal}
                 </p>
               </div>
