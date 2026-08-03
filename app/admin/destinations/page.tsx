@@ -44,33 +44,43 @@ export default async function AdminDestinationsPage({
     if (name) destinations.set(slugifyDestination(name), name);
   }
 
-  for (const page of managedPages) {
-    destinations.set(page.slug, page.countryName);
-  }
-
   const rows = Array.from(destinations.entries())
-    .map(([slug, countryName]) => ({
-      slug,
-      countryName,
-      page: managedBySlug.get(slug),
-      issues: managedBySlug.get(slug)
-        ? getDestinationSeoIssues(managedBySlug.get(slug)!)
-        : ["Country page is not configured"],
-    }))
+    .map(([slug, countryName]) => {
+      const page = managedBySlug.get(slug);
+      const issues = page
+        ? getDestinationSeoIssues(page)
+        : ["Country page is not configured"];
+      const pageStatus = !page?.published
+        ? "not-published"
+        : issues.length
+          ? "needs-work"
+          : "complete";
+
+      return { slug, countryName, page, issues, pageStatus };
+    })
     .filter(
       (row) =>
         (!query ||
           row.countryName.toLowerCase().includes(query) ||
           row.slug.includes(query)) &&
-        (status === "all" ||
-          (status === "ready" && row.issues.length === 0) ||
-          (status === "editorial" && row.issues.length > 0)),
+        (status === "all" || status === row.pageStatus),
     );
 
-  const readyCount = managedPages.filter(
-    (page) => getDestinationSeoIssues(page).length === 0,
-  ).length;
-  const editorialCount = destinations.size - readyCount;
+  const destinationRows = Array.from(destinations.entries()).map(([slug]) => {
+    const page = managedBySlug.get(slug);
+    const issues = page ? getDestinationSeoIssues(page) : [];
+    return {
+      page,
+      status: !page?.published
+        ? "not-published"
+        : issues.length
+          ? "needs-work"
+          : "complete",
+    };
+  });
+  const completeCount = destinationRows.filter((row) => row.status === "complete").length;
+  const needsWorkCount = destinationRows.filter((row) => row.status === "needs-work").length;
+  const notPublishedCount = destinationRows.filter((row) => row.status === "not-published").length;
 
   return (
     <AdminShell activePage="destinations">
@@ -82,8 +92,8 @@ export default async function AdminDestinationsPage({
           Country Pages
         </h1>
         <p className="mt-2 max-w-3xl text-slate-600">
-          Manage destination content independently from provider imports and
-          product pricing.
+          One country, one landing page and one clear search topic. Only
+          destinations with an active plan appear here.
         </p>
       </div>
 
@@ -96,11 +106,10 @@ export default async function AdminDestinationsPage({
 
       <div className="mb-6 flex flex-col gap-4 rounded-2xl border border-blue-200 bg-blue-50 p-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="font-black text-blue-950">Prepare missing SEO content</p>
+          <p className="font-black text-blue-950">Prepare missing page drafts</p>
           <p className="mt-1 max-w-3xl text-sm leading-6 text-blue-900/75">
-            Completes short or empty titles, descriptions, travel guidance,
-            image details and FAQs. Existing complete copy is not overwritten,
-            and no page is automatically approved for Google indexing.
+            Adds a safe starting point to empty fields. Existing copy is not
+            overwritten, and every page still requires review before publication.
           </p>
         </div>
         <form action={prepareDestinationSeoDrafts}>
@@ -123,8 +132,9 @@ export default async function AdminDestinationsPage({
           className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 font-bold outline-none focus:border-blue-500"
         >
           <option value="all">All countries</option>
-          <option value="editorial">Editorial work required</option>
-          <option value="ready">Ready for Google</option>
+          <option value="not-published">Not published</option>
+          <option value="needs-work">Needs work</option>
+          <option value="complete">Complete</option>
         </select>
         <button className="rounded-xl bg-blue-700 px-5 py-3 font-bold text-white">
           Search
@@ -133,25 +143,25 @@ export default async function AdminDestinationsPage({
 
       <div className="mb-4 grid gap-3 sm:grid-cols-4">
         <div className="rounded-2xl bg-white p-5 shadow-sm">
-          <p className="text-xs font-bold uppercase text-slate-500">Available</p>
+          <p className="text-xs font-bold uppercase text-slate-500">Active destinations</p>
           <p className="mt-1 text-3xl font-black">{destinations.size}</p>
         </div>
         <div className="rounded-2xl bg-white p-5 shadow-sm">
-          <p className="text-xs font-bold uppercase text-slate-500">Managed</p>
-          <p className="mt-1 text-3xl font-black">{managedPages.length}</p>
+          <p className="text-xs font-bold uppercase text-slate-500">Not published</p>
+          <p className="mt-1 text-3xl font-black text-slate-600">{notPublishedCount}</p>
         </div>
         <div className="rounded-2xl bg-white p-5 shadow-sm">
-          <p className="text-xs font-bold uppercase text-slate-500">Editorial work</p>
-          <p className="mt-1 text-3xl font-black text-amber-700">{editorialCount}</p>
+          <p className="text-xs font-bold uppercase text-slate-500">Needs work</p>
+          <p className="mt-1 text-3xl font-black text-amber-700">{needsWorkCount}</p>
         </div>
         <div className="rounded-2xl bg-white p-5 shadow-sm">
-          <p className="text-xs font-bold uppercase text-slate-500">Google ready</p>
-          <p className="mt-1 text-3xl font-black text-emerald-700">{readyCount}</p>
+          <p className="text-xs font-bold uppercase text-slate-500">Complete</p>
+          <p className="mt-1 text-3xl font-black text-emerald-700">{completeCount}</p>
         </div>
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        {rows.map(({ slug, countryName, page, issues }) => (
+        {rows.map(({ slug, countryName, page, issues, pageStatus }) => (
           <div
             key={slug}
             className="flex flex-col gap-3 border-b border-slate-100 px-5 py-4 last:border-b-0 sm:flex-row sm:items-center sm:justify-between"
@@ -162,6 +172,9 @@ export default async function AdminDestinationsPage({
               </p>
               <p className="mt-1 font-mono text-xs text-slate-500">
                 /esim/{slug}
+              </p>
+              <p className="mt-1 text-xs font-bold text-blue-700">
+                Target keyword: eSIM for {page?.displayName || countryName}
               </p>
               {issues.length ? (
                 <p className="mt-2 max-w-2xl text-sm font-semibold text-amber-700">
@@ -177,18 +190,18 @@ export default async function AdminDestinationsPage({
             <div className="flex items-center gap-3">
               <span
                 className={`rounded-full px-3 py-1 text-xs font-bold ${
-                  page?.published
-                    ? page.indexable
-                      ? "bg-emerald-100 text-emerald-800"
-                      : "bg-amber-100 text-amber-800"
-                    : "bg-slate-100 text-slate-600"
+                  pageStatus === "complete"
+                    ? "bg-emerald-100 text-emerald-800"
+                    : pageStatus === "needs-work"
+                      ? "bg-amber-100 text-amber-800"
+                      : "bg-slate-100 text-slate-600"
                 }`}
               >
-                {!page
-                  ? "Not configured"
-                  : issues.length
-                    ? `${issues.length} items to review`
-                    : "Ready for Google"}
+                {pageStatus === "complete"
+                  ? "Complete"
+                  : pageStatus === "needs-work"
+                    ? "Needs work"
+                    : "Not published"}
               </span>
               <Link
                 href={`/admin/destinations/${slug}?country=${encodeURIComponent(countryName)}`}

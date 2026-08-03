@@ -449,7 +449,7 @@ export default async function EsimLandingPage({ params }: PageProps) {
           >
             <div className="p-5 sm:p-8">
               <p className="mb-2 text-xs font-bold uppercase tracking-wide text-blue-600 sm:mb-3 sm:text-sm">
-                Travel eSIM recommendation
+                {displayName} travel eSIM
               </p>
 
               <h1 className="max-w-3xl text-[2rem] font-black leading-[1.05] tracking-tight text-slate-950 sm:text-4xl md:text-6xl">
@@ -610,6 +610,29 @@ export default async function EsimLandingPage({ params }: PageProps) {
               ))}
           </section>
         ) : null}
+
+        <section className="mt-10 overflow-hidden rounded-[2rem] bg-[#0b2f78] text-white shadow-xl shadow-blue-200">
+          <div className="grid items-center gap-6 p-7 sm:p-9 lg:grid-cols-[1fr_auto]">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-200">
+                DALO recommendation engine
+              </p>
+              <h2 className="mt-2 text-2xl font-black tracking-tight sm:text-3xl">
+                Not sure which {displayName} eSIM fits your trip?
+              </h2>
+              <p className="mt-3 max-w-2xl leading-7 text-blue-100">
+                Match your destination, trip length and expected data usage with
+                one clear plan recommendation instead of comparing every package.
+              </p>
+            </div>
+            <Link
+              href="/#quiz"
+              className="inline-flex min-h-12 items-center justify-center rounded-xl bg-white px-6 py-3 font-black text-blue-800 transition hover:bg-blue-50 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            >
+              Find my eSIM <span aria-hidden="true" className="ml-2">→</span>
+            </Link>
+          </div>
+        </section>
 
         <section className="mt-10 rounded-[2rem] bg-white p-8 shadow-xl shadow-blue-100">
           <h2 className="text-3xl font-black text-slate-950">

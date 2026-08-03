@@ -188,66 +188,103 @@ export function HomeFaq() {
   return (
     <>
       {/* FAQ */}
-      <section id="faq" className="mx-auto max-w-6xl px-6 py-16">
-        <div className="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+      <section id="faq" className="mx-auto grid max-w-6xl gap-6 px-6 py-16 lg:grid-cols-[0.72fr_1.28fr] lg:items-start">
+        <div className="relative overflow-hidden rounded-[2rem] bg-[#10233a] p-7 text-white shadow-[0_24px_65px_rgba(16,35,58,0.2)] sm:p-9 lg:sticky lg:top-6">
+          <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full border border-white/10" />
+          <div className="pointer-events-none absolute -bottom-16 -left-16 h-44 w-44 rounded-full bg-[#2148c0]/30 blur-2xl" />
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#2148c0]">Travel with confidence</p>
-            <h2 className="mt-2 text-4xl font-bold tracking-tight text-slate-950">
-              Questions, answered.
+            <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#f2a45f]">DALO travel confidence</p>
+            <h2 className="mt-3 text-4xl font-bold tracking-[-0.04em] text-white">
+              Travel data without the usual surprises.
             </h2>
           </div>
-          <p className="max-w-sm text-sm leading-relaxed text-slate-600 md:text-right">
-            The essentials to know before choosing and installing your travel eSIM.
+          <p className="relative mt-5 max-w-sm text-sm leading-7 text-slate-300">
+            Clear pricing, prepaid data and no contract waiting for you after the trip.
           </p>
+
+          <div className="relative mt-8 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.06]">
+            {[
+              ["Before payment", "Your plan and full price"],
+              ["At checkout", "Secure Stripe payment"],
+              ["After purchase", "Digital delivery and support"],
+            ].map(([moment, promise], index) => (
+              <div key={moment} className="grid grid-cols-[2rem_1fr] gap-3 border-b border-white/10 px-4 py-4 last:border-b-0">
+                <span className="grid h-8 w-8 place-items-center rounded-lg bg-white/10 text-[10px] font-black text-blue-100">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <div>
+                  <p className="text-[9px] font-black uppercase tracking-[0.14em] text-blue-200">{moment}</p>
+                  <p className="mt-1 text-sm font-bold text-white">{promise}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <a href="/support" className="relative mt-7 inline-flex min-h-12 w-full items-center justify-between rounded-xl bg-white px-4 py-3 text-sm font-black text-[#10233a] transition hover:bg-blue-50 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-300/40">
+            DALO support is here
+            <span className="text-[#2148c0]">Contact support →</span>
+          </a>
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
           {[
             {
-              label: "Basics",
-              question: "What is an eSIM?",
+              label: "Prepaid only",
+              question: "No subscription or automatic renewal.",
               answer:
-                "An eSIM is a digital SIM card that lets you activate mobile data without replacing your physical SIM.",
+                "DALO travel eSIMs are prepaid purchases for a defined data allowance and validity period. There is no recurring DALO subscription and your plan does not renew automatically.",
+            },
+            {
+              label: "Clear pricing",
+              question: "See your complete DALO price before payment.",
+              answer:
+                "You see the plan, data allowance, validity and total DALO price before payment. DALO does not add an activation fee or surprise service charge after you select your plan.",
+            },
+            {
+              label: "Roaming control",
+              question: "Avoid unexpected home-carrier roaming charges.",
+              answer:
+                "Your DALO plan has a defined prepaid data allowance instead of open-ended DALO overage charges. Set the DALO eSIM as your mobile-data line and disable data roaming on your home SIM to avoid charges from your regular carrier.",
             },
             {
               label: "Your number",
-              question: "Can I keep my phone number?",
+              question: "Keep your number while DALO handles travel data.",
               answer:
-                "Yes. Your physical SIM and travel eSIM can work together on most modern compatible phones.",
+                "Yes. On compatible dual-SIM phones, your regular SIM can stay active for calls and messages while the DALO eSIM provides travel data.",
             },
             {
               label: "Payment",
-              question: "Is checkout secure?",
+              question: "Stripe processes your complete card details.",
               answer:
-                "Recommendation questions never request payment details. Payment happens only after you review your matched plan.",
+                "No. Card details are entered and processed securely by Stripe. DALO stores the order information needed for delivery and support, but never your complete card number.",
             },
             {
-              label: "Installation",
-              question: "How long does installation take?",
+              label: "Support",
+              question: "Setup guidance and support stay with your order.",
               answer:
-                "Usually only a few minutes after purchase. Your eSIM is delivered digitally with setup instructions.",
+                "Your order number, eSIM details and installation options remain available in your DALO account. If you need help, support can identify the correct eSIM using your order number or ICCID.",
             },
           ].map((item, index) => (
-            <details key={item.question} className="group border-b border-slate-200 last:border-b-0">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-5 px-5 py-5 marker:hidden sm:px-7">
+            <details key={item.question} className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_12px_35px_rgba(30,64,120,0.07)] transition duration-300 open:border-blue-200 open:shadow-[0_18px_45px_rgba(33,72,192,0.12)]">
+              <summary className="flex min-h-28 cursor-pointer list-none items-start justify-between gap-5 px-5 py-5 marker:hidden sm:px-6 sm:py-6">
                 <span className="flex items-center gap-4">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#2148c0]">
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#eef3ff] text-[10px] font-black tracking-[0.08em] text-[#2148c0] transition group-open:bg-[#2148c0] group-open:text-white">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   <span>
-                    <span className="block text-[9px] font-bold uppercase tracking-[0.12em] text-slate-600">
+                    <span className="block text-[9px] font-black uppercase tracking-[0.14em] text-[#2148c0]">
                       {item.label}
                     </span>
-                    <span className="mt-0.5 block font-bold text-slate-950">
+                    <span className="mt-1.5 block text-base font-extrabold leading-snug text-slate-950">
                       {item.question}
                     </span>
                   </span>
                 </span>
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#eef3ff] text-lg text-[#2148c0] transition group-open:rotate-45">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-blue-100 bg-[#f7f9ff] text-lg font-light text-[#2148c0] transition duration-300 group-hover:border-blue-300 group-hover:bg-blue-50 group-open:rotate-45 group-open:border-[#2148c0]">
                   +
                 </span>
               </summary>
-              <p className="px-5 pb-5 pl-[4.75rem] text-sm leading-relaxed text-slate-600 sm:px-7 sm:pl-[5.5rem]">
+              <p className="border-t border-blue-100 bg-[#f8faff] px-5 py-5 text-sm leading-7 text-slate-600 sm:px-6">
                 {item.answer}
               </p>
             </details>

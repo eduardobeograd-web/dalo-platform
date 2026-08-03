@@ -48,6 +48,9 @@ export default async function EditDestinationPage({
           <p className="mt-2 font-mono text-sm text-slate-500">
             /esim/{slug}
           </p>
+          <div className="mt-3 inline-flex rounded-full border border-blue-200 bg-blue-50 px-4 py-2 text-sm font-black text-blue-800">
+            Target keyword: eSIM for {displayName}
+          </div>
         </div>
         <div className="flex gap-3">
           {page?.published ? (
@@ -84,7 +87,11 @@ export default async function EditDestinationPage({
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <p className={`text-sm font-black uppercase tracking-wide ${contentIssues.length ? "text-amber-800" : "text-emerald-800"}`}>
-              {contentIssues.length ? "Editorial work required" : "Ready for Google"}
+              {!page?.published
+                ? "Not published"
+                : contentIssues.length
+                  ? "Needs work"
+                  : "Complete"}
             </p>
             <h2 className="mt-1 text-xl font-black text-slate-950">
               {contentIssues.length
@@ -92,12 +99,12 @@ export default async function EditDestinationPage({
                 : "This country page passes the current checks"}
             </h2>
             <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
-              Automatic drafts are a starting point only. Replace them with accurate,
-              country-specific travel guidance before enabling Google indexing.
+              Keep the title, introduction, network guidance and FAQ specific to
+              this destination. Draft text is only a starting point.
             </p>
           </div>
           <span className="rounded-full bg-white px-4 py-2 text-sm font-black text-slate-700 shadow-sm">
-            {contentIssues.length ? "Needs review" : "Complete"}
+            {!page?.published ? "Not published" : contentIssues.length ? "Needs work" : "Complete"}
           </span>
         </div>
         {contentIssues.length ? (
@@ -141,7 +148,7 @@ export default async function EditDestinationPage({
               defaultValue={
                 page?.seoTitle ||
                 fallback?.title ||
-                `${displayName} eSIM | Travel Data Plans | DALO`
+                `${displayName} eSIM | Prepaid Travel Data Plans | DALO`
               }
               required
               maxLength={70}
@@ -170,7 +177,7 @@ export default async function EditDestinationPage({
               defaultValue={
                 page?.headline ||
                 fallback?.headline ||
-                `${displayName} eSIM plans for your trip`
+                `Find the right eSIM for ${displayName}`
               }
               required
               className={inputClass}

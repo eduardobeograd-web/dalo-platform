@@ -32,7 +32,7 @@ export default function HomeHeroQuiz() {
           <div className="grid items-start gap-3 sm:gap-5 lg:grid-cols-[minmax(0,1fr)_580px] lg:gap-5">
             <div className="self-center py-2 pr-0 sm:py-5 sm:pr-4 lg:py-8 lg:pr-7">
               <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-blue-700 sm:mb-4 sm:text-xs">
-                The travel eSIM matching engine
+                The travel eSIM recommendation engine
               </p>
 
               <h1 className="max-w-[37rem] text-[2.05rem] font-bold leading-[0.98] tracking-[-0.045em] text-slate-950 sm:text-5xl lg:text-[3.45rem]">
@@ -44,8 +44,8 @@ export default function HomeHeroQuiz() {
               </h1>
 
               <p className="mt-2 max-w-md text-[13px] leading-relaxed text-slate-700 sm:mt-5 sm:text-lg">
-                Tell us where you&apos;re going and how you use your phone.
-                DALO turns that into one clear recommendation.
+                Find the right eSIM for international travel without comparing
+                endless plans. Tell DALO about your trip and get one clear recommendation.
               </p>
 
               <div className="mt-5 hidden max-w-xl rounded-2xl border border-white/80 bg-white/80 p-4 shadow-[0_16px_35px_rgba(15,80,110,0.1)] backdrop-blur-sm sm:block">

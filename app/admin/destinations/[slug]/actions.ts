@@ -16,6 +16,7 @@ export async function updateDestinationPage(
     answer: String(formData.get(`faqAnswer${index}`) || "").trim(),
   })).filter((item) => item.question && item.answer);
 
+  const published = formData.get("published") === "on";
   const data = {
     countryName: String(formData.get("countryName") || "").trim(),
     displayName: String(formData.get("displayName") || "").trim(),
@@ -32,8 +33,8 @@ export async function updateDestinationPage(
       String(formData.get("compatibilityText") || "").trim() || null,
     hotspotText: String(formData.get("hotspotText") || "").trim() || null,
     faq,
-    published: formData.get("published") === "on",
-    indexable: formData.get("indexable") === "on",
+    published,
+    indexable: published && formData.get("indexable") === "on",
   };
 
   await prisma.destinationPage.upsert({
