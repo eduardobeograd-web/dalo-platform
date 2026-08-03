@@ -95,6 +95,9 @@ export default function SiteFooter() {
               <a className="block hover:text-[#2148c0]" href="/customer/login">
                 Login
               </a>
+              <a className="block hover:text-[#2148c0]" href="/install">
+                Install DALO app
+              </a>
             </div>
           </div>
 

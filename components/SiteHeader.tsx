@@ -82,6 +82,12 @@ export default function SiteHeader({ mode = "public" }: SiteHeaderProps) {
         ) : (
           <div className="flex items-center gap-2 sm:gap-4">
             <a
+              className="hidden min-h-11 items-center justify-center whitespace-nowrap rounded-lg px-2 text-xs font-semibold text-slate-600 transition hover:bg-blue-50 hover:text-[#2148c0] md:inline-flex sm:text-sm"
+              href="/install"
+            >
+              Install app
+            </a>
+            <a
               className="inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-lg px-2 text-xs font-semibold text-slate-600 transition hover:bg-blue-50 hover:text-[#2148c0] sm:text-sm"
               href="/customer/dashboard"
             >

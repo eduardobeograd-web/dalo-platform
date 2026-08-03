@@ -1,4 +1,4 @@
-const DALO_SERVICE_WORKER_VERSION = "dalo-pwa-v1";
+const DALO_SERVICE_WORKER_VERSION = "dalo-pwa-v2";
 
 self.addEventListener("install", () => {
   self.skipWaiting();
@@ -21,3 +21,7 @@ self.addEventListener("activate", (event) => {
 });
 
 // DALO intentionally does not cache checkout, account, QR-code, or order data.
+self.addEventListener("fetch", () => {
+  // Keep requests on the normal network path. The listener provides broad
+  // installability support without caching private account or checkout data.
+});

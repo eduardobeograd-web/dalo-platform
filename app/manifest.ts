@@ -10,6 +10,7 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: "/customer/dashboard",
     scope: "/",
     display: "standalone",
+    orientation: "portrait-primary",
     background_color: "#f6f8ff",
     theme_color: "#2148c0",
     categories: ["travel", "utilities"],
