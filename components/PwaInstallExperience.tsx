@@ -86,8 +86,6 @@ export default function PwaInstallExperience({ installUrl }: { installUrl: strin
     setNotice(
       platform === "ios"
         ? "Use Safari's Share button, then choose Add to Home Screen."
-        : platform === "samsung"
-          ? "For the best Android installation, open this page in Google Chrome and choose Install app."
         : "Open your browser menu and choose Install app or Add to Home screen.",
     );
     document.getElementById("install-steps")?.scrollIntoView({ behavior: "smooth" });
