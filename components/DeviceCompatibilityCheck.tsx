@@ -122,25 +122,14 @@ export default function DeviceCompatibilityCheck() {
         aria-label="Check device compatibility"
         className="group fixed bottom-24 right-3 z-40 flex h-12 w-auto items-center justify-center gap-2 rounded-2xl border border-blue-400 bg-blue-800 px-2.5 text-left text-white shadow-[0_14px_35px_rgba(13,54,140,0.32)] transition hover:-translate-y-1 hover:bg-blue-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 sm:bottom-5 sm:right-5 sm:h-auto sm:min-w-[330px] sm:justify-start sm:gap-3 sm:px-4 sm:py-3.5"
       >
-        <span className="relative grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-blue-800 sm:h-11 sm:w-11 sm:rounded-xl">
-          <span className="absolute -right-3 -top-3 flex h-10 w-6 flex-col items-center justify-center gap-1 rounded-lg border-2 border-white bg-slate-950 p-1 shadow-[0_0_0_2px_#1e3a8a,0_5px_16px_rgba(15,23,42,0.45)]" aria-hidden="true">
+        <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white sm:h-11 sm:w-11" aria-hidden="true">
+          <span className="flex h-9 w-6 flex-col items-center justify-center gap-1 rounded-lg border-2 border-blue-900 bg-slate-950 p-1 shadow-[0_4px_12px_rgba(15,23,42,0.35)]">
             <span className="h-2 w-2 rounded-full bg-red-950 ring-1 ring-red-600/60" />
-            <span className="relative h-2.5 w-2.5 rounded-full bg-amber-300 ring-2 ring-amber-100 shadow-[0_0_14px_4px_rgba(251,191,36,0.85)] motion-safe:animate-pulse">
-              <span className="absolute inset-0 animate-ping rounded-full bg-amber-300 opacity-50 motion-reduce:animate-none" />
+            <span className="relative h-2.5 w-2.5 rounded-full bg-amber-300 ring-2 ring-amber-100 shadow-[0_0_12px_3px_rgba(251,191,36,0.85)] motion-safe:animate-pulse">
+              <span className="absolute inset-0 animate-ping rounded-full bg-amber-300 opacity-45 motion-reduce:animate-none" />
             </span>
             <span className="h-2 w-2 rounded-full bg-emerald-950 ring-1 ring-emerald-600/60" />
           </span>
-          <svg
-            viewBox="0 0 24 24"
-            aria-hidden="true"
-            className="h-5 w-5"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-          >
-            <rect x="7" y="2.75" width="10" height="18.5" rx="2.2" />
-            <path d="M10 5.75h4M10.25 17.25l1.35 1.35 2.65-3" />
-          </svg>
         </span>
         <span className="block min-w-0 pr-1 sm:hidden">
           <span className="block max-w-[10rem] truncate text-[11px] font-black uppercase tracking-[0.08em] text-blue-100">
