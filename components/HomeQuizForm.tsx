@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import DeviceCompatibilityCheck from "./DeviceCompatibilityCheck";
 
 const durationOptions = [
   { value: "1-3", label: "1-3" },
@@ -88,14 +89,17 @@ export default function HomeQuizForm() {
         <div className="pointer-events-none absolute -left-2 top-1/2 h-4 w-4 rounded-full bg-[#f7fafc]" />
         <div className="pointer-events-none absolute -right-2 top-1/2 h-4 w-4 rounded-full bg-[#f7fafc]" />
 
-        <div className="mb-2 flex items-end justify-between border-b border-dashed border-slate-300/80 pb-2 sm:mb-3 sm:pb-3">
-          <div>
+        <div className="mb-2 flex items-center justify-between gap-2 border-b border-dashed border-slate-300/80 pb-2 sm:mb-3 sm:items-end sm:pb-3">
+          <div className="min-w-0">
             <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#2148c0]">Find your plan</p>
             <h2 className="mt-1 text-xl font-extrabold tracking-[-0.035em] text-[#10233a] sm:text-2xl md:text-[1.7rem]">Your trip. Your eSIM.</h2>
           </div>
-          <div className="hidden items-center gap-2 pb-1 sm:flex">
-            <span className="h-2 w-2 rounded-full bg-[#e98b3a]" />
-            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">Matching engine live</p>
+          <div className="flex shrink-0 items-center">
+            <DeviceCompatibilityCheck variant="quiz" />
+            <div className="hidden items-center gap-2 pb-1 sm:flex">
+              <span className="h-2 w-2 rounded-full bg-[#e98b3a]" />
+              <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">Matching engine live</p>
+            </div>
           </div>
         </div>
 

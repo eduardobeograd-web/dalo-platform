@@ -9,9 +9,10 @@ import {
 } from "@/lib/consent";
 
 const hiddenPrefixes = ["/admin", "/customer"];
+const OPEN_DEVICE_CHECK_EVENT = "dalo:open-device-check";
 type DevicePlatform = "iphone" | "ipad" | "samsung" | "android" | "other";
 
-export default function DeviceCompatibilityCheck() {
+export default function DeviceCompatibilityCheck({ variant = "floating" }: { variant?: "floating" | "quiz" }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [platform, setPlatform] = useState<DevicePlatform>("other");
@@ -58,6 +59,17 @@ export default function DeviceCompatibilityCheck() {
     window.addEventListener("keydown", closeOnEscape);
     return () => window.removeEventListener("keydown", closeOnEscape);
   }, [open]);
+
+  useEffect(() => {
+    if (variant !== "floating") return;
+
+    function openDeviceCheck() {
+      setOpen(true);
+    }
+
+    window.addEventListener(OPEN_DEVICE_CHECK_EVENT, openDeviceCheck);
+    return () => window.removeEventListener(OPEN_DEVICE_CHECK_EVENT, openDeviceCheck);
+  }, [variant]);
 
   if (
     !consentDecided ||
@@ -117,10 +129,18 @@ export default function DeviceCompatibilityCheck() {
     <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          if (variant === "quiz") {
+            window.dispatchEvent(new Event(OPEN_DEVICE_CHECK_EVENT));
+            return;
+          }
+          setOpen(true);
+        }}
         aria-haspopup="dialog"
         aria-label="Check device compatibility"
-        className="group fixed bottom-24 right-3 z-40 flex h-12 w-auto items-center justify-center gap-2 rounded-2xl border border-blue-400 bg-blue-800 px-2.5 text-left text-white shadow-[0_14px_35px_rgba(13,54,140,0.32)] transition hover:-translate-y-1 hover:bg-blue-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 sm:bottom-5 sm:right-5 sm:h-auto sm:min-w-[330px] sm:justify-start sm:gap-3 sm:px-4 sm:py-3.5"
+        className={variant === "quiz"
+          ? "group relative flex min-h-12 shrink-0 items-center gap-2 rounded-xl border border-blue-200 bg-blue-50/90 px-2.5 py-1.5 text-left shadow-sm transition hover:border-blue-400 hover:bg-blue-100 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 sm:hidden"
+          : `group fixed bottom-24 right-3 z-40 h-12 w-auto items-center justify-center gap-2 rounded-2xl border border-blue-400 bg-blue-800 px-2.5 text-left text-white shadow-[0_14px_35px_rgba(13,54,140,0.32)] transition hover:-translate-y-1 hover:bg-blue-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 sm:bottom-5 sm:right-5 sm:h-auto sm:min-w-[330px] sm:justify-start sm:gap-3 sm:px-4 sm:py-3.5 ${pathname === "/" ? "hidden sm:flex" : "flex"}`}
       >
         <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white sm:h-11 sm:w-11" aria-hidden="true">
           <span className="flex h-9 w-6 flex-col items-center justify-center gap-1 rounded-lg border-2 border-blue-900 bg-slate-950 p-1 shadow-[0_4px_12px_rgba(15,23,42,0.35)]">
@@ -132,11 +152,11 @@ export default function DeviceCompatibilityCheck() {
           </span>
         </span>
         <span className="block min-w-0 pr-1 sm:hidden">
-          <span className="block max-w-[10rem] truncate text-[11px] font-black uppercase tracking-[0.08em] text-blue-100">
+          <span className={`block max-w-[8rem] truncate text-[10px] font-black uppercase tracking-[0.06em] ${variant === "quiz" ? "text-blue-700" : "text-blue-100"}`}>
             {platformLabel}
           </span>
-          <span className="block text-xs font-extrabold text-white">
-            Check eSIM readiness
+          <span className={`block text-xs font-extrabold ${variant === "quiz" ? "text-[#10233a]" : "text-white"}`}>
+            {variant === "quiz" ? "Verify eSIM →" : "Check eSIM readiness"}
           </span>
         </span>
         <span className="hidden min-w-0 flex-1 sm:block">
@@ -152,7 +172,7 @@ export default function DeviceCompatibilityCheck() {
         </span>
       </button>
 
-      {open ? (
+      {variant === "floating" && open ? (
         <div
           className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/35 p-3 backdrop-blur-sm sm:items-center sm:p-6"
           role="presentation"
