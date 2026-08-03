@@ -1,4 +1,5 @@
 import { parseDestinationFaq } from "./destination-pages";
+import { getDestinationSeoDraft } from "./destination-seo-draft";
 
 type ProductReadinessInput = {
   country: string;
@@ -18,6 +19,9 @@ type ProductReadinessInput = {
 };
 
 type DestinationReadinessInput = {
+  slug?: string;
+  countryName?: string;
+  displayName?: string;
   seoTitle: string;
   seoDescription: string;
   headline: string;
@@ -32,6 +36,58 @@ type DestinationReadinessInput = {
   published: boolean;
   indexable: boolean;
 };
+
+function sameText(left: string | null | undefined, right: string | null | undefined) {
+  return left?.trim() === right?.trim();
+}
+
+export function getDestinationEditorialIssues(page: DestinationReadinessInput) {
+  if (!page.slug) return [];
+
+  const draft = getDestinationSeoDraft(
+    page.slug,
+    page.displayName || page.countryName,
+  );
+  const issues: string[] = [];
+  const faqs = parseDestinationFaq(page.faq);
+
+  if (
+    sameText(page.seoTitle, draft.seoTitle) &&
+    sameText(page.seoDescription, draft.seoDescription)
+  ) {
+    issues.push("SEO title and description still use the automatic template");
+  }
+
+  if (
+    sameText(page.headline, draft.headline) &&
+    sameText(page.intro, draft.intro)
+  ) {
+    issues.push("Headline and introduction need country-specific editing");
+  }
+
+  if (
+    sameText(page.coverageText, draft.coverageText) ||
+    sameText(page.activationText, draft.activationText) ||
+    sameText(page.compatibilityText, draft.compatibilityText) ||
+    sameText(page.hotspotText, draft.hotspotText)
+  ) {
+    issues.push("Travel and product guidance still contains generic copy");
+  }
+
+  const draftFaqs = parseDestinationFaq(draft.faq);
+  if (
+    faqs.length === draftFaqs.length &&
+    faqs.every(
+      (faq, index) =>
+        sameText(faq.question, draftFaqs[index]?.question) &&
+        sameText(faq.answer, draftFaqs[index]?.answer),
+    )
+  ) {
+    issues.push("FAQs still use the automatic template");
+  }
+
+  return issues;
+}
 
 function hasText(value: string | null | undefined, minimum = 1) {
   return Boolean(value && value.trim().length >= minimum);
@@ -79,6 +135,8 @@ export function getDestinationSeoIssues(page: DestinationReadinessInput) {
   if (!hasText(page.hotspotText, 60)) issues.push("Hotspot information is incomplete");
   if (faqs.length < 3) issues.push("At least three complete FAQs are required");
   if (faqs.some((faq) => faq.answer.length < 50)) issues.push("FAQ answers need more detail");
+
+  issues.push(...getDestinationEditorialIssues(page));
 
   return issues;
 }

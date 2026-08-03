@@ -6,7 +6,7 @@ import SiteHeader from "../../components/SiteHeader";
 import { getDestinationImage } from "../../lib/destination-images";
 import { slugifyDestination } from "../../lib/destination-pages";
 import { prisma } from "../../lib/db";
-import { baseUrl } from "../../lib/site";
+import { siteUrl as baseUrl } from "../../lib/site-url";
 
 export const revalidate = 3600;
 

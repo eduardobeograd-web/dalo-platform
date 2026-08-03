@@ -1,5 +1,6 @@
 import Link from "next/link";
 import AdminShell from "../../../components/AdminShell";
+import { getDestinationSeoIssues } from "../../../lib/catalog-readiness";
 import { slugifyDestination } from "../../../lib/destination-pages";
 import { prisma } from "../../../lib/db";
 import { prepareDestinationSeoDrafts } from "./actions";
@@ -11,10 +12,15 @@ function first(value: string | string[] | undefined) {
 export default async function AdminDestinationsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string | string[]; prepared?: string | string[] }>;
+  searchParams: Promise<{
+    q?: string | string[];
+    prepared?: string | string[];
+    status?: string | string[];
+  }>;
 }) {
   const params = await searchParams;
   const query = (first(params.q) || "").trim().toLowerCase();
+  const status = first(params.status) || "all";
 
   const [products, managedPages] = await Promise.all([
     prisma.product.findMany({
@@ -47,13 +53,24 @@ export default async function AdminDestinationsPage({
       slug,
       countryName,
       page: managedBySlug.get(slug),
+      issues: managedBySlug.get(slug)
+        ? getDestinationSeoIssues(managedBySlug.get(slug)!)
+        : ["Country page is not configured"],
     }))
     .filter(
       (row) =>
-        !query ||
-        row.countryName.toLowerCase().includes(query) ||
-        row.slug.includes(query),
+        (!query ||
+          row.countryName.toLowerCase().includes(query) ||
+          row.slug.includes(query)) &&
+        (status === "all" ||
+          (status === "ready" && row.issues.length === 0) ||
+          (status === "editorial" && row.issues.length > 0)),
     );
+
+  const readyCount = managedPages.filter(
+    (page) => getDestinationSeoIssues(page).length === 0,
+  ).length;
+  const editorialCount = destinations.size - readyCount;
 
   return (
     <AdminShell activePage="destinations">
@@ -93,19 +110,28 @@ export default async function AdminDestinationsPage({
         </form>
       </div>
 
-      <form className="mb-6 flex gap-3 rounded-2xl bg-white p-4 shadow-sm">
+      <form className="mb-6 grid gap-3 rounded-2xl bg-white p-4 shadow-sm sm:grid-cols-[1fr_220px_auto]">
         <input
           name="q"
           defaultValue={first(params.q) || ""}
           placeholder="Search country or slug"
           className="min-w-0 flex-1 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-blue-500"
         />
+        <select
+          name="status"
+          defaultValue={status}
+          className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 font-bold outline-none focus:border-blue-500"
+        >
+          <option value="all">All countries</option>
+          <option value="editorial">Editorial work required</option>
+          <option value="ready">Ready for Google</option>
+        </select>
         <button className="rounded-xl bg-blue-700 px-5 py-3 font-bold text-white">
           Search
         </button>
       </form>
 
-      <div className="mb-4 grid gap-3 sm:grid-cols-3">
+      <div className="mb-4 grid gap-3 sm:grid-cols-4">
         <div className="rounded-2xl bg-white p-5 shadow-sm">
           <p className="text-xs font-bold uppercase text-slate-500">Available</p>
           <p className="mt-1 text-3xl font-black">{destinations.size}</p>
@@ -115,15 +141,17 @@ export default async function AdminDestinationsPage({
           <p className="mt-1 text-3xl font-black">{managedPages.length}</p>
         </div>
         <div className="rounded-2xl bg-white p-5 shadow-sm">
-          <p className="text-xs font-bold uppercase text-slate-500">Indexed</p>
-          <p className="mt-1 text-3xl font-black">
-            {managedPages.filter((page) => page.published && page.indexable).length}
-          </p>
+          <p className="text-xs font-bold uppercase text-slate-500">Editorial work</p>
+          <p className="mt-1 text-3xl font-black text-amber-700">{editorialCount}</p>
+        </div>
+        <div className="rounded-2xl bg-white p-5 shadow-sm">
+          <p className="text-xs font-bold uppercase text-slate-500">Google ready</p>
+          <p className="mt-1 text-3xl font-black text-emerald-700">{readyCount}</p>
         </div>
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-        {rows.map(({ slug, countryName, page }) => (
+        {rows.map(({ slug, countryName, page, issues }) => (
           <div
             key={slug}
             className="flex flex-col gap-3 border-b border-slate-100 px-5 py-4 last:border-b-0 sm:flex-row sm:items-center sm:justify-between"
@@ -135,6 +163,15 @@ export default async function AdminDestinationsPage({
               <p className="mt-1 font-mono text-xs text-slate-500">
                 /esim/{slug}
               </p>
+              {issues.length ? (
+                <p className="mt-2 max-w-2xl text-sm font-semibold text-amber-700">
+                  {issues.slice(0, 2).join(" · ")}
+                </p>
+              ) : (
+                <p className="mt-2 text-sm font-semibold text-emerald-700">
+                  Country content has passed the current editorial checks.
+                </p>
+              )}
             </div>
 
             <div className="flex items-center gap-3">
@@ -147,13 +184,11 @@ export default async function AdminDestinationsPage({
                     : "bg-slate-100 text-slate-600"
                 }`}
               >
-                {page?.published
-                  ? page.indexable
-                    ? "Published + indexed"
-                    : "Published + noindex"
-                  : page
-                    ? "Draft"
-                    : "Not configured"}
+                {!page
+                  ? "Not configured"
+                  : issues.length
+                    ? `${issues.length} items to review`
+                    : "Ready for Google"}
               </span>
               <Link
                 href={`/admin/destinations/${slug}?country=${encodeURIComponent(countryName)}`}

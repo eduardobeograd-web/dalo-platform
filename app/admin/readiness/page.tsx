@@ -111,8 +111,12 @@ export default async function CatalogReadinessPage({
       return true;
     })
     .sort((a, b) => {
-      const priority = { blocked: 0, "needs-work": 1, ready: 2 };
-      return priority[a.status] - priority[b.status] || a.name.localeCompare(b.name);
+      const priority: Record<string, number> = {
+        blocked: 0,
+        "needs-work": 1,
+        ready: 2,
+      };
+      return (priority[a.status] ?? 3) - (priority[b.status] ?? 3) || a.name.localeCompare(b.name);
     });
 
   const readyCount = rows.filter((row) => row.status === "ready").length;

@@ -13,23 +13,23 @@ function getMargin(buyPrice: number, sellPrice: number) {
 }
 
 export default async function AdminDashboard() {
-  const products = await prisma.product.findMany({
-    orderBy: {
-      createdAt: "asc",
-    },
-  });
-
-  const orders = await prisma.order.findMany({
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
-
-  const supportRequests = await prisma.supportRequest.findMany({
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+  const [products, orders, supportRequests] = await Promise.all([
+    prisma.product.findMany({
+      orderBy: {
+        createdAt: "asc",
+      },
+    }),
+    prisma.order.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    }),
+    prisma.supportRequest.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    }),
+  ]);
 
   const activeProducts = products.filter((product) => product.active);
 

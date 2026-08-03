@@ -4,7 +4,11 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdminPermission } from "../../../lib/admin-auth";
 import { ADMIN_PERMISSIONS } from "../../../lib/admin-permissions";
-import { getDestinationSeoDraft } from "../../../lib/destination-seo-draft";
+import {
+  getCatalogDestinationSeoDraft,
+  getDestinationSeoDraft,
+  isAutomaticDestinationSeo,
+} from "../../../lib/destination-seo-draft";
 import { slugifyDestination } from "../../../lib/destination-pages";
 import { parseDestinationFaq } from "../../../lib/destination-pages";
 import { prisma } from "../../../lib/db";
@@ -24,24 +28,47 @@ export async function prepareDestinationSeoDrafts() {
         sellPrice: { gt: 0 },
         validityDays: { gt: 0 },
       },
-      select: { country: true, region: true },
+      select: {
+        country: true,
+        region: true,
+        data: true,
+        validityDays: true,
+        sellPrice: true,
+      },
     }),
     prisma.destinationPage.findMany(),
   ]);
 
-  const names = new Map<string, string>();
+  const groups = new Map<string, { name: string; products: typeof products }>();
   for (const product of products) {
     for (const value of [product.country, product.region]) {
       const name = value?.trim();
-      if (name) names.set(slugifyDestination(name), name);
+      if (!name) continue;
+      const slug = slugifyDestination(name);
+      const group = groups.get(slug) || { name, products: [] };
+      group.products.push(product);
+      groups.set(slug, group);
     }
   }
 
   const pagesBySlug = new Map(existingPages.map((page) => [page.slug, page]));
 
-  for (const [slug, name] of names) {
+  for (const [slug, group] of groups) {
     const current = pagesBySlug.get(slug);
-    const draft = getDestinationSeoDraft(slug, current?.displayName || name);
+    const name = current?.displayName || group.name;
+    const dataOptions = Array.from(new Set(group.products.map((product) => product.data)));
+    const validity = group.products.map((product) => product.validityDays);
+    const prices = group.products.map((product) => product.sellPrice);
+    const catalogDraft = getCatalogDestinationSeoDraft(slug, name, {
+      planCount: group.products.length,
+      startingPrice: Math.min(...prices),
+      dataOptions,
+      minimumValidityDays: Math.min(...validity),
+      maximumValidityDays: Math.max(...validity),
+    });
+    const draft = current && !isAutomaticDestinationSeo(current)
+      ? getDestinationSeoDraft(slug, name)
+      : catalogDraft;
     const currentFaq = parseDestinationFaq(current?.faq);
 
     await prisma.destinationPage.upsert({
@@ -50,7 +77,7 @@ export async function prepareDestinationSeoDrafts() {
         slug,
         ...draft,
         published: true,
-        indexable: false,
+        indexable: true,
       },
       update: {
         countryName: current?.countryName.trim() || name,
@@ -84,6 +111,9 @@ export async function prepareDestinationSeoDrafts() {
             ? currentFaq
             : draft.faq,
         published: true,
+        indexable: current && !isAutomaticDestinationSeo(current)
+          ? current.indexable
+          : true,
       },
     });
   }

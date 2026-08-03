@@ -1,5 +1,6 @@
 import Link from "next/link";
 import AdminShell from "../../../../components/AdminShell";
+import { getDestinationSeoIssues } from "../../../../lib/catalog-readiness";
 import { parseDestinationFaq } from "../../../../lib/destination-pages";
 import { prisma } from "../../../../lib/db";
 import { getSeoLandingPage } from "../../../../lib/seo-pages";
@@ -28,6 +29,9 @@ export default async function EditDestinationPage({
   const displayName = page?.displayName || fallback?.name || countryName;
   const faqs = page ? parseDestinationFaq(page.faq) : fallback?.faq || [];
   const save = updateDestinationPage.bind(null, slug);
+  const contentIssues = page
+    ? getDestinationSeoIssues(page)
+    : ["Save the page before running the complete editorial check"];
   const inputClass =
     "w-full rounded-2xl border border-slate-200 bg-slate-50 p-4 outline-none focus:border-blue-500 focus:bg-white";
 
@@ -69,6 +73,43 @@ export default async function EditDestinationPage({
           Country page saved.
         </div>
       ) : null}
+
+      <section
+        className={`mb-6 rounded-2xl border p-5 ${
+          contentIssues.length
+            ? "border-amber-200 bg-amber-50"
+            : "border-emerald-200 bg-emerald-50"
+        }`}
+      >
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+          <div>
+            <p className={`text-sm font-black uppercase tracking-wide ${contentIssues.length ? "text-amber-800" : "text-emerald-800"}`}>
+              {contentIssues.length ? "Editorial work required" : "Ready for Google"}
+            </p>
+            <h2 className="mt-1 text-xl font-black text-slate-950">
+              {contentIssues.length
+                ? `${contentIssues.length} items need attention`
+                : "This country page passes the current checks"}
+            </h2>
+            <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
+              Automatic drafts are a starting point only. Replace them with accurate,
+              country-specific travel guidance before enabling Google indexing.
+            </p>
+          </div>
+          <span className="rounded-full bg-white px-4 py-2 text-sm font-black text-slate-700 shadow-sm">
+            {contentIssues.length ? "Needs review" : "Complete"}
+          </span>
+        </div>
+        {contentIssues.length ? (
+          <ul className="mt-4 grid gap-2 text-sm font-semibold text-amber-950 md:grid-cols-2">
+            {contentIssues.map((issue) => (
+              <li key={issue} className="rounded-xl bg-white/70 px-4 py-3">
+                {issue}
+              </li>
+            ))}
+          </ul>
+        ) : null}
+      </section>
 
       <form action={save} className="space-y-6">
         <section className="grid gap-5 rounded-[2rem] bg-white p-7 shadow-sm lg:grid-cols-2">

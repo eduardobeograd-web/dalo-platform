@@ -17,6 +17,7 @@ type AdminPage =
   | "products"
   | "readiness"
   | "destinations"
+  | "seo-audit"
   | "recommendations"
   | "upsells"
   | "orders"
@@ -32,6 +33,7 @@ const pagePermissions: Record<AdminPage, AdminPermission> = {
   products: ADMIN_PERMISSIONS.PRODUCTS_READ,
   readiness: ADMIN_PERMISSIONS.SEO_READ,
   destinations: ADMIN_PERMISSIONS.SEO_READ,
+  "seo-audit": ADMIN_PERMISSIONS.SEO_READ,
   recommendations: ADMIN_PERMISSIONS.RECOMMENDATIONS_READ,
   upsells: ADMIN_PERMISSIONS.UPSELLS_READ,
   orders: ADMIN_PERMISSIONS.ORDERS_READ,
@@ -64,6 +66,7 @@ const navGroups: Array<{
       { id: "products", href: "/admin/products", label: "Products" },
       { id: "readiness", href: "/admin/readiness", label: "Launch readiness" },
       { id: "destinations", href: "/admin/destinations", label: "SEO & Country pages" },
+      { id: "seo-audit", href: "/admin/seo-audit", label: "SEO Audit" },
     ],
   },
   {
