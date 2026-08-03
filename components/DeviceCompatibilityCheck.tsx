@@ -123,9 +123,12 @@ export default function DeviceCompatibilityCheck() {
         className="group fixed bottom-24 right-3 z-40 flex h-12 w-auto items-center justify-center gap-2 rounded-2xl border border-blue-400 bg-blue-800 px-2.5 text-left text-white shadow-[0_14px_35px_rgba(13,54,140,0.32)] transition hover:-translate-y-1 hover:bg-blue-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 sm:bottom-5 sm:right-5 sm:h-auto sm:min-w-[330px] sm:justify-start sm:gap-3 sm:px-4 sm:py-3.5"
       >
         <span className="relative grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-blue-800 sm:h-11 sm:w-11 sm:rounded-xl">
-          <span className="absolute -right-1.5 -top-1.5 grid h-4 w-4 place-items-center rounded-full border-2 border-blue-800 bg-amber-300 shadow-[0_0_12px_rgba(251,191,36,0.9)]">
-            <span className="absolute h-full w-full animate-ping rounded-full bg-amber-300 opacity-35 motion-reduce:animate-none" />
-            <span className="relative h-1.5 w-1.5 rounded-full bg-amber-600" />
+          <span className="absolute -right-3 -top-3 flex h-10 w-6 flex-col items-center justify-center gap-1 rounded-lg border-2 border-white bg-slate-950 p-1 shadow-[0_0_0_2px_#1e3a8a,0_5px_16px_rgba(15,23,42,0.45)]" aria-hidden="true">
+            <span className="h-2 w-2 rounded-full bg-red-950 ring-1 ring-red-600/60" />
+            <span className="relative h-2.5 w-2.5 rounded-full bg-amber-300 ring-2 ring-amber-100 shadow-[0_0_14px_4px_rgba(251,191,36,0.85)] motion-safe:animate-pulse">
+              <span className="absolute inset-0 animate-ping rounded-full bg-amber-300 opacity-50 motion-reduce:animate-none" />
+            </span>
+            <span className="h-2 w-2 rounded-full bg-emerald-950 ring-1 ring-emerald-600/60" />
           </span>
           <svg
             viewBox="0 0 24 24"
