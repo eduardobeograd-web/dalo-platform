@@ -75,7 +75,7 @@ export default function DeviceCompatibilityCheck() {
         ? "Samsung Galaxy detected"
       : platform === "android"
         ? "Android device detected"
-        : "Check your phone";
+        : "Check your device";
   const compatibilitySignal =
     platform === "iphone"
       ? "Many recent iPhones are eSIM ready. Your exact model and region still need one quick check."
