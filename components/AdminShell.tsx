@@ -15,6 +15,7 @@ import { adminLogout } from "../app/admin/logout";
 type AdminPage =
   | "dashboard"
   | "products"
+  | "readiness"
   | "destinations"
   | "recommendations"
   | "upsells"
@@ -29,6 +30,7 @@ type AdminPage =
 const pagePermissions: Record<AdminPage, AdminPermission> = {
   dashboard: ADMIN_PERMISSIONS.DASHBOARD_READ,
   products: ADMIN_PERMISSIONS.PRODUCTS_READ,
+  readiness: ADMIN_PERMISSIONS.SEO_READ,
   destinations: ADMIN_PERMISSIONS.SEO_READ,
   recommendations: ADMIN_PERMISSIONS.RECOMMENDATIONS_READ,
   upsells: ADMIN_PERMISSIONS.UPSELLS_READ,
@@ -60,7 +62,8 @@ const navGroups: Array<{
     label: "Catalog",
     items: [
       { id: "products", href: "/admin/products", label: "Products" },
-    { id: "destinations", href: "/admin/destinations", label: "SEO & Country pages" },
+      { id: "readiness", href: "/admin/readiness", label: "Launch readiness" },
+      { id: "destinations", href: "/admin/destinations", label: "SEO & Country pages" },
     ],
   },
   {

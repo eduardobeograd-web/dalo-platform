@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
+import { getDestinationSeoIssues } from "../../../lib/catalog-readiness";
 import SiteHeader from "../../../components/SiteHeader";
 import SiteFooter from "../../../components/SiteFooter";
 import { parseDestinationFaq } from "../../../lib/destination-pages";
@@ -187,6 +188,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const managedPage = await prisma.destinationPage.findFirst({
     where: { slug, published: true },
   });
+  const activeProduct = managedPage
+    ? await prisma.product.findFirst({
+        where: {
+          active: true,
+          OR: [
+            { country: managedPage.countryName },
+            { region: managedPage.countryName },
+          ],
+        },
+        select: { id: true },
+      })
+    : null;
 
   if (!page && !seoPage && !managedPage) {
     return {
@@ -210,12 +223,14 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     alternates: {
       canonical: pageUrl,
     },
-    robots: managedPage
-      ? {
-          index: managedPage.indexable,
-          follow: true,
-        }
-      : undefined,
+    robots: {
+      index: Boolean(
+        managedPage &&
+          activeProduct &&
+          getDestinationSeoIssues(managedPage).length === 0,
+      ),
+      follow: true,
+    },
     openGraph: {
       title,
       description,

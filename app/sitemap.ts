@@ -1,43 +1,8 @@
 import type { MetadataRoute } from "next";
 import { prisma } from "../lib/db";
 import { siteUrl as baseUrl } from "../lib/site-url";
-
-const indexedCountrySlugs = new Set([
-  "turkey",
-  "thailand",
-  "serbia",
-  "croatia",
-  "bosnia-and-herzegovina",
-  "germany",
-  "france",
-  "italy",
-  "spain",
-  "japan",
-  "egypt",
-  "united-arab-emirates",
-  "united-kingdom",
-  "united-states-of-america",
-  "greece",
-  "portugal",
-  "morocco",
-  "canada",
-  "australia",
-  "mexico",
-  "indonesia",
-  "malaysia",
-  "singapore",
-  "korea-republic-of",
-  "saudi-arabia",
-]);
-
-function slugify(value: string) {
-  return value
-    .toLowerCase()
-    .trim()
-    .replace(/&/g, "and")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
+import { getDestinationSeoIssues } from "../lib/catalog-readiness";
+import { slugifyDestination } from "../lib/destination-pages";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [products, managedPages] = await Promise.all([
@@ -47,6 +12,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       },
       select: {
         country: true,
+        region: true,
         updatedAt: true,
       },
       orderBy: {
@@ -54,37 +20,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       },
     }),
     prisma.destinationPage.findMany({
-      where: { published: true },
-      select: {
-        slug: true,
-        indexable: true,
-        updatedAt: true,
-      },
+      where: { published: true, indexable: true },
     }),
   ]);
 
-  const countryMap = new Map<string, Date>();
+  const productDates = new Map<string, Date>();
 
   for (const product of products) {
-    if (!product.country) continue;
-
-    const slug = slugify(product.country);
-
-    if (!indexedCountrySlugs.has(slug)) continue;
-
-    const existingDate = countryMap.get(slug);
-
-    if (!existingDate || product.updatedAt > existingDate) {
-      countryMap.set(slug, product.updatedAt);
+    for (const destination of [product.country, product.region]) {
+      if (!destination) continue;
+      const slug = slugifyDestination(destination);
+      const existingDate = productDates.get(slug);
+      if (!existingDate || product.updatedAt > existingDate) {
+        productDates.set(slug, product.updatedAt);
+      }
     }
   }
 
+  const countryMap = new Map<string, Date>();
   for (const page of managedPages) {
-    if (page.indexable) {
-      countryMap.set(page.slug, page.updatedAt);
-    } else {
-      countryMap.delete(page.slug);
-    }
+    const productDate = productDates.get(page.slug);
+    if (!productDate || getDestinationSeoIssues(page).length > 0) continue;
+    countryMap.set(page.slug, productDate > page.updatedAt ? productDate : page.updatedAt);
   }
 
   const staticRoutes: MetadataRoute.Sitemap = [
