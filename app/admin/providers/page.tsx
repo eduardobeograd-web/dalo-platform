@@ -203,11 +203,15 @@ export default async function AdminProvidersPage() {
     },
   ];
 
-  const readyProviders = providers.filter(
+  const visibleProviders = providers.filter(
+    (provider) => provider.slug === "esim-go" || provider.slug === "manual"
+  );
+
+  const readyProviders = visibleProviders.filter(
     (provider) => provider.status === "configured" || provider.status === "mock"
   ).length;
 
-  const mappedProducts = providers.reduce(
+  const mappedProducts = visibleProviders.reduce(
     (total, provider) => total + provider.mappedProducts,
     0
   );
@@ -252,9 +256,9 @@ export default async function AdminProvidersPage() {
           className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50 transition hover:-translate-y-1 hover:shadow-xl"
         >
           <p className="text-sm font-semibold text-slate-500">Providers</p>
-          <h2 className="mt-3 text-3xl font-bold">{providers.length}</h2>
+          <h2 className="mt-3 text-3xl font-bold">{visibleProviders.length}</h2>
           <p className="mt-2 text-sm text-slate-500">
-            API, mock and manual paths
+            Live integration and fallback
           </p>
         </Link>
 
@@ -326,7 +330,7 @@ export default async function AdminProvidersPage() {
               </thead>
 
               <tbody>
-                {providers.map((provider) => (
+                {visibleProviders.map((provider) => (
                   <tr
                     key={provider.name}
                     className="border-b border-slate-100 align-top last:border-b-0 hover:bg-slate-50"
@@ -494,21 +498,6 @@ export default async function AdminProvidersPage() {
                 </p>
               </Link>
 
-              <Link
-                href="/admin/providers/dalo-mock"
-                className="flex items-center justify-between rounded-2xl bg-green-50 p-4 transition hover:-translate-y-1"
-              >
-                <span className="font-semibold">Mock Fulfillment</span>
-                <span className="font-bold text-green-700">Ready</span>
-              </Link>
-
-              <Link
-                href="/admin/providers/airalo"
-                className="flex items-center justify-between rounded-2xl bg-yellow-50 p-4 transition hover:-translate-y-1"
-              >
-                <span className="font-semibold">Airalo API</span>
-                <span className="font-bold text-yellow-700">Planned</span>
-              </Link>
             </div>
           </div>
         </div>

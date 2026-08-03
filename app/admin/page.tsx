@@ -1,6 +1,5 @@
 import AdminShell from "../../components/AdminShell";
 import { prisma } from "../../lib/db";
-import { adminLogout } from "./logout";
 
 function formatPrice(value: number) {
   return `$${value.toFixed(2)}`;
@@ -40,8 +39,10 @@ export default async function AdminDashboard() {
     return {
       ...order,
       product,
-      amount: product?.sellPrice || 0,
-      profit: product ? product.sellPrice - product.buyPrice : 0,
+      amount: order.amount ?? product?.sellPrice ?? 0,
+      profit:
+        (order.amount ?? product?.sellPrice ?? 0) -
+        (order.buyPriceAtPurchase ?? product?.buyPrice ?? 0),
     };
   });
 
@@ -66,8 +67,7 @@ export default async function AdminDashboard() {
   const openFulfillments = orders.filter(
     (order) =>
       order.payment === "Paid" &&
-      order.fulfillment !== "Delivered" &&
-      order.esimStatus !== "ready"
+      (order.fulfillment !== "Delivered" || order.esimStatus !== "ready")
   );
 
   const failedPayments = orders.filter(
@@ -143,14 +143,6 @@ export default async function AdminDashboard() {
             View Website
           </a>
 
-          <form action={adminLogout}>
-            <button
-              type="submit"
-              className="rounded-2xl bg-slate-950 px-6 py-4 font-bold text-white transition hover:bg-slate-800"
-            >
-              Logout
-            </button>
-          </form>
         </div>
       </div>
 
