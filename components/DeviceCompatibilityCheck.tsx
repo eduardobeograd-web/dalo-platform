@@ -123,7 +123,10 @@ export default function DeviceCompatibilityCheck() {
         className="group fixed bottom-24 right-3 z-40 flex h-12 w-auto items-center justify-center gap-2 rounded-2xl border border-blue-400 bg-blue-800 px-2.5 text-left text-white shadow-[0_14px_35px_rgba(13,54,140,0.32)] transition hover:-translate-y-1 hover:bg-blue-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 sm:bottom-5 sm:right-5 sm:h-auto sm:min-w-[330px] sm:justify-start sm:gap-3 sm:px-4 sm:py-3.5"
       >
         <span className="relative grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white text-blue-800 sm:h-11 sm:w-11 sm:rounded-xl">
-          <span className={`absolute -right-1 -top-1 h-3.5 w-3.5 rounded-full border-2 border-blue-800 ${deviceRecognized ? "bg-emerald-400" : "bg-amber-400"}`} />
+          <span className="absolute -right-1.5 -top-1.5 grid h-4 w-4 place-items-center rounded-full border-2 border-blue-800 bg-amber-300 shadow-[0_0_12px_rgba(251,191,36,0.9)]">
+            <span className="absolute h-full w-full animate-ping rounded-full bg-amber-300 opacity-35 motion-reduce:animate-none" />
+            <span className="relative h-1.5 w-1.5 rounded-full bg-amber-600" />
+          </span>
           <svg
             viewBox="0 0 24 24"
             aria-hidden="true"
