@@ -6,11 +6,14 @@ import {
   getProviderEnvStatus,
   getProviderStatusLabel,
 } from "../../../../lib/providers/provider-configs";
-import { updateProviderConfig } from "../actions";
+import { syncEsimGoNetworks, updateProviderConfig } from "../actions";
 
 type ProviderDetailPageProps = {
   params: Promise<{
     slug: string;
+  }>;
+  searchParams: Promise<{
+    networkSync?: string;
   }>;
 };
 
@@ -32,8 +35,10 @@ function statusColor(label: string) {
 
 export default async function ProviderDetailPage({
   params,
+  searchParams,
 }: ProviderDetailPageProps) {
   const { slug } = await params;
+  const { networkSync } = await searchParams;
   const provider = await getProviderConfigBySlug(slug);
 
   if (!provider) {
@@ -113,6 +118,12 @@ export default async function ProviderDetailPage({
           </h2>
         </div>
       </div>
+
+      {networkSync ? (
+        <div className="mb-6 rounded-2xl border border-green-200 bg-green-50 px-5 py-4 font-semibold text-green-800">
+          Network coverage updated for {networkSync} countries.
+        </div>
+      ) : null}
 
       <form
         action={updateProviderWithId}
@@ -290,6 +301,16 @@ export default async function ProviderDetailPage({
               >
                 Save Changes
               </button>
+
+              {provider.slug === "esim-go" ? (
+                <button
+                  type="submit"
+                  formAction={syncEsimGoNetworks}
+                  className="rounded-2xl border border-blue-200 bg-blue-50 p-4 font-bold text-blue-800 transition hover:bg-blue-100"
+                >
+                  Sync network coverage
+                </button>
+              ) : null}
 
               <Link
                 href={productsHref}

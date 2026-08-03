@@ -114,7 +114,7 @@ export function getDestinationSeoDraft(slug: string, suppliedName?: string) {
       : `Your eSIM connects to supported mobile networks in ${name}. Coverage can vary by location, terrain, buildings and the selected package${highlights ? `, particularly during ${highlights}` : ""}, so review the plan details and keep essential maps available offline.`,
     activationText: `Install the eSIM while you have a stable internet connection and follow the instructions delivered after payment. Activation timing depends on the selected plan; the product details explain whether activation begins on installation or first network connection.`,
     compatibilityText: `Your phone must support eSIM technology and be unlocked from its mobile carrier. Check the DALO compatibility guide before checkout, especially when using an older device or a model originally purchased through a network operator.`,
-    hotspotText: `Hotspot and tethering availability depends on the selected plan and device. Check the package details before purchase if sharing data with a laptop or another traveler is important for your trip.`,
+    hotspotText: `All DALO eSIM plans support personal hotspot and tethering. Share your mobile data with a laptop, tablet or another device. Hotspot usage counts toward your plan's data allowance.`,
     faq: [
       {
         question: regionalUse
@@ -179,7 +179,7 @@ export function getCatalogDestinationSeoDraft(
     coverageText: `The selected eSIM uses the supported partner networks stated in its package details for ${name}. Coverage and speed vary by network, device, location, terrain and buildings. Check the individual plan before purchase and keep essential maps available offline when traveling beyond populated areas.`,
     activationText: `Your ${name} eSIM is delivered digitally after payment. Install it on reliable Wi-Fi and follow the instructions supplied with the selected package. Activation timing can differ by plan, so confirm whether validity starts on installation or on the first supported network connection.`,
     compatibilityText: `Use an unlocked phone that supports eSIM and check the DALO compatibility guide before buying. Compatible dual-SIM devices can normally keep the regular number active while the ${name} eSIM is selected for mobile data. Disable data roaming on the home line if your carrier may charge for it.`,
-    hotspotText: `Hotspot support is determined by the selected ${name} package. Review the plan details before checkout if you need to connect a laptop or share data, and choose a larger allowance when tethering is part of the trip.`,
+    hotspotText: `All DALO eSIM plans support personal hotspot and tethering. Share your mobile data with a laptop, tablet or another device. Hotspot usage counts toward your plan's data allowance.`,
     faq: [
       {
         question: `What ${name} eSIM plans does DALO compare?`,

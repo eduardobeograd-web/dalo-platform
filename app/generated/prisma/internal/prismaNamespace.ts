@@ -386,6 +386,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 export const ModelName = {
   RecommendationSetting: 'RecommendationSetting',
   Product: 'Product',
+  CountryNetworkCoverage: 'CountryNetworkCoverage',
   Customer: 'Customer',
   CustomerSession: 'CustomerSession',
   PasswordResetToken: 'PasswordResetToken',
@@ -412,7 +413,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "recommendationSetting" | "product" | "customer" | "customerSession" | "passwordResetToken" | "order" | "supportRequest" | "customerEvent" | "providerConfig" | "destinationPage" | "adminUser" | "adminSession" | "adminAuditLog"
+    modelProps: "recommendationSetting" | "product" | "countryNetworkCoverage" | "customer" | "customerSession" | "passwordResetToken" | "order" | "supportRequest" | "customerEvent" | "providerConfig" | "destinationPage" | "adminUser" | "adminSession" | "adminAuditLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -561,6 +562,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ProductCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ProductCountAggregateOutputType> | number
+        }
+      }
+    }
+    CountryNetworkCoverage: {
+      payload: Prisma.$CountryNetworkCoveragePayload<ExtArgs>
+      fields: Prisma.CountryNetworkCoverageFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CountryNetworkCoverageFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CountryNetworkCoveragePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CountryNetworkCoverageFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CountryNetworkCoveragePayload>
+        }
+        findFirst: {
+          args: Prisma.CountryNetworkCoverageFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CountryNetworkCoveragePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CountryNetworkCoverageFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CountryNetworkCoveragePayload>
+        }
+        findMany: {
+          args: Prisma.CountryNetworkCoverageFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CountryNetworkCoveragePayload>[]
+        }
+        create: {
+          args: Prisma.CountryNetworkCoverageCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CountryNetworkCoveragePayload>
+        }
+        createMany: {
+          args: Prisma.CountryNetworkCoverageCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CountryNetworkCoverageCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CountryNetworkCoveragePayload>[]
+        }
+        delete: {
+          args: Prisma.CountryNetworkCoverageDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CountryNetworkCoveragePayload>
+        }
+        update: {
+          args: Prisma.CountryNetworkCoverageUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CountryNetworkCoveragePayload>
+        }
+        deleteMany: {
+          args: Prisma.CountryNetworkCoverageDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CountryNetworkCoverageUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CountryNetworkCoverageUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CountryNetworkCoveragePayload>[]
+        }
+        upsert: {
+          args: Prisma.CountryNetworkCoverageUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CountryNetworkCoveragePayload>
+        }
+        aggregate: {
+          args: Prisma.CountryNetworkCoverageAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCountryNetworkCoverage>
+        }
+        groupBy: {
+          args: Prisma.CountryNetworkCoverageGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CountryNetworkCoverageGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CountryNetworkCoverageCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CountryNetworkCoverageCountAggregateOutputType> | number
         }
       }
     }
@@ -1466,6 +1541,20 @@ export const ProductScalarFieldEnum = {
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
 
 
+export const CountryNetworkCoverageScalarFieldEnum = {
+  id: 'id',
+  isoCode: 'isoCode',
+  countryName: 'countryName',
+  networks: 'networks',
+  source: 'source',
+  syncedAt: 'syncedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CountryNetworkCoverageScalarFieldEnum = (typeof CountryNetworkCoverageScalarFieldEnum)[keyof typeof CountryNetworkCoverageScalarFieldEnum]
+
+
 export const CustomerScalarFieldEnum = {
   id: 'id',
   email: 'email',
@@ -1680,19 +1769,19 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
 export const NullableJsonNullValueInput = {
   DbNull: DbNull,
   JsonNull: JsonNull
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
-
-
-export const JsonNullValueInput = {
-  JsonNull: JsonNull
-} as const
-
-export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {
@@ -1914,6 +2003,7 @@ export type PrismaClientOptions = ({
 export type GlobalOmitConfig = {
   recommendationSetting?: Prisma.RecommendationSettingOmit
   product?: Prisma.ProductOmit
+  countryNetworkCoverage?: Prisma.CountryNetworkCoverageOmit
   customer?: Prisma.CustomerOmit
   customerSession?: Prisma.CustomerSessionOmit
   passwordResetToken?: Prisma.PasswordResetTokenOmit

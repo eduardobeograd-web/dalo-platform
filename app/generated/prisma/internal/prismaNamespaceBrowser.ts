@@ -53,6 +53,7 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   RecommendationSetting: 'RecommendationSetting',
   Product: 'Product',
+  CountryNetworkCoverage: 'CountryNetworkCoverage',
   Customer: 'Customer',
   CustomerSession: 'CustomerSession',
   PasswordResetToken: 'PasswordResetToken',
@@ -129,6 +130,20 @@ export const ProductScalarFieldEnum = {
 } as const
 
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
+
+
+export const CountryNetworkCoverageScalarFieldEnum = {
+  id: 'id',
+  isoCode: 'isoCode',
+  countryName: 'countryName',
+  networks: 'networks',
+  source: 'source',
+  syncedAt: 'syncedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CountryNetworkCoverageScalarFieldEnum = (typeof CountryNetworkCoverageScalarFieldEnum)[keyof typeof CountryNetworkCoverageScalarFieldEnum]
 
 
 export const CustomerScalarFieldEnum = {
@@ -345,19 +360,19 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
 export const NullableJsonNullValueInput = {
   DbNull: DbNull,
   JsonNull: JsonNull
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
-
-
-export const JsonNullValueInput = {
-  JsonNull: JsonNull
-} as const
-
-export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {

@@ -5,6 +5,8 @@ import { notFound, redirect } from "next/navigation";
 import { getDestinationSeoIssues } from "../../../lib/catalog-readiness";
 import SiteHeader from "../../../components/SiteHeader";
 import SiteFooter from "../../../components/SiteFooter";
+import DestinationAtAGlance from "../../../components/DestinationAtAGlance";
+import DestinationNetworkCoverage from "../../../components/DestinationNetworkCoverage";
 import { parseDestinationFaq } from "../../../lib/destination-pages";
 import { getDestinationImage } from "../../../lib/destination-images";
 import { prisma } from "../../../lib/db";
@@ -674,6 +676,8 @@ export default async function EsimLandingPage({ params }: PageProps) {
           </div>
         </section>
       </section>
+      <DestinationAtAGlance slug={slug} />
+      <DestinationNetworkCoverage slug={slug} />
       <SiteFooter />
     </main>
   );

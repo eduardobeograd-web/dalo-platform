@@ -52,6 +52,11 @@ export type RecommendationSetting = Prisma.RecommendationSettingModel
  */
 export type Product = Prisma.ProductModel
 /**
+ * Model CountryNetworkCoverage
+ * 
+ */
+export type CountryNetworkCoverage = Prisma.CountryNetworkCoverageModel
+/**
  * Model Customer
  * 
  */

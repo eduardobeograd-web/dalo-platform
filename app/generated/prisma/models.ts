@@ -10,6 +10,7 @@
  */
 export type * from './models/RecommendationSetting'
 export type * from './models/Product'
+export type * from './models/CountryNetworkCoverage'
 export type * from './models/Customer'
 export type * from './models/CustomerSession'
 export type * from './models/PasswordResetToken'
