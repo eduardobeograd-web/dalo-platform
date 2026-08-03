@@ -495,6 +495,7 @@ export default async function OrderDetailPage({
               </div>
             )}
           </div>
+          </div>
           ) : (
             <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
               <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
@@ -507,7 +508,6 @@ export default async function OrderDetailPage({
             </div>
           )}
         </div>
-      </div>
     </AdminShell>
   );
 }

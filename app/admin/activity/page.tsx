@@ -1,5 +1,4 @@
 import Link from "next/link";
-import type { Prisma } from "@prisma/client";
 import AdminShell from "../../../components/AdminShell";
 import { prisma } from "../../../lib/db";
 
@@ -14,12 +13,12 @@ export default async function AdminActivityPage({ searchParams }: { searchParams
   const query = first(params.q).trim();
   const type = first(params.type).trim();
   const page = Math.max(1, Number(first(params.page)) || 1);
-  const where: Prisma.CustomerEventWhereInput = {
+  const where = {
     ...(type ? { eventType: type } : {}),
     ...(query ? { OR: [
-      { email: { contains: query, mode: "insensitive" } },
-      { sessionId: { contains: query, mode: "insensitive" } },
-      { order: { orderNumber: { contains: query, mode: "insensitive" } } },
+      { customer: { email: { contains: query, mode: "insensitive" as const } } },
+      { sessionId: { contains: query, mode: "insensitive" as const } },
+      { order: { orderNumber: { contains: query, mode: "insensitive" as const } } },
     ] } : {}),
   };
   const [events, count, eventTypes] = await Promise.all([
@@ -44,7 +43,7 @@ export default async function AdminActivityPage({ searchParams }: { searchParams
       <section className="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white">
         <div className="border-b border-slate-100 px-5 py-4 font-black">{count} matching events</div>
         <div className="divide-y divide-slate-100">
-          {events.map((event) => <div key={event.id} className="grid gap-3 px-5 py-4 text-sm lg:grid-cols-[190px_1fr_1.3fr_1.3fr]"><p className="text-slate-500">{event.createdAt.toLocaleString("en")}</p><p className="font-mono text-xs font-black text-blue-700">{event.eventType}</p><div><p className="font-bold text-slate-900">{event.customer?.email || event.email || "Anonymous"}</p><p className="mt-1 truncate text-xs text-slate-400">{event.sessionId || "No session"}</p></div><div><p className="font-bold text-slate-700">{event.order?.orderNumber || event.product?.name || "No linked record"}</p><p className="mt-1 text-xs text-slate-400">{event.product?.country || ""}</p></div></div>)}
+          {events.map((event) => <div key={event.id} className="grid gap-3 px-5 py-4 text-sm lg:grid-cols-[190px_1fr_1.3fr_1.3fr]"><p className="text-slate-500">{event.createdAt.toLocaleString("en")}</p><p className="font-mono text-xs font-black text-blue-700">{event.eventType}</p><div><p className="font-bold text-slate-900">{event.customer?.email || "Anonymous"}</p><p className="mt-1 truncate text-xs text-slate-400">{event.sessionId || "No session"}</p></div><div><p className="font-bold text-slate-700">{event.order?.orderNumber || event.product?.name || "No linked record"}</p><p className="mt-1 text-xs text-slate-400">{event.product?.country || ""}</p></div></div>)}
           {events.length === 0 ? <p className="px-5 py-14 text-center text-slate-500">No matching activity.</p> : null}
         </div>
       </section>

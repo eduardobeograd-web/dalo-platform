@@ -18,6 +18,15 @@ function minutesSince(date: Date) {
   return Math.max(0, Math.floor((Date.now() - date.getTime()) / 60000));
 }
 
+function getMetadataValue(metadata: unknown, key: string) {
+  if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) {
+    return null;
+  }
+
+  const value = (metadata as Record<string, unknown>)[key];
+  return typeof value === "string" ? value : null;
+}
+
 export default async function AdminMarketingPage({ searchParams }: { searchParams?: Promise<{ range?: string }> }) {
   const params = (await searchParams) || {};
   const range = ["today", "7d", "30d", "all"].includes(params.range || "") ? params.range || "30d" : "30d";
@@ -72,7 +81,7 @@ export default async function AdminMarketingPage({ searchParams }: { searchParam
         <section className="rounded-2xl border border-slate-200 bg-white p-5">
           <div><p className="text-xs font-black uppercase tracking-wide text-orange-600">Checkout recovery</p><h2 className="mt-1 text-2xl font-black">Abandoned checkouts</h2><p className="mt-1 text-sm text-slate-500">Only sessions without a purchase or previous reminder.</p></div>
           <div className="mt-5 divide-y divide-slate-100">
-            {abandoned.slice(0,10).map((event) => <div key={event.id} className="grid gap-3 py-4 sm:grid-cols-[1fr_auto] sm:items-center"><div><p className="font-black text-slate-900">{event.email || "Unknown email"}</p><p className="mt-1 text-sm text-slate-500">{event.product?.name || "Unknown product"} · {minutesSince(event.createdAt)} min ago</p></div><SendAbandonedCheckoutEmailButton eventId={event.id} /></div>)}
+            {abandoned.slice(0,10).map((event) => <div key={event.id} className="grid gap-3 py-4 sm:grid-cols-[1fr_auto] sm:items-center"><div><p className="font-black text-slate-900">{getMetadataValue(event.metadata, "customerEmail") || "Unknown email"}</p><p className="mt-1 text-sm text-slate-500">{event.product?.name || "Unknown product"} · {minutesSince(event.createdAt)} min ago</p></div><SendAbandonedCheckoutEmailButton eventId={event.id} /></div>)}
             {abandoned.length === 0 ? <p className="py-8 text-center text-slate-500">No open recovery opportunities.</p> : null}
           </div>
         </section>

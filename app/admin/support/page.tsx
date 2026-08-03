@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { Prisma } from "@prisma/client";
+import type { Prisma } from "../../generated/prisma/client";
 import AdminShell from "../../../components/AdminShell";
 import { prisma } from "../../../lib/db";
 
