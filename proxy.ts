@@ -10,8 +10,15 @@ export async function proxy(request: NextRequest) {
   const isAccessRoute =
     pathname === "/test-access" || pathname === "/api/test-access";
   const isExternalServiceRoute = pathname === "/api/stripe/webhook";
+  const isPublicPwaAsset =
+    pathname === "/manifest.webmanifest" || pathname === "/sw.js";
 
-  if (testPassword && !isAccessRoute && !isExternalServiceRoute) {
+  if (
+    testPassword &&
+    !isAccessRoute &&
+    !isExternalServiceRoute &&
+    !isPublicPwaAsset
+  ) {
     const expectedToken = await createTestAccessToken(testPassword);
     const suppliedToken = request.cookies.get(ACCESS_COOKIE)?.value;
 
