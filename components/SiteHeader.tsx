@@ -12,6 +12,7 @@ export default function SiteHeader({ mode = "public" }: SiteHeaderProps) {
       <nav className="mx-auto flex max-w-7xl items-center justify-between rounded-2xl border border-white/90 bg-white/90 px-4 py-1 shadow-[0_10px_35px_rgba(30,64,120,0.08)] backdrop-blur-xl sm:px-6 sm:py-2">
         <Link
           href="/"
+          prefetch={false}
           className="flex h-12 items-center overflow-visible sm:h-14"
           aria-label="DALO home"
         >
@@ -27,13 +28,13 @@ export default function SiteHeader({ mode = "public" }: SiteHeaderProps) {
 
         {mode === "public" ? (
           <div className="hidden items-center gap-8 text-sm font-semibold text-slate-700 lg:flex">
-            <Link className="transition hover:text-[#2148c0]" href="/#how">
+            <Link prefetch={false} className="transition hover:text-[#2148c0]" href="/#how">
               How it works
             </Link>
-            <Link className="transition hover:text-[#2148c0]" href="/esim">
+            <Link prefetch={false} className="transition hover:text-[#2148c0]" href="/esim">
               Destinations
             </Link>
-            <Link className="transition hover:text-[#2148c0]" href="/#faq">
+            <Link prefetch={false} className="transition hover:text-[#2148c0]" href="/#faq">
               FAQ
             </Link>
           </div>
@@ -46,12 +47,14 @@ export default function SiteHeader({ mode = "public" }: SiteHeaderProps) {
             <PwaInstallButton />
             <Link
               href="/customer/dashboard"
+              prefetch={false}
               className="inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs font-bold text-slate-700 transition hover:border-blue-200 hover:text-[#2148c0] sm:rounded-xl sm:px-4 sm:text-sm"
             >
               Dashboard
             </Link>
             <Link
               href="/customer/support"
+              prefetch={false}
               className="hidden rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 transition hover:border-blue-200 hover:text-[#2148c0] sm:block"
             >
               Support
@@ -69,12 +72,14 @@ export default function SiteHeader({ mode = "public" }: SiteHeaderProps) {
           <div className="flex items-center gap-3">
             <Link
               href="/"
+              prefetch={false}
               className="hidden text-sm font-semibold text-slate-600 transition hover:text-[#2148c0] sm:block"
             >
               Home
             </Link>
             <Link
               href="/#quiz"
+              prefetch={false}
               className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#2148c0] px-3 py-2 text-xs font-bold text-white transition hover:bg-[#17389b] focus:outline-none focus:ring-4 focus:ring-blue-100 sm:rounded-xl sm:px-5 sm:py-2.5 sm:text-sm"
             >
               New search
@@ -85,11 +90,13 @@ export default function SiteHeader({ mode = "public" }: SiteHeaderProps) {
             <Link
               className="inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-lg px-2 text-xs font-semibold text-slate-600 transition hover:bg-blue-50 hover:text-[#2148c0] sm:text-sm"
               href="/customer/dashboard"
+              prefetch={false}
             >
               My account
             </Link>
             <Link
               href="/#quiz"
+              prefetch={false}
               className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#2148c0] px-3 py-2 text-xs font-bold text-white transition hover:bg-[#17389b] focus:outline-none focus:ring-4 focus:ring-blue-100 sm:rounded-xl sm:px-5 sm:py-2.5 sm:text-sm"
             >
               Start quiz

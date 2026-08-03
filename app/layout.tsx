@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
-import CookieConsent from "../components/CookieConsent";
+import DeferredCookieConsent from "../components/DeferredCookieConsent";
 import DeferredDeviceCompatibilityCheck from "../components/DeferredDeviceCompatibilityCheck";
 import { siteUrl as baseUrl } from "../lib/site-url";
 import "./globals.css";
@@ -94,7 +94,7 @@ export default function RootLayout({
         />
         {children}
         <DeferredDeviceCompatibilityCheck />
-        <CookieConsent />
+        <DeferredCookieConsent />
       </body>
     </html>
   );

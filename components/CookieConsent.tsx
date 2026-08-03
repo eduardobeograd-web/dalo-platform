@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
@@ -72,12 +71,12 @@ export default function CookieConsent() {
                 Optional storage helps us understand product interest and
                 marketing performance. Nothing optional is activated without
                 your choice.{" "}
-                <Link
+                <a
                   href="/cookie-policy"
                   className="font-bold text-blue-700 hover:text-blue-900"
                 >
                   Cookie details
-                </Link>
+                </a>
               </p>
             </div>
 
