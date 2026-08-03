@@ -60,7 +60,7 @@ const navGroups: Array<{
     label: "Catalog",
     items: [
       { id: "products", href: "/admin/products", label: "Products" },
-      { id: "destinations", href: "/admin/destinations", label: "Country pages" },
+    { id: "destinations", href: "/admin/destinations", label: "SEO & Country pages" },
     ],
   },
   {

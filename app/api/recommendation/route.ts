@@ -54,7 +54,7 @@ type RecommendationLike = {
 };
 
 const DEFAULT_COUNTRY = "Europe";
-const DEFAULT_DAYS = "8-14";
+const DEFAULT_DAYS = "8-11";
 const DEFAULT_TYPE: UsageType = "everyday";
 
 const corsHeaders = {
@@ -63,7 +63,18 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
 
-const allowedDays = new Set(["1-3", "4-7", "8-14", "15-30", "30+"]);
+const allowedDays = new Set([
+  "1-3",
+  "4-7",
+  "8-11",
+  "12-15",
+  "16-21",
+  "22-30",
+  // Keep existing shared links and integrations working.
+  "8-14",
+  "15-30",
+  "30+",
+]);
 const allowedTypes = new Set(["essential", "everyday", "power"]);
 
 function normalizeCountry(value: unknown) {

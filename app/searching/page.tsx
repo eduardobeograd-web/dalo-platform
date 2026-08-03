@@ -18,7 +18,7 @@ function SearchingContent() {
   const params = useSearchParams();
 
   const country = params.get("country") || "Europe";
-  const days = params.get("days") || "8-14";
+  const days = params.get("days") || "8-11";
   const type = params.get("type") || "everyday";
   const usageLabel = getUsageLabel(type);
 

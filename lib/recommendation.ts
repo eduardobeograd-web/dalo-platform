@@ -88,6 +88,10 @@ export function parseDays(days?: string) {
   if (value === "1-3") return 3;
   if (value === "4-7") return 7;
   if (value === "1-7") return 7;
+  if (value === "8-11") return 11;
+  if (value === "12-15") return 15;
+  if (value === "16-21") return 21;
+  if (value === "22-30") return 30;
   if (value === "8-14") return 14;
   if (value === "15-30") return 30;
   if (value === "30+") return 60;

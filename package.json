@@ -11,7 +11,8 @@
     "db:backup": "node scripts/backup-sqlite.mjs",
     "db:migrate:postgres": "tsx scripts/migrate-sqlite-to-postgres.ts",
     "prices:check-margins": "node scripts/check-product-margins.mjs",
-    "prices:sync-esimdata": "node scripts/sync-esimdata-prices.mjs"
+    "prices:sync-esimdata": "node scripts/sync-esimdata-prices.mjs",
+    "recommendations:audit": "DOTENV_CONFIG_PATH=.env.local tsx scripts/audit-recommendations.ts"
   },
   "dependencies": {
     "@prisma/adapter-better-sqlite3": "^7.8.0",

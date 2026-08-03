@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import AdminShell from "../../../../components/AdminShell";
+import {
+  adminHasPermission,
+  requireAdminPermission,
+} from "../../../../lib/admin-auth";
+import { ADMIN_PERMISSIONS } from "../../../../lib/admin-permissions";
 import { prisma } from "../../../../lib/db";
 import {
   deleteTestOrder,
@@ -87,6 +92,11 @@ export default async function OrderDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const admin = await requireAdminPermission(ADMIN_PERMISSIONS.ORDERS_READ);
+  const canManageOrders = adminHasPermission(
+    admin,
+    ADMIN_PERMISSIONS.ORDERS_WRITE,
+  );
   const { id } = await params;
 
   if (!id) {
@@ -401,8 +411,9 @@ export default async function OrderDetailPage({
           </div>
         </div>
 
-        <div className="rounded-[2rem] bg-white p-6 shadow-xl shadow-blue-50">
-          <h2 className="text-2xl font-bold text-slate-950">Quick Actions</h2>
+          {canManageOrders ? (
+          <div className="rounded-[2rem] bg-white p-6 shadow-xl shadow-blue-50">
+            <h2 className="text-2xl font-bold text-slate-950">Quick Actions</h2>
 
           <p className="mt-2 text-slate-600">
             Fast status updates for this order.
@@ -484,6 +495,17 @@ export default async function OrderDetailPage({
               </div>
             )}
           </div>
+          ) : (
+            <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">
+                Read-only access
+              </p>
+              <p className="mt-3 text-sm leading-6 text-slate-600">
+                Order status and fulfillment actions are available only to
+                administrators with order management permission.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </AdminShell>

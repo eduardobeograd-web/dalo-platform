@@ -6,7 +6,7 @@ import SiteHeader from "./SiteHeader";
 
 export default function HomeHeroQuiz() {
   const [country, setCountry] = useState("");
-  const [days, setDays] = useState("8-14");
+  const [days, setDays] = useState("8-11");
   const [userType, setUserType] = useState("everyday");
   const [destinations, setDestinations] = useState<string[]>([]);
   const destinationsRequested = useRef(false);
@@ -191,12 +191,14 @@ export default function HomeHeroQuiz() {
                   Trip length
                 </label>
 
-                <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-[repeat(4,minmax(0,1fr))_1.2fr]">
+                <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-[repeat(6,minmax(0,1fr))_1.2fr]">
                   {[
                     { value: "1-3", label: "1–3", detail: "days" },
                     { value: "4-7", label: "4–7", detail: "days" },
-                    { value: "8-14", label: "8–14", detail: "days" },
-                    { value: "15-30", label: "15–30", detail: "days" },
+                    { value: "8-11", label: "8–11", detail: "days" },
+                    { value: "12-15", label: "12–15", detail: "days" },
+                    { value: "16-21", label: "16–21", detail: "days" },
+                    { value: "22-30", label: "22–30", detail: "days" },
                   ].map((option) => (
                     <button
                       key={option.value}
@@ -215,7 +217,14 @@ export default function HomeHeroQuiz() {
 
                   <label
                     className={`col-span-2 flex min-h-[42px] flex-col items-center justify-center rounded-lg border px-2 transition focus-within:ring-2 focus-within:ring-[#b8c9ff] sm:col-span-1 sm:min-h-[46px] ${
-                      !["1-3", "4-7", "8-14", "15-30"].includes(days)
+                      ![
+                        "1-3",
+                        "4-7",
+                        "8-11",
+                        "12-15",
+                        "16-21",
+                        "22-30",
+                      ].includes(days)
                         ? "border-[#2148c0] bg-[#eef3ff] text-[#2148c0]"
                         : "border-slate-200 bg-white/75 text-slate-700 hover:border-[#8aa3ed] hover:bg-white"
                     }`}
@@ -232,13 +241,20 @@ export default function HomeHeroQuiz() {
                         aria-label="Exact trip duration in days"
                         placeholder="#"
                         value={
-                          ["1-3", "4-7", "8-14", "15-30"].includes(days)
+                          [
+                            "1-3",
+                            "4-7",
+                            "8-11",
+                            "12-15",
+                            "16-21",
+                            "22-30",
+                          ].includes(days)
                             ? ""
                             : days
                         }
                         onChange={(e) => {
                           if (e.target.value === "") {
-                            setDays("8-14");
+                            setDays("8-11");
                             return;
                           }
 

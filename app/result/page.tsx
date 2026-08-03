@@ -36,7 +36,7 @@ export default async function ResultPage({
   const params = await searchParams;
 
   const country = params.country || "Europe";
-  const days = params.days || "8-14";
+  const days = params.days || "8-11";
   const type = params.type || "everyday";
 
   const {
