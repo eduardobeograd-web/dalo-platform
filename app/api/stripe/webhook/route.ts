@@ -61,9 +61,12 @@ async function markOrderPaid(session: Stripe.Checkout.Session) {
       ? session.payment_intent
       : session.payment_intent?.id || null;
 
-  const updatedOrder = await prisma.order.update({
+  const updateResult = await prisma.order.updateMany({
     where: {
       id: order.id,
+      payment: {
+        in: ["Pending", "Failed"],
+      },
     },
     data: {
       payment: "Paid",
@@ -84,6 +87,26 @@ async function markOrderPaid(session: Stripe.Checkout.Session) {
       esimStatus: order.esimStatus || "pending",
     },
   });
+
+  if (updateResult.count !== 1) {
+    return {
+      updated: false,
+      reason: "order_already_finalized",
+      orderId: order.id,
+      orderNumber: order.orderNumber,
+    };
+  }
+
+  const updatedOrder = await prisma.order.findUnique({
+    where: { id: order.id },
+  });
+
+  if (!updatedOrder) {
+    return {
+      updated: false,
+      reason: "order_not_found_after_update",
+    };
+  }
 
   return {
     updated: true,
@@ -270,9 +293,35 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    if (event.type === "checkout.session.completed") {
+    if (
+      event.type === "checkout.session.completed" ||
+      event.type === "checkout.session.async_payment_succeeded"
+    ) {
       const session = event.data.object as Stripe.Checkout.Session;
       const result = await markOrderPaid(session);
+
+      if (result.updated && result.orderId) {
+        const paidOrder = await prisma.order.findUnique({
+          where: { id: result.orderId },
+        });
+
+        if (paidOrder) {
+          await trackCustomerEvent({
+            customerId: paidOrder.customerId,
+            orderId: paidOrder.id,
+            productId: paidOrder.productId,
+            sessionId: session.metadata?.daloSessionId || null,
+            eventType: "purchase_completed",
+            metadata: {
+              source: "stripe_webhook",
+              stripeCheckoutSessionId: session.id,
+              orderNumber: paidOrder.orderNumber,
+              amount: paidOrder.amount,
+              currency: paidOrder.currency,
+            },
+          });
+        }
+      }
 
       let fulfillmentResult = null;
 
@@ -284,9 +333,21 @@ export async function POST(request: NextRequest) {
         fulfillmentResult = await fulfillOrderMockById(result.orderId);
       }
 
+      const deliveryOrder = result.orderId
+        ? await prisma.order.findUnique({ where: { id: result.orderId } })
+        : null;
+      const hasInstallDetails = Boolean(
+        deliveryOrder?.activationCode ||
+          deliveryOrder?.qrCodeUrl ||
+          deliveryOrder?.iosInstallUrl ||
+          deliveryOrder?.androidInstallUrl
+      );
       const emailResult =
-        result.updated && result.orderId
-          ? await sendOrderConfirmationEmail(result.orderId)
+        deliveryOrder?.payment === "Paid" &&
+        deliveryOrder.fulfillment === "Delivered" &&
+        deliveryOrder.esimStatus === "ready" &&
+        hasInstallDetails
+          ? await sendOrderConfirmationEmail(deliveryOrder.id)
           : null;
 
       return NextResponse.json({
@@ -309,7 +370,21 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    if (event.type === "payment_intent.payment_failed") {
+    if (
+      event.type === "payment_intent.payment_failed" ||
+      event.type === "checkout.session.async_payment_failed"
+    ) {
+      if (event.type === "checkout.session.async_payment_failed") {
+        const session = event.data.object as Stripe.Checkout.Session;
+        const result = await markCheckoutExpired(session);
+
+        return NextResponse.json({
+          received: true,
+          eventType: event.type,
+          result,
+        });
+      }
+
       const paymentIntent = event.data.object as Stripe.PaymentIntent;
       const result = await markPaymentFailed(paymentIntent);
 
@@ -323,7 +398,7 @@ export async function POST(request: NextRequest) {
     if (event.type === "charge.refunded") {
       const charge = event.data.object as Stripe.Charge;
       const result = await markOrderRefunded(charge);
-      const emailResult = "orderId" in result && result.orderId
+      const emailResult = result.updated && "orderId" in result && result.orderId
         ? await sendRefundConfirmationEmail({
             orderId: result.orderId,
             amountRefunded: charge.amount_refunded / 100,

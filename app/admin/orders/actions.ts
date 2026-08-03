@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "../../../lib/db";
 import { fulfillOrderMockById } from "@/lib/mock-fulfillment";
+import { sendOrderConfirmationEmail } from "@/lib/order-confirmation-email";
 import { ADMIN_PERMISSIONS } from "../../../lib/admin-permissions";
 import { requireAdminPermission } from "../../../lib/admin-auth";
 
@@ -35,6 +36,19 @@ function cleanNumber(value: FormDataEntryValue | null) {
   return number;
 }
 
+async function sendDeliveryEmailIfReady(orderId: string) {
+  const order = await prisma.order.findUnique({ where: { id: orderId } });
+
+  if (
+    order?.payment === "Paid" &&
+    order.fulfillment === "Delivered" &&
+    order.esimStatus === "ready" &&
+    Boolean(order.activationCode || order.qrCodeUrl || order.iosInstallUrl || order.androidInstallUrl)
+  ) {
+    await sendOrderConfirmationEmail(order.id);
+  }
+}
+
 export async function updateOrderFulfillment(orderId: string, formData: FormData) {
   await requireOrderWrite();
   await prisma.order.update({
@@ -59,6 +73,8 @@ export async function updateOrderFulfillment(orderId: string, formData: FormData
       lastUsageSyncAt: formData.get("syncUsage") === "on" ? new Date() : undefined,
     },
   });
+
+  await sendDeliveryEmailIfReady(orderId);
 
   revalidateOrderPages(orderId);
 }
@@ -102,6 +118,8 @@ export async function markOrderDelivered(orderId: string) {
       esimStatus: "ready",
     },
   });
+
+  await sendDeliveryEmailIfReady(orderId);
 
   revalidateOrderPages(orderId);
 }
@@ -164,6 +182,9 @@ export async function deleteTestOrder(orderId: string) {
 }
 export async function fulfillOrderMock(orderId: string) {
   await requireOrderWrite();
-  await fulfillOrderMockById(orderId);
+  const result = await fulfillOrderMockById(orderId);
+  if (result.fulfilled) {
+    await sendDeliveryEmailIfReady(orderId);
+  }
   revalidateOrderPages(orderId);
 }

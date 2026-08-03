@@ -1,6 +1,13 @@
 import { prisma } from "@/lib/db";
 
 export async function fulfillOrderMockById(orderId: string) {
+  if (process.env.NODE_ENV === "production") {
+    return {
+      fulfilled: false as const,
+      reason: "mock_fulfillment_disabled_in_production",
+    };
+  }
+
   const order = await prisma.order.findUnique({
     where: {
       id: orderId,
@@ -23,6 +30,26 @@ export async function fulfillOrderMockById(orderId: string) {
     return {
       fulfilled: false as const,
       reason: "already_fulfilled",
+      orderId: order.id,
+      orderNumber: order.orderNumber,
+    };
+  }
+
+  const claim = await prisma.order.updateMany({
+    where: {
+      id: order.id,
+      fulfillment: { not: "processing_mock" },
+      esimStatus: { not: "ready" },
+    },
+    data: {
+      fulfillment: "processing_mock",
+    },
+  });
+
+  if (claim.count !== 1) {
+    return {
+      fulfilled: false as const,
+      reason: "already_processing_or_fulfilled",
       orderId: order.id,
       orderNumber: order.orderNumber,
     };

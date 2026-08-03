@@ -11,7 +11,10 @@ import {
 const EVENT_TYPE = "order_confirmation_email_sent";
 
 export async function sendOrderConfirmationEmail(orderId: string) {
-  const existingEvent = await prisma.customerEvent.findFirst({
+  return prisma.$transaction(async (tx) => {
+  await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`dalo-order-email:${orderId}`}))`;
+
+  const existingEvent = await tx.customerEvent.findFirst({
     where: {
       orderId,
       eventType: EVENT_TYPE,
@@ -26,7 +29,7 @@ export async function sendOrderConfirmationEmail(orderId: string) {
     };
   }
 
-  const order = await prisma.order.findUnique({
+  const order = await tx.order.findUnique({
     where: {
       id: orderId,
     },
@@ -40,7 +43,7 @@ export async function sendOrderConfirmationEmail(orderId: string) {
     };
   }
 
-  const product = await prisma.product.findUnique({
+  const product = await tx.product.findUnique({
     where: {
       id: order.productId,
     },
@@ -58,12 +61,12 @@ export async function sendOrderConfirmationEmail(orderId: string) {
     process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
   const orderNumber = order.orderNumber || order.id;
   const customerAccount = order.customerId
-    ? await prisma.customer.findUnique({
+    ? await tx.customer.findUnique({
         where: {
           id: order.customerId,
         },
       })
-    : await prisma.customer.findUnique({
+    : await tx.customer.findUnique({
         where: {
           email: order.customer,
         },
@@ -142,7 +145,7 @@ export async function sendOrderConfirmationEmail(orderId: string) {
     };
   }
 
-  await prisma.customerEvent.create({
+  await tx.customerEvent.create({
     data: {
       customerId: order.customerId,
       orderId: order.id,
@@ -160,4 +163,5 @@ export async function sendOrderConfirmationEmail(orderId: string) {
     sent: true as const,
     skipped: false as const,
   };
+  }, { timeout: 30_000 });
 }

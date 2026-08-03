@@ -2,6 +2,7 @@ import crypto from "crypto";
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../lib/db";
 import { stripe } from "../../../../lib/stripe";
+import { allowCheckoutAttempt } from "@/lib/checkout-rate-limit";
 import {
   CHECKOUT_LEGAL_VERSION,
   hasRequiredCheckoutConsent,
@@ -11,6 +12,10 @@ const ORDER_NUMBER_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
 function normalizeEmail(email: string) {
   return email.trim().toLowerCase();
+}
+
+function isValidEmail(email: string) {
+  return email.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 function extractDataGb(dataText: string) {
@@ -63,6 +68,9 @@ async function createUniqueOrderNumber() {
 }
 
 export async function POST(request: Request) {
+  let pendingOrderId: string | null = null;
+  let createdStripeSessionId: string | null = null;
+
   try {
     const formData = await request.formData();
 
@@ -78,7 +86,7 @@ export async function POST(request: Request) {
       formData.get("marketingSourceEventId") || ""
     );
 
-    if (!productId || !email || !email.includes("@")) {
+    if (!productId || productId.length > 128 || !isValidEmail(email)) {
       return NextResponse.redirect(
         new URL(`/checkout?productId=${productId}&error=1`, request.url)
       );
@@ -93,6 +101,12 @@ export async function POST(request: Request) {
       );
     }
 
+    if (!(await allowCheckoutAttempt(request, email))) {
+      return NextResponse.redirect(
+        new URL(`/checkout?productId=${productId}&error=1`, request.url)
+      );
+    }
+
     if (
       !process.env.STRIPE_SECRET_KEY ||
       process.env.STRIPE_SECRET_KEY === "sk_test_placeholder"
@@ -102,9 +116,10 @@ export async function POST(request: Request) {
       );
     }
 
-    const product = await prisma.product.findUnique({
+    const product = await prisma.product.findFirst({
       where: {
         id: productId,
+        active: true,
       },
     });
 
@@ -112,12 +127,21 @@ export async function POST(request: Request) {
       return NextResponse.redirect(new URL("/checkout?error=1", request.url));
     }
 
+    const existingCustomer = await prisma.customer.findUnique({
+      where: { email },
+    });
+
+    if (existingCustomer && !existingCustomer.active) {
+      return NextResponse.redirect(
+        new URL(`/checkout?productId=${productId}&error=1`, request.url)
+      );
+    }
+
     const customer = await prisma.customer.upsert({
       where: {
         email,
       },
       update: {
-        active: true,
         ...(customerName ? { name: customerName } : {}),
       },
       create: {
@@ -173,9 +197,10 @@ export async function POST(request: Request) {
         lastUsageSyncAt: null,
       },
     });
+    pendingOrderId = order.id;
 
     const siteUrl =
-      process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+      process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin;
 
     const stripeMetadata = {
       orderId: order.id,
@@ -240,11 +265,10 @@ export async function POST(request: Request) {
       success_url: `${siteUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${siteUrl}/checkout?productId=${product.id}`,
     });
+    createdStripeSessionId = stripeSession.id;
 
     if (!stripeSession.url) {
-      return NextResponse.redirect(
-        new URL(`/checkout?productId=${product.id}&error=1`, request.url)
-      );
+      throw new Error("Stripe checkout URL was not created");
     }
 
     await prisma.order.update({
@@ -255,6 +279,21 @@ export async function POST(request: Request) {
     return NextResponse.redirect(stripeSession.url, 303);
   } catch (error) {
     console.error("Stripe checkout failed:", error);
+
+    if (createdStripeSessionId) {
+      await stripe.checkout.sessions.expire(createdStripeSessionId).catch(() => null);
+    }
+
+    if (pendingOrderId) {
+      await prisma.order.updateMany({
+        where: { id: pendingOrderId, payment: "Pending" },
+        data: {
+          payment: "Failed",
+          fulfillment: "Cancelled",
+          esimStatus: "failed",
+        },
+      }).catch(() => null);
+    }
 
     return NextResponse.redirect(new URL("/checkout?error=1", request.url));
   }

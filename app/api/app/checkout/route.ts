@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getCurrentCustomerFromRequest } from "@/lib/customer-auth";
 import { prisma } from "@/lib/db";
 import { stripe } from "@/lib/stripe";
+import { allowCheckoutAttempt } from "@/lib/checkout-rate-limit";
 
 const ORDER_NUMBER_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
@@ -29,6 +30,10 @@ function normalizeString(value: unknown) {
 
 function normalizeEmail(value: unknown) {
   return normalizeString(value).toLowerCase();
+}
+
+function isValidEmail(email: string) {
+  return email.length <= 254 && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 function normalizeOptionalUrl(value: unknown) {
@@ -145,6 +150,9 @@ export async function OPTIONS() {
 }
 
 export async function POST(request: NextRequest) {
+  let pendingOrderId: string | null = null;
+  let createdStripeSessionId: string | null = null;
+
   try {
     const body = (await request.json().catch(() => ({}))) as CheckoutBody;
 
@@ -156,10 +164,7 @@ export async function POST(request: NextRequest) {
 
     const sessionCustomer = await getCurrentCustomerFromRequest(request);
 
-    const isMobileCheckout =
-      platform === "mobile_app" || platform === "mobile_web";
-
-    if (isMobileCheckout && !sessionCustomer) {
+    if (!sessionCustomer) {
       return NextResponse.json(
         {
           error: "Authentication required",
@@ -171,10 +176,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const email =
-      sessionCustomer?.email ||
-      normalizeEmail(body.customerEmail) ||
-      normalizeEmail(body.email);
+    const email = sessionCustomer.email;
 
     if (!productId) {
       return NextResponse.json(
@@ -188,7 +190,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!email || !email.includes("@")) {
+    if (!isValidEmail(email)) {
       return NextResponse.json(
         {
           error: "customerEmail is required",
@@ -197,6 +199,13 @@ export async function POST(request: NextRequest) {
           status: 400,
           headers: corsHeaders,
         }
+      );
+    }
+
+    if (!(await allowCheckoutAttempt(request, sessionCustomer.id))) {
+      return NextResponse.json(
+        { error: "Too many checkout attempts. Please try again shortly." },
+        { status: 429, headers: corsHeaders }
       );
     }
 
@@ -234,18 +243,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const customer = await prisma.customer.upsert({
-      where: {
-        email,
-      },
-      update: {
-        active: true,
-      },
-      create: {
-        email,
-        active: true,
-      },
-    });
+    const customer = sessionCustomer;
 
     const totalDataGb = extractDataGb(product.data);
     const orderNumber = await createUniqueOrderNumber();
@@ -284,9 +282,10 @@ export async function POST(request: NextRequest) {
         lastUsageSyncAt: null,
       },
     });
+    pendingOrderId = order.id;
 
     const siteUrl =
-      process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+      process.env.NEXT_PUBLIC_SITE_URL || new URL(request.url).origin;
 
     const successUrl = requestedSuccessUrl
       ? appendCheckoutParams(requestedSuccessUrl, {
@@ -337,17 +336,10 @@ export async function POST(request: NextRequest) {
       success_url: successUrl,
       cancel_url: cancelUrl,
     });
+    createdStripeSessionId = stripeSession.id;
 
     if (!stripeSession.url) {
-      return NextResponse.json(
-        {
-          error: "Stripe checkout URL was not created",
-        },
-        {
-          status: 500,
-          headers: corsHeaders,
-        }
-      );
+      throw new Error("Stripe checkout URL was not created");
     }
 
     await prisma.order.update({
@@ -378,6 +370,21 @@ export async function POST(request: NextRequest) {
     );
   } catch (error) {
     console.error("POST /api/app/checkout failed:", error);
+
+    if (createdStripeSessionId) {
+      await stripe.checkout.sessions.expire(createdStripeSessionId).catch(() => null);
+    }
+
+    if (pendingOrderId) {
+      await prisma.order.updateMany({
+        where: { id: pendingOrderId, payment: "Pending" },
+        data: {
+          payment: "Failed",
+          fulfillment: "Cancelled",
+          esimStatus: "failed",
+        },
+      }).catch(() => null);
+    }
 
     return NextResponse.json(
       {

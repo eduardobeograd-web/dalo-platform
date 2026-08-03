@@ -101,9 +101,10 @@ export default async function CheckoutPage({
     process.env.DALO_ENABLE_TEST_CHECKOUT === "true";
 
   const product = productId
-    ? await prisma.product.findUnique({
+    ? await prisma.product.findFirst({
         where: {
           id: productId,
+          active: true,
         },
       })
     : null;

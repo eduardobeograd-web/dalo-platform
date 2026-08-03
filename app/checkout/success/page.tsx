@@ -1,7 +1,5 @@
 import { prisma } from "../../../lib/db";
 import { stripe } from "../../../lib/stripe";
-import { trackCustomerEvent } from "../../../lib/customer-events";
-import { fulfillOrderMockById } from "../../../lib/mock-fulfillment";
 import SiteFooter from "../../../components/SiteFooter";
 import SiteHeader from "../../../components/SiteHeader";
 
@@ -9,7 +7,7 @@ function formatPrice(value: number) {
   return `$${value.toFixed(2)}`;
 }
 
-async function finalizeStripeCheckout(sessionId: string) {
+async function loadStripeCheckoutOrder(sessionId: string) {
   if (!process.env.STRIPE_SECRET_KEY) {
     return null;
   }
@@ -21,160 +19,12 @@ async function finalizeStripeCheckout(sessionId: string) {
     return null;
   }
 
-  const existingOrder = await prisma.order.findUnique({
+  return prisma.order.findFirst({
     where: {
       id: orderId,
+      stripeSessionId: stripeSession.id,
     },
   });
-
-  if (!existingOrder) {
-    return null;
-  }
-
-  if (stripeSession.payment_status !== "paid") {
-    return existingOrder;
-  }
-
-  const product = await prisma.product.findUnique({
-    where: {
-      id: existingOrder.productId,
-    },
-  });
-
-  if (!product) {
-    return existingOrder;
-  }
-
-  const email =
-    stripeSession.customer_details?.email ||
-    stripeSession.customer_email ||
-    existingOrder.customer;
-
-  const customer = await prisma.customer.upsert({
-    where: {
-      email,
-    },
-    update: {
-      active: true,
-    },
-    create: {
-      email,
-      active: true,
-    },
-  });
-
-  const updatedOrder = await prisma.order.update({
-    where: {
-      id: existingOrder.id,
-    },
-    data: {
-      customer: email,
-      customerId: customer.id,
-      payment: "Paid",
-      amount:
-        existingOrder.amount ??
-        (typeof stripeSession.amount_total === "number"
-          ? stripeSession.amount_total / 100
-          : product.sellPrice),
-      currency:
-        existingOrder.currency ||
-        stripeSession.currency?.toUpperCase() ||
-        "USD",
-      buyPriceAtPurchase:
-        existingOrder.buyPriceAtPurchase ?? product.buyPrice,
-      productNameAtPurchase:
-        existingOrder.productNameAtPurchase || product.name,
-      countryAtPurchase:
-        existingOrder.countryAtPurchase || product.country,
-      dataAtPurchase: existingOrder.dataAtPurchase || product.data,
-      validityDaysAtPurchase:
-        existingOrder.validityDaysAtPurchase || product.validityDays,
-      providerAtPurchase:
-        existingOrder.providerAtPurchase || product.provider,
-      providerProductIdAtPurchase:
-        existingOrder.providerProductIdAtPurchase ||
-        product.providerProductId,
-      stripeSessionId: existingOrder.stripeSessionId || stripeSession.id,
-      stripePaymentIntentId:
-        existingOrder.stripePaymentIntentId ||
-        (typeof stripeSession.payment_intent === "string"
-          ? stripeSession.payment_intent
-          : stripeSession.payment_intent?.id || null),
-      paidAt: existingOrder.paidAt || new Date(),
-      fulfillment:
-        existingOrder.fulfillment === "Waiting"
-          ? "pending_manual"
-          : existingOrder.fulfillment,
-      esimStatus: existingOrder.esimStatus || "pending",
-    },
-  });
-
-  let finalizedOrder = updatedOrder;
-
-  if (
-    process.env.DALO_AUTO_MOCK_FULFILLMENT === "true" &&
-    updatedOrder.fulfillment === "pending_manual" &&
-    updatedOrder.esimStatus !== "ready"
-  ) {
-    const fulfillmentResult = await fulfillOrderMockById(updatedOrder.id);
-
-    if (fulfillmentResult.fulfilled) {
-      const fulfilledOrder = await prisma.order.findUnique({
-        where: {
-          id: updatedOrder.id,
-        },
-      });
-
-      if (fulfilledOrder) {
-        finalizedOrder = fulfilledOrder;
-      }
-    }
-  }
-
-  const existingPurchaseEvent = await prisma.customerEvent.findFirst({
-    where: {
-      eventType: "purchase_completed",
-      orderId: updatedOrder.id,
-    },
-  });
-
-  if (!existingPurchaseEvent) {
-    const marketingCampaign = stripeSession.metadata?.marketingCampaign || "";
-    const marketingSourceEventId =
-      stripeSession.metadata?.marketingSourceEventId || "";
-    const daloSessionId = stripeSession.metadata?.daloSessionId || "";
-
-    await trackCustomerEvent({
-      customerId: customer.id,
-      orderId: updatedOrder.id,
-      productId: product.id,
-      sessionId: daloSessionId || null,
-      eventType: "purchase_completed",
-      metadata: {
-        source: "stripe_checkout_success",
-        sessionId: daloSessionId || null,
-        paymentMode: "stripe_checkout",
-        paymentStatus: finalizedOrder.payment,
-        fulfillmentStatus: finalizedOrder.fulfillment,
-        stripeCheckoutSessionId: stripeSession.id,
-        orderNumber: finalizedOrder.orderNumber,
-        customerEmail: email,
-        productName: product.name,
-        destination: product.country,
-        data: product.data,
-        validityDays: product.validityDays,
-        price: product.sellPrice,
-        provider: product.provider,
-        marketingCampaign: marketingCampaign || null,
-        marketingSourceEventId: marketingSourceEventId || null,
-        attributedToMarketing: Boolean(
-          marketingCampaign || marketingSourceEventId
-        ),
-      },
-    });
-  }
-
-  return finalizedOrder;
 }
 
 export default async function CheckoutSuccessPage({
@@ -188,10 +38,15 @@ export default async function CheckoutSuccessPage({
   const params = await searchParams;
 
   let order = params.session_id
-    ? await finalizeStripeCheckout(params.session_id)
+    ? await loadStripeCheckoutOrder(params.session_id)
     : null;
 
-  if (!order && params.orderId) {
+  if (
+    !order &&
+    params.orderId &&
+    process.env.NODE_ENV !== "production" &&
+    process.env.DALO_ENABLE_TEST_CHECKOUT === "true"
+  ) {
     order = await prisma.order.findUnique({
       where: {
         id: params.orderId,

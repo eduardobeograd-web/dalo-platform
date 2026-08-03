@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { getCurrentCustomerFromRequest } from "@/lib/customer-auth";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -20,10 +21,6 @@ type ProductLike = {
   image: string;
   description: string;
 };
-
-function normalizeEmail(value: string | null) {
-  return (value || "").trim().toLowerCase();
-}
 
 function safeProduct(product?: ProductLike | null) {
   if (!product) return null;
@@ -59,16 +56,16 @@ export async function GET(
   }
 ) {
   try {
-    const email = normalizeEmail(request.nextUrl.searchParams.get("email"));
+    const customer = await getCurrentCustomerFromRequest(request);
     const { id } = await context.params;
 
-    if (!email || !email.includes("@")) {
+    if (!customer) {
       return NextResponse.json(
         {
-          error: "email is required",
+          error: "Authentication required",
         },
         {
-          status: 400,
+          status: 401,
           headers: corsHeaders,
         }
       );
@@ -77,7 +74,7 @@ export async function GET(
     const order = await prisma.order.findFirst({
       where: {
         id,
-        customer: email,
+        customerId: customer.id,
       },
     });
 
@@ -102,7 +99,7 @@ export async function GET(
     return NextResponse.json(
       {
         customer: {
-          email,
+          email: customer.email,
         },
         order: {
           id: order.id,

@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { prisma } from "@/lib/db";
 import { trackCustomerEvent } from "@/lib/customer-events";
 import {
   CONSENT_COOKIE_NAME,
@@ -8,103 +7,35 @@ import {
   parseConsentValue,
 } from "@/lib/consent";
 
-const allowedEvents = new Set([
+const allowedPublicEvents = new Set([
   "product_view",
   "category_view",
   "search",
   "add_to_cart",
   "checkout_started",
   "checkout_email_entered",
-  "payment_success",
-  "payment_failed",
-  "purchase_completed",
-  "registration",
-  "login",
-  "password_reset",
-  "esim_delivered",
-  "esim_installed",
-  "esim_activated",
-  "esim_expiring",
-  "esim_expired",
-  "abandoned_checkout_email_sent",
-  "product_interest_email_sent",
   "marketing_email_clicked",
 ]);
 
-function normalizeEmail(value: unknown) {
-  if (typeof value !== "string") {
-    return null;
-  }
-
-  const email = value.trim().toLowerCase();
-
-  if (!email || !email.includes("@") || !email.includes(".")) {
-    return null;
-  }
-
-  return email;
+function cleanIdentifier(value: unknown) {
+  return typeof value === "string" ? value.trim().slice(0, 128) : null;
 }
 
-function getMetadataEmail(metadata: unknown) {
-  if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) {
-    return null;
-  }
+function cleanMetadata(value: unknown) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
 
-  const value = (metadata as Record<string, unknown>).customerEmail;
+  const serialized = JSON.stringify(value);
+  if (serialized.length > 8_000) return null;
 
-  return normalizeEmail(value);
-}
+  const metadata = { ...(value as Record<string, unknown>) };
+  delete metadata.customerEmail;
+  delete metadata.email;
+  delete metadata.customerId;
+  delete metadata.orderId;
+  delete metadata.stripeSessionId;
+  delete metadata.stripePaymentIntentId;
 
-async function findKnownCustomerFromSession(sessionId?: string | null) {
-  if (!sessionId) {
-    return null;
-  }
-
-  const recentSessionEvents = await prisma.customerEvent.findMany({
-    where: {
-      sessionId,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    take: 50,
-    include: {
-      customer: true,
-    },
-  });
-
-  for (const event of recentSessionEvents) {
-    if (event.customer) {
-      return {
-        customerId: event.customer.id,
-        email: event.customer.email,
-      };
-    }
-
-    const metadataEmail = getMetadataEmail(event.metadata);
-
-    if (metadataEmail) {
-      const customer = await prisma.customer.upsert({
-        where: {
-          email: metadataEmail,
-        },
-        update: {
-          active: true,
-        },
-        create: {
-          email: metadataEmail,
-          active: true,
-        },
-      });
-
-      return {
-        customerId: customer.id,
-        email: customer.email,
-      };
-    }
-  }
-
-  return null;
+  return metadata;
 }
 
 export async function POST(request: Request) {
@@ -112,8 +43,6 @@ export async function POST(request: Request) {
     const body = await request.json();
 
     const {
-      customerId,
-      orderId,
       productId,
       sessionId,
       eventType,
@@ -127,7 +56,7 @@ export async function POST(request: Request) {
       );
     }
 
-    if (!allowedEvents.has(eventType)) {
+    if (!allowedPublicEvents.has(eventType)) {
       return NextResponse.json(
         { error: "Invalid eventType" },
         { status: 400 }
@@ -154,69 +83,18 @@ export async function POST(request: Request) {
       }
     }
 
-    const metadataEmail = getMetadataEmail(metadata);
-    let enrichedCustomerId = customerId ?? null;
-    let knownCustomerEmail: string | null = null;
-
-    if (metadataEmail) {
-      const customer = await prisma.customer.upsert({
-        where: {
-          email: metadataEmail,
-        },
-        update: {
-          active: true,
-        },
-        create: {
-          email: metadataEmail,
-          active: true,
-        },
-      });
-
-      enrichedCustomerId = customer.id;
-      knownCustomerEmail = customer.email;
-    }
-
-    if (!enrichedCustomerId && sessionId) {
-      const knownCustomer = await findKnownCustomerFromSession(sessionId);
-
-      if (knownCustomer) {
-        enrichedCustomerId = knownCustomer.customerId;
-        knownCustomerEmail = knownCustomer.email;
-      }
-    }
-
-    const enrichedMetadata =
-      metadata && typeof metadata === "object" && !Array.isArray(metadata)
-        ? {
-            ...metadata,
-            ...(knownCustomerEmail
-              ? {
-                  knownCustomerEmail,
-                  customerRecognizedBySession: true,
-                }
-              : {}),
-          }
-        : knownCustomerEmail
-          ? {
-              knownCustomerEmail,
-              customerRecognizedBySession: true,
-            }
-          : metadata ?? null;
-
     const event = await trackCustomerEvent({
-      customerId: enrichedCustomerId,
-      orderId: orderId ?? null,
-      productId: productId ?? null,
-      sessionId: sessionId ?? null,
+      customerId: null,
+      orderId: null,
+      productId: cleanIdentifier(productId),
+      sessionId: cleanIdentifier(sessionId),
       eventType,
-      metadata: enrichedMetadata,
+      metadata: cleanMetadata(metadata),
     });
 
     return NextResponse.json({
       success: true,
       eventId: event?.id ?? null,
-      customerId: enrichedCustomerId,
-      knownCustomerEmail,
     });
   } catch (error) {
     console.error("Event API error:", error);
