@@ -119,7 +119,15 @@ export default async function ProviderDetailPage({
         </div>
       </div>
 
-      {networkSync ? (
+      {networkSync === "missing-key" ? (
+        <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-amber-900">
+          <p className="font-bold">Network sync is not configured yet.</p>
+          <p className="mt-1 text-sm leading-6">
+            Add ESIM_GO_API_KEY to the Vercel environment and redeploy before
+            starting the network coverage sync.
+          </p>
+        </div>
+      ) : networkSync ? (
         <div className="mb-6 rounded-2xl border border-green-200 bg-green-50 px-5 py-4 font-semibold text-green-800">
           Network coverage updated for {networkSync} countries.
         </div>
@@ -306,9 +314,16 @@ export default async function ProviderDetailPage({
                 <button
                   type="submit"
                   formAction={syncEsimGoNetworks}
-                  className="rounded-2xl border border-blue-200 bg-blue-50 p-4 font-bold text-blue-800 transition hover:bg-blue-100"
+                  disabled={!envStatus.configured}
+                  className={`rounded-2xl border p-4 font-bold transition ${
+                    envStatus.configured
+                      ? "border-blue-200 bg-blue-50 text-blue-800 hover:bg-blue-100"
+                      : "cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400"
+                  }`}
                 >
-                  Sync network coverage
+                  {envStatus.configured
+                    ? "Sync network coverage"
+                    : "API key required for network sync"}
                 </button>
               ) : null}
 

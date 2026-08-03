@@ -1,13 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Geist } from "next/font/google";
+import localFont from "next/font/local";
 import DeferredCookieConsent from "../components/DeferredCookieConsent";
 import DeferredDeviceCompatibilityCheck from "../components/DeferredDeviceCompatibilityCheck";
 import { siteUrl as baseUrl } from "../lib/site-url";
 import "./globals.css";
 
-const geistSans = Geist({
+const geistSans = localFont({
+  src: "./fonts/geist-latin.woff2",
   variable: "--font-geist-sans",
-  subsets: ["latin"],
+  display: "swap",
+  weight: "100 900",
 });
 
 export const metadata: Metadata = {

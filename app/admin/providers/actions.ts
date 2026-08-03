@@ -142,7 +142,7 @@ export async function syncEsimGoNetworks() {
   ).replace(/\/$/, "");
 
   if (!apiKey) {
-    throw new Error("ESIM_GO_API_KEY is not configured.");
+    redirect("/admin/providers/esim-go?networkSync=missing-key");
   }
 
   const response = await fetch(`${baseUrl}/networks?returnAll=true`, {
