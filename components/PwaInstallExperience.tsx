@@ -81,7 +81,7 @@ export default function PwaInstallExperience({ installUrl }: { installUrl: strin
       platform === "ios"
         ? "Use Safari's Share button, then choose Add to Home Screen."
         : platform === "samsung"
-          ? "Tap the install icon in Samsung Internet's address bar, or open the browser menu and choose Add page to, then Home screen."
+          ? "On Android, use Install app in Chrome or the install icon in Samsung Internet."
         : "Open your browser menu and choose Install app or Add to Home screen.",
     );
     document.getElementById("install-steps")?.scrollIntoView({ behavior: "smooth" });
@@ -127,7 +127,7 @@ export default function PwaInstallExperience({ installUrl }: { installUrl: strin
       : platform === "ios"
         ? "Show iPhone install steps"
         : platform === "samsung"
-          ? "Show Samsung install steps"
+          ? "Show Android install steps"
         : platform === "android"
           ? "Show Android install steps"
           : "Show installation steps";
@@ -210,7 +210,7 @@ export default function PwaInstallExperience({ installUrl }: { installUrl: strin
 
         <div className="mt-8 grid gap-5 lg:grid-cols-3">
           <InstallSteps title="iPhone and iPad" accent="blue" steps={["Open this page in Safari.", "Tap the Share button at the bottom of Safari.", "Scroll down and choose Add to Home Screen.", "Tap Add to place DALO on your Home Screen."]} />
-          <InstallSteps title="Samsung and Android" accent="warm" steps={["In Samsung Internet, tap the install icon in the address bar.", "If it is not visible, open the browser menu and choose Add page to.", "Choose Home screen and confirm the installation.", "In Chrome, use Install app in the three-dot menu."]} />
+          <InstallSteps title="Android phones" accent="warm" steps={["In Chrome, tap Install DALO above or choose Install app from the three-dot menu.", "Confirm the installation to add DALO to your apps and Home screen.", "Using Samsung Internet? Tap its install icon in the address bar.", "Alternatively choose Add page to, then Home screen, from the Samsung Internet menu."]} />
           <InstallSteps title="Laptop or desktop" accent="slate" steps={["Open this page in Chrome or Microsoft Edge.", "Look for the install icon in the address bar.", "Select Install DALO eSIM.", "Open DALO like a normal desktop app."]} />
         </div>
       </section>
