@@ -82,22 +82,25 @@ export default function SiteHeader({ mode = "public" }: SiteHeaderProps) {
         ) : (
           <div className="flex items-center gap-2 sm:gap-4">
             <a
-              className="hidden min-h-11 items-center justify-center whitespace-nowrap rounded-lg px-2 text-xs font-semibold text-slate-600 transition hover:bg-blue-50 hover:text-[#2148c0] md:inline-flex sm:text-sm"
+              className="inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-lg px-1.5 text-xs font-semibold text-slate-600 transition hover:bg-blue-50 hover:text-[#2148c0] sm:px-2 sm:text-sm"
               href="/install"
             >
-              Install app
+              <span className="sm:hidden">Install</span>
+              <span className="hidden sm:inline">Install app</span>
             </a>
             <a
               className="inline-flex min-h-11 items-center justify-center whitespace-nowrap rounded-lg px-2 text-xs font-semibold text-slate-600 transition hover:bg-blue-50 hover:text-[#2148c0] sm:text-sm"
               href="/customer/dashboard"
             >
-              My account
+              <span className="sm:hidden">Account</span>
+              <span className="hidden sm:inline">My account</span>
             </a>
             <a
               href="/#quiz"
               className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[#2148c0] px-3 py-2 text-xs font-bold text-white transition hover:bg-[#17389b] focus:outline-none focus:ring-4 focus:ring-blue-100 sm:rounded-xl sm:px-5 sm:py-2.5 sm:text-sm"
             >
-              Start quiz
+              <span className="sm:hidden">Quiz</span>
+              <span className="hidden sm:inline">Start quiz</span>
             </a>
           </div>
         )}
