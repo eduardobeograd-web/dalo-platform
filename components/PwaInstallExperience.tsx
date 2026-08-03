@@ -65,6 +65,12 @@ export default function PwaInstallExperience({ installUrl }: { installUrl: strin
       return;
     }
 
+    if (platform === "samsung") {
+      setNotice("For the best Android installation, open this page in Google Chrome and choose Install app from the Chrome menu.");
+      document.getElementById("install-steps")?.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
+
     if (prompt) {
       await prompt.prompt();
       const choice = await prompt.userChoice;
@@ -81,7 +87,7 @@ export default function PwaInstallExperience({ installUrl }: { installUrl: strin
       platform === "ios"
         ? "Use Safari's Share button, then choose Add to Home Screen."
         : platform === "samsung"
-          ? "On Android, use Install app in Chrome or the install icon in Samsung Internet."
+          ? "For the best Android installation, open this page in Google Chrome and choose Install app."
         : "Open your browser menu and choose Install app or Add to Home screen.",
     );
     document.getElementById("install-steps")?.scrollIntoView({ behavior: "smooth" });
@@ -127,7 +133,7 @@ export default function PwaInstallExperience({ installUrl }: { installUrl: strin
       : platform === "ios"
         ? "Show iPhone install steps"
         : platform === "samsung"
-          ? "Show Android install steps"
+          ? "Use Chrome to install"
         : platform === "android"
           ? "Show Android install steps"
           : "Show installation steps";
@@ -155,6 +161,13 @@ export default function PwaInstallExperience({ installUrl }: { installUrl: strin
               </div>
             ))}
           </div>
+
+          {ready && platform === "samsung" ? (
+            <div className="mt-6 max-w-xl rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3.5 text-sm leading-6 text-amber-950">
+              <strong className="font-black">Installing from Samsung Internet?</strong>{" "}
+              Samsung Internet may show an Android compatibility warning created by its app installer. DALO recommends opening this page in Chrome for a warning-free installation.
+            </div>
+          ) : null}
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <button type="button" onClick={installDalo} disabled={!ready} className="inline-flex min-h-14 items-center justify-center gap-3 rounded-2xl bg-[#2148c0] px-6 py-3.5 font-black text-white shadow-[0_16px_35px_rgba(33,72,192,0.24)] transition hover:-translate-y-0.5 hover:bg-[#17389b] focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 disabled:cursor-wait disabled:opacity-60">
@@ -210,7 +223,7 @@ export default function PwaInstallExperience({ installUrl }: { installUrl: strin
 
         <div className="mt-8 grid gap-5 lg:grid-cols-3">
           <InstallSteps title="iPhone and iPad" accent="blue" steps={["Open this page in Safari.", "Tap the Share button at the bottom of Safari.", "Scroll down and choose Add to Home Screen.", "Tap Add to place DALO on your Home Screen."]} />
-          <InstallSteps title="Android phones" accent="warm" steps={["In Chrome, tap Install DALO above or choose Install app from the three-dot menu.", "Confirm the installation to add DALO to your apps and Home screen.", "Using Samsung Internet? Tap its install icon in the address bar.", "Alternatively choose Add page to, then Home screen, from the Samsung Internet menu."]} />
+          <InstallSteps title="Android phones" accent="warm" steps={["For the most consistent installation, open this page in Google Chrome.", "Tap Install DALO above or choose Install app from Chrome's three-dot menu.", "Confirm the installation to add DALO to your apps and Home screen.", "You can continue using Samsung Internet normally after DALO is installed."]} />
           <InstallSteps title="Laptop or desktop" accent="slate" steps={["Open this page in Chrome or Microsoft Edge.", "Look for the install icon in the address bar.", "Select Install DALO eSIM.", "Open DALO like a normal desktop app."]} />
         </div>
       </section>
