@@ -20,6 +20,16 @@ type OrderConfirmationEmailInput = {
   refundUrl: string;
   privacyUrl: string;
   legalVersion: string | null;
+  travelEssentials: {
+    destination: string;
+    referenceCity: string;
+    currencyCode: string | null;
+    currencyName: string;
+    multipleTimeZones?: boolean;
+    emergencyLabel?: string;
+    emergencyNumbers?: string;
+    emergencySourceUrl?: string;
+  } | null;
 };
 
 function escapeHtml(value: string) {
@@ -57,6 +67,7 @@ export function orderConfirmationHtml({
   refundUrl,
   privacyUrl,
   legalVersion,
+  travelEssentials,
 }: OrderConfirmationEmailInput) {
   const isReady = fulfillment.toLowerCase() === "delivered";
   const safeOrderNumber = escapeHtml(orderNumber);
@@ -78,6 +89,26 @@ export function orderConfirmationHtml({
   const safeRefundUrl = escapeHtml(refundUrl);
   const safePrivacyUrl = escapeHtml(privacyUrl);
   const safeLegalVersion = legalVersion ? escapeHtml(legalVersion) : null;
+  const safeTravelEssentials = travelEssentials
+    ? {
+        destination: escapeHtml(travelEssentials.destination),
+        referenceCity: escapeHtml(travelEssentials.referenceCity),
+        currencyCode: travelEssentials.currencyCode
+          ? escapeHtml(travelEssentials.currencyCode)
+          : null,
+        currencyName: escapeHtml(travelEssentials.currencyName),
+        multipleTimeZones: Boolean(travelEssentials.multipleTimeZones),
+        emergencyLabel: travelEssentials.emergencyLabel
+          ? escapeHtml(travelEssentials.emergencyLabel)
+          : null,
+        emergencyNumbers: travelEssentials.emergencyNumbers
+          ? escapeHtml(travelEssentials.emergencyNumbers)
+          : null,
+        emergencySourceUrl: travelEssentials.emergencySourceUrl
+          ? escapeHtml(travelEssentials.emergencySourceUrl)
+          : null,
+      }
+    : null;
 
   const installationLinks = [
     iosInstallUrl
@@ -169,6 +200,65 @@ export function orderConfirmationHtml({
                   </table>
                 </td>
               </tr>
+
+              ${
+                safeTravelEssentials
+                  ? `
+              <tr>
+                <td style="padding:4px 28px 18px;">
+                  <div style="border:1px solid #d9e3f2;border-radius:18px;background:#fffaf1;padding:20px;">
+                    <div style="font-size:10px;font-weight:900;letter-spacing:0.12em;text-transform:uppercase;color:#b45309;">
+                      Useful for your trip
+                    </div>
+                    <div style="margin-top:6px;font-size:19px;font-weight:900;line-height:1.3;color:#101828;">
+                      ${safeTravelEssentials.destination} essentials
+                    </div>
+                    <p style="margin:6px 0 15px;font-size:12px;line-height:1.6;color:#667085;">
+                      Keep these practical details with your eSIM information while you travel.
+                    </p>
+
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;font-size:13px;color:#475467;">
+                      <tr>
+                        <td style="padding:10px 0;border-top:1px solid #f0dfc3;">Local time reference</td>
+                        <td align="right" style="padding:10px 0;border-top:1px solid #f0dfc3;font-weight:800;color:#101828;">
+                          ${safeTravelEssentials.referenceCity}${safeTravelEssentials.multipleTimeZones ? " · multiple time zones" : ""}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:10px 0;border-top:1px solid #f0dfc3;">Currency</td>
+                        <td align="right" style="padding:10px 0;border-top:1px solid #f0dfc3;font-weight:800;color:#101828;">
+                          ${safeTravelEssentials.currencyName}${safeTravelEssentials.currencyCode ? ` · ${safeTravelEssentials.currencyCode}` : ""}
+                        </td>
+                      </tr>
+                      ${
+                        safeTravelEssentials.emergencyNumbers
+                          ? `
+                      <tr>
+                        <td style="padding:10px 0;border-top:1px solid #f0dfc3;">
+                          <span style="font-weight:900;color:#b42318;">Emergency</span>
+                          ${safeTravelEssentials.emergencyLabel ? `<div style="margin-top:2px;font-size:10px;color:#667085;">${safeTravelEssentials.emergencyLabel}</div>` : ""}
+                        </td>
+                        <td align="right" style="padding:10px 0;border-top:1px solid #f0dfc3;font-size:17px;font-weight:900;letter-spacing:0.04em;color:#b42318;">
+                          ${safeTravelEssentials.emergencyNumbers}
+                        </td>
+                      </tr>`
+                          : ""
+                      }
+                    </table>
+
+                    ${
+                      safeTravelEssentials.emergencySourceUrl
+                        ? `<a href="${safeTravelEssentials.emergencySourceUrl}" style="display:inline-block;margin-top:10px;font-size:12px;font-weight:900;color:#2148c0;text-decoration:underline;">Check the official emergency guidance</a>`
+                        : ""
+                    }
+                    <p style="margin:10px 0 0;font-size:10px;line-height:1.5;color:#98a2b3;">
+                      Travel information can change. Follow local authorities and current official guidance when you arrive.
+                    </p>
+                  </div>
+                </td>
+              </tr>`
+                  : ""
+              }
 
               <tr>
                 <td style="padding:10px 28px 18px;">

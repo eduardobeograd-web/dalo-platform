@@ -2,6 +2,8 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import QRCode from "qrcode";
 import { prisma } from "@/lib/db";
+import { getDestinationTravelEssentials } from "@/lib/destination-travel-essentials";
+import { slugifyDestination } from "@/lib/destination-pages";
 import { sendEmail } from "@/lib/email";
 import {
   orderConfirmationHtml,
@@ -60,6 +62,10 @@ export async function sendOrderConfirmationEmail(orderId: string) {
   const siteUrl =
     process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
   const orderNumber = order.orderNumber || order.id;
+  const destination = order.countryAtPurchase || product.country;
+  const travelEssentials = getDestinationTravelEssentials(
+    slugifyDestination(destination),
+  );
   const customerAccount = order.customerId
     ? await tx.customer.findUnique({
         where: {
@@ -114,7 +120,7 @@ export async function sendOrderConfirmationEmail(orderId: string) {
       customerName: customerAccount?.name || null,
       iccid: order.iccid,
       productName: order.productNameAtPurchase || product.name,
-      destination: order.countryAtPurchase || product.country,
+      destination,
       data: order.dataAtPurchase || product.data,
       validityDays:
         order.validityDaysAtPurchase || product.validityDays,
@@ -134,6 +140,7 @@ export async function sendOrderConfirmationEmail(orderId: string) {
       refundUrl: `${siteUrl}/refund-policy`,
       privacyUrl: `${siteUrl}/privacy-policy`,
       legalVersion: order.legalVersion,
+      travelEssentials,
     }),
   });
 
