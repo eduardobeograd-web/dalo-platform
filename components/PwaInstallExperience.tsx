@@ -9,7 +9,7 @@ type InstallPromptEvent = Event & {
 };
 
 type NavigatorWithStandalone = Navigator & { standalone?: boolean };
-type Platform = "ios" | "android" | "desktop";
+type Platform = "ios" | "samsung" | "android" | "desktop";
 
 export default function PwaInstallExperience({ installUrl }: { installUrl: string }) {
   const [prompt, setPrompt] = useState<InstallPromptEvent | null>(null);
@@ -27,9 +27,10 @@ export default function PwaInstallExperience({ installUrl }: { installUrl: strin
       /iPhone|iPad|iPod/i.test(userAgent) ||
       (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
     const android = /Android/i.test(userAgent);
+    const samsung = /SamsungBrowser/i.test(userAgent);
 
     setInstalled(standalone);
-    setPlatform(ios ? "ios" : android ? "android" : "desktop");
+    setPlatform(ios ? "ios" : samsung ? "samsung" : android ? "android" : "desktop");
     setReady(true);
 
     function captureInstallPrompt(event: Event) {
@@ -79,6 +80,8 @@ export default function PwaInstallExperience({ installUrl }: { installUrl: strin
     setNotice(
       platform === "ios"
         ? "Use Safari's Share button, then choose Add to Home Screen."
+        : platform === "samsung"
+          ? "Tap the install icon in Samsung Internet's address bar, or open the browser menu and choose Add page to, then Home screen."
         : "Open your browser menu and choose Install app or Add to Home screen.",
     );
     document.getElementById("install-steps")?.scrollIntoView({ behavior: "smooth" });
@@ -111,9 +114,23 @@ export default function PwaInstallExperience({ installUrl }: { installUrl: strin
   const platformLabel =
     platform === "ios"
       ? "iPhone or iPad"
+      : platform === "samsung"
+        ? "Samsung"
       : platform === "android"
         ? "Android phone"
         : "this device";
+
+  const installButtonLabel = installed
+    ? "DALO is installed"
+    : prompt
+      ? `Install on ${platformLabel}`
+      : platform === "ios"
+        ? "Show iPhone install steps"
+        : platform === "samsung"
+          ? "Show Samsung install steps"
+        : platform === "android"
+          ? "Show Android install steps"
+          : "Show installation steps";
 
   return (
     <div className="relative mx-auto max-w-7xl px-4 pt-10 sm:px-6 sm:pt-16">
@@ -142,7 +159,7 @@ export default function PwaInstallExperience({ installUrl }: { installUrl: strin
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <button type="button" onClick={installDalo} disabled={!ready} className="inline-flex min-h-14 items-center justify-center gap-3 rounded-2xl bg-[#2148c0] px-6 py-3.5 font-black text-white shadow-[0_16px_35px_rgba(33,72,192,0.24)] transition hover:-translate-y-0.5 hover:bg-[#17389b] focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 disabled:cursor-wait disabled:opacity-60">
               <DownloadIcon />
-              {installed ? "DALO is installed" : `Install on ${platformLabel}`}
+              {installButtonLabel}
             </button>
             <button type="button" onClick={shareInstallPage} className="inline-flex min-h-14 items-center justify-center gap-3 rounded-2xl border border-blue-200 bg-white px-6 py-3.5 font-black text-[#17389b] transition hover:border-blue-400 hover:bg-blue-50 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-100">
               <ShareIcon />
@@ -193,7 +210,7 @@ export default function PwaInstallExperience({ installUrl }: { installUrl: strin
 
         <div className="mt-8 grid gap-5 lg:grid-cols-3">
           <InstallSteps title="iPhone and iPad" accent="blue" steps={["Open this page in Safari.", "Tap the Share button at the bottom of Safari.", "Scroll down and choose Add to Home Screen.", "Tap Add to place DALO on your Home Screen."]} />
-          <InstallSteps title="Android" accent="warm" steps={["Open this page in Chrome.", "Tap Install DALO above when the button is available.", "Otherwise open Chrome's three-dot menu.", "Choose Install app or Add to Home screen."]} />
+          <InstallSteps title="Samsung and Android" accent="warm" steps={["In Samsung Internet, tap the install icon in the address bar.", "If it is not visible, open the browser menu and choose Add page to.", "Choose Home screen and confirm the installation.", "In Chrome, use Install app in the three-dot menu."]} />
           <InstallSteps title="Laptop or desktop" accent="slate" steps={["Open this page in Chrome or Microsoft Edge.", "Look for the install icon in the address bar.", "Select Install DALO eSIM.", "Open DALO like a normal desktop app."]} />
         </div>
       </section>
