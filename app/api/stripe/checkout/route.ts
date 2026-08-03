@@ -221,7 +221,7 @@ export async function POST(request: Request) {
       mode: "payment",
       customer_email: email,
       customer_creation: "always",
-      billing_address_collection: "required",
+      billing_address_collection: "auto",
       tax_id_collection: {
         enabled: true,
       },
