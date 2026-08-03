@@ -139,8 +139,8 @@ export default function DeviceCompatibilityCheck({ variant = "floating" }: { var
         aria-haspopup="dialog"
         aria-label="Check device compatibility"
         className={variant === "quiz"
-          ? "group relative flex min-h-12 shrink-0 items-center gap-2 rounded-xl border border-blue-200 bg-blue-50/90 px-2.5 py-1.5 text-left shadow-sm transition hover:border-blue-400 hover:bg-blue-100 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 sm:hidden"
-          : `group fixed bottom-24 right-3 z-40 h-12 w-auto items-center justify-center gap-2 rounded-2xl border border-blue-400 bg-blue-800 px-2.5 text-left text-white shadow-[0_14px_35px_rgba(13,54,140,0.32)] transition hover:-translate-y-1 hover:bg-blue-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 sm:bottom-5 sm:right-5 sm:h-auto sm:min-w-[330px] sm:justify-start sm:gap-3 sm:px-4 sm:py-3.5 ${pathname === "/" ? "hidden sm:flex" : "flex"}`}
+          ? "group relative flex min-h-12 shrink-0 items-center gap-2 rounded-xl border border-blue-200 bg-blue-50/90 px-2.5 py-1.5 text-left shadow-sm transition hover:border-blue-400 hover:bg-blue-100 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200"
+          : `group fixed bottom-24 right-3 z-40 h-12 w-auto items-center justify-center gap-2 rounded-2xl border border-blue-400 bg-blue-800 px-2.5 text-left text-white shadow-[0_14px_35px_rgba(13,54,140,0.32)] transition hover:-translate-y-1 hover:bg-blue-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 sm:bottom-5 sm:right-5 sm:h-auto sm:min-w-[330px] sm:justify-start sm:gap-3 sm:px-4 sm:py-3.5 ${pathname === "/" ? "hidden" : "flex"}`}
       >
         <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white sm:h-11 sm:w-11" aria-hidden="true">
           <span className="flex h-9 w-6 flex-col items-center justify-center gap-1 rounded-lg border-2 border-blue-900 bg-slate-950 p-1 shadow-[0_4px_12px_rgba(15,23,42,0.35)]">
@@ -160,14 +160,14 @@ export default function DeviceCompatibilityCheck({ variant = "floating" }: { var
           </span>
         </span>
         <span className="hidden min-w-0 flex-1 sm:block">
-          <span className="block truncate text-[11px] font-bold uppercase tracking-[0.16em] text-blue-100">
-            {platformLabel}
+          <span className={`block truncate text-[11px] font-bold uppercase tracking-[0.16em] ${variant === "quiz" ? "text-blue-700" : "text-blue-100"}`}>
+            {variant === "quiz" && platform === "other" ? "Phone compatibility" : platformLabel}
           </span>
-          <span className="block text-[15px] font-extrabold text-white">
-            Check device compatibility
+          <span className={`block text-[15px] font-extrabold ${variant === "quiz" ? "text-[#10233a]" : "text-white"}`}>
+            {variant === "quiz" ? "Check before buying →" : "Check device compatibility"}
           </span>
         </span>
-        <span className="hidden shrink-0 rounded-lg bg-white/15 px-2.5 py-1.5 text-xs font-black uppercase tracking-wide transition group-hover:bg-white group-hover:text-blue-900 sm:block">
+        <span className={`${variant === "quiz" ? "hidden" : "hidden sm:block"} shrink-0 rounded-lg bg-white/15 px-2.5 py-1.5 text-xs font-black uppercase tracking-wide transition group-hover:bg-white group-hover:text-blue-900`}>
           Check now
         </span>
       </button>

@@ -96,10 +96,6 @@ export default function HomeQuizForm() {
           </div>
           <div className="flex shrink-0 items-center">
             <DeviceCompatibilityCheck variant="quiz" />
-            <div className="hidden items-center gap-2 pb-1 sm:flex">
-              <span className="h-2 w-2 rounded-full bg-[#e98b3a]" />
-              <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">Matching engine live</p>
-            </div>
           </div>
         </div>
 
