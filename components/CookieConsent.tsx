@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   OPEN_CONSENT_EVENT,
@@ -11,17 +12,13 @@ import {
 const hiddenPrefixes = ["/admin", "/customer"];
 
 export default function CookieConsent() {
-  const [hiddenOnCurrentRoute, setHiddenOnCurrentRoute] = useState(true);
+  const pathname = usePathname();
   const [preferences, setPreferences] = useState<ConsentPreferences | null>();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [analytics, setAnalytics] = useState(false);
   const [marketing, setMarketing] = useState(false);
 
   useEffect(() => {
-    setHiddenOnCurrentRoute(
-      hiddenPrefixes.some((prefix) => window.location.pathname.startsWith(prefix))
-    );
-
     const storedPreferences = readConsent();
     setPreferences(storedPreferences);
     setAnalytics(storedPreferences?.analytics ?? false);
@@ -38,7 +35,7 @@ export default function CookieConsent() {
     return () => window.removeEventListener(OPEN_CONSENT_EVENT, openSettings);
   }, []);
 
-  if (hiddenOnCurrentRoute) {
+  if (hiddenPrefixes.some((prefix) => pathname.startsWith(prefix))) {
     return null;
   }
 
