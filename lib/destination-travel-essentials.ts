@@ -66,6 +66,12 @@ const emergencyInformation: Record<string, EmergencyInfo> = {
     emergencySourceUrl:
       "https://www.gov.uk/foreign-travel-advice/mexico/getting-help",
   },
+  chile: {
+    emergencyLabel: "Ambulance · Fire · Police",
+    emergencyNumbers: "131 · 132 · 133",
+    emergencySourceUrl:
+      "https://www.consulado.gob.cl/emergencias-en-chile",
+  },
   france: europeanEmergency,
   thailand: {
     emergencyLabel: "General · Ambulance · Tourist police",
@@ -210,6 +216,13 @@ const destinationTravelEssentials: Record<
     currencyCode: "MXN",
     currencyName: "Mexican peso",
     multipleTimeZones: true,
+  },
+  chile: {
+    destination: "Chile",
+    timeZone: "America/Santiago",
+    referenceCity: "Santiago",
+    currencyCode: "CLP",
+    currencyName: "Chilean peso",
   },
   france: {
     destination: "France",
