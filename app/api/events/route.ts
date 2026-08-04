@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { trackCustomerEvent } from "@/lib/customer-events";
+import { allowSecurityAttempt } from "@/lib/security-rate-limit";
 import {
   CONSENT_COOKIE_NAME,
   getEventConsentCategory,
@@ -40,6 +41,20 @@ function cleanMetadata(value: unknown) {
 
 export async function POST(request: Request) {
   try {
+    if (
+      !(await allowSecurityAttempt({
+        scope: "public-events",
+        headers: request.headers,
+        ipLimit: 120,
+        windowMinutes: 10,
+      }))
+    ) {
+      return NextResponse.json(
+        { error: "Too many events" },
+        { status: 429 },
+      );
+    }
+
     const body = await request.json();
 
     const {

@@ -8,6 +8,10 @@ export function createCustomerToken() {
   return crypto.randomBytes(32).toString("hex");
 }
 
+export function hashCustomerToken(token: string) {
+  return crypto.createHash("sha256").update(token).digest("hex");
+}
+
 export async function setCustomerSessionCookie(token: string) {
   const cookieStore = await cookies();
 
@@ -31,7 +35,7 @@ export async function getCustomerBySessionToken(token?: string | null) {
 
   const session = await prisma.customerSession.findUnique({
     where: {
-      token,
+      token: hashCustomerToken(token),
     },
     include: {
       customer: true,

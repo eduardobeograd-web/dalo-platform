@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   clearCustomerSessionCookie,
   getBearerTokenFromRequest,
+  hashCustomerToken,
 } from "@/lib/customer-auth";
 import { prisma } from "@/lib/db";
 
@@ -12,7 +13,7 @@ export async function POST(request: NextRequest) {
     if (bearerToken) {
       await prisma.customerSession.deleteMany({
         where: {
-          token: bearerToken,
+          token: hashCustomerToken(bearerToken),
         },
       });
     }

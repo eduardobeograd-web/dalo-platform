@@ -187,16 +187,6 @@ function toPublicRecommendation(
     explanation: recommendation.explanation ?? null,
   };
 
-  if (debug) {
-    publicRecommendation.debug = {
-      budgetProduct: safeProduct(recommendation.budgetProduct),
-      comfortProduct: safeProduct(recommendation.comfortProduct),
-      heavyProduct: safeProduct(recommendation.heavyProduct),
-      regionalProduct: safeProduct(recommendation.regionalProduct),
-      scoredProducts: recommendation.scoredProducts,
-    };
-  }
-
   return publicRecommendation;
 }
 
@@ -218,8 +208,6 @@ function buildPublicInput(input: RecommendationApiInput) {
 
 async function getRecommendationResponse(input: RecommendationApiInput) {
   const publicInput = buildPublicInput(input);
-  const debug = input.debug === true || input.debug === "true";
-
   const recommendation = await buildRecommendation({
     country: publicInput.country,
     days: publicInput.days,
@@ -230,7 +218,7 @@ async function getRecommendationResponse(input: RecommendationApiInput) {
     input: publicInput,
     recommendation: toPublicRecommendation(
       recommendation as RecommendationLike | null,
-      debug
+      false
     ),
   };
 }

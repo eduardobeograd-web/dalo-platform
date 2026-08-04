@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "../../../lib/db";
-import { CUSTOMER_SESSION_COOKIE } from "../../../lib/customer-auth";
+import {
+  CUSTOMER_SESSION_COOKIE,
+  hashCustomerToken,
+} from "../../../lib/customer-auth";
 
 export async function GET(request: NextRequest) {
   const token = request.nextUrl.searchParams.get("token");
@@ -11,7 +14,7 @@ export async function GET(request: NextRequest) {
 
   const session = await prisma.customerSession.findUnique({
     where: {
-      token,
+      token: hashCustomerToken(token),
     },
     include: {
       customer: true,
@@ -24,7 +27,7 @@ export async function GET(request: NextRequest) {
 
   await prisma.customerSession.update({
     where: {
-      token,
+      token: hashCustomerToken(token),
     },
     data: {
       usedAt: new Date(),

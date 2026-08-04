@@ -5,7 +5,10 @@ import crypto from "crypto";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { prisma } from "../../../lib/db";
-import { createCustomerToken } from "../../../lib/customer-auth";
+import {
+  createCustomerToken,
+  hashCustomerToken,
+} from "../../../lib/customer-auth";
 
 function hashToken(token: string) {
   return crypto.createHash("sha256").update(token).digest("hex");
@@ -88,7 +91,7 @@ export async function setCustomerPassword(formData: FormData) {
     await tx.customerSession.create({
       data: {
         customerId: resetToken.customerId,
-        token: sessionToken,
+        token: hashCustomerToken(sessionToken),
         expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
       },
     });

@@ -1,10 +1,12 @@
 "use server";
 
 import crypto from "crypto";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { prisma } from "../../../lib/db";
 import { sendEmail } from "../../../lib/email";
 import { siteUrl } from "../../../lib/site-url";
+import { allowSecurityAttempt } from "../../../lib/security-rate-limit";
 
 function normalizeEmail(value: FormDataEntryValue | null) {
   return String(value || "").trim().toLowerCase();
@@ -12,8 +14,16 @@ function normalizeEmail(value: FormDataEntryValue | null) {
 
 export async function requestPasswordReset(formData: FormData) {
   const email = normalizeEmail(formData.get("email"));
+  const allowed = await allowSecurityAttempt({
+    scope: "password-reset",
+    headers: await headers(),
+    identity: email,
+    ipLimit: 10,
+    identityLimit: 3,
+    windowMinutes: 60,
+  });
 
-  if (email && email.includes("@")) {
+  if (allowed && email && email.includes("@")) {
     const customer = await prisma.customer.findUnique({
       where: { email },
     });

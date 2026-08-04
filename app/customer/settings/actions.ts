@@ -6,6 +6,7 @@ import {
   clearCustomerSessionCookie,
   createCustomerToken,
   getCurrentCustomer,
+  hashCustomerToken,
   setCustomerSessionCookie,
 } from "../../../lib/customer-auth";
 import { prisma } from "../../../lib/db";
@@ -135,7 +136,7 @@ export async function changeCustomerPassword(formData: FormData) {
     await tx.customerSession.create({
       data: {
         customerId: customer.id,
-        token: sessionToken,
+        token: hashCustomerToken(sessionToken),
         expiresAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
       },
     });

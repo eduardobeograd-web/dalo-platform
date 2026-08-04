@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createTestAccessToken, safeTokenEqual } from "../../../lib/test-access";
+import { allowSecurityAttempt } from "../../../lib/security-rate-limit";
 
 const ACCESS_COOKIE = "dalo_test_access";
 
@@ -18,6 +19,20 @@ export async function POST(request: NextRequest) {
 
   if (!testPassword) {
     return NextResponse.redirect(new URL(destination, request.url), 303);
+  }
+
+  if (
+    !(await allowSecurityAttempt({
+      scope: "test-access",
+      headers: request.headers,
+      ipLimit: 10,
+      windowMinutes: 15,
+    }))
+  ) {
+    const errorUrl = new URL("/test-access", request.url);
+    errorUrl.searchParams.set("error", "1");
+    errorUrl.searchParams.set("next", destination);
+    return NextResponse.redirect(errorUrl, 303);
   }
 
   const [suppliedToken, expectedToken] = await Promise.all([

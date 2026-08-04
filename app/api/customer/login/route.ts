@@ -2,9 +2,11 @@ import bcrypt from "bcryptjs";
 import { NextRequest, NextResponse } from "next/server";
 import {
   createCustomerToken,
+  hashCustomerToken,
   setCustomerSessionCookie,
 } from "@/lib/customer-auth";
 import { prisma } from "@/lib/db";
+import { allowSecurityAttempt } from "@/lib/security-rate-limit";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -48,6 +50,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (
+      !(await allowSecurityAttempt({
+        scope: "customer-api-login",
+        headers: request.headers,
+        identity: email,
+        ipLimit: 20,
+        identityLimit: 8,
+        windowMinutes: 15,
+      }))
+    ) {
+      return NextResponse.json(
+        { error: "Too many login attempts. Please try again later." },
+        { status: 429, headers: corsHeaders },
+      );
+    }
+
     const customer = await prisma.customer.findUnique({
       where: {
         email,
@@ -86,7 +104,7 @@ export async function POST(request: NextRequest) {
     await prisma.customerSession.create({
       data: {
         customerId: customer.id,
-        token,
+        token: hashCustomerToken(token),
         expiresAt,
       },
     });

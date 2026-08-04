@@ -3,8 +3,10 @@ import { NextRequest, NextResponse } from "next/server";
 import {
   createCustomerToken,
   CUSTOMER_SESSION_COOKIE,
+  hashCustomerToken,
 } from "../../../../lib/customer-auth";
 import { prisma } from "../../../../lib/db";
+import { allowSecurityAttempt } from "../../../../lib/security-rate-limit";
 
 function normalizeEmail(value: FormDataEntryValue | null) {
   return String(value || "").trim().toLowerCase();
@@ -45,6 +47,22 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  if (
+    !(await allowSecurityAttempt({
+      scope: "customer-form-login",
+      headers: request.headers,
+      identity: email,
+      ipLimit: 20,
+      identityLimit: 8,
+      windowMinutes: 15,
+    }))
+  ) {
+    return NextResponse.redirect(
+      loginRedirect(request, destination, true),
+      303,
+    );
+  }
+
   const customer = await prisma.customer.findUnique({
     where: { email },
   });
@@ -67,7 +85,7 @@ export async function POST(request: NextRequest) {
   await prisma.customerSession.create({
     data: {
       customerId: customer.id,
-      token,
+      token: hashCustomerToken(token),
       expiresAt,
     },
   });
