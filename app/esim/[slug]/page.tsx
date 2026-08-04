@@ -7,6 +7,7 @@ import SiteHeader from "../../../components/SiteHeader";
 import SiteFooter from "../../../components/SiteFooter";
 import DestinationAtAGlance from "../../../components/DestinationAtAGlance";
 import DestinationNetworkCoverage from "../../../components/DestinationNetworkCoverage";
+import ItalyDestinationMap from "../../../components/ItalyDestinationMap";
 import { parseDestinationFaq } from "../../../lib/destination-pages";
 import { getDestinationImage } from "../../../lib/destination-images";
 import { prisma } from "../../../lib/db";
@@ -487,19 +488,23 @@ export default async function EsimLandingPage({ params }: PageProps) {
                 </p>
               ) : null}
             </div>
-            <Image
-              width={640}
-              height={320}
-              preload
-              quality={60}
-              sizes="(max-width: 639px) 100vw, 320px"
-              src={destinationImage}
-              alt={
-                managedPage?.heroImageAlt ||
-                `${displayName} travel destination`
-              }
-              className="h-40 min-h-0 w-full object-cover sm:h-60 lg:h-full lg:min-h-72"
-            />
+            {slug === "italy" ? (
+              <ItalyDestinationMap />
+            ) : (
+              <Image
+                width={640}
+                height={320}
+                preload
+                quality={60}
+                sizes="(max-width: 639px) 100vw, 320px"
+                src={destinationImage}
+                alt={
+                  managedPage?.heroImageAlt ||
+                  `${displayName} travel destination`
+                }
+                className="h-40 min-h-0 w-full object-cover sm:h-60 lg:h-full lg:min-h-72"
+              />
+            )}
           </div>
         </div>
 
