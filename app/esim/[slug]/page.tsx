@@ -7,7 +7,9 @@ import SiteHeader from "../../../components/SiteHeader";
 import SiteFooter from "../../../components/SiteFooter";
 import DestinationAtAGlance from "../../../components/DestinationAtAGlance";
 import DestinationNetworkCoverage from "../../../components/DestinationNetworkCoverage";
-import ItalyDestinationMap from "../../../components/ItalyDestinationMap";
+import DestinationMap, {
+  hasDestinationMap,
+} from "../../../components/DestinationMap";
 import { parseDestinationFaq } from "../../../lib/destination-pages";
 import { getDestinationImage } from "../../../lib/destination-images";
 import { prisma } from "../../../lib/db";
@@ -488,8 +490,8 @@ export default async function EsimLandingPage({ params }: PageProps) {
                 </p>
               ) : null}
             </div>
-            {slug === "italy" ? (
-              <ItalyDestinationMap />
+            {hasDestinationMap(slug) ? (
+              <DestinationMap destination={displayName} slug={slug} />
             ) : (
               <Image
                 width={640}
