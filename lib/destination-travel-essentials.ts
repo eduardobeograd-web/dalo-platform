@@ -1,3 +1,6 @@
+import { destinationCountryFacts } from "./destination-country-facts";
+import { destinationMapAliases } from "./destination-map-registry";
+
 export type DestinationTravelEssentials = {
   destination: string;
   timeZone: string;
@@ -355,7 +358,12 @@ const destinationTravelEssentials: Record<
 };
 
 export function getDestinationTravelEssentials(slug: string) {
-  const essentials = destinationTravelEssentials[slug];
+  const curatedEssentials = destinationTravelEssentials[slug];
+  const countryCode = destinationMapAliases[slug];
+  const generatedEssentials = countryCode
+    ? destinationCountryFacts[countryCode]
+    : undefined;
+  const essentials = curatedEssentials || generatedEssentials;
   const emergency = emergencyInformation[slug];
 
   if (!essentials || !emergency) return null;
