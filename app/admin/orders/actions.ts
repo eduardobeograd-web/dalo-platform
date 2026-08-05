@@ -7,6 +7,7 @@ import { sendOrderConfirmationEmail } from "@/lib/order-confirmation-email";
 import { sendInternalOrderNotification } from "@/lib/internal-order-notification";
 import { ADMIN_PERMISSIONS } from "../../../lib/admin-permissions";
 import { requireAdminPermission } from "../../../lib/admin-auth";
+import { addMonths, getFirstUsageLifecycleUpdate } from "../../../lib/esim-lifecycle";
 
 async function requireOrderWrite() {
   return requireAdminPermission(ADMIN_PERMISSIONS.ORDERS_WRITE);
@@ -53,6 +54,15 @@ async function sendDeliveryEmailIfReady(orderId: string) {
 
 export async function updateOrderFulfillment(orderId: string, formData: FormData) {
   await requireOrderWrite();
+  const existingOrder = await prisma.order.findUniqueOrThrow({ where: { id: orderId } });
+  const usedDataGb = cleanNumber(formData.get("usedDataGb"));
+  const usageLifecycle = getFirstUsageLifecycleUpdate({
+    previousUsedDataGb: existingOrder.usedDataGb,
+    nextUsedDataGb: usedDataGb,
+    activatedAt: existingOrder.activatedAt,
+    expiresAt: existingOrder.expiresAt,
+    validityDays: existingOrder.validityDaysAtPurchase,
+  });
   await prisma.order.update({
     where: {
       id: orderId,
@@ -70,9 +80,10 @@ export async function updateOrderFulfillment(orderId: string, formData: FormData
       androidInstallUrl: cleanOptional(formData.get("androidInstallUrl")),
 
       totalDataGb: cleanNumber(formData.get("totalDataGb")),
-      usedDataGb: cleanNumber(formData.get("usedDataGb")),
+      usedDataGb,
       remainingDataGb: cleanNumber(formData.get("remainingDataGb")),
       lastUsageSyncAt: formData.get("syncUsage") === "on" ? new Date() : undefined,
+      ...usageLifecycle,
     },
   });
 
@@ -83,12 +94,15 @@ export async function updateOrderFulfillment(orderId: string, formData: FormData
 
 export async function markOrderPaid(orderId: string) {
   await requireOrderWrite();
+  const paidAt = new Date();
   await prisma.order.update({
     where: {
       id: orderId,
     },
     data: {
       payment: "Paid",
+      paidAt,
+      activationDeadlineAt: addMonths(paidAt, 6),
     },
   });
 

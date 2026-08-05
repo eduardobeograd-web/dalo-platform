@@ -3,6 +3,7 @@ import { getCurrentCustomer } from "../../../lib/customer-auth";
 import { prisma } from "../../../lib/db";
 import SiteFooter from "../../../components/SiteFooter";
 import SiteHeader from "../../../components/SiteHeader";
+import { getEsimLifecycleStatus } from "../../../lib/esim-lifecycle";
 
 function formatDate(value?: Date | null) {
   if (!value) return "Not available";
@@ -61,6 +62,7 @@ export default async function CustomerDashboardPage() {
   const installationReadyCount = orders.filter(
     (order) =>
       order.payment !== "Refunded" &&
+      (order.usedDataGb || 0) <= 0 &&
       (order.iosInstallUrl ||
         order.androidInstallUrl ||
         order.qrCodeUrl ||
@@ -144,7 +146,8 @@ export default async function CustomerDashboardPage() {
           <div className="mt-5 grid gap-4 sm:mt-10 sm:gap-6">
             {orders.map((order) => {
               const product = productById.get(order.productId);
-              const isRefunded = order.payment === "Refunded";
+              const lifecycleStatus = getEsimLifecycleStatus(order);
+              const isRefunded = lifecycleStatus === "refunded";
 
               const usagePercent = getUsagePercent(
                 order.totalDataGb,
@@ -174,37 +177,33 @@ export default async function CustomerDashboardPage() {
                   <div className="grid gap-4 p-4 sm:gap-6 sm:p-8 lg:grid-cols-[1fr_320px]">
                     <div>
                       <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                        <span className="rounded-full bg-blue-100 px-3 py-1.5 text-[11px] font-bold text-blue-700 sm:px-4 sm:py-2 sm:text-sm">
-                          {order.esimStatus ||
-                            order.fulfillment ||
-                            "Order created"}
-                        </span>
-
-                        <span
-                          className={`rounded-full px-3 py-1.5 text-[11px] font-bold sm:px-4 sm:py-2 sm:text-sm ${
-                            order.payment.includes("Refunded")
-                              ? "bg-amber-100 text-amber-800"
-                              : order.payment === "Paid"
+                        <span className={`rounded-full px-3 py-1.5 text-[11px] font-bold sm:px-4 sm:py-2 sm:text-sm ${
+                          lifecycleStatus === "refunded"
+                            ? "bg-amber-100 text-amber-800"
+                            : lifecycleStatus === "delivery_issue"
+                              ? "bg-red-100 text-red-700"
+                              : lifecycleStatus === "active"
                                 ? "bg-emerald-100 text-emerald-700"
-                                : "bg-slate-100 text-slate-700"
-                          }`}
-                        >
-                          {order.payment}
+                                : lifecycleStatus === "ready"
+                                  ? "bg-green-100 text-green-700"
+                                  : lifecycleStatus === "pending"
+                                    ? "bg-yellow-100 text-yellow-700"
+                                    : "bg-slate-100 text-slate-700"
+                        }`}>
+                          {lifecycleStatus === "refunded"
+                            ? "Refunded"
+                            : lifecycleStatus === "delivery_issue"
+                              ? "Delivery issue"
+                              : lifecycleStatus === "active"
+                                ? "Active"
+                                : lifecycleStatus === "expired"
+                                  ? "Expired"
+                                  : lifecycleStatus === "data_used"
+                                    ? "Data used"
+                                    : lifecycleStatus === "ready"
+                                  ? "Ready to install"
+                                  : "Installation pending"}
                         </span>
-
-                        {isRefunded ? (
-                          <span className="rounded-full bg-amber-100 px-3 py-1.5 text-[11px] font-bold text-amber-800 sm:px-4 sm:py-2 sm:text-sm">
-                            Installation unavailable
-                          </span>
-                        ) : hasInstallDetails ? (
-                          <span className="rounded-full bg-green-100 px-3 py-1.5 text-[11px] font-bold text-green-700 sm:px-4 sm:py-2 sm:text-sm">
-                            Ready to install
-                          </span>
-                        ) : (
-                          <span className="rounded-full bg-yellow-100 px-3 py-1.5 text-[11px] font-bold text-yellow-700 sm:px-4 sm:py-2 sm:text-sm">
-                            Installation pending
-                          </span>
-                        )}
                       </div>
 
                       <h2 className="mt-4 text-2xl font-black tracking-tight sm:mt-5 sm:text-3xl">
@@ -297,9 +296,29 @@ export default async function CustomerDashboardPage() {
                       <h3 className="text-xl font-bold sm:text-2xl">Manage eSIM</h3>
 
                       <p className="mt-3 hidden text-slate-300 sm:block">
-                        View activation details, install links, usage and future
-                        top-ups for this eSIM.
+                        View installation details, usage and everything connected
+                        to this eSIM.
                       </p>
+
+                      {!isRefunded ? (
+                        <div className="mt-4 rounded-2xl border border-blue-400/25 bg-blue-400/10 p-4 sm:mt-5">
+                          <p className="text-xs font-black uppercase tracking-[0.16em] text-blue-200">
+                            Did you know?
+                          </p>
+                          <p className="mt-2 text-sm font-black text-white">
+                            Keep this eSIM after your trip
+                          </p>
+                          <p className="mt-1 text-xs leading-5 text-slate-300 sm:text-sm">
+                            Your eSIM profile is separate from your current data
+                            plan. Keep it installed: compatible data or country
+                            plans may be added without installing another eSIM.
+                          </p>
+                          <p className="mt-2 text-[11px] font-semibold leading-4 text-blue-100 sm:text-xs">
+                            DALO checks compatibility before a plan is added to
+                            your existing eSIM.
+                          </p>
+                        </div>
+                      ) : null}
 
                       <div className="mt-4 grid grid-cols-2 gap-2 sm:mt-6 sm:block sm:space-y-3">
                         <a
@@ -322,14 +341,14 @@ export default async function CustomerDashboardPage() {
                           )}`}
                           className="inline-flex min-h-11 items-center justify-center rounded-xl bg-white/10 px-3 text-center text-xs font-bold text-white sm:block sm:rounded-2xl sm:px-5 sm:py-4 sm:text-base"
                         >
-                          Buy more data
+                          Find more data
                         </a>
 
                         <a
                           href="/"
                           className="col-span-2 inline-flex min-h-11 items-center justify-center rounded-xl border border-white/10 px-3 text-center text-xs font-bold text-slate-200 sm:block sm:rounded-2xl sm:bg-white/10 sm:px-5 sm:py-4 sm:text-base sm:text-white"
                         >
-                          Buy new eSIM
+                          Add another destination
                         </a>
                       </div>
 

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentCustomer } from "../../../lib/customer-auth";
 import { prisma } from "../../../lib/db";
@@ -71,8 +72,21 @@ export default async function CustomerSupportPage({
             </p>
 
             {success ? (
-              <div className="mt-6 rounded-2xl bg-green-50 p-5 font-bold text-green-700">
-                Your support request was sent successfully.
+              <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 text-emerald-900">
+                <p className="font-black">Your support request was sent successfully.</p>
+                <p className="mt-2 text-sm leading-6 text-emerald-800">
+                  DALO Support has received your message. You can return to your eSIMs while we review it.
+                </p>
+                <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+                  <Link href="/customer/dashboard" className="inline-flex min-h-12 items-center justify-center rounded-xl bg-emerald-700 px-5 text-sm font-black text-white transition hover:bg-emerald-800">
+                    Back to My eSIMs
+                  </Link>
+                  {orderId ? (
+                    <Link href={`/customer/orders/${orderId}`} className="inline-flex min-h-12 items-center justify-center rounded-xl border border-emerald-300 bg-white px-5 text-sm font-black text-emerald-800 transition hover:bg-emerald-100">
+                      View this eSIM
+                    </Link>
+                  ) : null}
+                </div>
               </div>
             ) : null}
 

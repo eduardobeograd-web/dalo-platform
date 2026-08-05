@@ -119,6 +119,8 @@ export async function GET(
           usedDataGb: order.usedDataGb,
           remainingDataGb: order.remainingDataGb,
 
+          activationDeadlineAt: order.activationDeadlineAt,
+          activatedAt: order.activatedAt,
           expiresAt: order.expiresAt,
           lastUsageSyncAt: order.lastUsageSyncAt,
           createdAt: order.createdAt,

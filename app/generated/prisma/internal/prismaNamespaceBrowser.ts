@@ -226,6 +226,8 @@ export const OrderScalarFieldEnum = {
   totalDataGb: 'totalDataGb',
   usedDataGb: 'usedDataGb',
   remainingDataGb: 'remainingDataGb',
+  activationDeadlineAt: 'activationDeadlineAt',
+  activatedAt: 'activatedAt',
   expiresAt: 'expiresAt',
   lastUsageSyncAt: 'lastUsageSyncAt',
   createdAt: 'createdAt'

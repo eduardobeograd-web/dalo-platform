@@ -33,6 +33,8 @@ type OrderLike = {
   totalDataGb: number | null;
   usedDataGb: number | null;
   remainingDataGb: number | null;
+  activationDeadlineAt: Date | null;
+  activatedAt: Date | null;
   expiresAt: Date | null;
   lastUsageSyncAt: Date | null;
   amount: number | null;
@@ -82,6 +84,8 @@ function safeOrder(order: OrderLike, product?: ProductLike | null) {
     totalDataGb: order.totalDataGb,
     usedDataGb: order.usedDataGb,
     remainingDataGb: order.remainingDataGb,
+    activationDeadlineAt: order.activationDeadlineAt,
+    activatedAt: order.activatedAt,
     expiresAt: order.expiresAt,
     lastUsageSyncAt: order.lastUsageSyncAt,
     createdAt: order.createdAt,

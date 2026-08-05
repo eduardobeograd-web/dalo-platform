@@ -3,6 +3,7 @@ import { getCurrentCustomer } from "../../../../lib/customer-auth";
 import { prisma } from "../../../../lib/db";
 import SiteFooter from "../../../../components/SiteFooter";
 import SiteHeader from "../../../../components/SiteHeader";
+import { getEsimLifecycleStatus } from "../../../../lib/esim-lifecycle";
 
 function formatDate(date?: Date | null) {
   if (!date) return "Not available yet";
@@ -28,8 +29,18 @@ function getCustomerStatus(order: {
   esimStatus: string | null;
   fulfillment: string;
   payment: string;
+  usedDataGb: number | null;
+  remainingDataGb: number | null;
+  totalDataGb: number | null;
+  paidAt: Date | null;
+  createdAt: Date;
+  activationDeadlineAt: Date | null;
+  activatedAt: Date | null;
+  expiresAt: Date | null;
 }) {
-  if (order.payment === "Refunded") {
+  const lifecycleStatus = getEsimLifecycleStatus(order);
+
+  if (lifecycleStatus === "refunded") {
     return {
       label: "This order was refunded",
       description:
@@ -39,23 +50,48 @@ function getCustomerStatus(order: {
     };
   }
 
-  const status = (order.esimStatus || order.fulfillment || "").toLowerCase();
-
-  if (status === "ready" || status === "active" || status === "delivered") {
-    return {
-      label: "Your eSIM is ready",
-      description: "You can install your eSIM now.",
-      badge: "Ready",
-      badgeStyle: "bg-green-100 text-green-700",
-    };
-  }
-
-  if (status === "failed") {
+  if (lifecycleStatus === "delivery_issue") {
     return {
       label: "We need to check your eSIM",
       description: "Please contact support and include your DALO order number.",
-      badge: "Needs help",
+      badge: "Delivery issue",
       badgeStyle: "bg-red-100 text-red-700",
+    };
+  }
+
+  if (lifecycleStatus === "expired") {
+    return {
+      label: "This eSIM has expired",
+      description: "This plan is no longer available for installation or mobile data.",
+      badge: "Expired",
+      badgeStyle: "bg-slate-100 text-slate-700",
+    };
+  }
+
+  if (lifecycleStatus === "data_used") {
+    return {
+      label: "Your data has been used",
+      description: "The included data allowance has been fully used.",
+      badge: "Data used",
+      badgeStyle: "bg-slate-100 text-slate-700",
+    };
+  }
+
+  if (lifecycleStatus === "active") {
+    return {
+      label: "Your eSIM is active",
+      description: "Your eSIM has connected and started using mobile data.",
+      badge: "Active",
+      badgeStyle: "bg-emerald-100 text-emerald-700",
+    };
+  }
+
+  if (lifecycleStatus === "ready") {
+    return {
+      label: "Your eSIM is ready to install",
+      description: "Install your eSIM before your trip, then activate it when you arrive.",
+      badge: "Ready to install",
+      badgeStyle: "bg-green-100 text-green-700",
     };
   }
 

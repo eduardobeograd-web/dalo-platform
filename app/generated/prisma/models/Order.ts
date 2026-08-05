@@ -78,6 +78,8 @@ export type OrderMinAggregateOutputType = {
   totalDataGb: number | null
   usedDataGb: number | null
   remainingDataGb: number | null
+  activationDeadlineAt: Date | null
+  activatedAt: Date | null
   expiresAt: Date | null
   lastUsageSyncAt: Date | null
   createdAt: Date | null
@@ -117,6 +119,8 @@ export type OrderMaxAggregateOutputType = {
   totalDataGb: number | null
   usedDataGb: number | null
   remainingDataGb: number | null
+  activationDeadlineAt: Date | null
+  activatedAt: Date | null
   expiresAt: Date | null
   lastUsageSyncAt: Date | null
   createdAt: Date | null
@@ -156,6 +160,8 @@ export type OrderCountAggregateOutputType = {
   totalDataGb: number
   usedDataGb: number
   remainingDataGb: number
+  activationDeadlineAt: number
+  activatedAt: number
   expiresAt: number
   lastUsageSyncAt: number
   createdAt: number
@@ -215,6 +221,8 @@ export type OrderMinAggregateInputType = {
   totalDataGb?: true
   usedDataGb?: true
   remainingDataGb?: true
+  activationDeadlineAt?: true
+  activatedAt?: true
   expiresAt?: true
   lastUsageSyncAt?: true
   createdAt?: true
@@ -254,6 +262,8 @@ export type OrderMaxAggregateInputType = {
   totalDataGb?: true
   usedDataGb?: true
   remainingDataGb?: true
+  activationDeadlineAt?: true
+  activatedAt?: true
   expiresAt?: true
   lastUsageSyncAt?: true
   createdAt?: true
@@ -293,6 +303,8 @@ export type OrderCountAggregateInputType = {
   totalDataGb?: true
   usedDataGb?: true
   remainingDataGb?: true
+  activationDeadlineAt?: true
+  activatedAt?: true
   expiresAt?: true
   lastUsageSyncAt?: true
   createdAt?: true
@@ -419,6 +431,8 @@ export type OrderGroupByOutputType = {
   totalDataGb: number | null
   usedDataGb: number | null
   remainingDataGb: number | null
+  activationDeadlineAt: Date | null
+  activatedAt: Date | null
   expiresAt: Date | null
   lastUsageSyncAt: Date | null
   createdAt: Date
@@ -481,6 +495,8 @@ export type OrderWhereInput = {
   totalDataGb?: Prisma.FloatNullableFilter<"Order"> | number | null
   usedDataGb?: Prisma.FloatNullableFilter<"Order"> | number | null
   remainingDataGb?: Prisma.FloatNullableFilter<"Order"> | number | null
+  activationDeadlineAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  activatedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   expiresAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   lastUsageSyncAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
@@ -523,6 +539,8 @@ export type OrderOrderByWithRelationInput = {
   totalDataGb?: Prisma.SortOrderInput | Prisma.SortOrder
   usedDataGb?: Prisma.SortOrderInput | Prisma.SortOrder
   remainingDataGb?: Prisma.SortOrderInput | Prisma.SortOrder
+  activationDeadlineAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  activatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   expiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   lastUsageSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -568,6 +586,8 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   totalDataGb?: Prisma.FloatNullableFilter<"Order"> | number | null
   usedDataGb?: Prisma.FloatNullableFilter<"Order"> | number | null
   remainingDataGb?: Prisma.FloatNullableFilter<"Order"> | number | null
+  activationDeadlineAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  activatedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   expiresAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   lastUsageSyncAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
@@ -610,6 +630,8 @@ export type OrderOrderByWithAggregationInput = {
   totalDataGb?: Prisma.SortOrderInput | Prisma.SortOrder
   usedDataGb?: Prisma.SortOrderInput | Prisma.SortOrder
   remainingDataGb?: Prisma.SortOrderInput | Prisma.SortOrder
+  activationDeadlineAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  activatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   expiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   lastUsageSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -657,6 +679,8 @@ export type OrderScalarWhereWithAggregatesInput = {
   totalDataGb?: Prisma.FloatNullableWithAggregatesFilter<"Order"> | number | null
   usedDataGb?: Prisma.FloatNullableWithAggregatesFilter<"Order"> | number | null
   remainingDataGb?: Prisma.FloatNullableWithAggregatesFilter<"Order"> | number | null
+  activationDeadlineAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
+  activatedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
   expiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
   lastUsageSyncAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string
@@ -695,6 +719,8 @@ export type OrderCreateInput = {
   totalDataGb?: number | null
   usedDataGb?: number | null
   remainingDataGb?: number | null
+  activationDeadlineAt?: Date | string | null
+  activatedAt?: Date | string | null
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
   createdAt?: Date | string
@@ -737,6 +763,8 @@ export type OrderUncheckedCreateInput = {
   totalDataGb?: number | null
   usedDataGb?: number | null
   remainingDataGb?: number | null
+  activationDeadlineAt?: Date | string | null
+  activatedAt?: Date | string | null
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
   createdAt?: Date | string
@@ -777,6 +805,8 @@ export type OrderUpdateInput = {
   totalDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   usedDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   remainingDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  activationDeadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -819,6 +849,8 @@ export type OrderUncheckedUpdateInput = {
   totalDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   usedDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   remainingDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  activationDeadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -860,6 +892,8 @@ export type OrderCreateManyInput = {
   totalDataGb?: number | null
   usedDataGb?: number | null
   remainingDataGb?: number | null
+  activationDeadlineAt?: Date | string | null
+  activatedAt?: Date | string | null
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
   createdAt?: Date | string
@@ -898,6 +932,8 @@ export type OrderUpdateManyMutationInput = {
   totalDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   usedDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   remainingDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  activationDeadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -937,6 +973,8 @@ export type OrderUncheckedUpdateManyInput = {
   totalDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   usedDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   remainingDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  activationDeadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -986,6 +1024,8 @@ export type OrderCountOrderByAggregateInput = {
   totalDataGb?: Prisma.SortOrder
   usedDataGb?: Prisma.SortOrder
   remainingDataGb?: Prisma.SortOrder
+  activationDeadlineAt?: Prisma.SortOrder
+  activatedAt?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   lastUsageSyncAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -1034,6 +1074,8 @@ export type OrderMaxOrderByAggregateInput = {
   totalDataGb?: Prisma.SortOrder
   usedDataGb?: Prisma.SortOrder
   remainingDataGb?: Prisma.SortOrder
+  activationDeadlineAt?: Prisma.SortOrder
+  activatedAt?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   lastUsageSyncAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -1073,6 +1115,8 @@ export type OrderMinOrderByAggregateInput = {
   totalDataGb?: Prisma.SortOrder
   usedDataGb?: Prisma.SortOrder
   remainingDataGb?: Prisma.SortOrder
+  activationDeadlineAt?: Prisma.SortOrder
+  activatedAt?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   lastUsageSyncAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -1207,6 +1251,8 @@ export type OrderCreateWithoutCustomerAccountInput = {
   totalDataGb?: number | null
   usedDataGb?: number | null
   remainingDataGb?: number | null
+  activationDeadlineAt?: Date | string | null
+  activatedAt?: Date | string | null
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
   createdAt?: Date | string
@@ -1247,6 +1293,8 @@ export type OrderUncheckedCreateWithoutCustomerAccountInput = {
   totalDataGb?: number | null
   usedDataGb?: number | null
   remainingDataGb?: number | null
+  activationDeadlineAt?: Date | string | null
+  activatedAt?: Date | string | null
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
   createdAt?: Date | string
@@ -1317,6 +1365,8 @@ export type OrderScalarWhereInput = {
   totalDataGb?: Prisma.FloatNullableFilter<"Order"> | number | null
   usedDataGb?: Prisma.FloatNullableFilter<"Order"> | number | null
   remainingDataGb?: Prisma.FloatNullableFilter<"Order"> | number | null
+  activationDeadlineAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  activatedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   expiresAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   lastUsageSyncAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
@@ -1355,6 +1405,8 @@ export type OrderCreateWithoutSupportRequestsInput = {
   totalDataGb?: number | null
   usedDataGb?: number | null
   remainingDataGb?: number | null
+  activationDeadlineAt?: Date | string | null
+  activatedAt?: Date | string | null
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
   createdAt?: Date | string
@@ -1396,6 +1448,8 @@ export type OrderUncheckedCreateWithoutSupportRequestsInput = {
   totalDataGb?: number | null
   usedDataGb?: number | null
   remainingDataGb?: number | null
+  activationDeadlineAt?: Date | string | null
+  activatedAt?: Date | string | null
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
   createdAt?: Date | string
@@ -1451,6 +1505,8 @@ export type OrderUpdateWithoutSupportRequestsInput = {
   totalDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   usedDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   remainingDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  activationDeadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1492,6 +1548,8 @@ export type OrderUncheckedUpdateWithoutSupportRequestsInput = {
   totalDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   usedDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   remainingDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  activationDeadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1531,6 +1589,8 @@ export type OrderCreateWithoutCustomerEventsInput = {
   totalDataGb?: number | null
   usedDataGb?: number | null
   remainingDataGb?: number | null
+  activationDeadlineAt?: Date | string | null
+  activatedAt?: Date | string | null
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
   createdAt?: Date | string
@@ -1572,6 +1632,8 @@ export type OrderUncheckedCreateWithoutCustomerEventsInput = {
   totalDataGb?: number | null
   usedDataGb?: number | null
   remainingDataGb?: number | null
+  activationDeadlineAt?: Date | string | null
+  activatedAt?: Date | string | null
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
   createdAt?: Date | string
@@ -1627,6 +1689,8 @@ export type OrderUpdateWithoutCustomerEventsInput = {
   totalDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   usedDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   remainingDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  activationDeadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1668,6 +1732,8 @@ export type OrderUncheckedUpdateWithoutCustomerEventsInput = {
   totalDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   usedDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   remainingDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  activationDeadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1707,6 +1773,8 @@ export type OrderCreateManyCustomerAccountInput = {
   totalDataGb?: number | null
   usedDataGb?: number | null
   remainingDataGb?: number | null
+  activationDeadlineAt?: Date | string | null
+  activatedAt?: Date | string | null
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
   createdAt?: Date | string
@@ -1745,6 +1813,8 @@ export type OrderUpdateWithoutCustomerAccountInput = {
   totalDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   usedDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   remainingDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  activationDeadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1785,6 +1855,8 @@ export type OrderUncheckedUpdateWithoutCustomerAccountInput = {
   totalDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   usedDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   remainingDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  activationDeadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1825,6 +1897,8 @@ export type OrderUncheckedUpdateManyWithoutCustomerAccountInput = {
   totalDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   usedDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   remainingDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  activationDeadlineAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1904,6 +1978,8 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   totalDataGb?: boolean
   usedDataGb?: boolean
   remainingDataGb?: boolean
+  activationDeadlineAt?: boolean
+  activatedAt?: boolean
   expiresAt?: boolean
   lastUsageSyncAt?: boolean
   createdAt?: boolean
@@ -1947,6 +2023,8 @@ export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   totalDataGb?: boolean
   usedDataGb?: boolean
   remainingDataGb?: boolean
+  activationDeadlineAt?: boolean
+  activatedAt?: boolean
   expiresAt?: boolean
   lastUsageSyncAt?: boolean
   createdAt?: boolean
@@ -1987,6 +2065,8 @@ export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   totalDataGb?: boolean
   usedDataGb?: boolean
   remainingDataGb?: boolean
+  activationDeadlineAt?: boolean
+  activatedAt?: boolean
   expiresAt?: boolean
   lastUsageSyncAt?: boolean
   createdAt?: boolean
@@ -2027,12 +2107,14 @@ export type OrderSelectScalar = {
   totalDataGb?: boolean
   usedDataGb?: boolean
   remainingDataGb?: boolean
+  activationDeadlineAt?: boolean
+  activatedAt?: boolean
   expiresAt?: boolean
   lastUsageSyncAt?: boolean
   createdAt?: boolean
 }
 
-export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderNumber" | "customer" | "customerId" | "productId" | "amount" | "currency" | "buyPriceAtPurchase" | "productNameAtPurchase" | "countryAtPurchase" | "dataAtPurchase" | "validityDaysAtPurchase" | "providerAtPurchase" | "providerProductIdAtPurchase" | "stripeSessionId" | "stripePaymentIntentId" | "paidAt" | "legalAcceptedAt" | "legalVersion" | "immediateDeliveryAcceptedAt" | "immediateDeliveryVersion" | "payment" | "fulfillment" | "esimStatus" | "providerOrderId" | "iccid" | "qrCodeUrl" | "activationCode" | "iosInstallUrl" | "androidInstallUrl" | "totalDataGb" | "usedDataGb" | "remainingDataGb" | "expiresAt" | "lastUsageSyncAt" | "createdAt", ExtArgs["result"]["order"]>
+export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderNumber" | "customer" | "customerId" | "productId" | "amount" | "currency" | "buyPriceAtPurchase" | "productNameAtPurchase" | "countryAtPurchase" | "dataAtPurchase" | "validityDaysAtPurchase" | "providerAtPurchase" | "providerProductIdAtPurchase" | "stripeSessionId" | "stripePaymentIntentId" | "paidAt" | "legalAcceptedAt" | "legalVersion" | "immediateDeliveryAcceptedAt" | "immediateDeliveryVersion" | "payment" | "fulfillment" | "esimStatus" | "providerOrderId" | "iccid" | "qrCodeUrl" | "activationCode" | "iosInstallUrl" | "androidInstallUrl" | "totalDataGb" | "usedDataGb" | "remainingDataGb" | "activationDeadlineAt" | "activatedAt" | "expiresAt" | "lastUsageSyncAt" | "createdAt", ExtArgs["result"]["order"]>
 export type OrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   customerAccount?: boolean | Prisma.Order$customerAccountArgs<ExtArgs>
   supportRequests?: boolean | Prisma.Order$supportRequestsArgs<ExtArgs>
@@ -2087,6 +2169,8 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     totalDataGb: number | null
     usedDataGb: number | null
     remainingDataGb: number | null
+    activationDeadlineAt: Date | null
+    activatedAt: Date | null
     expiresAt: Date | null
     lastUsageSyncAt: Date | null
     createdAt: Date
@@ -2549,6 +2633,8 @@ export interface OrderFieldRefs {
   readonly totalDataGb: Prisma.FieldRef<"Order", 'Float'>
   readonly usedDataGb: Prisma.FieldRef<"Order", 'Float'>
   readonly remainingDataGb: Prisma.FieldRef<"Order", 'Float'>
+  readonly activationDeadlineAt: Prisma.FieldRef<"Order", 'DateTime'>
+  readonly activatedAt: Prisma.FieldRef<"Order", 'DateTime'>
   readonly expiresAt: Prisma.FieldRef<"Order", 'DateTime'>
   readonly lastUsageSyncAt: Prisma.FieldRef<"Order", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"Order", 'DateTime'>

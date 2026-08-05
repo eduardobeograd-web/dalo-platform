@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/db";
+import { addMonths } from "@/lib/esim-lifecycle";
 
 export async function fulfillOrderMockById(orderId: string) {
   const explicitTestMode =
@@ -61,6 +62,7 @@ export async function fulfillOrderMockById(orderId: string) {
 
   const orderNumber = order.orderNumber || order.id;
   const shortId = order.id.slice(-8).toUpperCase();
+  const paidAt = order.paidAt || new Date();
 
   const updatedOrder = await prisma.order.update({
     where: {
@@ -68,6 +70,8 @@ export async function fulfillOrderMockById(orderId: string) {
     },
     data: {
       payment: "Paid",
+      paidAt,
+      activationDeadlineAt: order.activationDeadlineAt || addMonths(paidAt, 6),
       fulfillment: "Delivered",
       esimStatus: "ready",
       providerOrderId: `esimgo_mock_${orderNumber}`,

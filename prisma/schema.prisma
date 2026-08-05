@@ -162,6 +162,8 @@ model Order {
   usedDataGb      Float?
   remainingDataGb Float?
 
+  activationDeadlineAt DateTime?
+  activatedAt     DateTime?
   expiresAt       DateTime?
   lastUsageSyncAt DateTime?
 

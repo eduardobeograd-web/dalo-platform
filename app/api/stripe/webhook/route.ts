@@ -8,6 +8,7 @@ import { sendInternalOrderNotification } from "@/lib/internal-order-notification
 import { sendPaymentConfirmationEmail } from "@/lib/payment-confirmation-email";
 import { trackCustomerEvent } from "@/lib/customer-events";
 import { sendRefundConfirmationEmail } from "@/lib/refund-confirmation-email";
+import { addMonths } from "@/lib/esim-lifecycle";
 
 export const runtime = "nodejs";
 
@@ -63,6 +64,7 @@ async function markOrderPaid(session: Stripe.Checkout.Session) {
       ? session.payment_intent
       : session.payment_intent?.id || null;
 
+  const paidAt = order.paidAt || new Date();
   const updateResult = await prisma.order.updateMany({
     where: {
       id: order.id,
@@ -81,7 +83,9 @@ async function markOrderPaid(session: Stripe.Checkout.Session) {
       stripeSessionId: order.stripeSessionId || session.id,
       stripePaymentIntentId:
         order.stripePaymentIntentId || stripePaymentIntentId,
-      paidAt: order.paidAt || new Date(),
+      paidAt,
+      activationDeadlineAt:
+        order.activationDeadlineAt || addMonths(paidAt, 6),
       fulfillment:
         order.fulfillment === "pending_manual" || order.fulfillment === "Waiting"
           ? "pending_manual"
