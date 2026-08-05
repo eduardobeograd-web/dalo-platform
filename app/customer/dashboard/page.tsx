@@ -301,26 +301,19 @@ export default async function CustomerDashboardPage() {
                       </p>
 
                       {!isRefunded ? (
-                        <div className="mt-4 rounded-2xl border border-blue-400/25 bg-blue-400/10 p-4 sm:mt-5">
-                          <p className="text-xs font-black uppercase tracking-[0.16em] text-blue-200">
-                            Did you know?
+                        <details className="mt-4 rounded-xl border border-blue-400/20 bg-blue-400/10 px-4 py-3 text-sm sm:mt-5">
+                          <summary className="cursor-pointer font-bold text-blue-100">
+                            Did you know? Keep this eSIM after your trip
+                          </summary>
+                          <p className="mt-2 text-xs leading-5 text-slate-300">
+                            Your eSIM and data plan are separate. Compatible data
+                            or country plans may be added without another
+                            installation. DALO checks compatibility first.
                           </p>
-                          <p className="mt-2 text-sm font-black text-white">
-                            Keep this eSIM after your trip
-                          </p>
-                          <p className="mt-1 text-xs leading-5 text-slate-300 sm:text-sm">
-                            Your eSIM profile is separate from your current data
-                            plan. Keep it installed: compatible data or country
-                            plans may be added without installing another eSIM.
-                          </p>
-                          <p className="mt-2 text-[11px] font-semibold leading-4 text-blue-100 sm:text-xs">
-                            DALO checks compatibility before a plan is added to
-                            your existing eSIM.
-                          </p>
-                        </div>
+                        </details>
                       ) : null}
 
-                      <div className="mt-4 grid grid-cols-2 gap-2 sm:mt-6 sm:block sm:space-y-3">
+                      <div className="mt-4 grid grid-cols-2 gap-2 sm:mt-5 sm:block sm:space-y-3">
                         <a
                           href={`/customer/orders/${order.id}`}
                           className="col-span-2 inline-flex min-h-12 items-center justify-center rounded-xl bg-blue-600 px-4 text-center text-sm font-bold text-white sm:block sm:rounded-2xl sm:px-5 sm:py-4 sm:text-base"
@@ -336,12 +329,10 @@ export default async function CustomerDashboardPage() {
                         </a>
 
                         <a
-                          href={`/?country=${encodeURIComponent(
-                            product?.country || ""
-                          )}`}
+                          href={`/customer/orders/${order.id}#top-up`}
                           className="inline-flex min-h-11 items-center justify-center rounded-xl bg-white/10 px-3 text-center text-xs font-bold text-white sm:block sm:rounded-2xl sm:px-5 sm:py-4 sm:text-base"
                         >
-                          Find more data
+                          Buy more data
                         </a>
 
                         <a
@@ -352,7 +343,7 @@ export default async function CustomerDashboardPage() {
                         </a>
                       </div>
 
-                      <div className="mt-4 grid grid-cols-2 gap-2 sm:mt-6 sm:block sm:space-y-4">
+                      <div className="hidden">
                       <div className="min-w-0 rounded-xl bg-white/10 p-3 sm:rounded-2xl sm:p-4">
                         <p className="text-sm text-slate-400">
                           Order number

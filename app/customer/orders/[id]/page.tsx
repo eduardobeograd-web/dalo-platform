@@ -431,7 +431,7 @@ export default async function CustomerOrderDetailPage({
 
                 <div className="hidden rounded-[2rem] bg-blue-50 p-6 sm:block">
                   <h3 className="text-2xl font-bold text-blue-950">
-                    Top-up coming soon
+                    <span id="top-up" className="scroll-mt-24">Top-up coming soon</span>
                   </h3>
 
                   <p className="mt-3 text-blue-700">

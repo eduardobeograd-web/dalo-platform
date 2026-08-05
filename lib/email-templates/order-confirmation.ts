@@ -299,6 +299,21 @@ export function orderConfirmationHtml({
                     ${safeAccountButtonLabel}
                   </a>
 
+                  <div style="margin-top:18px;border:1px solid #c9d8fb;border-radius:16px;background:#f1f5ff;padding:18px;">
+                    <div style="font-size:10px;font-weight:900;letter-spacing:0.12em;text-transform:uppercase;color:#315fca;">
+                      Did you know?
+                    </div>
+                    <div style="margin-top:6px;font-size:17px;font-weight:900;line-height:1.35;color:#101828;">
+                      Keep this eSIM installed after your trip
+                    </div>
+                    <p style="margin:7px 0 0;font-size:12px;line-height:1.65;color:#536176;">
+                      Your DALO eSIM profile is separate from your current data plan. When this plan ends, do not delete the eSIM. You may be able to add more data or a compatible plan for another country without installing a new eSIM.
+                    </p>
+                    <p style="margin:7px 0 0;font-size:11px;font-weight:800;line-height:1.55;color:#315fca;">
+                      DALO checks compatibility before another plan is added to your existing eSIM.
+                    </p>
+                  </div>
+
                   <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top:20px;width:100%;font-size:12px;color:#667085;">
                     <tr>
                       <td align="center" style="padding:4px;">Secure Stripe payment</td>
