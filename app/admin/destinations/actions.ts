@@ -77,7 +77,7 @@ export async function prepareDestinationSeoDrafts() {
         slug,
         ...draft,
         published: true,
-        indexable: true,
+        indexable: false,
       },
       update: {
         countryName: current?.countryName.trim() || name,
@@ -113,7 +113,7 @@ export async function prepareDestinationSeoDrafts() {
         published: true,
         indexable: current && !isAutomaticDestinationSeo(current)
           ? current.indexable
-          : true,
+          : false,
       },
     });
   }

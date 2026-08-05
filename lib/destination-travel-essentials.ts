@@ -359,16 +359,29 @@ const destinationTravelEssentials: Record<
 
 export function getDestinationTravelEssentials(slug: string) {
   const curatedEssentials = destinationTravelEssentials[slug];
+  const normalizedSlug = normalizeDestinationSlug(slug);
+  const namedCountryFacts = Object.values(destinationCountryFacts).find(
+    (facts) => normalizeDestinationSlug(facts.destination) === normalizedSlug,
+  );
   const countryCode = destinationMapAliases[slug];
   const generatedEssentials = countryCode
     ? destinationCountryFacts[countryCode]
     : undefined;
-  const essentials = curatedEssentials || generatedEssentials;
+  const essentials = curatedEssentials || namedCountryFacts || generatedEssentials;
   const emergency = emergencyInformation[slug];
 
-  if (!essentials || !emergency) return null;
+  if (!essentials) return null;
 
-  return { ...essentials, ...emergency };
+  return emergency ? { ...essentials, ...emergency } : essentials;
+}
+
+function normalizeDestinationSlug(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .replace(/&/g, "and")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
 }
 
 type FrankfurterRate = {
