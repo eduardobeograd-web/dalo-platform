@@ -156,7 +156,7 @@ const guides: Record<string, DestinationEditorialGuide> = {
         href: "https://www.mfa.gov.tr/visa-information-for-foreigners.en.mfa",
       },
       {
-        label: "Current travel guidance",
+        label: "UK government travel advice",
         description: "Safety, entry and local guidance from the UK government travel advisory.",
         href: "https://www.gov.uk/foreign-travel-advice/turkey",
       },
@@ -199,7 +199,7 @@ const officialResources: Record<
       href: "https://www.australia.com/en",
     },
     {
-      label: "Current travel guidance",
+      label: "UK government travel advice",
       description: "Entry, safety and local information from the UK government.",
       href: "https://www.gov.uk/foreign-travel-advice/australia",
     },
@@ -211,7 +211,7 @@ const officialResources: Record<
       href: "https://travel.destinationcanada.com/en-ca",
     },
     {
-      label: "Current travel guidance",
+      label: "UK government travel advice",
       description: "Entry, safety and local information from the UK government.",
       href: "https://www.gov.uk/foreign-travel-advice/canada",
     },
@@ -223,7 +223,7 @@ const officialResources: Record<
       href: "https://www.travelchina.org.cn/en/",
     },
     {
-      label: "Current travel guidance",
+      label: "UK government travel advice",
       description: "Entry, safety and local information from the UK government.",
       href: "https://www.gov.uk/foreign-travel-advice/china",
     },
@@ -235,7 +235,7 @@ const officialResources: Record<
       href: "https://www.experienceegypt.eg/en",
     },
     {
-      label: "Current travel guidance",
+      label: "UK government travel advice",
       description: "Entry, safety and local information from the UK government.",
       href: "https://www.gov.uk/foreign-travel-advice/egypt",
     },
@@ -259,7 +259,7 @@ const officialResources: Record<
       href: "https://www.france.fr/en/",
     },
     {
-      label: "Current travel guidance",
+      label: "UK government travel advice",
       description: "Entry, safety and local information from the UK government.",
       href: "https://www.gov.uk/foreign-travel-advice/france",
     },
@@ -271,7 +271,7 @@ const officialResources: Record<
       href: "https://www.germany.travel/en/home.html",
     },
     {
-      label: "Current travel guidance",
+      label: "UK government travel advice",
       description: "Entry, safety and local information from the UK government.",
       href: "https://www.gov.uk/foreign-travel-advice/germany",
     },
@@ -283,7 +283,7 @@ const officialResources: Record<
       href: "https://www.visitgreece.gr/en",
     },
     {
-      label: "Current travel guidance",
+      label: "UK government travel advice",
       description: "Entry, safety and local information from the UK government.",
       href: "https://www.gov.uk/foreign-travel-advice/greece",
     },
@@ -295,7 +295,7 @@ const officialResources: Record<
       href: "https://www.indonesia.travel/gb/en/home",
     },
     {
-      label: "Current travel guidance",
+      label: "UK government travel advice",
       description: "Entry, safety and local information from the UK government.",
       href: "https://www.gov.uk/foreign-travel-advice/indonesia",
     },
@@ -307,7 +307,7 @@ const officialResources: Record<
       href: "https://www.italia.it/en",
     },
     {
-      label: "Current travel guidance",
+      label: "UK government travel advice",
       description: "Entry, safety and local information from the UK government.",
       href: "https://www.gov.uk/foreign-travel-advice/italy",
     },
@@ -319,7 +319,7 @@ const officialResources: Record<
       href: "https://www.japan.travel/en/",
     },
     {
-      label: "Current travel guidance",
+      label: "UK government travel advice",
       description: "Entry, safety and local information from the UK government.",
       href: "https://www.gov.uk/foreign-travel-advice/japan",
     },
@@ -331,7 +331,7 @@ const officialResources: Record<
       href: "https://visitmexico.com/eng/home-2/",
     },
     {
-      label: "Current travel guidance",
+      label: "UK government travel advice",
       description: "Entry, safety and regional information from the UK government.",
       href: "https://www.gov.uk/foreign-travel-advice/mexico",
     },
@@ -343,7 +343,7 @@ const officialResources: Record<
       href: "https://www.visitmorocco.com/en",
     },
     {
-      label: "Current travel guidance",
+      label: "UK government travel advice",
       description: "Entry, safety and local information from the UK government.",
       href: "https://www.gov.uk/foreign-travel-advice/morocco",
     },
@@ -355,7 +355,7 @@ const officialResources: Record<
       href: "https://philippines.travel/",
     },
     {
-      label: "Current travel guidance",
+      label: "UK government travel advice",
       description: "Entry, safety and regional information from the UK government.",
       href: "https://www.gov.uk/foreign-travel-advice/philippines",
     },
@@ -367,7 +367,7 @@ const officialResources: Record<
       href: "https://www.visitportugal.com/en",
     },
     {
-      label: "Current travel guidance",
+      label: "UK government travel advice",
       description: "Entry, safety and local information from the UK government.",
       href: "https://www.gov.uk/foreign-travel-advice/portugal",
     },
@@ -379,7 +379,7 @@ const officialResources: Record<
       href: "https://www.visitsingapore.com/",
     },
     {
-      label: "Current travel guidance",
+      label: "UK government travel advice",
       description: "Entry, safety and local information from the UK government.",
       href: "https://www.gov.uk/foreign-travel-advice/singapore",
     },
@@ -391,7 +391,7 @@ const officialResources: Record<
       href: "https://english.visitkorea.or.kr/svc/main/index.do",
     },
     {
-      label: "Current travel guidance",
+      label: "UK government travel advice",
       description: "Entry, safety and local information from the UK government.",
       href: "https://www.gov.uk/foreign-travel-advice/south-korea",
     },
@@ -403,7 +403,7 @@ const officialResources: Record<
       href: "https://www.spain.info/en/",
     },
     {
-      label: "Current travel guidance",
+      label: "UK government travel advice",
       description: "Entry, safety and local information from the UK government.",
       href: "https://www.gov.uk/foreign-travel-advice/spain",
     },
@@ -415,7 +415,7 @@ const officialResources: Record<
       href: "https://www.myswitzerland.com/en/",
     },
     {
-      label: "Current travel guidance",
+      label: "UK government travel advice",
       description: "Entry, safety and local information from the UK government.",
       href: "https://www.gov.uk/foreign-travel-advice/switzerland",
     },
@@ -427,7 +427,7 @@ const officialResources: Record<
       href: "https://www.tourismthailand.org/home",
     },
     {
-      label: "Current travel guidance",
+      label: "UK government travel advice",
       description: "Entry, safety and regional information from the UK government.",
       href: "https://www.gov.uk/foreign-travel-advice/thailand",
     },
@@ -439,7 +439,7 @@ const officialResources: Record<
       href: "https://u.ae/en/information-and-services/visiting-and-exploring-the-uae",
     },
     {
-      label: "Current travel guidance",
+      label: "UK government travel advice",
       description: "Entry, safety and local information from the UK government.",
       href: "https://www.gov.uk/foreign-travel-advice/united-arab-emirates",
     },
@@ -463,7 +463,7 @@ const officialResources: Record<
       href: "https://www.visittheusa.com/",
     },
     {
-      label: "Current travel guidance",
+      label: "UK government travel advice",
       description: "Entry, safety and local information from the UK government.",
       href: "https://www.gov.uk/foreign-travel-advice/usa",
     },
@@ -475,7 +475,7 @@ const officialResources: Record<
       href: "https://vietnam.travel/",
     },
     {
-      label: "Current travel guidance",
+      label: "UK government travel advice",
       description: "Entry, safety and local information from the UK government.",
       href: "https://www.gov.uk/foreign-travel-advice/vietnam",
     },

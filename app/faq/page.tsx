@@ -231,14 +231,17 @@ export default function FaqPage() {
           </div>
         </div>
 
-        <div className="mt-6 flex flex-wrap gap-2 rounded-2xl border border-blue-100 bg-white p-3 shadow-[0_12px_35px_rgba(30,64,120,0.06)]">
+        <div className="mt-6 grid gap-2 rounded-2xl border border-blue-100 bg-white p-3 shadow-[0_12px_35px_rgba(30,64,120,0.06)] sm:grid-cols-2 lg:grid-cols-3">
           {faqGroups.map((group) => (
             <a
               key={group.id}
               href={`#${group.id}`}
-              className="rounded-xl px-4 py-2.5 text-sm font-bold text-slate-600 transition hover:bg-[#eef3ff] hover:text-[#2148c0] focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200"
+              className="flex min-h-14 items-center gap-3 rounded-xl border border-transparent bg-[#f8faff] px-4 py-3 text-sm font-bold text-slate-700 transition hover:border-blue-200 hover:bg-[#eef3ff] hover:text-[#2148c0] focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200"
             >
-              {group.title}
+              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white text-[10px] font-black tracking-[0.08em] text-[#2148c0] shadow-sm">
+                {group.number}
+              </span>
+              <span className="leading-5">{group.title}</span>
             </a>
           ))}
         </div>

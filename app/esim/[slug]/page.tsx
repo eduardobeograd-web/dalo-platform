@@ -861,7 +861,7 @@ export default async function EsimLandingPage({ params }: PageProps) {
                         </span>
                       </span>
                       <span className="mt-4 text-xs font-black text-blue-700">
-                        Open official website ↗
+                        Open source ↗
                       </span>
                     </a>
                   ))}
