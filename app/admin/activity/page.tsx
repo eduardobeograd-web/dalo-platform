@@ -61,14 +61,14 @@ export default async function AdminActivityPage({ searchParams }: { searchParams
   const where = {
     ...(type
       ? { eventType: type }
-      : { eventType: { not: "security_rate_limit" } }),
+      : { eventType: { notIn: ["security_rate_limit", "page_view"] } }),
     ...(query ? { OR: [
       { customer: { email: { contains: query, mode: "insensitive" as const } } },
       { sessionId: { contains: query, mode: "insensitive" as const } },
       { order: { orderNumber: { contains: query, mode: "insensitive" as const } } },
     ] } : {}),
   };
-  const [events, count, eventTypes] = await Promise.all([
+  const [events, count, eventTypes, pageViews] = await Promise.all([
     prisma.customerEvent.findMany({
       where,
       orderBy: { createdAt: "desc" },
@@ -82,7 +82,35 @@ export default async function AdminActivityPage({ searchParams }: { searchParams
     }),
     prisma.customerEvent.count({ where }),
     prisma.customerEvent.findMany({ distinct: ["eventType"], select: { eventType: true }, orderBy: { eventType: "asc" } }),
+    prisma.customerEvent.findMany({
+      where: { eventType: "page_view" },
+      orderBy: { createdAt: "desc" },
+      take: 200,
+      select: { id: true, sessionId: true, metadata: true, createdAt: true },
+    }),
   ]);
+
+  const visitorSessions = Array.from(
+    pageViews.reduce((sessions, event) => {
+      const key = event.sessionId || event.id;
+      const pagePath = metadataString(event.metadata, "pagePath") || "Unknown page";
+      const existing = sessions.get(key);
+
+      if (existing) {
+        if (!existing.pages.includes(pagePath)) existing.pages.push(pagePath);
+        return sessions;
+      }
+
+      sessions.set(key, {
+        id: key,
+        createdAt: event.createdAt,
+        country: metadataString(event.metadata, "visitorCountry") || "Unknown",
+        browser: metadataString(event.metadata, "browser") || "Unknown browser",
+        pages: [pagePath],
+      });
+      return sessions;
+    }, new Map<string, { id: string; createdAt: Date; country: string; browser: string; pages: string[] }>()),
+  ).map(([, session]) => session).slice(0, 20);
 
   return (
     <AdminShell activePage="activity">
@@ -92,6 +120,28 @@ export default async function AdminActivityPage({ searchParams }: { searchParams
         <p className="mt-2 text-slate-600">Technical customer and order events for investigation. Marketing actions remain separate.</p>
         <Link href="/admin/events" className="mt-3 inline-block text-sm font-black text-blue-700">Back to Marketing →</Link>
       </div>
+      <section className="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+        <div className="border-b border-slate-100 px-5 py-4">
+          <p className="font-black text-slate-950">Recent website visits</p>
+          <p className="mt-1 text-xs text-slate-500">One entry per visitor session · Europe/Belgrade time</p>
+        </div>
+        <div className="divide-y divide-slate-100">
+          {visitorSessions.map((session) => (
+            <div key={session.id} className="grid gap-3 px-5 py-4 text-sm lg:grid-cols-[190px_180px_1fr] lg:items-center">
+              <p className="text-slate-500">{formatAdminTime(session.createdAt)}</p>
+              <div>
+                <p className="font-black text-slate-900">{session.country}</p>
+                <p className="mt-0.5 text-xs text-slate-400">{session.browser}</p>
+              </div>
+              <div>
+                <p className="font-bold text-slate-700">{session.pages.length} {session.pages.length === 1 ? "page" : "pages"} visited</p>
+                <p className="mt-1 truncate text-xs text-slate-400">{session.pages.join(" · ")}</p>
+              </div>
+            </div>
+          ))}
+          {visitorSessions.length === 0 ? <p className="px-5 py-10 text-center text-sm text-slate-500">New visits will appear after analytics consent.</p> : null}
+        </div>
+      </section>
       <form className="mt-6 grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 md:grid-cols-[1fr_260px_auto]">
         <input name="q" defaultValue={query} placeholder="Email, order number or session" className="rounded-xl border border-slate-200 px-4 py-3" />
         <select name="type" defaultValue={type} className="rounded-xl border border-slate-200 bg-white px-4 py-3 font-bold"><option value="">All event types</option>{eventTypes.map((item) => <option key={item.eventType} value={item.eventType}>{item.eventType}</option>)}</select>
