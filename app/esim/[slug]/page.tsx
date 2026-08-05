@@ -754,8 +754,8 @@ export default async function EsimLandingPage({ params }: PageProps) {
                 Plan your connected trip to {displayName}
               </h2>
               <p className="mt-3 max-w-3xl leading-7 text-slate-600">
-                Practical guidance for choosing your data allowance and arriving
-                with the information you need already available.
+                {editorialGuide.overview ||
+                  "Practical guidance for choosing your data allowance and arriving with the information you need already available."}
               </p>
             </div>
 
@@ -767,12 +767,16 @@ export default async function EsimLandingPage({ params }: PageProps) {
                 <p className="mt-3 leading-7 text-slate-600">
                   {editorialGuide.dataAdvice}
                 </p>
-                <div className="mt-5 flex flex-wrap gap-2">
+                <p className="mt-5 text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">
+                  Common mobile data uses
+                </p>
+                <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
                   {editorialGuide.useCases.map((useCase) => (
                     <span
                       key={useCase}
-                      className="rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-800"
+                      className="inline-flex items-center gap-2 text-xs font-bold text-slate-700"
                     >
+                      <span className="h-1.5 w-1.5 rounded-full bg-blue-600" />
                       {useCase}
                     </span>
                   ))}
@@ -801,6 +805,69 @@ export default async function EsimLandingPage({ params }: PageProps) {
                 </div>
               </article>
             </div>
+
+            {editorialGuide.connectivityTips?.length ? (
+              <div className="border-t border-blue-100 bg-[#fbfcff] px-6 py-7 sm:px-8">
+                <p className="text-xs font-black uppercase tracking-[0.15em] text-blue-700">
+                  Before you travel
+                </p>
+                <div className="mt-4 grid gap-3 md:grid-cols-3">
+                  {editorialGuide.connectivityTips.map((tip, index) => (
+                    <div
+                      key={tip}
+                      className="grid grid-cols-[2rem_1fr] gap-3 rounded-2xl border border-slate-200 bg-white p-4"
+                    >
+                      <span className="grid h-8 w-8 place-items-center rounded-lg bg-blue-50 text-[10px] font-black text-blue-700">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <p className="text-sm leading-6 text-slate-600">{tip}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            {editorialGuide.officialLinks?.length ? (
+              <div className="border-t border-blue-100 px-6 py-7 sm:px-8">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+                  <div>
+                    <p className="text-xs font-black uppercase tracking-[0.15em] text-orange-700">
+                      Verified travel resources
+                    </p>
+                    <h3 className="mt-1 text-xl font-black text-slate-950">
+                      Continue with an official source
+                    </h3>
+                  </div>
+                  <p className="max-w-md text-sm leading-6 text-slate-500 sm:text-right">
+                    Entry and travel information can change. Check the official source before departure.
+                  </p>
+                </div>
+
+                <div className="mt-5 grid gap-3 md:grid-cols-3">
+                  {editorialGuide.officialLinks.map((resource) => (
+                    <a
+                      key={resource.href}
+                      href={resource.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="group flex min-h-32 flex-col justify-between rounded-2xl border border-blue-100 bg-blue-50/50 p-5 transition hover:-translate-y-0.5 hover:border-blue-300 hover:bg-blue-50 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200"
+                    >
+                      <span>
+                        <span className="block text-sm font-black text-slate-950 group-hover:text-blue-800">
+                          {resource.label}
+                        </span>
+                        <span className="mt-2 block text-xs leading-5 text-slate-600">
+                          {resource.description}
+                        </span>
+                      </span>
+                      <span className="mt-4 text-xs font-black text-blue-700">
+                        Open official website ↗
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ) : null}
           </section>
         ) : null}
 

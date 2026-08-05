@@ -3,6 +3,13 @@ export type DestinationEditorialGuide = {
   useCases: string[];
   dataAdvice: string;
   arrivalAdvice: string;
+  overview?: string;
+  connectivityTips?: string[];
+  officialLinks?: Array<{
+    label: string;
+    description: string;
+    href: string;
+  }>;
 };
 
 const guides: Record<string, DestinationEditorialGuide> = {
@@ -128,9 +135,32 @@ const guides: Record<string, DestinationEditorialGuide> = {
   },
   turkey: {
     places: ["Istanbul", "Antalya", "Cappadocia", "Izmir", "Bodrum"],
-    useCases: ["City transport", "Translation", "Transfers", "Bookings"],
-    dataAdvice: "Maps and transport are moderate use, while longer coastal or multi-city trips need more. Increase the allowance for video, calls or hotspot access.",
-    arrivalAdvice: "Install before departure so airport transfers and accommodation contacts are ready when you land.",
+    useCases: ["City transport", "Translation", "Transfer details", "Reservations"],
+    dataAdvice: "A short Istanbul stay usually needs less data than a route combining Cappadocia, the Aegean coast and Antalya. Maps, transport searches, translation and messages suit moderate use. Choose a larger allowance for a multi-city itinerary, frequent video sharing, calls or hotspot access.",
+    arrivalAdvice: "Install the eSIM before departure while reliable Wi-Fi is available. Keep your hotel address, airport transfer details and installation instructions saved offline, then select the DALO eSIM for mobile data after arrival.",
+    overview: "Turkey combines dense city travel, long intercity journeys and coastal destinations in one trip. Mobile data is useful beyond hotel Wi-Fi for navigating Istanbul, checking domestic transport, confirming accommodation and staying reachable during transfers. Coverage can vary outside major cities and along rural routes, so download essential tickets, addresses and maps before longer journeys.",
+    connectivityTips: [
+      "Save accommodation addresses in both Latin and Turkish spelling before arrival.",
+      "Download offline map areas before domestic flights, road journeys or rural excursions.",
+      "Keep the DALO order number and ICCID available offline in case support is needed.",
+    ],
+    officialLinks: [
+      {
+        label: "Official tourism portal",
+        description: "Destination information and trip inspiration from GoTürkiye.",
+        href: "https://goturkiye.com/",
+      },
+      {
+        label: "Official visa information",
+        description: "Entry and visa guidance from the Republic of Türkiye Ministry of Foreign Affairs.",
+        href: "https://www.mfa.gov.tr/visa-information-for-foreigners.en.mfa",
+      },
+      {
+        label: "Current travel guidance",
+        description: "Safety, entry and local guidance from the UK government travel advisory.",
+        href: "https://www.gov.uk/foreign-travel-advice/turkey",
+      },
+    ],
   },
   "united-arab-emirates": {
     places: ["Dubai", "Abu Dhabi", "Sharjah", "Ras Al Khaimah"],
@@ -158,6 +188,306 @@ const guides: Record<string, DestinationEditorialGuide> = {
   },
 };
 
+const officialResources: Record<
+  string,
+  NonNullable<DestinationEditorialGuide["officialLinks"]>
+> = {
+  australia: [
+    {
+      label: "Official tourism portal",
+      description: "Destination planning from Tourism Australia.",
+      href: "https://www.australia.com/en",
+    },
+    {
+      label: "Current travel guidance",
+      description: "Entry, safety and local information from the UK government.",
+      href: "https://www.gov.uk/foreign-travel-advice/australia",
+    },
+  ],
+  canada: [
+    {
+      label: "Official tourism portal",
+      description: "Travel ideas and destination information from Destination Canada.",
+      href: "https://travel.destinationcanada.com/en-ca",
+    },
+    {
+      label: "Current travel guidance",
+      description: "Entry, safety and local information from the UK government.",
+      href: "https://www.gov.uk/foreign-travel-advice/canada",
+    },
+  ],
+  china: [
+    {
+      label: "Official tourism portal",
+      description: "Destination information from the China tourism portal.",
+      href: "https://www.travelchina.org.cn/en/",
+    },
+    {
+      label: "Current travel guidance",
+      description: "Entry, safety and local information from the UK government.",
+      href: "https://www.gov.uk/foreign-travel-advice/china",
+    },
+  ],
+  egypt: [
+    {
+      label: "Official tourism portal",
+      description: "Destination information from the Egyptian Tourism Authority.",
+      href: "https://www.experienceegypt.eg/en",
+    },
+    {
+      label: "Current travel guidance",
+      description: "Entry, safety and local information from the UK government.",
+      href: "https://www.gov.uk/foreign-travel-advice/egypt",
+    },
+  ],
+  europe: [
+    {
+      label: "European travel portal",
+      description: "Cross-border destination inspiration from the European Travel Commission.",
+      href: "https://visiteurope.com/",
+    },
+    {
+      label: "Official EU travel information",
+      description: "Passenger rights and practical travel guidance from the European Union.",
+      href: "https://europa.eu/youreurope/citizens/travel/index_en.htm",
+    },
+  ],
+  france: [
+    {
+      label: "Official tourism portal",
+      description: "Destination information from Atout France.",
+      href: "https://www.france.fr/en/",
+    },
+    {
+      label: "Current travel guidance",
+      description: "Entry, safety and local information from the UK government.",
+      href: "https://www.gov.uk/foreign-travel-advice/france",
+    },
+  ],
+  germany: [
+    {
+      label: "Official tourism portal",
+      description: "Destination information from the German National Tourist Board.",
+      href: "https://www.germany.travel/en/home.html",
+    },
+    {
+      label: "Current travel guidance",
+      description: "Entry, safety and local information from the UK government.",
+      href: "https://www.gov.uk/foreign-travel-advice/germany",
+    },
+  ],
+  greece: [
+    {
+      label: "Official tourism portal",
+      description: "Destination information from the Greek National Tourism Organisation.",
+      href: "https://www.visitgreece.gr/en",
+    },
+    {
+      label: "Current travel guidance",
+      description: "Entry, safety and local information from the UK government.",
+      href: "https://www.gov.uk/foreign-travel-advice/greece",
+    },
+  ],
+  indonesia: [
+    {
+      label: "Official tourism portal",
+      description: "Destination information from Indonesia's tourism portal.",
+      href: "https://www.indonesia.travel/gb/en/home",
+    },
+    {
+      label: "Current travel guidance",
+      description: "Entry, safety and local information from the UK government.",
+      href: "https://www.gov.uk/foreign-travel-advice/indonesia",
+    },
+  ],
+  italy: [
+    {
+      label: "Official tourism portal",
+      description: "Destination information from Italy's national tourism portal.",
+      href: "https://www.italia.it/en",
+    },
+    {
+      label: "Current travel guidance",
+      description: "Entry, safety and local information from the UK government.",
+      href: "https://www.gov.uk/foreign-travel-advice/italy",
+    },
+  ],
+  japan: [
+    {
+      label: "Official tourism portal",
+      description: "Destination information from the Japan National Tourism Organization.",
+      href: "https://www.japan.travel/en/",
+    },
+    {
+      label: "Current travel guidance",
+      description: "Entry, safety and local information from the UK government.",
+      href: "https://www.gov.uk/foreign-travel-advice/japan",
+    },
+  ],
+  mexico: [
+    {
+      label: "Official tourism portal",
+      description: "Destination information from Visit Mexico.",
+      href: "https://visitmexico.com/eng/home-2/",
+    },
+    {
+      label: "Current travel guidance",
+      description: "Entry, safety and regional information from the UK government.",
+      href: "https://www.gov.uk/foreign-travel-advice/mexico",
+    },
+  ],
+  morocco: [
+    {
+      label: "Official tourism portal",
+      description: "Destination information from the Moroccan National Tourism Office.",
+      href: "https://www.visitmorocco.com/en",
+    },
+    {
+      label: "Current travel guidance",
+      description: "Entry, safety and local information from the UK government.",
+      href: "https://www.gov.uk/foreign-travel-advice/morocco",
+    },
+  ],
+  philippines: [
+    {
+      label: "Official tourism portal",
+      description: "Destination information from the Philippines tourism portal.",
+      href: "https://philippines.travel/",
+    },
+    {
+      label: "Current travel guidance",
+      description: "Entry, safety and regional information from the UK government.",
+      href: "https://www.gov.uk/foreign-travel-advice/philippines",
+    },
+  ],
+  portugal: [
+    {
+      label: "Official tourism portal",
+      description: "Destination information from Turismo de Portugal.",
+      href: "https://www.visitportugal.com/en",
+    },
+    {
+      label: "Current travel guidance",
+      description: "Entry, safety and local information from the UK government.",
+      href: "https://www.gov.uk/foreign-travel-advice/portugal",
+    },
+  ],
+  singapore: [
+    {
+      label: "Official tourism portal",
+      description: "Destination information from the Singapore Tourism Board.",
+      href: "https://www.visitsingapore.com/",
+    },
+    {
+      label: "Current travel guidance",
+      description: "Entry, safety and local information from the UK government.",
+      href: "https://www.gov.uk/foreign-travel-advice/singapore",
+    },
+  ],
+  "korea-republic-of": [
+    {
+      label: "Official tourism portal",
+      description: "Destination information from the Korea Tourism Organization.",
+      href: "https://english.visitkorea.or.kr/svc/main/index.do",
+    },
+    {
+      label: "Current travel guidance",
+      description: "Entry, safety and local information from the UK government.",
+      href: "https://www.gov.uk/foreign-travel-advice/south-korea",
+    },
+  ],
+  spain: [
+    {
+      label: "Official tourism portal",
+      description: "Destination information from Spain's official tourism portal.",
+      href: "https://www.spain.info/en/",
+    },
+    {
+      label: "Current travel guidance",
+      description: "Entry, safety and local information from the UK government.",
+      href: "https://www.gov.uk/foreign-travel-advice/spain",
+    },
+  ],
+  switzerland: [
+    {
+      label: "Official tourism portal",
+      description: "Destination information from Switzerland Tourism.",
+      href: "https://www.myswitzerland.com/en/",
+    },
+    {
+      label: "Current travel guidance",
+      description: "Entry, safety and local information from the UK government.",
+      href: "https://www.gov.uk/foreign-travel-advice/switzerland",
+    },
+  ],
+  thailand: [
+    {
+      label: "Official tourism portal",
+      description: "Destination information from the Tourism Authority of Thailand.",
+      href: "https://www.tourismthailand.org/home",
+    },
+    {
+      label: "Current travel guidance",
+      description: "Entry, safety and regional information from the UK government.",
+      href: "https://www.gov.uk/foreign-travel-advice/thailand",
+    },
+  ],
+  "united-arab-emirates": [
+    {
+      label: "Official UAE visitor information",
+      description: "Travel and visitor guidance from the official UAE government portal.",
+      href: "https://u.ae/en/information-and-services/visiting-and-exploring-the-uae",
+    },
+    {
+      label: "Current travel guidance",
+      description: "Entry, safety and local information from the UK government.",
+      href: "https://www.gov.uk/foreign-travel-advice/united-arab-emirates",
+    },
+  ],
+  "united-kingdom": [
+    {
+      label: "Official tourism portal",
+      description: "Destination information from VisitBritain.",
+      href: "https://www.visitbritain.com/en",
+    },
+    {
+      label: "Official border guidance",
+      description: "Entry requirements and border information from the UK government.",
+      href: "https://www.gov.uk/uk-border-control",
+    },
+  ],
+  "united-states-of-america": [
+    {
+      label: "Official tourism portal",
+      description: "Destination information from Brand USA.",
+      href: "https://www.visittheusa.com/",
+    },
+    {
+      label: "Current travel guidance",
+      description: "Entry, safety and local information from the UK government.",
+      href: "https://www.gov.uk/foreign-travel-advice/usa",
+    },
+  ],
+  vietnam: [
+    {
+      label: "Official tourism portal",
+      description: "Destination information from Vietnam's official tourism website.",
+      href: "https://vietnam.travel/",
+    },
+    {
+      label: "Current travel guidance",
+      description: "Entry, safety and local information from the UK government.",
+      href: "https://www.gov.uk/foreign-travel-advice/vietnam",
+    },
+  ],
+};
+
 export function getDestinationEditorialGuide(slug: string) {
-  return guides[slug] || null;
+  const guide = guides[slug];
+  if (!guide) return null;
+
+  return {
+    ...guide,
+    officialLinks: guide.officialLinks || officialResources[slug],
+  };
 }
