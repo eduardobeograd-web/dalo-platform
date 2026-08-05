@@ -82,6 +82,7 @@ export default async function CheckoutPage({
 }: {
   searchParams: Promise<{
     productId?: string;
+    providerProductId?: string;
     error?: string;
     stripe?: string;
     consent?: string;
@@ -95,6 +96,7 @@ export default async function CheckoutPage({
 }) {
   const params = await searchParams;
   const productId = params.productId;
+  const providerProductId = params.providerProductId;
   const hasError = params.error === "1";
   const stripeMissing = params.stripe === "missing";
   const consentRequired = params.consent === "required";
@@ -108,7 +110,7 @@ export default async function CheckoutPage({
     process.env.NODE_ENV !== "production" &&
     process.env.DALO_ENABLE_TEST_CHECKOUT === "true";
 
-  const product = productId
+  let product = productId
     ? await prisma.product.findFirst({
         where: {
           id: productId,
@@ -116,6 +118,18 @@ export default async function CheckoutPage({
         },
       })
     : null;
+
+  if (!product && providerProductId) {
+    product = await prisma.product.findFirst({
+      where: {
+        providerProductId,
+        active: true,
+      },
+      orderBy: {
+        updatedAt: "desc",
+      },
+    });
+  }
 
   if (!product) {
     return (

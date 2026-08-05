@@ -12,6 +12,7 @@ function formatPrice(value: number) {
 
 function recommendationCheckoutHref(input: {
   productId: string;
+  providerProductId: string;
   recommendedProductId: string;
   days: string;
   usageType: string;
@@ -19,6 +20,7 @@ function recommendationCheckoutHref(input: {
 }) {
   const params = new URLSearchParams({
     productId: input.productId,
+    providerProductId: input.providerProductId,
     recommendedProductId: input.recommendedProductId,
     recommendationTripLength: input.days,
     recommendationUsageType: input.usageType,
@@ -214,7 +216,7 @@ export default async function ResultPage({
               </div>
 
               <CheckoutStartedLink
-                href={recommendationCheckoutHref({ productId: plan.id, recommendedProductId: plan.id, days, usageType: type, choice: "best_match" })}
+                href={recommendationCheckoutHref({ productId: plan.id, providerProductId: plan.providerProductId, recommendedProductId: plan.id, days, usageType: type, choice: "best_match" })}
                 productId={plan.id}
                 className="mt-auto block rounded-2xl bg-[#2148c0] px-6 py-4 text-center text-lg font-black text-white shadow-[0_16px_35px_rgba(33,72,192,0.28)] transition hover:-translate-y-0.5 hover:bg-[#1738a0] hover:shadow-[0_20px_42px_rgba(33,72,192,0.34)]"
                 metadata={{
@@ -253,7 +255,7 @@ export default async function ResultPage({
                   </div>
 
                   <CheckoutStartedLink
-                    href={recommendationCheckoutHref({ productId: upsell.id, recommendedProductId: plan.id, days, usageType: type, choice: "upgrade" })}
+                    href={recommendationCheckoutHref({ productId: upsell.id, providerProductId: upsell.providerProductId, recommendedProductId: plan.id, days, usageType: type, choice: "upgrade" })}
                     productId={upsell.id}
                     className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-xl bg-[#10233a] px-3 text-xs font-black text-white shadow-sm transition hover:bg-[#2148c0]"
                     metadata={{
@@ -337,7 +339,7 @@ export default async function ResultPage({
                     </div>
 
                     <CheckoutStartedLink
-                      href={recommendationCheckoutHref({ productId: upsell.id, recommendedProductId: plan.id, days, usageType: type, choice: "upgrade" })}
+                      href={recommendationCheckoutHref({ productId: upsell.id, providerProductId: upsell.providerProductId, recommendedProductId: plan.id, days, usageType: type, choice: "upgrade" })}
                       productId={upsell.id}
                       className="mt-3 block rounded-2xl bg-amber-300 px-5 py-4 text-center text-sm font-black text-slate-950 shadow-[0_12px_28px_rgba(251,191,36,0.24)] transition hover:-translate-y-0.5 hover:bg-amber-200"
                       metadata={{
@@ -427,7 +429,7 @@ export default async function ResultPage({
                 </div>
 
                 <CheckoutStartedLink
-                  href={recommendationCheckoutHref({ productId: regionalUpsell.id, recommendedProductId: plan.id, days, usageType: type, choice: "regional" })}
+                  href={recommendationCheckoutHref({ productId: regionalUpsell.id, providerProductId: regionalUpsell.providerProductId, recommendedProductId: plan.id, days, usageType: type, choice: "regional" })}
                   productId={regionalUpsell.id}
                   className="mt-5 block rounded-2xl bg-purple-600 px-5 py-4 text-center text-sm font-black text-white shadow-lg shadow-purple-200 transition hover:bg-purple-700"
                   metadata={{
@@ -494,7 +496,7 @@ export default async function ResultPage({
           </div>
 
           <CheckoutStartedLink
-            href={recommendationCheckoutHref({ productId: plan.id, recommendedProductId: plan.id, days, usageType: type, choice: "best_match" })}
+            href={recommendationCheckoutHref({ productId: plan.id, providerProductId: plan.providerProductId, recommendedProductId: plan.id, days, usageType: type, choice: "best_match" })}
             productId={plan.id}
             className="shrink-0 rounded-2xl bg-blue-600 px-5 py-4 text-sm font-black text-white shadow-lg shadow-blue-200"
             metadata={{
