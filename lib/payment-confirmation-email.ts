@@ -1,3 +1,5 @@
+import { readFile } from "node:fs/promises";
+import path from "node:path";
 import { prisma } from "@/lib/db";
 import { sendEmail } from "@/lib/email";
 import {
@@ -41,9 +43,20 @@ export async function sendPaymentConfirmationEmail(orderId: string) {
     const accountUrl = customer?.passwordHash
       ? `${siteUrl}/customer/orders/${order.id}`
       : `${siteUrl}/customer/forgot-password?email=${encodeURIComponent(order.customer)}`;
+    const logoContent = await readFile(
+      path.join(process.cwd(), "public", "dalo-email-header.png"),
+      "base64",
+    );
     const result = await sendEmail({
       to: order.customer,
       subject: paymentConfirmationSubject(orderNumber),
+      attachments: [
+        {
+          content: logoContent,
+          filename: "dalo-email-header.png",
+          contentId: "dalo-header",
+        },
+      ],
       html: paymentConfirmationHtml({
         orderNumber,
         customerName: customer?.name || null,

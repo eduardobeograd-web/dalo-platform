@@ -20,7 +20,7 @@ function escapeHtml(value: string) {
 }
 
 export function paymentConfirmationSubject(orderNumber: string) {
-  return `Payment received for your DALO order ${orderNumber}`;
+  return `DALO payment confirmed - order ${orderNumber}`;
 }
 
 export function paymentConfirmationHtml({
@@ -34,64 +34,75 @@ export function paymentConfirmationHtml({
   accountUrl,
   supportUrl,
 }: PaymentConfirmationEmailInput) {
-  const greeting = customerName ? `Hi ${escapeHtml(customerName)},` : "Hi,";
+  const firstName = customerName?.trim()
+    ? escapeHtml(customerName.trim().split(/\s+/)[0])
+    : null;
+  const safeOrderNumber = escapeHtml(orderNumber);
+  const safeProductName = escapeHtml(productName);
+  const safeDestination = escapeHtml(destination);
+  const safeData = escapeHtml(data);
+  const safePrice = escapeHtml(price);
+  const safeAccountUrl = escapeHtml(accountUrl);
+  const safeSupportUrl = escapeHtml(supportUrl);
 
   return `
-  <div style="margin:0;padding:0;background:#f3f7ff;font-family:Arial,Helvetica,sans-serif;color:#0f172a;">
-    <div style="max-width:640px;margin:0 auto;padding:32px 18px;">
-      <div style="overflow:hidden;border:1px solid #dbeafe;border-radius:28px;background:#ffffff;box-shadow:0 18px 50px rgba(30,64,175,0.10);">
-        <div style="background:#1648d8;padding:28px 32px;color:#ffffff;">
-          <div style="font-size:24px;font-weight:900;letter-spacing:0.08em;">DALO</div>
-          <div style="margin-top:8px;font-size:13px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#dbeafe;">
-            Payment confirmed
-          </div>
-        </div>
-
-        <div style="padding:32px;">
-          <div style="display:inline-block;border-radius:999px;background:#ecfdf5;padding:8px 12px;font-size:12px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#047857;">
-            Payment received
-          </div>
-
-          <p style="margin:22px 0 8px;font-size:16px;font-weight:700;color:#334155;">${greeting}</p>
-          <h1 style="margin:0 0 12px;font-size:30px;line-height:1.15;color:#020617;">
-            We are preparing your eSIM.
-          </h1>
-          <p style="margin:0;font-size:16px;line-height:1.65;color:#475569;">
-            Your payment is confirmed. We will send a second email with your QR code and installation details as soon as your eSIM is ready.
-          </p>
-
-          <div style="margin:26px 0;border:1px solid #dbeafe;background:#f8fbff;border-radius:20px;padding:22px;">
-            <div style="font-size:12px;font-weight:800;color:#2563eb;letter-spacing:0.08em;text-transform:uppercase;">
-              Order ${escapeHtml(orderNumber)}
-            </div>
-            <div style="margin-top:9px;font-size:21px;font-weight:800;color:#020617;">
-              ${escapeHtml(productName)}
-            </div>
-            <div style="margin-top:12px;font-size:15px;line-height:1.7;color:#475569;">
-              ${escapeHtml(destination)} &middot; ${escapeHtml(data)} &middot; ${validityDays} days
-            </div>
-            <div style="margin-top:8px;font-size:18px;font-weight:900;color:#0f172a;">
-              ${escapeHtml(price)}
-            </div>
-          </div>
-
-          <div style="margin:26px 0;border-left:4px solid #f59e0b;padding:2px 0 2px 18px;">
-            <div style="font-size:18px;font-weight:800;color:#020617;">What happens next?</div>
-            <p style="margin:8px 0 0;font-size:14px;line-height:1.6;color:#475569;">
-              Keep an eye on your inbox. Your installation email will contain everything needed to add the eSIM to your phone.
-            </p>
-          </div>
-
-          <a href="${escapeHtml(accountUrl)}" style="display:block;background:#1648d8;color:#ffffff;text-decoration:none;text-align:center;font-weight:800;border-radius:16px;padding:16px 22px;font-size:16px;">
-            View order status
-          </a>
-
-          <p style="margin:22px 0 0;font-size:13px;line-height:1.6;color:#64748b;">
-            Need help? Reply to this email or visit <a href="${escapeHtml(supportUrl)}" style="color:#1648d8;font-weight:700;">DALO support</a> and include your order number.
-          </p>
-        </div>
+  <!doctype html>
+  <html lang="en">
+    <head>
+      <meta name="color-scheme" content="light only" />
+      <meta name="supported-color-schemes" content="light" />
+      <style>:root { color-scheme: light; supported-color-schemes: light; }</style>
+    </head>
+    <body style="margin:0;padding:0;background:#eef3fb;font-family:Arial,Helvetica,sans-serif;color:#101828;">
+      <div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">
+        Your payment for DALO order ${safeOrderNumber} is confirmed.
       </div>
-    </div>
-  </div>
+      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;background:#eef3fb;">
+        <tr>
+          <td align="center" style="padding:28px 12px;">
+            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;max-width:620px;border:1px solid #d7e1f1;border-radius:24px;background:#ffffff;overflow:hidden;">
+              <tr>
+                <td style="padding:0;background:#dfe9ff;">
+                  <img src="cid:dalo-header" alt="DALO - We found the right eSIM for your trip." width="620" style="display:block;width:100%;max-width:620px;height:auto;border:0;" />
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:30px 28px 12px;">
+                  <div style="display:inline-block;border-radius:999px;background:#e8f8ee;padding:7px 11px;font-size:11px;font-weight:900;letter-spacing:0.08em;text-transform:uppercase;color:#18723d;">Payment confirmed</div>
+                  <p style="margin:18px 0 0;font-size:15px;font-weight:800;color:#344054;">Hi${firstName ? ` ${firstName}` : ""},</p>
+                  <h1 style="margin:9px 0 10px;font-size:31px;line-height:1.16;letter-spacing:-0.02em;color:#101828;">We are preparing your eSIM.</h1>
+                  <p style="margin:0;font-size:15px;line-height:1.65;color:#536176;">Your payment has been received. A separate email with your QR code and installation details will follow as soon as your eSIM is ready.</p>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:16px 28px;">
+                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;border:1px solid #d9e3f2;border-radius:18px;background:#f7f9fd;">
+                    <tr>
+                      <td style="padding:20px;">
+                        <div style="font-size:10px;font-weight:900;letter-spacing:0.12em;text-transform:uppercase;color:#315fca;">DALO order number</div>
+                        <div style="margin-top:5px;font-family:monospace;font-size:15px;font-weight:900;color:#173f91;">${safeOrderNumber}</div>
+                        <div style="margin-top:17px;font-size:19px;font-weight:800;color:#101828;">${safeProductName}</div>
+                        <div style="margin-top:8px;font-size:14px;line-height:1.6;color:#536176;">${safeDestination} &middot; ${safeData} &middot; ${validityDays} days</div>
+                        <div style="margin-top:8px;font-size:18px;font-weight:900;color:#101828;">${safePrice}</div>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <td style="padding:8px 28px 28px;">
+                  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;border-left:3px solid #f59e0b;background:#fffaf0;">
+                    <tr><td style="padding:15px 17px;font-size:14px;line-height:1.6;color:#475467;"><strong style="color:#101828;">Next:</strong> Keep an eye on your inbox. Your installation email will contain everything needed to add the eSIM to your device.</td></tr>
+                  </table>
+                  <a href="${safeAccountUrl}" style="display:block;margin-top:20px;border-radius:12px;background:#173fbd;padding:15px 18px;text-align:center;font-size:15px;font-weight:800;color:#ffffff;text-decoration:none;">View order status</a>
+                  <p style="margin:20px 0 0;font-size:12px;line-height:1.65;color:#667085;">Need help? Reply to this email or visit <a href="${safeSupportUrl}" style="color:#173f91;font-weight:800;">DALO support</a> and include order ${safeOrderNumber}.</p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </body>
+  </html>
   `;
 }
