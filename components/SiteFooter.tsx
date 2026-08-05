@@ -89,6 +89,9 @@ export default function SiteFooter() {
               <a className="block hover:text-[#2148c0]" href="/support">
                 Support
               </a>
+              <a className="block hover:text-[#2148c0]" href="/faq">
+                FAQ
+              </a>
               <a className="block hover:text-[#2148c0]" href="/contact">
                 Contact
               </a>

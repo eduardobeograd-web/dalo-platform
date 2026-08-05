@@ -32,7 +32,7 @@ export default function SiteHeader({ mode = "public" }: SiteHeaderProps) {
             <a className="transition hover:text-[#2148c0]" href="/esim">
               Destinations
             </a>
-            <a className="transition hover:text-[#2148c0]" href="/#faq">
+            <a className="transition hover:text-[#2148c0]" href="/faq">
               FAQ
             </a>
           </div>

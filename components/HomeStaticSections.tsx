@@ -289,6 +289,13 @@ export function HomeFaq() {
               </p>
             </details>
           ))}
+          <a
+            href="/faq"
+            className="flex min-h-14 items-center justify-between rounded-2xl border border-blue-200 bg-[#eef3ff] px-5 py-4 text-sm font-black text-[#2148c0] transition hover:border-[#2148c0] hover:bg-blue-100 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 md:col-span-2 lg:col-span-1 xl:col-span-2"
+          >
+            Explore all eSIM questions
+            <span aria-hidden="true">View the complete FAQ →</span>
+          </a>
         </div>
       </section>
     </>
