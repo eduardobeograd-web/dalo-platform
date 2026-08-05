@@ -7,6 +7,7 @@ import {
   logoutCustomerEverywhere,
   updateBillingAddress,
   updateCustomerProfile,
+  updateMarketingPreferences,
 } from "./actions";
 
 type SettingsPageProps = {
@@ -36,6 +37,14 @@ const statusMessages: Record<
   "billing-saved": {
     tone: "success",
     text: "Your billing address has been saved.",
+  },
+  "marketing-enabled": {
+    tone: "success",
+    text: "Email tips, plan reminders and occasional offers are enabled.",
+  },
+  "marketing-disabled": {
+    tone: "success",
+    text: "Marketing emails are disabled. Essential order and account emails will continue.",
   },
   "password-saved": {
     tone: "success",
@@ -135,6 +144,42 @@ export default async function CustomerSettingsPage({
         ) : null}
 
         <div className="mt-6 grid gap-5 sm:mt-8">
+          <section className="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-[0_16px_45px_rgba(30,64,120,0.08)]">
+            <div className="border-b border-slate-200 px-5 py-5 sm:px-8">
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-[#2148c0]">
+                Email preferences
+              </p>
+              <h2 className="mt-1 text-2xl font-black tracking-tight">
+                Travel updates
+              </h2>
+              <p className="mt-2 text-sm leading-6 text-slate-600">
+                Order confirmations, delivery and security emails are always sent.
+                The setting below only controls optional tips, reminders and offers.
+              </p>
+            </div>
+            <form action={updateMarketingPreferences} className="p-5 sm:p-8">
+              <label className="flex cursor-pointer items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <input
+                  name="marketingEmailConsent"
+                  type="checkbox"
+                  defaultChecked={customer.marketingEmailConsent}
+                  className="mt-1 h-5 w-5 rounded border-slate-300 accent-[#2148c0]"
+                />
+                <span>
+                  <span className="block font-black text-slate-950">
+                    Send me useful eSIM tips, plan reminders and occasional offers
+                  </span>
+                  <span className="mt-1 block text-sm leading-6 text-slate-600">
+                    You can switch this off again at any time.
+                  </span>
+                </span>
+              </label>
+              <button className="mt-5 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-[#2148c0] px-6 text-sm font-black text-white transition hover:bg-[#173f91] sm:w-auto">
+                Save email preferences
+              </button>
+            </form>
+          </section>
+
           <section className="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white shadow-[0_16px_45px_rgba(30,64,120,0.08)]">
             <div className="border-b border-slate-200 px-5 py-5 sm:px-8">
               <p className="text-xs font-black uppercase tracking-[0.16em] text-[#2148c0]">

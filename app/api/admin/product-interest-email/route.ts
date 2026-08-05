@@ -72,6 +72,19 @@ export async function POST(request: Request) {
       );
     }
 
+    const consentCustomer = productViewEvent.customer ||
+      await prisma.customer.findUnique({ where: { email: customerEmail } });
+
+    if (!consentCustomer?.marketingEmailConsent) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "This customer has not consented to marketing emails.",
+        },
+        { status: 403 },
+      );
+    }
+
     const existingPurchase = await prisma.customerEvent.findFirst({
       where: {
         eventType: "purchase_completed",

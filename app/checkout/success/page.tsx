@@ -2,6 +2,7 @@ import { prisma } from "../../../lib/db";
 import { stripe } from "../../../lib/stripe";
 import SiteFooter from "../../../components/SiteFooter";
 import SiteHeader from "../../../components/SiteHeader";
+import { enablePostPurchaseMarketing } from "./actions";
 
 function formatPrice(value: number) {
   return `$${value.toFixed(2)}`;
@@ -33,6 +34,7 @@ export default async function CheckoutSuccessPage({
   searchParams: Promise<{
     orderId?: string;
     session_id?: string;
+    marketing?: string;
   }>;
 }) {
   const params = await searchParams;
@@ -217,6 +219,34 @@ export default async function CheckoutSuccessPage({
                 : "Stripe test payment completed. Your eSIM delivery is being prepared."}
             </div>
           </div>
+
+          {params.session_id && customer ? (
+            <div className="mt-6 rounded-2xl border border-blue-100 bg-white p-6 text-left shadow-sm">
+              {customer.marketingEmailConsent || params.marketing === "saved" ? (
+                <div>
+                  <p className="font-black text-slate-950">You are travel-ready</p>
+                  <p className="mt-1 text-sm leading-6 text-slate-600">
+                    We can send useful eSIM tips, plan reminders and occasional
+                    offers. You can change this anytime in account settings.
+                  </p>
+                </div>
+              ) : (
+                <form action={enablePostPurchaseMarketing} className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <input type="hidden" name="stripeSessionId" value={params.session_id} />
+                  <div>
+                    <p className="font-black text-slate-950">Stay travel-ready</p>
+                    <p className="mt-1 max-w-2xl text-sm leading-6 text-slate-600">
+                      I&apos;d like to receive useful eSIM tips, plan reminders and
+                      occasional offers by email. I can unsubscribe at any time.
+                    </p>
+                  </div>
+                  <button className="min-h-12 shrink-0 rounded-xl bg-[#2148c0] px-6 text-sm font-black text-white transition hover:bg-[#173f91]">
+                    Keep me updated
+                  </button>
+                </form>
+              )}
+            </div>
+          ) : null}
 
           <div className="mt-10">
             <a

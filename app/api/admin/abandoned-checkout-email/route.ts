@@ -52,9 +52,9 @@ export async function POST(request: Request) {
       );
     }
 
-    if (emailEvent.eventType !== "checkout_email_entered") {
+    if (emailEvent.eventType !== "checkout_reminder_requested") {
       return NextResponse.json(
-        { success: false, error: "Event is not checkout_email_entered" },
+        { success: false, error: "Event is not checkout_reminder_requested" },
         { status: 400 }
       );
     }

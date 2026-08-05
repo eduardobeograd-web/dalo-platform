@@ -211,12 +211,7 @@ export default async function CheckoutPage({
 
             <div>
               <label className="mb-2 block font-semibold">Email address</label>
-              <CheckoutEmailInput
-                productId={product.id}
-                productName={product.name}
-                destination={product.country}
-                price={product.sellPrice}
-              />
+              <CheckoutEmailInput />
             </div>
 
             <div>

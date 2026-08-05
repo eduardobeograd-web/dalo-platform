@@ -36,6 +36,11 @@ export type CustomerMinAggregateOutputType = {
   billingState: string | null
   billingPostalCode: string | null
   billingCountry: string | null
+  marketingEmailConsent: boolean | null
+  marketingEmailConsentAt: Date | null
+  marketingEmailConsentRevokedAt: Date | null
+  marketingEmailConsentSource: string | null
+  marketingEmailConsentVersion: string | null
   active: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -53,6 +58,11 @@ export type CustomerMaxAggregateOutputType = {
   billingState: string | null
   billingPostalCode: string | null
   billingCountry: string | null
+  marketingEmailConsent: boolean | null
+  marketingEmailConsentAt: Date | null
+  marketingEmailConsentRevokedAt: Date | null
+  marketingEmailConsentSource: string | null
+  marketingEmailConsentVersion: string | null
   active: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -70,6 +80,11 @@ export type CustomerCountAggregateOutputType = {
   billingState: number
   billingPostalCode: number
   billingCountry: number
+  marketingEmailConsent: number
+  marketingEmailConsentAt: number
+  marketingEmailConsentRevokedAt: number
+  marketingEmailConsentSource: number
+  marketingEmailConsentVersion: number
   active: number
   createdAt: number
   updatedAt: number
@@ -89,6 +104,11 @@ export type CustomerMinAggregateInputType = {
   billingState?: true
   billingPostalCode?: true
   billingCountry?: true
+  marketingEmailConsent?: true
+  marketingEmailConsentAt?: true
+  marketingEmailConsentRevokedAt?: true
+  marketingEmailConsentSource?: true
+  marketingEmailConsentVersion?: true
   active?: true
   createdAt?: true
   updatedAt?: true
@@ -106,6 +126,11 @@ export type CustomerMaxAggregateInputType = {
   billingState?: true
   billingPostalCode?: true
   billingCountry?: true
+  marketingEmailConsent?: true
+  marketingEmailConsentAt?: true
+  marketingEmailConsentRevokedAt?: true
+  marketingEmailConsentSource?: true
+  marketingEmailConsentVersion?: true
   active?: true
   createdAt?: true
   updatedAt?: true
@@ -123,6 +148,11 @@ export type CustomerCountAggregateInputType = {
   billingState?: true
   billingPostalCode?: true
   billingCountry?: true
+  marketingEmailConsent?: true
+  marketingEmailConsentAt?: true
+  marketingEmailConsentRevokedAt?: true
+  marketingEmailConsentSource?: true
+  marketingEmailConsentVersion?: true
   active?: true
   createdAt?: true
   updatedAt?: true
@@ -213,6 +243,11 @@ export type CustomerGroupByOutputType = {
   billingState: string | null
   billingPostalCode: string | null
   billingCountry: string | null
+  marketingEmailConsent: boolean
+  marketingEmailConsentAt: Date | null
+  marketingEmailConsentRevokedAt: Date | null
+  marketingEmailConsentSource: string | null
+  marketingEmailConsentVersion: string | null
   active: boolean
   createdAt: Date
   updatedAt: Date
@@ -251,6 +286,11 @@ export type CustomerWhereInput = {
   billingState?: Prisma.StringNullableFilter<"Customer"> | string | null
   billingPostalCode?: Prisma.StringNullableFilter<"Customer"> | string | null
   billingCountry?: Prisma.StringNullableFilter<"Customer"> | string | null
+  marketingEmailConsent?: Prisma.BoolFilter<"Customer"> | boolean
+  marketingEmailConsentAt?: Prisma.DateTimeNullableFilter<"Customer"> | Date | string | null
+  marketingEmailConsentRevokedAt?: Prisma.DateTimeNullableFilter<"Customer"> | Date | string | null
+  marketingEmailConsentSource?: Prisma.StringNullableFilter<"Customer"> | string | null
+  marketingEmailConsentVersion?: Prisma.StringNullableFilter<"Customer"> | string | null
   active?: Prisma.BoolFilter<"Customer"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
@@ -273,6 +313,11 @@ export type CustomerOrderByWithRelationInput = {
   billingState?: Prisma.SortOrderInput | Prisma.SortOrder
   billingPostalCode?: Prisma.SortOrderInput | Prisma.SortOrder
   billingCountry?: Prisma.SortOrderInput | Prisma.SortOrder
+  marketingEmailConsent?: Prisma.SortOrder
+  marketingEmailConsentAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  marketingEmailConsentRevokedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  marketingEmailConsentSource?: Prisma.SortOrderInput | Prisma.SortOrder
+  marketingEmailConsentVersion?: Prisma.SortOrderInput | Prisma.SortOrder
   active?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -298,6 +343,11 @@ export type CustomerWhereUniqueInput = Prisma.AtLeast<{
   billingState?: Prisma.StringNullableFilter<"Customer"> | string | null
   billingPostalCode?: Prisma.StringNullableFilter<"Customer"> | string | null
   billingCountry?: Prisma.StringNullableFilter<"Customer"> | string | null
+  marketingEmailConsent?: Prisma.BoolFilter<"Customer"> | boolean
+  marketingEmailConsentAt?: Prisma.DateTimeNullableFilter<"Customer"> | Date | string | null
+  marketingEmailConsentRevokedAt?: Prisma.DateTimeNullableFilter<"Customer"> | Date | string | null
+  marketingEmailConsentSource?: Prisma.StringNullableFilter<"Customer"> | string | null
+  marketingEmailConsentVersion?: Prisma.StringNullableFilter<"Customer"> | string | null
   active?: Prisma.BoolFilter<"Customer"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Customer"> | Date | string
@@ -320,6 +370,11 @@ export type CustomerOrderByWithAggregationInput = {
   billingState?: Prisma.SortOrderInput | Prisma.SortOrder
   billingPostalCode?: Prisma.SortOrderInput | Prisma.SortOrder
   billingCountry?: Prisma.SortOrderInput | Prisma.SortOrder
+  marketingEmailConsent?: Prisma.SortOrder
+  marketingEmailConsentAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  marketingEmailConsentRevokedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  marketingEmailConsentSource?: Prisma.SortOrderInput | Prisma.SortOrder
+  marketingEmailConsentVersion?: Prisma.SortOrderInput | Prisma.SortOrder
   active?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -343,6 +398,11 @@ export type CustomerScalarWhereWithAggregatesInput = {
   billingState?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
   billingPostalCode?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
   billingCountry?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
+  marketingEmailConsent?: Prisma.BoolWithAggregatesFilter<"Customer"> | boolean
+  marketingEmailConsentAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Customer"> | Date | string | null
+  marketingEmailConsentRevokedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Customer"> | Date | string | null
+  marketingEmailConsentSource?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
+  marketingEmailConsentVersion?: Prisma.StringNullableWithAggregatesFilter<"Customer"> | string | null
   active?: Prisma.BoolWithAggregatesFilter<"Customer"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Customer"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Customer"> | Date | string
@@ -360,6 +420,11 @@ export type CustomerCreateInput = {
   billingState?: string | null
   billingPostalCode?: string | null
   billingCountry?: string | null
+  marketingEmailConsent?: boolean
+  marketingEmailConsentAt?: Date | string | null
+  marketingEmailConsentRevokedAt?: Date | string | null
+  marketingEmailConsentSource?: string | null
+  marketingEmailConsentVersion?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -382,6 +447,11 @@ export type CustomerUncheckedCreateInput = {
   billingState?: string | null
   billingPostalCode?: string | null
   billingCountry?: string | null
+  marketingEmailConsent?: boolean
+  marketingEmailConsentAt?: Date | string | null
+  marketingEmailConsentRevokedAt?: Date | string | null
+  marketingEmailConsentSource?: string | null
+  marketingEmailConsentVersion?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -404,6 +474,11 @@ export type CustomerUpdateInput = {
   billingState?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketingEmailConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  marketingEmailConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marketingEmailConsentRevokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marketingEmailConsentSource?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketingEmailConsentVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -426,6 +501,11 @@ export type CustomerUncheckedUpdateInput = {
   billingState?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketingEmailConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  marketingEmailConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marketingEmailConsentRevokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marketingEmailConsentSource?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketingEmailConsentVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -448,6 +528,11 @@ export type CustomerCreateManyInput = {
   billingState?: string | null
   billingPostalCode?: string | null
   billingCountry?: string | null
+  marketingEmailConsent?: boolean
+  marketingEmailConsentAt?: Date | string | null
+  marketingEmailConsentRevokedAt?: Date | string | null
+  marketingEmailConsentSource?: string | null
+  marketingEmailConsentVersion?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -465,6 +550,11 @@ export type CustomerUpdateManyMutationInput = {
   billingState?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketingEmailConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  marketingEmailConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marketingEmailConsentRevokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marketingEmailConsentSource?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketingEmailConsentVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -482,6 +572,11 @@ export type CustomerUncheckedUpdateManyInput = {
   billingState?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketingEmailConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  marketingEmailConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marketingEmailConsentRevokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marketingEmailConsentSource?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketingEmailConsentVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -499,6 +594,11 @@ export type CustomerCountOrderByAggregateInput = {
   billingState?: Prisma.SortOrder
   billingPostalCode?: Prisma.SortOrder
   billingCountry?: Prisma.SortOrder
+  marketingEmailConsent?: Prisma.SortOrder
+  marketingEmailConsentAt?: Prisma.SortOrder
+  marketingEmailConsentRevokedAt?: Prisma.SortOrder
+  marketingEmailConsentSource?: Prisma.SortOrder
+  marketingEmailConsentVersion?: Prisma.SortOrder
   active?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -516,6 +616,11 @@ export type CustomerMaxOrderByAggregateInput = {
   billingState?: Prisma.SortOrder
   billingPostalCode?: Prisma.SortOrder
   billingCountry?: Prisma.SortOrder
+  marketingEmailConsent?: Prisma.SortOrder
+  marketingEmailConsentAt?: Prisma.SortOrder
+  marketingEmailConsentRevokedAt?: Prisma.SortOrder
+  marketingEmailConsentSource?: Prisma.SortOrder
+  marketingEmailConsentVersion?: Prisma.SortOrder
   active?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -533,6 +638,11 @@ export type CustomerMinOrderByAggregateInput = {
   billingState?: Prisma.SortOrder
   billingPostalCode?: Prisma.SortOrder
   billingCountry?: Prisma.SortOrder
+  marketingEmailConsent?: Prisma.SortOrder
+  marketingEmailConsentAt?: Prisma.SortOrder
+  marketingEmailConsentRevokedAt?: Prisma.SortOrder
+  marketingEmailConsentSource?: Prisma.SortOrder
+  marketingEmailConsentVersion?: Prisma.SortOrder
   active?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -546,6 +656,10 @@ export type CustomerScalarRelationFilter = {
 export type CustomerNullableScalarRelationFilter = {
   is?: Prisma.CustomerWhereInput | null
   isNot?: Prisma.CustomerWhereInput | null
+}
+
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
 }
 
 export type CustomerCreateNestedOneWithoutSessionsInput = {
@@ -636,6 +750,11 @@ export type CustomerCreateWithoutSessionsInput = {
   billingState?: string | null
   billingPostalCode?: string | null
   billingCountry?: string | null
+  marketingEmailConsent?: boolean
+  marketingEmailConsentAt?: Date | string | null
+  marketingEmailConsentRevokedAt?: Date | string | null
+  marketingEmailConsentSource?: string | null
+  marketingEmailConsentVersion?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -657,6 +776,11 @@ export type CustomerUncheckedCreateWithoutSessionsInput = {
   billingState?: string | null
   billingPostalCode?: string | null
   billingCountry?: string | null
+  marketingEmailConsent?: boolean
+  marketingEmailConsentAt?: Date | string | null
+  marketingEmailConsentRevokedAt?: Date | string | null
+  marketingEmailConsentSource?: string | null
+  marketingEmailConsentVersion?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -694,6 +818,11 @@ export type CustomerUpdateWithoutSessionsInput = {
   billingState?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketingEmailConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  marketingEmailConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marketingEmailConsentRevokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marketingEmailConsentSource?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketingEmailConsentVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -715,6 +844,11 @@ export type CustomerUncheckedUpdateWithoutSessionsInput = {
   billingState?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketingEmailConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  marketingEmailConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marketingEmailConsentRevokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marketingEmailConsentSource?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketingEmailConsentVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -736,6 +870,11 @@ export type CustomerCreateWithoutPasswordResetTokensInput = {
   billingState?: string | null
   billingPostalCode?: string | null
   billingCountry?: string | null
+  marketingEmailConsent?: boolean
+  marketingEmailConsentAt?: Date | string | null
+  marketingEmailConsentRevokedAt?: Date | string | null
+  marketingEmailConsentSource?: string | null
+  marketingEmailConsentVersion?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -757,6 +896,11 @@ export type CustomerUncheckedCreateWithoutPasswordResetTokensInput = {
   billingState?: string | null
   billingPostalCode?: string | null
   billingCountry?: string | null
+  marketingEmailConsent?: boolean
+  marketingEmailConsentAt?: Date | string | null
+  marketingEmailConsentRevokedAt?: Date | string | null
+  marketingEmailConsentSource?: string | null
+  marketingEmailConsentVersion?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -794,6 +938,11 @@ export type CustomerUpdateWithoutPasswordResetTokensInput = {
   billingState?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketingEmailConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  marketingEmailConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marketingEmailConsentRevokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marketingEmailConsentSource?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketingEmailConsentVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -815,6 +964,11 @@ export type CustomerUncheckedUpdateWithoutPasswordResetTokensInput = {
   billingState?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketingEmailConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  marketingEmailConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marketingEmailConsentRevokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marketingEmailConsentSource?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketingEmailConsentVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -836,6 +990,11 @@ export type CustomerCreateWithoutOrdersInput = {
   billingState?: string | null
   billingPostalCode?: string | null
   billingCountry?: string | null
+  marketingEmailConsent?: boolean
+  marketingEmailConsentAt?: Date | string | null
+  marketingEmailConsentRevokedAt?: Date | string | null
+  marketingEmailConsentSource?: string | null
+  marketingEmailConsentVersion?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -857,6 +1016,11 @@ export type CustomerUncheckedCreateWithoutOrdersInput = {
   billingState?: string | null
   billingPostalCode?: string | null
   billingCountry?: string | null
+  marketingEmailConsent?: boolean
+  marketingEmailConsentAt?: Date | string | null
+  marketingEmailConsentRevokedAt?: Date | string | null
+  marketingEmailConsentSource?: string | null
+  marketingEmailConsentVersion?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -894,6 +1058,11 @@ export type CustomerUpdateWithoutOrdersInput = {
   billingState?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketingEmailConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  marketingEmailConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marketingEmailConsentRevokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marketingEmailConsentSource?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketingEmailConsentVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -915,6 +1084,11 @@ export type CustomerUncheckedUpdateWithoutOrdersInput = {
   billingState?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketingEmailConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  marketingEmailConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marketingEmailConsentRevokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marketingEmailConsentSource?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketingEmailConsentVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -936,6 +1110,11 @@ export type CustomerCreateWithoutSupportRequestsInput = {
   billingState?: string | null
   billingPostalCode?: string | null
   billingCountry?: string | null
+  marketingEmailConsent?: boolean
+  marketingEmailConsentAt?: Date | string | null
+  marketingEmailConsentRevokedAt?: Date | string | null
+  marketingEmailConsentSource?: string | null
+  marketingEmailConsentVersion?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -957,6 +1136,11 @@ export type CustomerUncheckedCreateWithoutSupportRequestsInput = {
   billingState?: string | null
   billingPostalCode?: string | null
   billingCountry?: string | null
+  marketingEmailConsent?: boolean
+  marketingEmailConsentAt?: Date | string | null
+  marketingEmailConsentRevokedAt?: Date | string | null
+  marketingEmailConsentSource?: string | null
+  marketingEmailConsentVersion?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -994,6 +1178,11 @@ export type CustomerUpdateWithoutSupportRequestsInput = {
   billingState?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketingEmailConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  marketingEmailConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marketingEmailConsentRevokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marketingEmailConsentSource?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketingEmailConsentVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1015,6 +1204,11 @@ export type CustomerUncheckedUpdateWithoutSupportRequestsInput = {
   billingState?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketingEmailConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  marketingEmailConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marketingEmailConsentRevokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marketingEmailConsentSource?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketingEmailConsentVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1036,6 +1230,11 @@ export type CustomerCreateWithoutCustomerEventsInput = {
   billingState?: string | null
   billingPostalCode?: string | null
   billingCountry?: string | null
+  marketingEmailConsent?: boolean
+  marketingEmailConsentAt?: Date | string | null
+  marketingEmailConsentRevokedAt?: Date | string | null
+  marketingEmailConsentSource?: string | null
+  marketingEmailConsentVersion?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1057,6 +1256,11 @@ export type CustomerUncheckedCreateWithoutCustomerEventsInput = {
   billingState?: string | null
   billingPostalCode?: string | null
   billingCountry?: string | null
+  marketingEmailConsent?: boolean
+  marketingEmailConsentAt?: Date | string | null
+  marketingEmailConsentRevokedAt?: Date | string | null
+  marketingEmailConsentSource?: string | null
+  marketingEmailConsentVersion?: string | null
   active?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1094,6 +1298,11 @@ export type CustomerUpdateWithoutCustomerEventsInput = {
   billingState?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketingEmailConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  marketingEmailConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marketingEmailConsentRevokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marketingEmailConsentSource?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketingEmailConsentVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1115,6 +1324,11 @@ export type CustomerUncheckedUpdateWithoutCustomerEventsInput = {
   billingState?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingPostalCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   billingCountry?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketingEmailConsent?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  marketingEmailConsentAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marketingEmailConsentRevokedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  marketingEmailConsentSource?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  marketingEmailConsentVersion?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1203,6 +1417,11 @@ export type CustomerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   billingState?: boolean
   billingPostalCode?: boolean
   billingCountry?: boolean
+  marketingEmailConsent?: boolean
+  marketingEmailConsentAt?: boolean
+  marketingEmailConsentRevokedAt?: boolean
+  marketingEmailConsentSource?: boolean
+  marketingEmailConsentVersion?: boolean
   active?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1226,6 +1445,11 @@ export type CustomerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   billingState?: boolean
   billingPostalCode?: boolean
   billingCountry?: boolean
+  marketingEmailConsent?: boolean
+  marketingEmailConsentAt?: boolean
+  marketingEmailConsentRevokedAt?: boolean
+  marketingEmailConsentSource?: boolean
+  marketingEmailConsentVersion?: boolean
   active?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1243,6 +1467,11 @@ export type CustomerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   billingState?: boolean
   billingPostalCode?: boolean
   billingCountry?: boolean
+  marketingEmailConsent?: boolean
+  marketingEmailConsentAt?: boolean
+  marketingEmailConsentRevokedAt?: boolean
+  marketingEmailConsentSource?: boolean
+  marketingEmailConsentVersion?: boolean
   active?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1260,12 +1489,17 @@ export type CustomerSelectScalar = {
   billingState?: boolean
   billingPostalCode?: boolean
   billingCountry?: boolean
+  marketingEmailConsent?: boolean
+  marketingEmailConsentAt?: boolean
+  marketingEmailConsentRevokedAt?: boolean
+  marketingEmailConsentSource?: boolean
+  marketingEmailConsentVersion?: boolean
   active?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type CustomerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "name" | "passwordHash" | "billingCompany" | "billingAddressLine1" | "billingAddressLine2" | "billingCity" | "billingState" | "billingPostalCode" | "billingCountry" | "active" | "createdAt" | "updatedAt", ExtArgs["result"]["customer"]>
+export type CustomerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "email" | "name" | "passwordHash" | "billingCompany" | "billingAddressLine1" | "billingAddressLine2" | "billingCity" | "billingState" | "billingPostalCode" | "billingCountry" | "marketingEmailConsent" | "marketingEmailConsentAt" | "marketingEmailConsentRevokedAt" | "marketingEmailConsentSource" | "marketingEmailConsentVersion" | "active" | "createdAt" | "updatedAt", ExtArgs["result"]["customer"]>
 export type CustomerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | Prisma.Customer$sessionsArgs<ExtArgs>
   passwordResetTokens?: boolean | Prisma.Customer$passwordResetTokensArgs<ExtArgs>
@@ -1298,6 +1532,11 @@ export type $CustomerPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     billingState: string | null
     billingPostalCode: string | null
     billingCountry: string | null
+    marketingEmailConsent: boolean
+    marketingEmailConsentAt: Date | null
+    marketingEmailConsentRevokedAt: Date | null
+    marketingEmailConsentSource: string | null
+    marketingEmailConsentVersion: string | null
     active: boolean
     createdAt: Date
     updatedAt: Date
@@ -1740,6 +1979,11 @@ export interface CustomerFieldRefs {
   readonly billingState: Prisma.FieldRef<"Customer", 'String'>
   readonly billingPostalCode: Prisma.FieldRef<"Customer", 'String'>
   readonly billingCountry: Prisma.FieldRef<"Customer", 'String'>
+  readonly marketingEmailConsent: Prisma.FieldRef<"Customer", 'Boolean'>
+  readonly marketingEmailConsentAt: Prisma.FieldRef<"Customer", 'DateTime'>
+  readonly marketingEmailConsentRevokedAt: Prisma.FieldRef<"Customer", 'DateTime'>
+  readonly marketingEmailConsentSource: Prisma.FieldRef<"Customer", 'String'>
+  readonly marketingEmailConsentVersion: Prisma.FieldRef<"Customer", 'String'>
   readonly active: Prisma.FieldRef<"Customer", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Customer", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Customer", 'DateTime'>

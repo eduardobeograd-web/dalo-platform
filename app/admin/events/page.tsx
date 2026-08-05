@@ -39,7 +39,7 @@ export default async function AdminMarketingPage({ searchParams }: { searchParam
     prisma.customerEvent.count({ where: { ...dateWhere, eventType: "purchase_completed" } }),
     prisma.customerEvent.count({ where: { ...dateWhere, eventType: { in: ["abandoned_checkout_email_sent", "product_interest_email_sent"] } } }),
     prisma.customerEvent.count({ where: { ...dateWhere, eventType: "marketing_email_clicked" } }),
-    prisma.customerEvent.findMany({ where: { ...dateWhere, eventType: "checkout_email_entered", sessionId: { not: null } }, orderBy: { createdAt: "desc" }, take: 30, include: { product: true } }),
+    prisma.customerEvent.findMany({ where: { ...dateWhere, eventType: "checkout_reminder_requested", sessionId: { not: null } }, orderBy: { createdAt: "desc" }, take: 30, include: { product: true } }),
     prisma.customerEvent.findMany({ where: { ...dateWhere, eventType: "product_view", customerId: { not: null }, sessionId: { not: null }, productId: { not: null } }, orderBy: { createdAt: "desc" }, take: 30, include: { customer: true, product: true } }),
     prisma.customerEvent.findMany({ where: { ...dateWhere, eventType: { in: ["abandoned_checkout_email_sent", "product_interest_email_sent"] } }, orderBy: { createdAt: "desc" }, take: 20, include: { customer: true, product: true } }),
   ]);
@@ -79,10 +79,10 @@ export default async function AdminMarketingPage({ searchParams }: { searchParam
 
       <div className="mt-7 grid gap-6 xl:grid-cols-2">
         <section className="rounded-2xl border border-slate-200 bg-white p-5">
-          <div><p className="text-xs font-black uppercase tracking-wide text-orange-600">Checkout recovery</p><h2 className="mt-1 text-2xl font-black">Abandoned checkouts</h2><p className="mt-1 text-sm text-slate-500">Only sessions without a purchase or previous reminder.</p></div>
+          <div><p className="text-xs font-black uppercase tracking-wide text-orange-600">Requested reminders</p><h2 className="mt-1 text-2xl font-black">Saved checkout plans</h2><p className="mt-1 text-sm text-slate-500">Only customers who explicitly requested one reminder.</p></div>
           <div className="mt-5 divide-y divide-slate-100">
             {abandoned.slice(0,10).map((event) => <div key={event.id} className="grid gap-3 py-4 sm:grid-cols-[1fr_auto] sm:items-center"><div><p className="font-black text-slate-900">{getMetadataValue(event.metadata, "customerEmail") || "Unknown email"}</p><p className="mt-1 text-sm text-slate-500">{event.product?.name || "Unknown product"} · {minutesSince(event.createdAt)} min ago</p></div><SendAbandonedCheckoutEmailButton eventId={event.id} /></div>)}
-            {abandoned.length === 0 ? <p className="py-8 text-center text-slate-500">No open recovery opportunities.</p> : null}
+            {abandoned.length === 0 ? <p className="py-8 text-center text-slate-500">No requested reminders waiting.</p> : null}
           </div>
         </section>
 

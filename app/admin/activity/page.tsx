@@ -160,7 +160,7 @@ export default async function AdminActivityPage({ searchParams }: { searchParams
               <p className="text-slate-500">{formatAdminTime(event.createdAt)}</p>
               <p className="font-mono text-xs font-black text-blue-700">{event.eventType}</p>
               <div>
-                <p className="font-bold text-slate-900">{event.customer?.email || "Anonymous"}</p>
+                <p className="font-bold text-slate-900">{event.customer?.email || metadataString(event.metadata, "customerEmail") || "Anonymous"}</p>
                 <p className="mt-1 truncate text-xs text-slate-400">{event.sessionId || "No session"}</p>
               </div>
               <div>

@@ -15,7 +15,6 @@ const allowedPublicEvents = new Set([
   "search",
   "add_to_cart",
   "checkout_started",
-  "checkout_email_entered",
   "marketing_email_clicked",
 ]);
 

@@ -1730,6 +1730,11 @@ export const CustomerScalarFieldEnum = {
   billingState: 'billingState',
   billingPostalCode: 'billingPostalCode',
   billingCountry: 'billingCountry',
+  marketingEmailConsent: 'marketingEmailConsent',
+  marketingEmailConsentAt: 'marketingEmailConsentAt',
+  marketingEmailConsentRevokedAt: 'marketingEmailConsentRevokedAt',
+  marketingEmailConsentSource: 'marketingEmailConsentSource',
+  marketingEmailConsentVersion: 'marketingEmailConsentVersion',
   active: 'active',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

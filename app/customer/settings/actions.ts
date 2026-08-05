@@ -42,6 +42,35 @@ export async function updateCustomerProfile(formData: FormData) {
   settingsRedirect("profile-saved");
 }
 
+export async function updateMarketingPreferences(formData: FormData) {
+  const customer = await getCurrentCustomer();
+
+  if (!customer) {
+    redirect("/customer/login");
+  }
+
+  const enabled = formData.get("marketingEmailConsent") === "on";
+
+  await prisma.customer.update({
+    where: { id: customer.id },
+    data: enabled
+      ? {
+          marketingEmailConsent: true,
+          marketingEmailConsentAt: new Date(),
+          marketingEmailConsentRevokedAt: null,
+          marketingEmailConsentSource: "account_settings",
+          marketingEmailConsentVersion: "2026-08-05",
+        }
+      : {
+          marketingEmailConsent: false,
+          marketingEmailConsentRevokedAt: new Date(),
+          marketingEmailConsentSource: "account_settings",
+        },
+  });
+
+  settingsRedirect(enabled ? "marketing-enabled" : "marketing-disabled");
+}
+
 export async function updateCustomerEmail() {
   const customer = await getCurrentCustomer();
 

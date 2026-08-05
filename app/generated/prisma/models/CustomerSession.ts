@@ -381,10 +381,6 @@ export type CustomerSessionUncheckedUpdateManyWithoutCustomerNestedInput = {
   deleteMany?: Prisma.CustomerSessionScalarWhereInput | Prisma.CustomerSessionScalarWhereInput[]
 }
 
-export type NullableDateTimeFieldUpdateOperationsInput = {
-  set?: Date | string | null
-}
-
 export type CustomerSessionCreateWithoutCustomerInput = {
   id?: string
   token: string
