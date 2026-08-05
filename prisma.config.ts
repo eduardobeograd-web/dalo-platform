@@ -1,7 +1,8 @@
 import { config } from "dotenv";
 import { defineConfig } from "prisma/config";
 
-// Keep Prisma CLI commands on the same PostgreSQL database as the Next.js app.
+// Prisma migrations should use Neon's direct connection. Runtime application
+// queries continue to use the pooled DATABASE_URL configured in lib/db.ts.
 config({ path: ".env.local" });
 config();
 
@@ -11,6 +12,6 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: process.env["DATABASE_URL"],
+    url: process.env["DATABASE_URL_UNPOOLED"] || process.env["DATABASE_URL"],
   },
 });
