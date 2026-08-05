@@ -760,7 +760,10 @@ function createExplanation({
   };
 }
 
-const ACTIVE_PRODUCTS_CACHE_MS = 15_000;
+// Product recommendations change only after catalog administration. Keeping
+// the compact in-process catalog for five minutes avoids repeatedly moving the
+// complete active catalog from Neon on warm serverless instances.
+const ACTIVE_PRODUCTS_CACHE_MS = 300_000;
 let activeProductsCache:
   | {
       expiresAt: number;

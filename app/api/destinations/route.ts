@@ -22,7 +22,8 @@ export async function OPTIONS() {
 
 export async function GET() {
   try {
-    const products = await prisma.product.findMany({
+    const products = await prisma.product.groupBy({
+      by: ["country", "region"],
       where: {
         active: true,
         sellPrice: {
@@ -31,10 +32,6 @@ export async function GET() {
         validityDays: {
           gt: 0,
         },
-      },
-      select: {
-        country: true,
-        region: true,
       },
       orderBy: {
         country: "asc",

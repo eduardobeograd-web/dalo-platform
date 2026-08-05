@@ -22,7 +22,17 @@ export default async function AdminActivityPage({ searchParams }: { searchParams
     ] } : {}),
   };
   const [events, count, eventTypes] = await Promise.all([
-    prisma.customerEvent.findMany({ where, orderBy: { createdAt: "desc" }, skip: (page - 1) * PAGE_SIZE, take: PAGE_SIZE, include: { customer: true, product: true, order: true } }),
+    prisma.customerEvent.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+      include: {
+        customer: { select: { email: true } },
+        product: { select: { name: true, country: true } },
+        order: { select: { orderNumber: true } },
+      },
+    }),
     prisma.customerEvent.count({ where }),
     prisma.customerEvent.findMany({ distinct: ["eventType"], select: { eventType: true }, orderBy: { eventType: "asc" } }),
   ]);

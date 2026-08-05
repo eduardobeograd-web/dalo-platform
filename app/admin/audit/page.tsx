@@ -5,7 +5,11 @@ export default async function AdminAuditPage() {
   const entries = await prisma.adminAuditLog.findMany({
     orderBy: { createdAt: "desc" },
     take: 200,
-    include: { adminUser: true },
+    include: {
+      adminUser: {
+        select: { id: true, name: true, email: true, role: true },
+      },
+    },
   });
 
   return (

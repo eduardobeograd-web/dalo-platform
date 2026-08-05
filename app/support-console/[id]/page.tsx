@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { SupportConsoleHeader } from "../../../components/SupportConsoleHeader";
+import SupportConsoleHeader from "../../../components/SupportConsoleHeader";
 import { prisma } from "../../../lib/db";
-import { requireSupportConsoleUser } from "../../../lib/support-console-auth";
+import { requireSupportConsole } from "../../../lib/support-console-auth";
 import { sendSupportReply, updateSupportRequestStatus } from "./actions";
 
 type PageProps = {
@@ -15,7 +15,7 @@ function formatDate(value: Date) {
 }
 
 export default async function SupportRequestPage({ params, searchParams }: PageProps) {
-  await requireSupportConsoleUser();
+  const admin = await requireSupportConsole();
   const [{ id }, notice] = await Promise.all([params, searchParams]);
   const request = await prisma.supportRequest.findUnique({
     where: { id },
@@ -30,7 +30,7 @@ export default async function SupportRequestPage({ params, searchParams }: PageP
 
   return (
     <main className="min-h-screen bg-[#eef4fb] text-slate-950">
-      <SupportConsoleHeader />
+      <SupportConsoleHeader adminName={admin.name || admin.email} />
       <div className="mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-8">
         <Link href="/support-console" className="inline-flex min-h-11 items-center text-sm font-bold text-[#174dc8]">
           &larr; Back to support queue

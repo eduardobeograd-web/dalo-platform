@@ -27,7 +27,16 @@ export async function notifySupportTeam(request: SupportPushInput) {
   webpush.setVapidDetails(subject, publicKey, privateKey);
 
   const subscriptions = await prisma.supportPushSubscription.findMany({
-    include: { adminUser: true },
+    include: {
+      adminUser: {
+        select: {
+          id: true,
+          active: true,
+          role: true,
+          permissions: true,
+        },
+      },
+    },
   });
   const permitted = subscriptions.filter(
     (subscription) =>

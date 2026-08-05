@@ -57,6 +57,9 @@ model Product {
   updatedAt         DateTime @updatedAt
 
   customerEvents    CustomerEvent[]
+
+  @@index([active, country])
+  @@index([active, region])
 }
 
 model CountryNetworkCoverage {
@@ -102,6 +105,9 @@ model CustomerSession {
   createdAt  DateTime @default(now())
 
   customer Customer @relation(fields: [customerId], references: [id])
+
+  @@index([customerId])
+  @@index([expiresAt])
 }
 
 model PasswordResetToken {
@@ -165,6 +171,13 @@ model Order {
 
   supportRequests SupportRequest[]
   customerEvents  CustomerEvent[]
+
+  @@index([customerId, createdAt])
+  @@index([customer, createdAt])
+  @@index([payment, createdAt])
+  @@index([fulfillment, createdAt])
+  @@index([esimStatus])
+  @@index([productId])
 }
 
 model SupportRequest {
@@ -188,6 +201,10 @@ model SupportRequest {
   customer Customer? @relation(fields: [customerId], references: [id])
   order    Order?    @relation(fields: [orderId], references: [id])
   replies  SupportReply[]
+
+  @@index([status, createdAt])
+  @@index([customerId])
+  @@index([orderId])
 }
 
 model CustomerEvent {

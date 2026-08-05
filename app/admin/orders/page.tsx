@@ -70,19 +70,22 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
     OR: [{ fulfillment: { not: "Delivered" } }, { esimStatus: { not: "ready" } }],
   };
 
-  const [orders, filteredCount, totalOrders, paidOrders, needsFulfillmentCount] = await Promise.all([
+  const [orders, filteredCount, totalOrders, paidTotals, needsFulfillmentCount] = await Promise.all([
     prisma.order.findMany({ where, orderBy: { createdAt: "desc" }, skip: (page - 1) * PAGE_SIZE, take: PAGE_SIZE }),
     prisma.order.count({ where }),
     prisma.order.count(),
-    prisma.order.findMany({ where: { payment: "Paid" }, select: { amount: true, buyPriceAtPurchase: true } }),
+    prisma.order.aggregate({
+      where: { payment: "Paid" },
+      _sum: { amount: true, buyPriceAtPurchase: true },
+    }),
     prisma.order.count({ where: needsFulfillmentWhere }),
   ]);
 
   const productIds = [...new Set(orders.map((order) => order.productId))];
   const products = await prisma.product.findMany({ where: { id: { in: productIds } } });
   const productMap = new Map(products.map((product) => [product.id, product]));
-  const revenue = paidOrders.reduce((sum, order) => sum + (order.amount || 0), 0);
-  const profit = paidOrders.reduce((sum, order) => sum + (order.amount || 0) - (order.buyPriceAtPurchase || 0), 0);
+  const revenue = paidTotals._sum.amount || 0;
+  const profit = revenue - (paidTotals._sum.buyPriceAtPurchase || 0);
   const pages = Math.max(1, Math.ceil(filteredCount / PAGE_SIZE));
 
   return (

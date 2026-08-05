@@ -13,107 +13,89 @@ function getMargin(buyPrice: number, sellPrice: number) {
 }
 
 export default async function AdminDashboard() {
-  const [products, orders, supportRequests] = await Promise.all([
-    prisma.product.findMany({
-      orderBy: {
-        createdAt: "asc",
+  const [
+    totalProducts,
+    activeProductsCount,
+    catalogPrices,
+    totalOrders,
+    paidOrders,
+    pendingOrders,
+    paidTotals,
+    openFulfillmentsCount,
+    failedPaymentsCount,
+    expiredCheckoutsCount,
+    refundedOrdersCount,
+    operationalOrders,
+    totalSupportRequests,
+    openSupportRequests,
+    inProgressSupportRequests,
+    resolvedSupportRequests,
+  ] = await Promise.all([
+    prisma.product.count(),
+    prisma.product.count({ where: { active: true } }),
+    prisma.product.findMany({ select: { buyPrice: true, sellPrice: true } }),
+    prisma.order.count(),
+    prisma.order.count({ where: { payment: "Paid" } }),
+    prisma.order.count({ where: { payment: "Pending" } }),
+    prisma.order.aggregate({
+      where: { payment: "Paid" },
+      _sum: { amount: true, buyPriceAtPurchase: true },
+    }),
+    prisma.order.count({
+      where: {
+        payment: "Paid",
+        OR: [
+          { fulfillment: { not: "Delivered" } },
+          { esimStatus: { not: "ready" } },
+        ],
       },
     }),
+    prisma.order.count({ where: { payment: "Failed" } }),
+    prisma.order.count({ where: { payment: "Expired" } }),
+    prisma.order.count({ where: { payment: "Refunded" } }),
     prisma.order.findMany({
-      orderBy: {
-        createdAt: "desc",
+      where: {
+        OR: [
+          {
+            payment: "Paid",
+            OR: [
+              { fulfillment: { not: "Delivered" } },
+              { esimStatus: { not: "ready" } },
+            ],
+          },
+          { payment: { in: ["Failed", "Expired", "Refunded"] } },
+        ],
+      },
+      orderBy: { createdAt: "desc" },
+      take: 6,
+      select: {
+        id: true,
+        orderNumber: true,
+        customer: true,
+        payment: true,
+        fulfillment: true,
+        esimStatus: true,
       },
     }),
-    prisma.supportRequest.findMany({
-      orderBy: {
-        createdAt: "desc",
-      },
-    }),
+    prisma.supportRequest.count(),
+    prisma.supportRequest.count({ where: { status: "open" } }),
+    prisma.supportRequest.count({ where: { status: "in_progress" } }),
+    prisma.supportRequest.count({ where: { status: "resolved" } }),
   ]);
 
-  const activeProducts = products.filter((product) => product.active);
-
-  const orderRows = orders.map((order) => {
-    const product = products.find((item) => item.id === order.productId);
-
-    return {
-      ...order,
-      product,
-      amount: order.amount ?? product?.sellPrice ?? 0,
-      profit:
-        (order.amount ?? product?.sellPrice ?? 0) -
-        (order.buyPriceAtPurchase ?? product?.buyPrice ?? 0),
-    };
-  });
-
-  const paidOrderRows = orderRows.filter((order) => order.payment === "Paid");
-
-  const revenue = paidOrderRows.reduce(
-    (total, order) => total + order.amount,
-    0
-  );
-
-  const profit = paidOrderRows.reduce(
-    (total, order) => total + order.profit,
-    0
-  );
-
-  const pendingOrders = orders.filter(
-    (order) => order.payment === "Pending"
-  ).length;
-
-  const paidOrders = orders.filter((order) => order.payment === "Paid").length;
-
-  const openFulfillments = orders.filter(
-    (order) =>
-      order.payment === "Paid" &&
-      (order.fulfillment !== "Delivered" || order.esimStatus !== "ready")
-  );
-
-  const failedPayments = orders.filter(
-    (order) => order.payment === "Failed"
-  );
-
-  const expiredCheckouts = orders.filter(
-    (order) => order.payment === "Expired"
-  );
-
-  const refundedOrders = orders.filter(
-    (order) => order.payment === "Refunded"
-  );
-
-  const operationalOrders = orders
-    .filter(
-      (order) =>
-        openFulfillments.some((item) => item.id === order.id) ||
-        order.payment === "Failed" ||
-        order.payment === "Expired" ||
-        order.payment === "Refunded"
-    )
-    .slice(0, 6);
-
-  const openSupportRequests = supportRequests.filter(
-    (request) => request.status === "open"
-  ).length;
-
-  const inProgressSupportRequests = supportRequests.filter(
-    (request) => request.status === "in_progress"
-  ).length;
-
-  const resolvedSupportRequests = supportRequests.filter(
-    (request) => request.status === "resolved"
-  ).length;
+  const revenue = paidTotals._sum.amount || 0;
+  const profit = revenue - (paidTotals._sum.buyPriceAtPurchase || 0);
 
   const averageMargin =
-    products.length > 0
-      ? products.reduce(
+    catalogPrices.length > 0
+      ? catalogPrices.reduce(
           (total, product) =>
             total + getMargin(product.buyPrice, product.sellPrice),
           0
-        ) / products.length
+        ) / catalogPrices.length
       : 0;
 
-  const estimatedCatalogValue = products.reduce(
+  const estimatedCatalogValue = catalogPrices.reduce(
     (total, product) => total + product.sellPrice,
     0
   );
@@ -149,7 +131,7 @@ export default async function AdminDashboard() {
       <div className="grid gap-6 md:grid-cols-4">
         <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
           <p className="text-sm font-semibold text-slate-500">Products</p>
-          <h2 className="mt-3 text-3xl font-bold">{products.length}</h2>
+          <h2 className="mt-3 text-3xl font-bold">{totalProducts}</h2>
           <p className="mt-2 text-sm text-slate-500">
             Total products in database
           </p>
@@ -159,7 +141,7 @@ export default async function AdminDashboard() {
           <p className="text-sm font-semibold text-slate-500">
             Active Products
           </p>
-          <h2 className="mt-3 text-3xl font-bold">{activeProducts.length}</h2>
+          <h2 className="mt-3 text-3xl font-bold">{activeProductsCount}</h2>
           <p className="mt-2 text-sm text-slate-500">
             Visible for recommendations
           </p>
@@ -183,7 +165,7 @@ export default async function AdminDashboard() {
       <div className="mt-8 grid gap-6 md:grid-cols-4">
         <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
           <p className="text-sm font-semibold text-slate-500">Orders</p>
-          <h2 className="mt-3 text-3xl font-bold">{orders.length}</h2>
+          <h2 className="mt-3 text-3xl font-bold">{totalOrders}</h2>
           <p className="mt-2 text-sm text-slate-500">
             Total database orders
           </p>
@@ -244,22 +226,22 @@ export default async function AdminDashboard() {
           {[
             {
               label: "Open delivery",
-              value: openFulfillments.length,
+              value: openFulfillmentsCount,
               color: "text-blue-700",
             },
             {
               label: "Failed payments",
-              value: failedPayments.length,
+              value: failedPaymentsCount,
               color: "text-red-700",
             },
             {
               label: "Expired checkouts",
-              value: expiredCheckouts.length,
+              value: expiredCheckoutsCount,
               color: "text-amber-700",
             },
             {
               label: "Refunded",
-              value: refundedOrders.length,
+              value: refundedOrdersCount,
               color: "text-slate-700",
             },
           ].map((item) => (
@@ -336,21 +318,21 @@ export default async function AdminDashboard() {
             <div className="flex items-center justify-between rounded-2xl bg-green-50 p-4">
               <span className="font-semibold">Product Table</span>
               <span className="font-bold text-green-700">
-                {products.length} Products
+                {totalProducts} Products
               </span>
             </div>
 
             <div className="flex items-center justify-between rounded-2xl bg-green-50 p-4">
               <span className="font-semibold">Order Table</span>
               <span className="font-bold text-green-700">
-                {orders.length} Orders
+                {totalOrders} Orders
               </span>
             </div>
 
             <div className="flex items-center justify-between rounded-2xl bg-green-50 p-4">
               <span className="font-semibold">Support Table</span>
               <span className="font-bold text-green-700">
-                {supportRequests.length} Requests
+                {totalSupportRequests} Requests
               </span>
             </div>
 
