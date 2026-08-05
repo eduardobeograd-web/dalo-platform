@@ -11,6 +11,7 @@ import DestinationMap, {
   hasDestinationMap,
 } from "../../../components/DestinationMap";
 import { parseDestinationFaq } from "../../../lib/destination-pages";
+import { getDestinationEditorialGuide } from "../../../lib/destination-editorial-guides";
 import { getDestinationImage } from "../../../lib/destination-images";
 import { prisma } from "../../../lib/db";
 import {
@@ -279,6 +280,7 @@ export default async function EsimLandingPage({ params }: PageProps) {
 
   const displayName =
     managedPage?.displayName || seoPage?.name || page!.name;
+  const editorialGuide = getDestinationEditorialGuide(slug);
   const destinationImage =
     managedPage?.heroImage || getDestinationImage(displayName);
   const pageUrl = `${baseUrl}/esim/${slug}`;
@@ -617,6 +619,66 @@ export default async function EsimLandingPage({ params }: PageProps) {
                   <p className="mt-3 leading-7 text-slate-600">{text}</p>
                 </article>
               ))}
+          </section>
+        ) : null}
+
+        {editorialGuide ? (
+          <section className="mt-10 overflow-hidden rounded-[2rem] border border-blue-100 bg-white shadow-[0_20px_55px_rgba(37,83,215,0.1)]">
+            <div className="border-b border-blue-100 bg-gradient-to-r from-blue-50 via-white to-orange-50 px-6 py-7 sm:px-8">
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-700">
+                Connected travel guide
+              </p>
+              <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
+                Plan your connected trip to {displayName}
+              </h2>
+              <p className="mt-3 max-w-3xl leading-7 text-slate-600">
+                Practical guidance for choosing your data allowance and arriving
+                with the information you need already available.
+              </p>
+            </div>
+
+            <div className="grid lg:grid-cols-2">
+              <article className="border-b border-blue-100 p-6 sm:p-8 lg:border-b-0 lg:border-r">
+                <p className="text-xs font-black uppercase tracking-[0.15em] text-blue-700">
+                  How much data do you need?
+                </p>
+                <p className="mt-3 leading-7 text-slate-600">
+                  {editorialGuide.dataAdvice}
+                </p>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {editorialGuide.useCases.map((useCase) => (
+                    <span
+                      key={useCase}
+                      className="rounded-full border border-blue-100 bg-blue-50 px-3 py-1.5 text-xs font-bold text-blue-800"
+                    >
+                      {useCase}
+                    </span>
+                  ))}
+                </div>
+              </article>
+
+              <article className="p-6 sm:p-8">
+                <p className="text-xs font-black uppercase tracking-[0.15em] text-orange-700">
+                  Arrive connected
+                </p>
+                <p className="mt-3 leading-7 text-slate-600">
+                  {editorialGuide.arrivalAdvice}
+                </p>
+                <p className="mt-6 text-xs font-black uppercase tracking-[0.15em] text-slate-500">
+                  Popular stops
+                </p>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {editorialGuide.places.map((place) => (
+                    <span
+                      key={place}
+                      className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-700"
+                    >
+                      {place}
+                    </span>
+                  ))}
+                </div>
+              </article>
+            </div>
           </section>
         ) : null}
 
