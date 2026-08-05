@@ -289,6 +289,15 @@ export default async function CustomerDashboardPage() {
                             Remaining: {formatGb(order.remainingDataGb)}
                           </p>
                         ) : null}
+
+                        {!isRefunded ? (
+                          <a
+                            href={`/customer/orders/${order.id}#top-up`}
+                            className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-blue-600 px-4 text-sm font-bold text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-200"
+                          >
+                            Buy more data
+                          </a>
+                        ) : null}
                       </div>
                     </div>
 
@@ -328,19 +337,12 @@ export default async function CustomerDashboardPage() {
                           Get help
                         </a>
 
-                        <a
-                          href={`/customer/orders/${order.id}#top-up`}
-                          className="inline-flex min-h-11 items-center justify-center rounded-xl bg-white/10 px-3 text-center text-xs font-bold text-white sm:block sm:rounded-2xl sm:px-5 sm:py-4 sm:text-base"
+                        <span
+                          aria-disabled="true"
+                          className="col-span-2 inline-flex min-h-11 cursor-not-allowed items-center justify-center rounded-xl border border-white/10 px-3 text-center text-xs font-bold text-slate-400 sm:rounded-2xl sm:bg-white/5 sm:px-5 sm:py-4 sm:text-sm"
                         >
-                          Buy more data
-                        </a>
-
-                        <a
-                          href="/"
-                          className="col-span-2 inline-flex min-h-11 items-center justify-center rounded-xl border border-white/10 px-3 text-center text-xs font-bold text-slate-200 sm:block sm:rounded-2xl sm:bg-white/10 sm:px-5 sm:py-4 sm:text-base sm:text-white"
-                        >
-                          Add another destination
-                        </a>
+                          Add another destination · Coming soon
+                        </span>
                       </div>
 
                       <div className="hidden">

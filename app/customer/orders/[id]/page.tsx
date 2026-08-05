@@ -354,6 +354,44 @@ export default async function CustomerOrderDetailPage({
                       provider usage sync is connected.
                     </div>
                   )}
+
+                  {!isRefunded ? (
+                    <div id="top-up" className="mt-5 scroll-mt-24 border-t border-slate-200 pt-5">
+                      <div className="flex items-start justify-between gap-4">
+                        <div>
+                          <p className="font-black text-slate-950">Need more data?</p>
+                          <p className="mt-1 text-sm leading-5 text-slate-600">
+                            Buy a compatible top-up for this eSIM without another installation.
+                          </p>
+                        </div>
+                        <span className="shrink-0 rounded-full bg-blue-50 px-3 py-1 text-[10px] font-black uppercase tracking-wide text-blue-700">
+                          Coming soon
+                        </span>
+                      </div>
+                      <button
+                        disabled
+                        className="mt-4 min-h-11 w-full cursor-not-allowed rounded-xl bg-blue-100 px-4 text-sm font-bold text-blue-400"
+                      >
+                        Buy more data
+                      </button>
+
+                      <div className="mt-4 border-t border-slate-200 pt-4">
+                        <p className="text-sm font-black text-slate-950">
+                          Travelling somewhere else?
+                        </p>
+                        <p className="mt-1 text-xs leading-5 text-slate-600">
+                          Choose another destination. Compatible plans may use
+                          this installed eSIM again.
+                        </p>
+                        <span
+                          aria-disabled="true"
+                          className="mt-3 inline-flex min-h-11 w-full cursor-not-allowed items-center justify-center rounded-xl border border-slate-200 bg-slate-50 px-4 text-sm font-bold text-slate-400"
+                        >
+                          Add another destination · Coming soon
+                        </span>
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
               </div>
 
@@ -429,23 +467,6 @@ export default async function CustomerOrderDetailPage({
                   </a>
                 </div>
 
-                <div className="hidden rounded-[2rem] bg-blue-50 p-6 sm:block">
-                  <h3 className="text-2xl font-bold text-blue-950">
-                    <span id="top-up" className="scroll-mt-24">Top-up coming soon</span>
-                  </h3>
-
-                  <p className="mt-3 text-blue-700">
-                    Later customers will be able to buy more data for this eSIM
-                    here.
-                  </p>
-
-                  <button
-                    disabled
-                    className="mt-6 w-full rounded-2xl bg-blue-100 px-5 py-4 font-bold text-blue-400"
-                  >
-                    Buy top-up soon
-                  </button>
-                </div>
               </aside>
             </div>
           </div>
