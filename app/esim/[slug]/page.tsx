@@ -154,6 +154,67 @@ function getPlanHint(dataAmount: string) {
   return "Best for light travel use";
 }
 
+type TravelerPlanCandidate = {
+  id: string;
+  name: string;
+  data: string;
+  validityDays: number;
+  sellPrice: number;
+};
+
+function getPlanDataGb(dataAmount: string) {
+  const normalized = dataAmount.toLowerCase().replace(/\s+/g, "");
+  const value = Number.parseFloat(normalized.match(/[\d.]+/)?.[0] || "0");
+  if (!Number.isFinite(value)) return 0;
+  return normalized.includes("mb") ? value / 1_000 : value;
+}
+
+function getTravelerPlanPicks<T extends TravelerPlanCandidate>(products: T[]) {
+  if (!products.length) return [];
+
+  const shortTrip = [...products].sort(
+    (left, right) =>
+      Math.abs(left.validityDays - 3) - Math.abs(right.validityDays - 3) ||
+      getPlanDataGb(left.data) - getPlanDataGb(right.data) ||
+      left.sellPrice - right.sellPrice,
+  )[0];
+  const everyday = [...products].sort(
+    (left, right) =>
+      Math.abs(getPlanDataGb(left.data) - 5) -
+        Math.abs(getPlanDataGb(right.data) - 5) ||
+      Math.abs(left.validityDays - 7) - Math.abs(right.validityDays - 7) ||
+      left.sellPrice - right.sellPrice,
+  )[0];
+  const heavy = [...products].sort(
+    (left, right) =>
+      getPlanDataGb(right.data) - getPlanDataGb(left.data) ||
+      right.validityDays - left.validityDays ||
+      left.sellPrice - right.sellPrice,
+  )[0];
+
+  return [
+    {
+      label: "Short city break",
+      detail: "A practical starting point for maps, messages and bookings.",
+      product: shortTrip,
+    },
+    {
+      label: "One-week trip",
+      detail: "Balanced for everyday navigation, calls and social use.",
+      product: everyday,
+    },
+    {
+      label: "Heavy data use",
+      detail: "More headroom for video, hotspot and longer travel days.",
+      product: heavy,
+    },
+  ].filter(
+    (pick, index, allPicks) =>
+      allPicks.findIndex((candidate) => candidate.product.id === pick.product.id) ===
+      index,
+  );
+}
+
 async function getProducts(
   slug: string,
   managedPage?: { countryName: string; displayName: string } | null,
@@ -314,6 +375,11 @@ export default async function EsimLandingPage({ params }: PageProps) {
 
   const products = await getProducts(slug, managedPage);
   const bestProduct = products[0];
+  const travelerPlanPicks = getTravelerPlanPicks(products);
+  const contentReviewedAt = managedPage?.updatedAt.toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+  });
 
   if (!bestProduct) notFound();
 
@@ -595,6 +661,62 @@ export default async function EsimLandingPage({ params }: PageProps) {
           </section>
         )}
 
+        {travelerPlanPicks.length > 1 ? (
+          <section className="mt-10">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-blue-700">
+                  Choose by travel style
+                </p>
+                <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950 sm:text-3xl">
+                  A useful starting point for your {displayName} trip
+                </h2>
+              </div>
+              <p className="max-w-md text-sm leading-6 text-slate-600">
+                These options are selected from currently available DALO plans.
+                Your quiz result can refine the match further.
+              </p>
+            </div>
+
+            <div className="mt-6 grid gap-4 md:grid-cols-3">
+              {travelerPlanPicks.map(({ label, detail, product }, index) => (
+                <article
+                  key={label}
+                  className={`rounded-[1.5rem] border p-5 sm:p-6 ${
+                    index === 1
+                      ? "border-blue-600 bg-blue-50 shadow-lg shadow-blue-100"
+                      : "border-blue-100 bg-white shadow-sm"
+                  }`}
+                >
+                  <p className="text-xs font-black uppercase tracking-[0.14em] text-blue-700">
+                    {label}
+                  </p>
+                  <h3 className="mt-3 text-xl font-black text-slate-950">
+                    {product.data} · {product.validityDays} days
+                  </h3>
+                  <p className="mt-2 min-h-12 text-sm leading-6 text-slate-600">
+                    {detail}
+                  </p>
+                  <div className="mt-5 flex items-end justify-between gap-3">
+                    <div>
+                      <p className="text-xs font-semibold text-slate-500">From</p>
+                      <p className="text-2xl font-black text-slate-950">
+                        ${product.sellPrice.toFixed(2)}
+                      </p>
+                    </div>
+                    <Link
+                      href={`/checkout?productId=${product.id}`}
+                      className="inline-flex min-h-11 items-center justify-center rounded-xl bg-blue-700 px-4 text-sm font-black text-white transition hover:bg-blue-800"
+                    >
+                      View plan →
+                    </Link>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
         {managedPage &&
         [
           managedPage.coverageText,
@@ -680,6 +802,27 @@ export default async function EsimLandingPage({ params }: PageProps) {
               </article>
             </div>
           </section>
+        ) : null}
+
+        {managedPage ? (
+          <aside className="mt-6 flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white px-5 py-4 text-sm text-slate-600 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+            <div className="flex items-center gap-3">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-50 font-black text-emerald-700">
+                ✓
+              </span>
+              <div>
+                <p className="font-black text-slate-950">Reviewed by DALO</p>
+                <p>
+                  Destination guidance and active catalog information
+                  {contentReviewedAt ? ` · Updated ${contentReviewedAt}` : ""}
+                </p>
+              </div>
+            </div>
+            <p className="max-w-lg leading-6 sm:text-right">
+              Plan availability and prices come from the current DALO catalog.
+              Emergency details are displayed only with a verified official source.
+            </p>
+          </aside>
         ) : null}
 
         <section className="mt-10 overflow-hidden rounded-[2rem] bg-[#0b2f78] text-white shadow-xl shadow-blue-200">
