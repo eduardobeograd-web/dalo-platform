@@ -2,6 +2,7 @@ import crypto from "node:crypto";
 import { prisma } from "@/lib/db";
 
 const EVENT_TYPE = "security_rate_limit";
+const BLOCKED_EVENT_TYPE = "security_rate_limit_blocked";
 
 type SecurityRateLimitInput = {
   scope: string;
@@ -21,6 +22,27 @@ function requestAddress(headers: Headers) {
     "unknown";
 
   return value.split(",")[0].trim().slice(0, 128) || "unknown";
+}
+
+function requestCountry(headers: Headers) {
+  const country =
+    headers.get("x-vercel-ip-country") ||
+    headers.get("cf-ipcountry") ||
+    "unknown";
+
+  return /^[a-z]{2}$/i.test(country) ? country.toUpperCase() : "unknown";
+}
+
+function requestBrowser(headers: Headers) {
+  const userAgent = headers.get("user-agent") || "";
+
+  if (/edg\//i.test(userAgent)) return "Edge";
+  if (/opr\//i.test(userAgent)) return "Opera";
+  if (/samsungbrowser/i.test(userAgent)) return "Samsung Internet";
+  if (/firefox\//i.test(userAgent)) return "Firefox";
+  if (/crios|chrome|chromium/i.test(userAgent)) return "Chrome";
+  if (/safari/i.test(userAgent)) return "Safari";
+  return "Unknown browser";
 }
 
 function fingerprint(secret: string, scope: string, kind: string, value: string) {
@@ -76,6 +98,8 @@ export async function allowSecurityAttempt({
       : []),
   ];
   const windowStart = new Date(Date.now() - windowMinutes * 60_000);
+  const country = requestCountry(headers);
+  const browser = requestBrowser(headers);
   const counts = await Promise.all(
     limits.map(({ key }) =>
       prisma.customerEvent.count({
@@ -88,7 +112,25 @@ export async function allowSecurityAttempt({
     ),
   );
 
-  if (counts.some((count, index) => count >= limits[index].limit)) {
+  const blockedLimits = limits.filter(
+    (_, index) => counts[index] >= limits[index].limit,
+  );
+
+  if (blockedLimits.length > 0) {
+    await prisma.customerEvent.createMany({
+      data: blockedLimits.map(({ key, kind }) => ({
+        eventType: BLOCKED_EVENT_TYPE,
+        sessionId: fingerprint(secret, normalizedScope, "blocked", key),
+        metadata: {
+          scope: normalizedScope,
+          kind,
+          outcome: "blocked",
+          country,
+          browser,
+          windowMinutes,
+        },
+      })),
+    });
     return false;
   }
 
@@ -99,6 +141,9 @@ export async function allowSecurityAttempt({
       metadata: {
         scope: normalizedScope,
         kind,
+        outcome: "counted",
+        country,
+        browser,
         windowMinutes,
       },
     })),
