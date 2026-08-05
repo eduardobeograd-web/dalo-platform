@@ -561,7 +561,7 @@ export default async function EsimLandingPage({ params }: PageProps) {
                     </p>
                   </div>
                   <Link
-                    href={`/checkout?productId=${bestProduct.id}`}
+                    href={`/checkout?productId=${bestProduct.id}&providerProductId=${encodeURIComponent(bestProduct.providerProductId)}`}
                     className="inline-flex min-h-11 items-center justify-center rounded-xl bg-blue-700 px-4 text-sm font-bold text-white"
                   >
                     View best plan →
@@ -649,7 +649,7 @@ export default async function EsimLandingPage({ params }: PageProps) {
                   </div>
 
                   <Link
-                    href={`/checkout?productId=${product.id}`}
+                    href={`/checkout?productId=${product.id}&providerProductId=${encodeURIComponent(product.providerProductId)}`}
                     className="rounded-full bg-blue-700 px-5 py-3 text-sm font-bold text-white"
                   >
                     Get this eSIM →
@@ -722,7 +722,7 @@ export default async function EsimLandingPage({ params }: PageProps) {
                       </p>
                     </div>
                     <Link
-                      href={`/checkout?productId=${product.id}`}
+                      href={`/checkout?productId=${product.id}&providerProductId=${encodeURIComponent(product.providerProductId)}`}
                       className="inline-flex min-h-11 items-center justify-center rounded-xl bg-blue-700 px-4 text-sm font-black text-white transition hover:bg-blue-800"
                     >
                       View plan →

@@ -224,12 +224,29 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const product = await prisma.product.findFirst({
+    let product = await prisma.product.findFirst({
       where: {
         id: productId,
         active: true,
       },
     });
+
+    const providerProductId =
+      typeof body.providerProductId === "string"
+        ? body.providerProductId.trim().slice(0, 160)
+        : "";
+
+    if (!product && providerProductId) {
+      product = await prisma.product.findFirst({
+        where: {
+          providerProductId,
+          active: true,
+        },
+        orderBy: {
+          updatedAt: "desc",
+        },
+      });
+    }
 
     if (!product) {
       return NextResponse.json(

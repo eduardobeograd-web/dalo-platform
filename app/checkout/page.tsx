@@ -215,6 +215,11 @@ export default async function CheckoutPage({
             className="mt-6 space-y-4 sm:mt-8 sm:space-y-5"
           >
             <input type="hidden" name="productId" value={product.id} />
+            <input
+              type="hidden"
+              name="providerProductId"
+              value={product.providerProductId}
+            />
             <input type="hidden" name="marketingCampaign" value={marketingCampaign} />
             <input type="hidden" name="marketingSourceEventId" value={marketingSourceEventId} />
             <input type="hidden" name="recommendedProductId" value={recommendedProductId} />
