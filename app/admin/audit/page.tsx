@@ -1,6 +1,18 @@
 import AdminShell from "../../../components/AdminShell";
 import { prisma } from "../../../lib/db";
 
+function formatAdminTime(value: Date) {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/Belgrade",
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  }).format(value);
+}
+
 export default async function AdminAuditPage() {
   const entries = await prisma.adminAuditLog.findMany({
     orderBy: { createdAt: "desc" },
@@ -20,7 +32,7 @@ export default async function AdminAuditPage() {
         </p>
         <h1 className="mt-2 text-3xl font-black text-slate-950">Audit log</h1>
         <p className="mt-2 text-slate-600">
-          The latest security and access changes across the DALO admin.
+          The latest security and access changes across the DALO admin. Times are shown in Europe/Belgrade time.
         </p>
 
         <div className="mt-8 overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
@@ -29,7 +41,7 @@ export default async function AdminAuditPage() {
               {entries.map((entry) => (
                 <div key={entry.id} className="grid gap-2 px-6 py-4 md:grid-cols-[180px_1fr_1fr_180px] md:items-center">
                   <p className="text-sm text-slate-500">
-                    {entry.createdAt.toLocaleString("en")}
+                    {formatAdminTime(entry.createdAt)}
                   </p>
                   <p className="font-bold text-slate-950">
                     {entry.adminUser?.name || "System"}

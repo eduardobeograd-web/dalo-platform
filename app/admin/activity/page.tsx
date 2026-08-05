@@ -4,6 +4,18 @@ import { prisma } from "../../../lib/db";
 
 const PAGE_SIZE = 50;
 
+function formatAdminTime(value: Date) {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/Belgrade",
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  }).format(value);
+}
+
 function first(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] || "" : value || "";
 }
@@ -30,6 +42,15 @@ function securityEventDetails(metadata: unknown) {
       .join(" · ") || "Details not recorded",
     outcome,
   };
+}
+
+function visitorEventContext(metadata: unknown) {
+  const country = metadataString(metadata, "visitorCountry");
+  const browser = metadataString(metadata, "browser");
+  const pagePath = metadataString(metadata, "pagePath");
+  const values = [country, browser, pagePath].filter(Boolean);
+
+  return values.length > 0 ? values.join(" · ") : null;
 }
 
 export default async function AdminActivityPage({ searchParams }: { searchParams?: Promise<Record<string, string | string[] | undefined>> }) {
@@ -83,9 +104,10 @@ export default async function AdminActivityPage({ searchParams }: { searchParams
             const securityDetails = event.eventType.startsWith("security_rate_limit")
               ? securityEventDetails(event.metadata)
               : null;
+            const visitorContext = visitorEventContext(event.metadata);
 
             return <div key={event.id} className="grid gap-3 px-5 py-4 text-sm lg:grid-cols-[190px_1fr_1.3fr_1.3fr]">
-              <p className="text-slate-500">{event.createdAt.toLocaleString("en")}</p>
+              <p className="text-slate-500">{formatAdminTime(event.createdAt)}</p>
               <p className="font-mono text-xs font-black text-blue-700">{event.eventType}</p>
               <div>
                 <p className="font-bold text-slate-900">{event.customer?.email || "Anonymous"}</p>
@@ -96,7 +118,9 @@ export default async function AdminActivityPage({ searchParams }: { searchParams
                   <p className="font-bold capitalize text-slate-700">{securityDetails?.title || event.order?.orderNumber || event.product?.name || "No linked record"}</p>
                   {securityDetails?.outcome ? <span className={`rounded-full px-2 py-0.5 text-[10px] font-black uppercase ${securityDetails.outcome === "blocked" ? "bg-red-50 text-red-700" : "bg-slate-100 text-slate-600"}`}>{securityDetails.outcome}</span> : null}
                 </div>
-                <p className="mt-1 text-xs text-slate-400">{securityDetails?.context || event.product?.country || ""}</p>
+                <p className="mt-1 text-xs text-slate-400">
+                  {securityDetails?.context || (visitorContext ? `Visitor: ${visitorContext}` : event.product?.country || "")}
+                </p>
               </div>
             </div>;
           })}

@@ -48,6 +48,10 @@ export async function trackClientEvent(input: TrackClientEventInput) {
       },
       body: JSON.stringify({
         ...input,
+        metadata: {
+          ...input.metadata,
+          pagePath: window.location.pathname,
+        },
         sessionId:
           input.sessionId ??
           (consentCategory === "necessary" ? null : getSessionId()),

@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import DeferredCookieConsent from "../components/DeferredCookieConsent";
 import DeferredDeviceCompatibilityCheck from "../components/DeferredDeviceCompatibilityCheck";
+import PageViewTracker from "../components/tracking/PageViewTracker";
 import { siteUrl as baseUrl } from "../lib/site-url";
 import "./globals.css";
 
@@ -95,6 +96,7 @@ export default function RootLayout({
           }}
         />
         {children}
+        <PageViewTracker />
         <DeferredDeviceCompatibilityCheck />
         <DeferredCookieConsent />
       </body>

@@ -10,6 +10,7 @@ import {
 
 const allowedPublicEvents = new Set([
   "product_view",
+  "page_view",
   "category_view",
   "search",
   "add_to_cart",
@@ -37,6 +38,33 @@ function cleanMetadata(value: unknown) {
   delete metadata.stripePaymentIntentId;
 
   return metadata;
+}
+
+function requestCountry(request: Request) {
+  const hostname = new URL(request.url).hostname;
+
+  if (hostname === "localhost" || hostname === "127.0.0.1") {
+    return "Local";
+  }
+
+  const country =
+    request.headers.get("x-vercel-ip-country") ||
+    request.headers.get("cf-ipcountry") ||
+    "Unknown";
+
+  return /^[a-z]{2}$/i.test(country) ? country.toUpperCase() : "Unknown";
+}
+
+function requestBrowser(request: Request) {
+  const userAgent = request.headers.get("user-agent") || "";
+
+  if (/edg\//i.test(userAgent)) return "Edge";
+  if (/opr\//i.test(userAgent)) return "Opera";
+  if (/samsungbrowser/i.test(userAgent)) return "Samsung Internet";
+  if (/firefox\//i.test(userAgent)) return "Firefox";
+  if (/crios|chrome|chromium/i.test(userAgent)) return "Chrome";
+  if (/safari/i.test(userAgent)) return "Safari";
+  return "Unknown browser";
 }
 
 export async function POST(request: Request) {
@@ -98,13 +126,18 @@ export async function POST(request: Request) {
       }
     }
 
+    const safeMetadata = cleanMetadata(metadata) || {};
     const event = await trackCustomerEvent({
       customerId: null,
       orderId: null,
       productId: cleanIdentifier(productId),
       sessionId: cleanIdentifier(sessionId),
       eventType,
-      metadata: cleanMetadata(metadata),
+      metadata: {
+        ...safeMetadata,
+        visitorCountry: requestCountry(request),
+        browser: requestBrowser(request),
+      },
     });
 
     return NextResponse.json({

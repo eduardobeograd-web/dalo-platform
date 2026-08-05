@@ -70,6 +70,9 @@ function clearOptionalTrackingStorage() {
     if (key?.startsWith("dalo_product_view_")) {
       window.sessionStorage.removeItem(key);
     }
+    if (key?.startsWith("dalo_page_view_")) {
+      window.sessionStorage.removeItem(key);
+    }
   }
 }
 
@@ -116,6 +119,7 @@ export function getEventConsentCategory(eventType: string) {
   if (
     [
       "product_view",
+      "page_view",
       "category_view",
       "search",
       "add_to_cart",
