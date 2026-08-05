@@ -5,40 +5,23 @@ function formatPrice(value: number) {
   return `$${value.toFixed(2)}`;
 }
 
-function getMargin(buyPrice: number, sellPrice: number) {
-  if (sellPrice === 0) return 0;
-
-  const profit = sellPrice - buyPrice;
-  return Math.round((profit / sellPrice) * 100);
-}
-
 export default async function AdminDashboard() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
   const [
-    totalProducts,
-    activeProductsCount,
-    catalogPrices,
-    totalOrders,
-    paidOrders,
-    pendingOrders,
-    paidTotals,
+    todaysOrders,
+    todaysPaidTotals,
     openFulfillmentsCount,
     failedPaymentsCount,
-    expiredCheckoutsCount,
-    refundedOrdersCount,
-    operationalOrders,
-    totalSupportRequests,
+    refundedTodayCount,
     openSupportRequests,
     inProgressSupportRequests,
-    resolvedSupportRequests,
+    operationalOrders,
   ] = await Promise.all([
-    prisma.product.count(),
-    prisma.product.count({ where: { active: true } }),
-    prisma.product.findMany({ select: { buyPrice: true, sellPrice: true } }),
-    prisma.order.count(),
-    prisma.order.count({ where: { payment: "Paid" } }),
-    prisma.order.count({ where: { payment: "Pending" } }),
+    prisma.order.count({ where: { createdAt: { gte: today } } }),
     prisma.order.aggregate({
-      where: { payment: "Paid" },
+      where: { payment: "Paid", paidAt: { gte: today } },
       _sum: { amount: true, buyPriceAtPurchase: true },
     }),
     prisma.order.count({
@@ -51,8 +34,11 @@ export default async function AdminDashboard() {
       },
     }),
     prisma.order.count({ where: { payment: "Failed" } }),
-    prisma.order.count({ where: { payment: "Expired" } }),
-    prisma.order.count({ where: { payment: "Refunded" } }),
+    prisma.order.count({
+      where: { payment: "Refunded", paidAt: { gte: today } },
+    }),
+    prisma.supportRequest.count({ where: { status: "open" } }),
+    prisma.supportRequest.count({ where: { status: "in_progress" } }),
     prisma.order.findMany({
       where: {
         OR: [
@@ -63,11 +49,11 @@ export default async function AdminDashboard() {
               { esimStatus: { not: "ready" } },
             ],
           },
-          { payment: { in: ["Failed", "Expired", "Refunded"] } },
+          { payment: "Failed" },
         ],
       },
       orderBy: { createdAt: "desc" },
-      take: 6,
+      take: 8,
       select: {
         id: true,
         orderNumber: true,
@@ -75,356 +61,181 @@ export default async function AdminDashboard() {
         payment: true,
         fulfillment: true,
         esimStatus: true,
+        createdAt: true,
       },
     }),
-    prisma.supportRequest.count(),
-    prisma.supportRequest.count({ where: { status: "open" } }),
-    prisma.supportRequest.count({ where: { status: "in_progress" } }),
-    prisma.supportRequest.count({ where: { status: "resolved" } }),
   ]);
 
-  const revenue = paidTotals._sum.amount || 0;
-  const profit = revenue - (paidTotals._sum.buyPriceAtPurchase || 0);
+  const todaysRevenue = todaysPaidTotals._sum.amount || 0;
+  const todaysProfit =
+    todaysRevenue - (todaysPaidTotals._sum.buyPriceAtPurchase || 0);
+  const ordersNeedingAttention =
+    openFulfillmentsCount + failedPaymentsCount;
 
-  const averageMargin =
-    catalogPrices.length > 0
-      ? catalogPrices.reduce(
-          (total, product) =>
-            total + getMargin(product.buyPrice, product.sellPrice),
-          0
-        ) / catalogPrices.length
-      : 0;
-
-  const estimatedCatalogValue = catalogPrices.reduce(
-    (total, product) => total + product.sellPrice,
-    0
-  );
+  const metrics = [
+    {
+      label: "Needs attention",
+      value: ordersNeedingAttention,
+      detail: `${openFulfillmentsCount} delivery · ${failedPaymentsCount} payment`,
+      href: "/admin/orders",
+      valueClass: ordersNeedingAttention > 0 ? "text-red-700" : "text-emerald-700",
+    },
+    {
+      label: "Open support",
+      value: openSupportRequests,
+      detail: `${inProgressSupportRequests} currently in progress`,
+      href: "/admin/support",
+      valueClass: openSupportRequests > 0 ? "text-blue-700" : "text-emerald-700",
+    },
+    {
+      label: "Orders today",
+      value: todaysOrders,
+      detail: `${refundedTodayCount} refunded today`,
+      href: "/admin/orders",
+      valueClass: "text-slate-950",
+    },
+    {
+      label: "Revenue today",
+      value: formatPrice(todaysRevenue),
+      detail: `${formatPrice(todaysProfit)} estimated profit`,
+      href: "/admin/orders",
+      valueClass: "text-emerald-700",
+    },
+  ];
 
   return (
     <AdminShell activePage="dashboard">
-      <div className="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-center">
+      <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
         <div>
-          <p className="text-sm font-bold uppercase tracking-wide text-blue-600">
-            DALO Admin
+          <p className="text-sm font-black uppercase tracking-[0.14em] text-blue-600">
+            DALO Operations
           </p>
-
-          <h1 className="mt-2 text-4xl font-bold text-slate-950">
-            Dashboard
+          <h1 className="mt-2 text-3xl font-black tracking-tight text-slate-950 sm:text-4xl">
+            What needs your attention
           </h1>
-
           <p className="mt-2 text-slate-600">
-            Live overview from your local DALO database.
-          </p>
-        </div>
-
-        <div className="flex gap-3">
-          <a
-            href="/"
-            className="rounded-2xl border border-slate-300 px-6 py-4 font-bold text-slate-700 transition hover:bg-white"
-          >
-            View Website
-          </a>
-
-        </div>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-4">
-        <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
-          <p className="text-sm font-semibold text-slate-500">Products</p>
-          <h2 className="mt-3 text-3xl font-bold">{totalProducts}</h2>
-          <p className="mt-2 text-sm text-slate-500">
-            Total products in database
-          </p>
-        </div>
-
-        <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
-          <p className="text-sm font-semibold text-slate-500">
-            Active Products
-          </p>
-          <h2 className="mt-3 text-3xl font-bold">{activeProductsCount}</h2>
-          <p className="mt-2 text-sm text-slate-500">
-            Visible for recommendations
-          </p>
-        </div>
-
-        <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
-          <p className="text-sm font-semibold text-slate-500">Revenue</p>
-          <h2 className="mt-3 text-3xl font-bold">{formatPrice(revenue)}</h2>
-          <p className="mt-2 text-sm text-slate-500">Paid orders only</p>
-        </div>
-
-        <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
-          <p className="text-sm font-semibold text-slate-500">Profit</p>
-          <h2 className="mt-3 text-3xl font-bold text-green-700">
-            {formatPrice(profit)}
-          </h2>
-          <p className="mt-2 text-sm text-slate-500">Paid orders only</p>
-        </div>
-      </div>
-
-      <div className="mt-8 grid gap-6 md:grid-cols-4">
-        <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
-          <p className="text-sm font-semibold text-slate-500">Orders</p>
-          <h2 className="mt-3 text-3xl font-bold">{totalOrders}</h2>
-          <p className="mt-2 text-sm text-slate-500">
-            Total database orders
-          </p>
-        </div>
-
-        <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
-          <p className="text-sm font-semibold text-slate-500">Paid Orders</p>
-          <h2 className="mt-3 text-3xl font-bold">{paidOrders}</h2>
-          <p className="mt-2 text-sm text-slate-500">Orders marked as paid</p>
-        </div>
-
-        <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">
-          <p className="text-sm font-semibold text-slate-500">
-            Pending Orders
-          </p>
-          <h2 className="mt-3 text-3xl font-bold text-yellow-600">
-            {pendingOrders}
-          </h2>
-          <p className="mt-2 text-sm text-slate-500">
-            Checkout tests or unpaid orders
+            Orders, delivery and customer support in one focused view.
           </p>
         </div>
 
         <a
-          href="/admin/support"
-          className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50 transition hover:-translate-y-1 hover:shadow-xl"
+          href="/"
+          className="inline-flex min-h-11 w-fit items-center justify-center rounded-xl border border-slate-300 bg-white px-5 text-sm font-bold text-slate-700 transition hover:border-blue-300 hover:text-blue-700"
         >
-          <p className="text-sm font-semibold text-slate-500">Open Support</p>
-          <h2 className="mt-3 text-3xl font-bold text-blue-700">
-            {openSupportRequests}
-          </h2>
-          <p className="mt-2 text-sm text-slate-500">
-            {inProgressSupportRequests} in progress
-          </p>
+          View website
         </a>
       </div>
 
-      <section className="mt-8 overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-lg shadow-blue-50">
-        <div className="flex flex-col gap-4 border-b border-slate-100 px-6 py-6 md:flex-row md:items-center md:justify-between md:px-8">
-          <div>
-            <p className="text-sm font-bold uppercase tracking-wide text-blue-600">
-              Operations
-            </p>
-            <h2 className="mt-1 text-2xl font-bold text-slate-950">
-              Orders that need attention
-            </h2>
-          </div>
-
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        {metrics.map((metric) => (
           <a
-            href="/admin/orders"
-            className="w-fit rounded-xl bg-slate-950 px-5 py-3 text-sm font-bold text-white transition hover:bg-blue-700"
+            key={metric.label}
+            href={metric.href}
+            className="rounded-[1.5rem] border border-slate-200 bg-white p-5 transition hover:-translate-y-0.5 hover:border-blue-200 hover:shadow-lg hover:shadow-blue-100/60"
           >
-            Review all orders
-          </a>
-        </div>
-
-        <div className="grid border-b border-slate-100 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            {
-              label: "Open delivery",
-              value: openFulfillmentsCount,
-              color: "text-blue-700",
-            },
-            {
-              label: "Failed payments",
-              value: failedPaymentsCount,
-              color: "text-red-700",
-            },
-            {
-              label: "Expired checkouts",
-              value: expiredCheckoutsCount,
-              color: "text-amber-700",
-            },
-            {
-              label: "Refunded",
-              value: refundedOrdersCount,
-              color: "text-slate-700",
-            },
-          ].map((item) => (
-            <div
-              key={item.label}
-              className="border-b border-slate-100 px-6 py-5 last:border-b-0 sm:odd:border-r lg:border-b-0 lg:not-last:border-r"
-            >
-              <p className="text-sm font-semibold text-slate-500">
-                {item.label}
-              </p>
-              <p className={`mt-2 text-3xl font-bold ${item.color}`}>
-                {item.value}
-              </p>
-            </div>
-          ))}
-        </div>
-
-        <div className="px-6 py-6 md:px-8">
-          {operationalOrders.length === 0 ? (
-            <div className="rounded-2xl bg-emerald-50 px-5 py-4 text-sm font-semibold text-emerald-800">
-              No payment or delivery issues need attention.
-            </div>
-          ) : (
-            <div className="space-y-3">
-              {operationalOrders.map((order) => {
-                const needsDelivery =
-                  order.payment === "Paid" &&
-                  order.fulfillment !== "Delivered" &&
-                  order.esimStatus !== "ready";
-                const status = needsDelivery
-                  ? "Open delivery"
-                  : order.payment;
-
-                return (
-                  <a
-                    key={order.id}
-                    href={`/admin/orders/${order.id}`}
-                    className="flex flex-col gap-2 rounded-2xl border border-slate-200 px-5 py-4 transition hover:border-blue-300 hover:bg-blue-50/50 sm:flex-row sm:items-center sm:justify-between"
-                  >
-                    <div>
-                      <p className="font-bold text-slate-950">
-                        {order.orderNumber || "Order without number"}
-                      </p>
-                      <p className="mt-1 text-sm text-slate-500">
-                        {order.customer}
-                      </p>
-                    </div>
-                    <span className="w-fit rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-700">
-                      {status}
-                    </span>
-                  </a>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      </section>
-
-      <div className="mt-8 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
-        <div className="rounded-[2rem] bg-white p-8 shadow-lg shadow-blue-50">
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold">Database Status</h2>
-            <p className="mt-1 text-slate-600">
-              Current DALO product, order and support foundation.
+            <p className="text-sm font-bold text-slate-500">{metric.label}</p>
+            <p className={`mt-3 text-3xl font-black ${metric.valueClass}`}>
+              {metric.value}
             </p>
-          </div>
+            <p className="mt-2 text-xs font-semibold text-slate-500">
+              {metric.detail}
+            </p>
+          </a>
+        ))}
+      </div>
 
-          <div className="space-y-4">
-            <div className="flex items-center justify-between rounded-2xl bg-green-50 p-4">
-              <span className="font-semibold">Prisma Database</span>
-              <span className="font-bold text-green-700">Connected</span>
+      <div className="mt-6 grid gap-6 xl:grid-cols-[1fr_290px]">
+        <section className="overflow-hidden rounded-[1.75rem] border border-slate-200 bg-white">
+          <div className="flex flex-col gap-4 border-b border-slate-100 px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-7">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.14em] text-red-600">
+                Action queue
+              </p>
+              <h2 className="mt-1 text-2xl font-black text-slate-950">
+                Orders requiring a decision
+              </h2>
             </div>
-
-            <div className="flex items-center justify-between rounded-2xl bg-green-50 p-4">
-              <span className="font-semibold">Product Table</span>
-              <span className="font-bold text-green-700">
-                {totalProducts} Products
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between rounded-2xl bg-green-50 p-4">
-              <span className="font-semibold">Order Table</span>
-              <span className="font-bold text-green-700">
-                {totalOrders} Orders
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between rounded-2xl bg-green-50 p-4">
-              <span className="font-semibold">Support Table</span>
-              <span className="font-bold text-green-700">
-                {totalSupportRequests} Requests
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between rounded-2xl bg-blue-50 p-4">
-              <span className="font-semibold">Open Support Requests</span>
-              <span className="font-bold text-blue-700">
-                {openSupportRequests} Open
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between rounded-2xl bg-amber-50 p-4">
-              <span className="font-semibold">Support In Progress</span>
-              <span className="font-bold text-amber-700">
-                {inProgressSupportRequests} In Progress
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between rounded-2xl bg-emerald-50 p-4">
-              <span className="font-semibold">Resolved Support</span>
-              <span className="font-bold text-emerald-700">
-                {resolvedSupportRequests} Resolved
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between rounded-2xl bg-blue-50 p-4">
-              <span className="font-semibold">Paid Order Revenue</span>
-              <span className="font-bold text-blue-700">
-                {formatPrice(revenue)}
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between rounded-2xl bg-blue-50 p-4">
-              <span className="font-semibold">Paid Order Profit</span>
-              <span className="font-bold text-blue-700">
-                {formatPrice(profit)}
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4">
-              <span className="font-semibold">Avg. Margin</span>
-              <span className="font-bold text-slate-700">
-                {Math.round(averageMargin)}%
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between rounded-2xl bg-slate-50 p-4">
-              <span className="font-semibold">Catalog Sell Value</span>
-              <span className="font-bold text-slate-700">
-                {formatPrice(estimatedCatalogValue)}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div className="rounded-[2rem] bg-slate-950 p-8 text-white shadow-lg">
-          <h2 className="text-2xl font-bold">Next Step</h2>
-
-          <p className="mt-3 text-slate-300">
-            Continue improving product management, order handling and customer
-            support before touching Stripe or API fulfillment.
-          </p>
-
-          <div className="mt-8 space-y-3">
-            <a
-              href="/admin/products"
-              className="block rounded-2xl bg-blue-600 px-5 py-4 text-center font-bold text-white"
-            >
-              Manage Products
-            </a>
-
-            <a
-              href="/admin/products/import"
-              className="block rounded-2xl bg-white/10 px-5 py-4 text-center font-bold text-white"
-            >
-              Import Rate Sheet
-            </a>
-
             <a
               href="/admin/orders"
-              className="block rounded-2xl bg-white/10 px-5 py-4 text-center font-bold text-white"
+              className="inline-flex min-h-10 w-fit items-center rounded-xl bg-slate-950 px-4 text-sm font-bold text-white transition hover:bg-blue-700"
             >
-              View Orders
-            </a>
-
-            <a
-              href="/admin/support"
-              className="block rounded-2xl bg-white/10 px-5 py-4 text-center font-bold text-white"
-            >
-              View Support Requests
+              All orders
             </a>
           </div>
-        </div>
+
+          <div className="p-4 sm:p-6">
+            {operationalOrders.length === 0 ? (
+              <div className="rounded-2xl bg-emerald-50 px-5 py-5 text-sm font-bold text-emerald-800">
+                Everything is clear. No payment or delivery issue needs attention.
+              </div>
+            ) : (
+              <div className="space-y-2">
+                {operationalOrders.map((order) => {
+                  const needsDelivery =
+                    order.payment === "Paid" &&
+                    (order.fulfillment !== "Delivered" ||
+                      order.esimStatus !== "ready");
+                  const status = needsDelivery ? "Open delivery" : "Payment failed";
+
+                  return (
+                    <a
+                      key={order.id}
+                      href={`/admin/orders/${order.id}`}
+                      className="flex flex-col gap-3 rounded-2xl border border-slate-200 px-4 py-4 transition hover:border-blue-300 hover:bg-blue-50/50 sm:flex-row sm:items-center sm:justify-between"
+                    >
+                      <div className="min-w-0">
+                        <p className="font-black text-slate-950">
+                          {order.orderNumber || "Order without number"}
+                        </p>
+                        <p className="mt-1 truncate text-sm text-slate-500">
+                          {order.customer}
+                        </p>
+                      </div>
+                      <span
+                        className={`w-fit shrink-0 rounded-full px-3 py-1 text-xs font-black ${
+                          needsDelivery
+                            ? "bg-blue-50 text-blue-700"
+                            : "bg-red-50 text-red-700"
+                        }`}
+                      >
+                        {status}
+                      </span>
+                    </a>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </section>
+
+        <aside className="rounded-[1.75rem] bg-slate-950 p-5 text-white sm:p-6">
+          <p className="text-xs font-black uppercase tracking-[0.14em] text-blue-300">
+            Quick access
+          </p>
+          <h2 className="mt-2 text-xl font-black">Go directly to</h2>
+
+          <div className="mt-5 space-y-2">
+            {[
+              ["Customer support", "/admin/support"],
+              ["Orders", "/admin/orders"],
+              ["Products", "/admin/products"],
+              ["SEO & country pages", "/admin/destinations"],
+            ].map(([label, href], index) => (
+              <a
+                key={href}
+                href={href}
+                className={`flex min-h-11 items-center justify-between rounded-xl px-4 text-sm font-bold transition ${
+                  index === 0
+                    ? "bg-blue-600 text-white hover:bg-blue-500"
+                    : "bg-white/10 text-slate-100 hover:bg-white/15"
+                }`}
+              >
+                {label}
+                <span aria-hidden="true">→</span>
+              </a>
+            ))}
+          </div>
+        </aside>
       </div>
     </AdminShell>
   );
