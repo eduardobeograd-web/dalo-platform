@@ -52,6 +52,7 @@ export default function HomeQuizForm() {
   const [days, setDays] = useState("8-11");
   const [userType, setUserType] = useState("everyday");
   const [destinations, setDestinations] = useState<string[]>([]);
+  const [destinationSuggestionsOpen, setDestinationSuggestionsOpen] = useState(false);
   const destinationsRequested = useRef(false);
   const durationValues = durationOptions.map((option) => option.value);
 
@@ -73,9 +74,18 @@ export default function HomeQuizForm() {
     if (selectedCountry) setCountry(selectedCountry);
   }, []);
 
-  const selectedDestinationIsAvailable =
-    country.trim().length > 0 &&
-    (destinations.length === 0 || destinations.includes(country));
+  const normalizedCountry = country.trim().toLocaleLowerCase("en");
+  const selectedDestination = destinations.find(
+    (destination) => destination.toLocaleLowerCase("en") === normalizedCountry,
+  );
+  const selectedDestinationIsAvailable = Boolean(selectedDestination);
+  const filteredDestinations = destinations
+    .filter((destination) =>
+      normalizedCountry
+        ? destination.toLocaleLowerCase("en").includes(normalizedCountry)
+        : true,
+    )
+    .slice(0, 8);
 
   return (
     <>
@@ -104,15 +114,57 @@ export default function HomeQuizForm() {
             <span className="flex h-5 w-5 items-center justify-center rounded-md bg-[#2148c0] text-[10px] text-white">1</span>
             Destination
           </label>
-          <div className="flex items-center gap-2.5 rounded-xl border border-white/80 bg-white/55 px-3 py-2 transition focus-within:border-[#2148c0] focus-within:bg-white/85 focus-within:ring-4 focus-within:ring-[#dbe6ff]/80 sm:px-3.5 sm:py-2.5">
-            <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" className="h-5 w-5 shrink-0 text-[#2148c0]">
-              <path d="M16 8.5c0 4.25-6 8-6 8s-6-3.75-6-8a6 6 0 1 1 12 0Z" stroke="currentColor" strokeWidth="1.5" />
-              <circle cx="10" cy="8.5" r="2" stroke="currentColor" strokeWidth="1.5" />
-            </svg>
-            <input id="quiz-country" name="country" required value={country} onChange={(event) => setCountry(event.target.value)} onFocus={() => void loadDestinations()} list="available-destinations" placeholder="Where are you going?" autoComplete="off" className="w-full bg-transparent text-sm font-semibold text-slate-900 outline-none placeholder:font-normal placeholder:text-slate-400" />
-            <datalist id="available-destinations">
-              {destinations.map((destination) => <option key={destination} value={destination} />)}
-            </datalist>
+          <div className="relative">
+            <div className="flex items-center gap-2.5 rounded-xl border border-white/80 bg-white/55 px-3 py-2 transition focus-within:border-[#2148c0] focus-within:bg-white/85 focus-within:ring-4 focus-within:ring-[#dbe6ff]/80 sm:px-3.5 sm:py-2.5">
+              <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" className="h-5 w-5 shrink-0 text-[#2148c0]">
+                <path d="M16 8.5c0 4.25-6 8-6 8s-6-3.75-6-8a6 6 0 1 1 12 0Z" stroke="currentColor" strokeWidth="1.5" />
+                <circle cx="10" cy="8.5" r="2" stroke="currentColor" strokeWidth="1.5" />
+              </svg>
+              <input
+                id="quiz-country"
+                required
+                value={country}
+                onChange={(event) => {
+                  setCountry(event.target.value);
+                  setDestinationSuggestionsOpen(true);
+                }}
+                onFocus={() => {
+                  setDestinationSuggestionsOpen(true);
+                  void loadDestinations();
+                }}
+                onBlur={() => {
+                  if (selectedDestination) setCountry(selectedDestination);
+                  setDestinationSuggestionsOpen(false);
+                }}
+                placeholder="Where are you going?"
+                autoComplete="off"
+                aria-autocomplete="list"
+                aria-expanded={destinationSuggestionsOpen}
+                className="w-full bg-transparent text-sm font-semibold text-slate-900 outline-none placeholder:font-normal placeholder:text-slate-400"
+              />
+              <input type="hidden" name="country" value={selectedDestination || ""} />
+            </div>
+
+            {destinationSuggestionsOpen && destinations.length > 0 ? (
+              <div className="absolute inset-x-0 top-full z-30 mt-2 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-xl shadow-slate-200/70">
+                {filteredDestinations.length > 0 ? filteredDestinations.map((destination) => (
+                  <button
+                    key={destination}
+                    type="button"
+                    onMouseDown={(event) => event.preventDefault()}
+                    onClick={() => {
+                      setCountry(destination);
+                      setDestinationSuggestionsOpen(false);
+                    }}
+                    className="block w-full border-b border-slate-100 px-4 py-2.5 text-left text-sm font-semibold text-slate-700 last:border-b-0 hover:bg-blue-50 hover:text-blue-700"
+                  >
+                    {destination}
+                  </button>
+                )) : (
+                  <p className="px-4 py-3 text-sm text-slate-500">No matching destination. Clear the field to see all available countries.</p>
+                )}
+              </div>
+            ) : null}
           </div>
           {country.trim().length === 0 ? <p className="mt-1.5 hidden text-xs text-slate-500 sm:block">Start typing to see destinations with active eSIM products.</p> : null}
           {country.trim().length > 0 && !selectedDestinationIsAvailable ? <p className="mt-1.5 text-xs font-semibold text-red-600">Please choose an available destination from the list.</p> : null}
