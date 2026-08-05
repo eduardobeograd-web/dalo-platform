@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentCustomerFromRequest } from "@/lib/customer-auth";
 import { prisma } from "@/lib/db";
+import { notifySupportTeam } from "@/lib/support-push";
 
 const allowedReasons = new Set([
   "installing",
@@ -102,6 +103,10 @@ export async function POST(request: NextRequest) {
         iccid: order.iccid,
         productName: product?.name || null,
       },
+    });
+
+    await notifySupportTeam(supportRequest).catch((error) => {
+      console.error("Support notification failed", error);
     });
 
     return NextResponse.json({

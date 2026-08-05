@@ -64,6 +64,7 @@ export const ModelName = {
   DestinationPage: 'DestinationPage',
   AdminUser: 'AdminUser',
   SupportReply: 'SupportReply',
+  SupportPushSubscription: 'SupportPushSubscription',
   AdminSession: 'AdminSession',
   AdminAuditLog: 'AdminAuditLog'
 } as const
@@ -343,6 +344,22 @@ export const SupportReplyScalarFieldEnum = {
 } as const
 
 export type SupportReplyScalarFieldEnum = (typeof SupportReplyScalarFieldEnum)[keyof typeof SupportReplyScalarFieldEnum]
+
+
+export const SupportPushSubscriptionScalarFieldEnum = {
+  id: 'id',
+  adminUserId: 'adminUserId',
+  endpoint: 'endpoint',
+  p256dh: 'p256dh',
+  auth: 'auth',
+  userAgent: 'userAgent',
+  failureCount: 'failureCount',
+  lastSuccessAt: 'lastSuccessAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SupportPushSubscriptionScalarFieldEnum = (typeof SupportPushSubscriptionScalarFieldEnum)[keyof typeof SupportPushSubscriptionScalarFieldEnum]
 
 
 export const AdminSessionScalarFieldEnum = {

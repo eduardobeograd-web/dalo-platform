@@ -26,11 +26,12 @@
     "pg": "^8.22.0",
     "prisma": "^7.9.1",
     "qrcode": "^1.5.4",
-    "read-excel-file": "^6.0.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",
+    "read-excel-file": "^6.0.1",
     "resend": "^6.12.4",
-    "stripe": "^22.2.0"
+    "stripe": "^22.2.0",
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -40,6 +41,7 @@
     "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/web-push": "^3.6.4",
     "eslint": "^9",
     "eslint-config-next": "^16.3.0",
     "tailwindcss": "^4",

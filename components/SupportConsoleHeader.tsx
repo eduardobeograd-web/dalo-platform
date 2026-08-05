@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { adminLogout } from "../app/admin/logout";
 import PwaInstallButton from "./PwaInstallButton";
+import SupportPushNotifications from "./SupportPushNotifications";
 
 export default function SupportConsoleHeader({
   adminName,
@@ -29,6 +30,9 @@ export default function SupportConsoleHeader({
         </Link>
 
         <div className="flex shrink-0 items-center gap-2">
+          <SupportPushNotifications
+            publicKey={process.env.NEXT_PUBLIC_SUPPORT_VAPID_PUBLIC_KEY?.trim() || ""}
+          />
           <PwaInstallButton
             mobileLabel="Install"
             label="Install support app"

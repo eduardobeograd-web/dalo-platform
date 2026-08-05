@@ -83,6 +83,11 @@ export type AdminUser = Prisma.AdminUserModel
  */
 export type SupportReply = Prisma.SupportReplyModel
 /**
+ * Model SupportPushSubscription
+ * 
+ */
+export type SupportPushSubscription = Prisma.SupportPushSubscriptionModel
+/**
  * Model AdminSession
  * 
  */

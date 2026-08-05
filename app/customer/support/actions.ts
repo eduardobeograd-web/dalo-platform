@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { getCurrentCustomer } from "../../../lib/customer-auth";
 import { prisma } from "../../../lib/db";
+import { notifySupportTeam } from "../../../lib/support-push";
 
 export async function createSupportRequest(formData: FormData) {
   const customer = await getCurrentCustomer();
@@ -43,7 +44,7 @@ export async function createSupportRequest(formData: FormData) {
     },
   });
 
-  await prisma.supportRequest.create({
+  const supportRequest = await prisma.supportRequest.create({
     data: {
       customerId: customer.id,
       orderId: order.id,
@@ -55,6 +56,10 @@ export async function createSupportRequest(formData: FormData) {
       iccid: order.iccid,
       productName: product?.name || null,
     },
+  });
+
+  await notifySupportTeam(supportRequest).catch((error) => {
+    console.error("Support notification failed", error);
   });
 
   redirect(`/customer/support?orderId=${order.id}&success=1`);

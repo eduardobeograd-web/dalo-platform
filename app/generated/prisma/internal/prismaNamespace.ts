@@ -410,6 +410,7 @@ export const ModelName = {
   DestinationPage: 'DestinationPage',
   AdminUser: 'AdminUser',
   SupportReply: 'SupportReply',
+  SupportPushSubscription: 'SupportPushSubscription',
   AdminSession: 'AdminSession',
   AdminAuditLog: 'AdminAuditLog'
 } as const
@@ -427,7 +428,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "recommendationSetting" | "product" | "countryNetworkCoverage" | "customer" | "customerSession" | "passwordResetToken" | "order" | "supportRequest" | "customerEvent" | "providerConfig" | "destinationPage" | "adminUser" | "supportReply" | "adminSession" | "adminAuditLog"
+    modelProps: "recommendationSetting" | "product" | "countryNetworkCoverage" | "customer" | "customerSession" | "passwordResetToken" | "order" | "supportRequest" | "customerEvent" | "providerConfig" | "destinationPage" | "adminUser" | "supportReply" | "supportPushSubscription" | "adminSession" | "adminAuditLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1393,6 +1394,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    SupportPushSubscription: {
+      payload: Prisma.$SupportPushSubscriptionPayload<ExtArgs>
+      fields: Prisma.SupportPushSubscriptionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SupportPushSubscriptionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportPushSubscriptionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SupportPushSubscriptionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportPushSubscriptionPayload>
+        }
+        findFirst: {
+          args: Prisma.SupportPushSubscriptionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportPushSubscriptionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SupportPushSubscriptionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportPushSubscriptionPayload>
+        }
+        findMany: {
+          args: Prisma.SupportPushSubscriptionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportPushSubscriptionPayload>[]
+        }
+        create: {
+          args: Prisma.SupportPushSubscriptionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportPushSubscriptionPayload>
+        }
+        createMany: {
+          args: Prisma.SupportPushSubscriptionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SupportPushSubscriptionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportPushSubscriptionPayload>[]
+        }
+        delete: {
+          args: Prisma.SupportPushSubscriptionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportPushSubscriptionPayload>
+        }
+        update: {
+          args: Prisma.SupportPushSubscriptionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportPushSubscriptionPayload>
+        }
+        deleteMany: {
+          args: Prisma.SupportPushSubscriptionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SupportPushSubscriptionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SupportPushSubscriptionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportPushSubscriptionPayload>[]
+        }
+        upsert: {
+          args: Prisma.SupportPushSubscriptionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportPushSubscriptionPayload>
+        }
+        aggregate: {
+          args: Prisma.SupportPushSubscriptionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSupportPushSubscription>
+        }
+        groupBy: {
+          args: Prisma.SupportPushSubscriptionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SupportPushSubscriptionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SupportPushSubscriptionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SupportPushSubscriptionCountAggregateOutputType> | number
+        }
+      }
+    }
     AdminSession: {
       payload: Prisma.$AdminSessionPayload<ExtArgs>
       fields: Prisma.AdminSessionFieldRefs
@@ -1841,6 +1916,22 @@ export const SupportReplyScalarFieldEnum = {
 export type SupportReplyScalarFieldEnum = (typeof SupportReplyScalarFieldEnum)[keyof typeof SupportReplyScalarFieldEnum]
 
 
+export const SupportPushSubscriptionScalarFieldEnum = {
+  id: 'id',
+  adminUserId: 'adminUserId',
+  endpoint: 'endpoint',
+  p256dh: 'p256dh',
+  auth: 'auth',
+  userAgent: 'userAgent',
+  failureCount: 'failureCount',
+  lastSuccessAt: 'lastSuccessAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SupportPushSubscriptionScalarFieldEnum = (typeof SupportPushSubscriptionScalarFieldEnum)[keyof typeof SupportPushSubscriptionScalarFieldEnum]
+
+
 export const AdminSessionScalarFieldEnum = {
   id: 'id',
   adminUserId: 'adminUserId',
@@ -2159,6 +2250,7 @@ export type GlobalOmitConfig = {
   destinationPage?: Prisma.DestinationPageOmit
   adminUser?: Prisma.AdminUserOmit
   supportReply?: Prisma.SupportReplyOmit
+  supportPushSubscription?: Prisma.SupportPushSubscriptionOmit
   adminSession?: Prisma.AdminSessionOmit
   adminAuditLog?: Prisma.AdminAuditLogOmit
 }
