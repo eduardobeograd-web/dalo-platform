@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { stripe } from "@/lib/stripe";
 import { fulfillOrderMockById } from "@/lib/mock-fulfillment";
 import { sendOrderConfirmationEmail } from "@/lib/order-confirmation-email";
+import { sendPaymentConfirmationEmail } from "@/lib/payment-confirmation-email";
 import { trackCustomerEvent } from "@/lib/customer-events";
 import { sendRefundConfirmationEmail } from "@/lib/refund-confirmation-email";
 
@@ -299,6 +300,7 @@ export async function POST(request: NextRequest) {
     ) {
       const session = event.data.object as Stripe.Checkout.Session;
       const result = await markOrderPaid(session);
+      let paymentEmailResult = null;
 
       if (result.updated && result.orderId) {
         const paidOrder = await prisma.order.findUnique({
@@ -320,6 +322,8 @@ export async function POST(request: NextRequest) {
               currency: paidOrder.currency,
             },
           });
+
+          paymentEmailResult = await sendPaymentConfirmationEmail(paidOrder.id);
         }
       }
 
@@ -354,6 +358,7 @@ export async function POST(request: NextRequest) {
         received: true,
         eventType: event.type,
         result,
+        paymentEmailResult,
         fulfillmentResult,
         emailResult,
       });

@@ -72,11 +72,17 @@ if (emailFrom.includes("onboarding@resend.dev")) {
   );
 }
 
-if (value("DALO_AUTO_MOCK_FULFILLMENT").toLowerCase() === "true") {
-  errors.push("DALO_AUTO_MOCK_FULFILLMENT must be false in production.");
-}
-
 const stripeKey = value("STRIPE_SECRET_KEY");
+
+if (value("DALO_AUTO_MOCK_FULFILLMENT").toLowerCase() === "true") {
+  if (stripeKey.startsWith("sk_live_")) {
+    errors.push("DALO_AUTO_MOCK_FULFILLMENT cannot be used with a live Stripe key.");
+  } else {
+    warnings.push(
+      "DALO_AUTO_MOCK_FULFILLMENT is active for test purchases. Disable it before launch.",
+    );
+  }
+}
 
 if (!stripeKey) {
   warnings.push("Stripe is not configured.");

@@ -1,7 +1,11 @@
 import { prisma } from "@/lib/db";
 
 export async function fulfillOrderMockById(orderId: string) {
-  if (process.env.NODE_ENV === "production") {
+  const explicitTestMode =
+    process.env.DALO_AUTO_MOCK_FULFILLMENT === "true" &&
+    process.env.STRIPE_SECRET_KEY?.startsWith("sk_test_");
+
+  if (process.env.NODE_ENV === "production" && !explicitTestMode) {
     return {
       fulfilled: false as const,
       reason: "mock_fulfillment_disabled_in_production",
