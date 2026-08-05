@@ -24,6 +24,7 @@ type AdminPage =
   | "events"
   | "activity"
   | "support"
+  | "support-app"
   | "providers"
   | "users"
   | "audit";
@@ -40,6 +41,7 @@ const pagePermissions: Record<AdminPage, AdminPermission> = {
   events: ADMIN_PERMISSIONS.EVENTS_READ,
   activity: ADMIN_PERMISSIONS.EVENTS_READ,
   support: ADMIN_PERMISSIONS.SUPPORT_READ,
+  "support-app": ADMIN_PERMISSIONS.SUPPORT_READ,
   providers: ADMIN_PERMISSIONS.PROVIDERS_READ,
   users: ADMIN_PERMISSIONS.ADMINS_READ,
   audit: ADMIN_PERMISSIONS.AUDIT_READ,
@@ -57,7 +59,8 @@ const navGroups: Array<{
     label: "Sales",
     items: [
       { id: "orders", href: "/admin/orders", label: "Orders" },
-      { id: "support", href: "/admin/support", label: "Support" },
+      { id: "support", href: "/admin/support", label: "Support inbox" },
+      { id: "support-app", href: "/support-console", label: "Support app" },
     ],
   },
   {

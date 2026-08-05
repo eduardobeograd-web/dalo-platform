@@ -16,6 +16,12 @@ function statusStyle(status: string) {
   return "bg-blue-100 text-blue-800";
 }
 
+function statusLabel(status: string) {
+  if (status === "resolved") return "Resolved";
+  if (status === "in_progress") return "Being handled";
+  return "New request";
+}
+
 export default async function SupportConsolePage({
   searchParams,
 }: {
@@ -89,7 +95,7 @@ export default async function SupportConsolePage({
           <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="text-[10px] font-black uppercase tracking-[0.18em] text-[#f2a45f]">
-                Customer operations
+                Customer support
               </p>
               <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">
                 Support workspace
@@ -101,11 +107,11 @@ export default async function SupportConsolePage({
             <div className="grid grid-cols-2 gap-3">
               <div className="rounded-2xl bg-white/10 px-4 py-3">
                 <p className="text-2xl font-black">{open}</p>
-                <p className="text-xs font-bold text-blue-100">Open</p>
+                <p className="text-xs font-bold text-blue-100">New requests</p>
               </div>
               <div className="rounded-2xl bg-white/10 px-4 py-3">
                 <p className="text-2xl font-black">{inProgress}</p>
-                <p className="text-xs font-bold text-amber-200">In progress</p>
+                <p className="text-xs font-bold text-amber-200">Being handled</p>
               </div>
             </div>
           </div>
@@ -127,8 +133,8 @@ export default async function SupportConsolePage({
             defaultValue={status}
             className="min-h-12 rounded-xl border border-slate-200 bg-white px-4 font-bold outline-none focus:border-blue-500"
           >
-            <option value="open">Open requests</option>
-            <option value="in_progress">In progress</option>
+            <option value="open">New requests</option>
+            <option value="in_progress">Being handled</option>
             <option value="resolved">Resolved</option>
             <option value="all">All requests</option>
           </select>
@@ -186,7 +192,7 @@ export default async function SupportConsolePage({
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className={`rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-wide ${statusStyle(request.status)}`}>
-                        {request.status.replace("_", " ")}
+                        {statusLabel(request.status)}
                       </span>
                       <span className="text-xs text-slate-400">{request.createdAt.toLocaleString("en")}</span>
                     </div>
