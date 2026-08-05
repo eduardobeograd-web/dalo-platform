@@ -109,7 +109,8 @@ async function updateRecommendationSetting(formData: FormData) {
 }
 
 export default async function RecommendationsPage() {
-  const [rules, settings, products] = await Promise.all([
+  const now = new Date();
+  const [rules, settings, products, trackedOrders, acceptedRecommendations, upgrades, topUps, completedUsage, missingUsage] = await Promise.all([
     getRecommendationRulesPreview(),
     getRecommendationSettings(),
     prisma.product.findMany({
@@ -117,10 +118,32 @@ export default async function RecommendationsPage() {
         active: true,
       },
     }),
+    prisma.order.count({ where: { payment: "Paid", recommendationProductId: { not: null } } }),
+    prisma.order.count({ where: { payment: "Paid", recommendationChoice: "best_match" } }),
+    prisma.order.count({ where: { payment: "Paid", recommendationChoice: "upgrade" } }),
+    prisma.order.count({ where: { payment: "Paid", orderKind: "top_up" } }),
+    prisma.order.aggregate({
+      where: {
+        payment: "Paid",
+        totalDataGb: { not: null },
+        usedDataGb: { not: null },
+        OR: [{ remainingDataGb: { lte: 0 } }, { expiresAt: { lte: now } }],
+      },
+      _count: { id: true },
+      _sum: { totalDataGb: true, usedDataGb: true },
+    }),
+    prisma.order.count({
+      where: { payment: "Paid", recommendationProductId: { not: null }, usedDataGb: null },
+    }),
   ]);
 
   const connectedRules = rules.filter((rule) => rule.recommendedProduct).length;
   const upsellRules = rules.filter((rule) => rule.upsellProduct).length;
+  const completedBundles = completedUsage._count.id;
+  const averageUsagePercent = completedUsage._sum.totalDataGb
+    ? Math.round(((completedUsage._sum.usedDataGb || 0) / completedUsage._sum.totalDataGb) * 100)
+    : null;
+  const sampleTarget = 30;
 
   return (
     <AdminShell activePage="recommendations">
@@ -147,6 +170,37 @@ export default async function RecommendationsPage() {
           Manage Products
         </a>
       </div>
+
+      <section className="mb-8 overflow-hidden rounded-[2rem] border border-blue-100 bg-white shadow-xl shadow-blue-50">
+        <div className="border-b border-blue-100 bg-blue-50/70 p-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.14em] text-blue-700">Early data</p>
+              <h2 className="mt-1 text-2xl font-black text-slate-950">Recommendation overview</h2>
+              <p className="mt-1 text-sm text-slate-600">{Math.min(completedBundles, sampleTarget)} of {sampleTarget} completed bundles collected. Trends remain neutral until the sample is large enough.</p>
+            </div>
+            <span className="w-fit rounded-full bg-white px-4 py-2 text-sm font-black text-blue-700">{trackedOrders} tracked purchases</span>
+          </div>
+          <div className="mt-4 h-2 overflow-hidden rounded-full bg-white">
+            <div className="h-full rounded-full bg-blue-600" style={{ width: `${Math.min(100, Math.round((completedBundles / sampleTarget) * 100))}%` }} />
+          </div>
+        </div>
+        <div className="grid gap-px bg-slate-100 sm:grid-cols-2 xl:grid-cols-5">
+          {[
+            ["Completed bundles", completedBundles],
+            ["Recommendation accepted", acceptedRecommendations],
+            ["Upgrade selected", upgrades],
+            ["Top-up purchased", topUps],
+            ["Average data used", averageUsagePercent === null ? "—" : `${averageUsagePercent}%`],
+          ].map(([label, value]) => (
+            <div key={label} className="bg-white p-5">
+              <p className="text-xs font-bold text-slate-500">{label}</p>
+              <p className="mt-2 text-2xl font-black text-slate-950">{value}</p>
+            </div>
+          ))}
+        </div>
+        {missingUsage > 0 ? <p className="border-t border-slate-100 px-6 py-3 text-xs font-semibold text-slate-500">{missingUsage} tracked purchases are waiting for provider usage data.</p> : null}
+      </section>
 
       <div className="mb-8 grid gap-6 md:grid-cols-4">
         <div className="rounded-[2rem] bg-white p-6 shadow-lg shadow-blue-50">

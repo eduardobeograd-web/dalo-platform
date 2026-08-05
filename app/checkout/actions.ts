@@ -70,6 +70,13 @@ export async function createCheckoutOrder(formData: FormData) {
   const sessionId = String(formData.get("sessionId") || "");
   const marketingCampaign = String(formData.get("marketingCampaign") || "");
   const marketingSourceEventId = String(formData.get("marketingSourceEventId") || "");
+  const recommendedProductId = String(formData.get("recommendedProductId") || "").slice(0, 128);
+  const recommendationTripLength = String(formData.get("recommendationTripLength") || "").slice(0, 32);
+  const recommendationUsageType = String(formData.get("recommendationUsageType") || "").slice(0, 32);
+  const requestedChoice = String(formData.get("recommendationChoice") || "");
+  const recommendationChoice = ["best_match", "upgrade", "regional"].includes(requestedChoice)
+    ? requestedChoice
+    : null;
 
   if (!productId || !email || !email.includes("@")) {
     redirect(`/checkout?productId=${productId}&error=1`);
@@ -103,6 +110,9 @@ export async function createCheckoutOrder(formData: FormData) {
   });
 
   const totalDataGb = extractDataGb(product.data);
+  const recommendedProduct = recommendedProductId
+    ? await prisma.product.findUnique({ where: { id: recommendedProductId } })
+    : null;
   const orderNumber = await createUniqueOrderNumber();
   const consentAcceptedAt = new Date();
 
@@ -116,6 +126,11 @@ export async function createCheckoutOrder(formData: FormData) {
         },
       },
       productId: product.id,
+      recommendationProductId: recommendedProduct?.id || null,
+      recommendationDataGb: recommendedProduct ? extractDataGb(recommendedProduct.data) : null,
+      recommendationTripLength: recommendationTripLength || null,
+      recommendationUsageType: recommendationUsageType || null,
+      recommendationChoice,
       legalAcceptedAt: consentAcceptedAt,
       legalVersion: CHECKOUT_LEGAL_VERSION,
       immediateDeliveryAcceptedAt: consentAcceptedAt,
@@ -160,6 +175,11 @@ export async function createCheckoutOrder(formData: FormData) {
       validityDays: product.validityDays,
       price: product.sellPrice,
       provider: product.provider,
+      recommendedProductId: recommendedProduct?.id || null,
+      recommendedData: recommendedProduct?.data || null,
+      recommendationTripLength: recommendationTripLength || null,
+      recommendationUsageType: recommendationUsageType || null,
+      recommendationChoice,
       marketingCampaign: marketingCampaign || null,
       marketingSourceEventId: marketingSourceEventId || null,
       attributedToMarketing: Boolean(marketingCampaign || marketingSourceEventId),

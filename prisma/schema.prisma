@@ -140,6 +140,13 @@ model Order {
   validityDaysAtPurchase Int?
   providerAtPurchase String?
   providerProductIdAtPurchase String?
+  recommendationProductId String?
+  recommendationDataGb Float?
+  recommendationTripLength String?
+  recommendationUsageType String?
+  recommendationChoice String?
+  orderKind String @default("new_esim")
+  sourceOrderId String?
   stripeSessionId String? @unique
   stripePaymentIntentId String?
   paidAt DateTime?
@@ -180,6 +187,8 @@ model Order {
   @@index([fulfillment, createdAt])
   @@index([esimStatus])
   @@index([productId])
+  @@index([recommendationProductId])
+  @@index([orderKind, createdAt])
 }
 
 model SupportRequest {

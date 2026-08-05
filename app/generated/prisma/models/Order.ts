@@ -30,6 +30,7 @@ export type OrderAvgAggregateOutputType = {
   amount: number | null
   buyPriceAtPurchase: number | null
   validityDaysAtPurchase: number | null
+  recommendationDataGb: number | null
   totalDataGb: number | null
   usedDataGb: number | null
   remainingDataGb: number | null
@@ -39,6 +40,7 @@ export type OrderSumAggregateOutputType = {
   amount: number | null
   buyPriceAtPurchase: number | null
   validityDaysAtPurchase: number | null
+  recommendationDataGb: number | null
   totalDataGb: number | null
   usedDataGb: number | null
   remainingDataGb: number | null
@@ -59,6 +61,13 @@ export type OrderMinAggregateOutputType = {
   validityDaysAtPurchase: number | null
   providerAtPurchase: string | null
   providerProductIdAtPurchase: string | null
+  recommendationProductId: string | null
+  recommendationDataGb: number | null
+  recommendationTripLength: string | null
+  recommendationUsageType: string | null
+  recommendationChoice: string | null
+  orderKind: string | null
+  sourceOrderId: string | null
   stripeSessionId: string | null
   stripePaymentIntentId: string | null
   paidAt: Date | null
@@ -100,6 +109,13 @@ export type OrderMaxAggregateOutputType = {
   validityDaysAtPurchase: number | null
   providerAtPurchase: string | null
   providerProductIdAtPurchase: string | null
+  recommendationProductId: string | null
+  recommendationDataGb: number | null
+  recommendationTripLength: string | null
+  recommendationUsageType: string | null
+  recommendationChoice: string | null
+  orderKind: string | null
+  sourceOrderId: string | null
   stripeSessionId: string | null
   stripePaymentIntentId: string | null
   paidAt: Date | null
@@ -141,6 +157,13 @@ export type OrderCountAggregateOutputType = {
   validityDaysAtPurchase: number
   providerAtPurchase: number
   providerProductIdAtPurchase: number
+  recommendationProductId: number
+  recommendationDataGb: number
+  recommendationTripLength: number
+  recommendationUsageType: number
+  recommendationChoice: number
+  orderKind: number
+  sourceOrderId: number
   stripeSessionId: number
   stripePaymentIntentId: number
   paidAt: number
@@ -173,6 +196,7 @@ export type OrderAvgAggregateInputType = {
   amount?: true
   buyPriceAtPurchase?: true
   validityDaysAtPurchase?: true
+  recommendationDataGb?: true
   totalDataGb?: true
   usedDataGb?: true
   remainingDataGb?: true
@@ -182,6 +206,7 @@ export type OrderSumAggregateInputType = {
   amount?: true
   buyPriceAtPurchase?: true
   validityDaysAtPurchase?: true
+  recommendationDataGb?: true
   totalDataGb?: true
   usedDataGb?: true
   remainingDataGb?: true
@@ -202,6 +227,13 @@ export type OrderMinAggregateInputType = {
   validityDaysAtPurchase?: true
   providerAtPurchase?: true
   providerProductIdAtPurchase?: true
+  recommendationProductId?: true
+  recommendationDataGb?: true
+  recommendationTripLength?: true
+  recommendationUsageType?: true
+  recommendationChoice?: true
+  orderKind?: true
+  sourceOrderId?: true
   stripeSessionId?: true
   stripePaymentIntentId?: true
   paidAt?: true
@@ -243,6 +275,13 @@ export type OrderMaxAggregateInputType = {
   validityDaysAtPurchase?: true
   providerAtPurchase?: true
   providerProductIdAtPurchase?: true
+  recommendationProductId?: true
+  recommendationDataGb?: true
+  recommendationTripLength?: true
+  recommendationUsageType?: true
+  recommendationChoice?: true
+  orderKind?: true
+  sourceOrderId?: true
   stripeSessionId?: true
   stripePaymentIntentId?: true
   paidAt?: true
@@ -284,6 +323,13 @@ export type OrderCountAggregateInputType = {
   validityDaysAtPurchase?: true
   providerAtPurchase?: true
   providerProductIdAtPurchase?: true
+  recommendationProductId?: true
+  recommendationDataGb?: true
+  recommendationTripLength?: true
+  recommendationUsageType?: true
+  recommendationChoice?: true
+  orderKind?: true
+  sourceOrderId?: true
   stripeSessionId?: true
   stripePaymentIntentId?: true
   paidAt?: true
@@ -412,6 +458,13 @@ export type OrderGroupByOutputType = {
   validityDaysAtPurchase: number | null
   providerAtPurchase: string | null
   providerProductIdAtPurchase: string | null
+  recommendationProductId: string | null
+  recommendationDataGb: number | null
+  recommendationTripLength: string | null
+  recommendationUsageType: string | null
+  recommendationChoice: string | null
+  orderKind: string
+  sourceOrderId: string | null
   stripeSessionId: string | null
   stripePaymentIntentId: string | null
   paidAt: Date | null
@@ -476,6 +529,13 @@ export type OrderWhereInput = {
   validityDaysAtPurchase?: Prisma.IntNullableFilter<"Order"> | number | null
   providerAtPurchase?: Prisma.StringNullableFilter<"Order"> | string | null
   providerProductIdAtPurchase?: Prisma.StringNullableFilter<"Order"> | string | null
+  recommendationProductId?: Prisma.StringNullableFilter<"Order"> | string | null
+  recommendationDataGb?: Prisma.FloatNullableFilter<"Order"> | number | null
+  recommendationTripLength?: Prisma.StringNullableFilter<"Order"> | string | null
+  recommendationUsageType?: Prisma.StringNullableFilter<"Order"> | string | null
+  recommendationChoice?: Prisma.StringNullableFilter<"Order"> | string | null
+  orderKind?: Prisma.StringFilter<"Order"> | string
+  sourceOrderId?: Prisma.StringNullableFilter<"Order"> | string | null
   stripeSessionId?: Prisma.StringNullableFilter<"Order"> | string | null
   stripePaymentIntentId?: Prisma.StringNullableFilter<"Order"> | string | null
   paidAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
@@ -520,6 +580,13 @@ export type OrderOrderByWithRelationInput = {
   validityDaysAtPurchase?: Prisma.SortOrderInput | Prisma.SortOrder
   providerAtPurchase?: Prisma.SortOrderInput | Prisma.SortOrder
   providerProductIdAtPurchase?: Prisma.SortOrderInput | Prisma.SortOrder
+  recommendationProductId?: Prisma.SortOrderInput | Prisma.SortOrder
+  recommendationDataGb?: Prisma.SortOrderInput | Prisma.SortOrder
+  recommendationTripLength?: Prisma.SortOrderInput | Prisma.SortOrder
+  recommendationUsageType?: Prisma.SortOrderInput | Prisma.SortOrder
+  recommendationChoice?: Prisma.SortOrderInput | Prisma.SortOrder
+  orderKind?: Prisma.SortOrder
+  sourceOrderId?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeSessionId?: Prisma.SortOrderInput | Prisma.SortOrder
   stripePaymentIntentId?: Prisma.SortOrderInput | Prisma.SortOrder
   paidAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -568,6 +635,13 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   validityDaysAtPurchase?: Prisma.IntNullableFilter<"Order"> | number | null
   providerAtPurchase?: Prisma.StringNullableFilter<"Order"> | string | null
   providerProductIdAtPurchase?: Prisma.StringNullableFilter<"Order"> | string | null
+  recommendationProductId?: Prisma.StringNullableFilter<"Order"> | string | null
+  recommendationDataGb?: Prisma.FloatNullableFilter<"Order"> | number | null
+  recommendationTripLength?: Prisma.StringNullableFilter<"Order"> | string | null
+  recommendationUsageType?: Prisma.StringNullableFilter<"Order"> | string | null
+  recommendationChoice?: Prisma.StringNullableFilter<"Order"> | string | null
+  orderKind?: Prisma.StringFilter<"Order"> | string
+  sourceOrderId?: Prisma.StringNullableFilter<"Order"> | string | null
   stripePaymentIntentId?: Prisma.StringNullableFilter<"Order"> | string | null
   paidAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   legalAcceptedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
@@ -611,6 +685,13 @@ export type OrderOrderByWithAggregationInput = {
   validityDaysAtPurchase?: Prisma.SortOrderInput | Prisma.SortOrder
   providerAtPurchase?: Prisma.SortOrderInput | Prisma.SortOrder
   providerProductIdAtPurchase?: Prisma.SortOrderInput | Prisma.SortOrder
+  recommendationProductId?: Prisma.SortOrderInput | Prisma.SortOrder
+  recommendationDataGb?: Prisma.SortOrderInput | Prisma.SortOrder
+  recommendationTripLength?: Prisma.SortOrderInput | Prisma.SortOrder
+  recommendationUsageType?: Prisma.SortOrderInput | Prisma.SortOrder
+  recommendationChoice?: Prisma.SortOrderInput | Prisma.SortOrder
+  orderKind?: Prisma.SortOrder
+  sourceOrderId?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeSessionId?: Prisma.SortOrderInput | Prisma.SortOrder
   stripePaymentIntentId?: Prisma.SortOrderInput | Prisma.SortOrder
   paidAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -660,6 +741,13 @@ export type OrderScalarWhereWithAggregatesInput = {
   validityDaysAtPurchase?: Prisma.IntNullableWithAggregatesFilter<"Order"> | number | null
   providerAtPurchase?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   providerProductIdAtPurchase?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  recommendationProductId?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  recommendationDataGb?: Prisma.FloatNullableWithAggregatesFilter<"Order"> | number | null
+  recommendationTripLength?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  recommendationUsageType?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  recommendationChoice?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
+  orderKind?: Prisma.StringWithAggregatesFilter<"Order"> | string
+  sourceOrderId?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   stripeSessionId?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   stripePaymentIntentId?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   paidAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
@@ -700,6 +788,13 @@ export type OrderCreateInput = {
   validityDaysAtPurchase?: number | null
   providerAtPurchase?: string | null
   providerProductIdAtPurchase?: string | null
+  recommendationProductId?: string | null
+  recommendationDataGb?: number | null
+  recommendationTripLength?: string | null
+  recommendationUsageType?: string | null
+  recommendationChoice?: string | null
+  orderKind?: string
+  sourceOrderId?: string | null
   stripeSessionId?: string | null
   stripePaymentIntentId?: string | null
   paidAt?: Date | string | null
@@ -744,6 +839,13 @@ export type OrderUncheckedCreateInput = {
   validityDaysAtPurchase?: number | null
   providerAtPurchase?: string | null
   providerProductIdAtPurchase?: string | null
+  recommendationProductId?: string | null
+  recommendationDataGb?: number | null
+  recommendationTripLength?: string | null
+  recommendationUsageType?: string | null
+  recommendationChoice?: string | null
+  orderKind?: string
+  sourceOrderId?: string | null
   stripeSessionId?: string | null
   stripePaymentIntentId?: string | null
   paidAt?: Date | string | null
@@ -786,6 +888,13 @@ export type OrderUpdateInput = {
   validityDaysAtPurchase?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   providerAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerProductIdAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationProductId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  recommendationTripLength?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationUsageType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationChoice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderKind?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -830,6 +939,13 @@ export type OrderUncheckedUpdateInput = {
   validityDaysAtPurchase?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   providerAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerProductIdAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationProductId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  recommendationTripLength?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationUsageType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationChoice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderKind?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -873,6 +989,13 @@ export type OrderCreateManyInput = {
   validityDaysAtPurchase?: number | null
   providerAtPurchase?: string | null
   providerProductIdAtPurchase?: string | null
+  recommendationProductId?: string | null
+  recommendationDataGb?: number | null
+  recommendationTripLength?: string | null
+  recommendationUsageType?: string | null
+  recommendationChoice?: string | null
+  orderKind?: string
+  sourceOrderId?: string | null
   stripeSessionId?: string | null
   stripePaymentIntentId?: string | null
   paidAt?: Date | string | null
@@ -913,6 +1036,13 @@ export type OrderUpdateManyMutationInput = {
   validityDaysAtPurchase?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   providerAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerProductIdAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationProductId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  recommendationTripLength?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationUsageType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationChoice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderKind?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -954,6 +1084,13 @@ export type OrderUncheckedUpdateManyInput = {
   validityDaysAtPurchase?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   providerAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerProductIdAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationProductId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  recommendationTripLength?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationUsageType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationChoice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderKind?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1005,6 +1142,13 @@ export type OrderCountOrderByAggregateInput = {
   validityDaysAtPurchase?: Prisma.SortOrder
   providerAtPurchase?: Prisma.SortOrder
   providerProductIdAtPurchase?: Prisma.SortOrder
+  recommendationProductId?: Prisma.SortOrder
+  recommendationDataGb?: Prisma.SortOrder
+  recommendationTripLength?: Prisma.SortOrder
+  recommendationUsageType?: Prisma.SortOrder
+  recommendationChoice?: Prisma.SortOrder
+  orderKind?: Prisma.SortOrder
+  sourceOrderId?: Prisma.SortOrder
   stripeSessionId?: Prisma.SortOrder
   stripePaymentIntentId?: Prisma.SortOrder
   paidAt?: Prisma.SortOrder
@@ -1035,6 +1179,7 @@ export type OrderAvgOrderByAggregateInput = {
   amount?: Prisma.SortOrder
   buyPriceAtPurchase?: Prisma.SortOrder
   validityDaysAtPurchase?: Prisma.SortOrder
+  recommendationDataGb?: Prisma.SortOrder
   totalDataGb?: Prisma.SortOrder
   usedDataGb?: Prisma.SortOrder
   remainingDataGb?: Prisma.SortOrder
@@ -1055,6 +1200,13 @@ export type OrderMaxOrderByAggregateInput = {
   validityDaysAtPurchase?: Prisma.SortOrder
   providerAtPurchase?: Prisma.SortOrder
   providerProductIdAtPurchase?: Prisma.SortOrder
+  recommendationProductId?: Prisma.SortOrder
+  recommendationDataGb?: Prisma.SortOrder
+  recommendationTripLength?: Prisma.SortOrder
+  recommendationUsageType?: Prisma.SortOrder
+  recommendationChoice?: Prisma.SortOrder
+  orderKind?: Prisma.SortOrder
+  sourceOrderId?: Prisma.SortOrder
   stripeSessionId?: Prisma.SortOrder
   stripePaymentIntentId?: Prisma.SortOrder
   paidAt?: Prisma.SortOrder
@@ -1096,6 +1248,13 @@ export type OrderMinOrderByAggregateInput = {
   validityDaysAtPurchase?: Prisma.SortOrder
   providerAtPurchase?: Prisma.SortOrder
   providerProductIdAtPurchase?: Prisma.SortOrder
+  recommendationProductId?: Prisma.SortOrder
+  recommendationDataGb?: Prisma.SortOrder
+  recommendationTripLength?: Prisma.SortOrder
+  recommendationUsageType?: Prisma.SortOrder
+  recommendationChoice?: Prisma.SortOrder
+  orderKind?: Prisma.SortOrder
+  sourceOrderId?: Prisma.SortOrder
   stripeSessionId?: Prisma.SortOrder
   stripePaymentIntentId?: Prisma.SortOrder
   paidAt?: Prisma.SortOrder
@@ -1126,6 +1285,7 @@ export type OrderSumOrderByAggregateInput = {
   amount?: Prisma.SortOrder
   buyPriceAtPurchase?: Prisma.SortOrder
   validityDaysAtPurchase?: Prisma.SortOrder
+  recommendationDataGb?: Prisma.SortOrder
   totalDataGb?: Prisma.SortOrder
   usedDataGb?: Prisma.SortOrder
   remainingDataGb?: Prisma.SortOrder
@@ -1232,6 +1392,13 @@ export type OrderCreateWithoutCustomerAccountInput = {
   validityDaysAtPurchase?: number | null
   providerAtPurchase?: string | null
   providerProductIdAtPurchase?: string | null
+  recommendationProductId?: string | null
+  recommendationDataGb?: number | null
+  recommendationTripLength?: string | null
+  recommendationUsageType?: string | null
+  recommendationChoice?: string | null
+  orderKind?: string
+  sourceOrderId?: string | null
   stripeSessionId?: string | null
   stripePaymentIntentId?: string | null
   paidAt?: Date | string | null
@@ -1274,6 +1441,13 @@ export type OrderUncheckedCreateWithoutCustomerAccountInput = {
   validityDaysAtPurchase?: number | null
   providerAtPurchase?: string | null
   providerProductIdAtPurchase?: string | null
+  recommendationProductId?: string | null
+  recommendationDataGb?: number | null
+  recommendationTripLength?: string | null
+  recommendationUsageType?: string | null
+  recommendationChoice?: string | null
+  orderKind?: string
+  sourceOrderId?: string | null
   stripeSessionId?: string | null
   stripePaymentIntentId?: string | null
   paidAt?: Date | string | null
@@ -1346,6 +1520,13 @@ export type OrderScalarWhereInput = {
   validityDaysAtPurchase?: Prisma.IntNullableFilter<"Order"> | number | null
   providerAtPurchase?: Prisma.StringNullableFilter<"Order"> | string | null
   providerProductIdAtPurchase?: Prisma.StringNullableFilter<"Order"> | string | null
+  recommendationProductId?: Prisma.StringNullableFilter<"Order"> | string | null
+  recommendationDataGb?: Prisma.FloatNullableFilter<"Order"> | number | null
+  recommendationTripLength?: Prisma.StringNullableFilter<"Order"> | string | null
+  recommendationUsageType?: Prisma.StringNullableFilter<"Order"> | string | null
+  recommendationChoice?: Prisma.StringNullableFilter<"Order"> | string | null
+  orderKind?: Prisma.StringFilter<"Order"> | string
+  sourceOrderId?: Prisma.StringNullableFilter<"Order"> | string | null
   stripeSessionId?: Prisma.StringNullableFilter<"Order"> | string | null
   stripePaymentIntentId?: Prisma.StringNullableFilter<"Order"> | string | null
   paidAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
@@ -1386,6 +1567,13 @@ export type OrderCreateWithoutSupportRequestsInput = {
   validityDaysAtPurchase?: number | null
   providerAtPurchase?: string | null
   providerProductIdAtPurchase?: string | null
+  recommendationProductId?: string | null
+  recommendationDataGb?: number | null
+  recommendationTripLength?: string | null
+  recommendationUsageType?: string | null
+  recommendationChoice?: string | null
+  orderKind?: string
+  sourceOrderId?: string | null
   stripeSessionId?: string | null
   stripePaymentIntentId?: string | null
   paidAt?: Date | string | null
@@ -1429,6 +1617,13 @@ export type OrderUncheckedCreateWithoutSupportRequestsInput = {
   validityDaysAtPurchase?: number | null
   providerAtPurchase?: string | null
   providerProductIdAtPurchase?: string | null
+  recommendationProductId?: string | null
+  recommendationDataGb?: number | null
+  recommendationTripLength?: string | null
+  recommendationUsageType?: string | null
+  recommendationChoice?: string | null
+  orderKind?: string
+  sourceOrderId?: string | null
   stripeSessionId?: string | null
   stripePaymentIntentId?: string | null
   paidAt?: Date | string | null
@@ -1486,6 +1681,13 @@ export type OrderUpdateWithoutSupportRequestsInput = {
   validityDaysAtPurchase?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   providerAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerProductIdAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationProductId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  recommendationTripLength?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationUsageType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationChoice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderKind?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1529,6 +1731,13 @@ export type OrderUncheckedUpdateWithoutSupportRequestsInput = {
   validityDaysAtPurchase?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   providerAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerProductIdAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationProductId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  recommendationTripLength?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationUsageType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationChoice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderKind?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1570,6 +1779,13 @@ export type OrderCreateWithoutCustomerEventsInput = {
   validityDaysAtPurchase?: number | null
   providerAtPurchase?: string | null
   providerProductIdAtPurchase?: string | null
+  recommendationProductId?: string | null
+  recommendationDataGb?: number | null
+  recommendationTripLength?: string | null
+  recommendationUsageType?: string | null
+  recommendationChoice?: string | null
+  orderKind?: string
+  sourceOrderId?: string | null
   stripeSessionId?: string | null
   stripePaymentIntentId?: string | null
   paidAt?: Date | string | null
@@ -1613,6 +1829,13 @@ export type OrderUncheckedCreateWithoutCustomerEventsInput = {
   validityDaysAtPurchase?: number | null
   providerAtPurchase?: string | null
   providerProductIdAtPurchase?: string | null
+  recommendationProductId?: string | null
+  recommendationDataGb?: number | null
+  recommendationTripLength?: string | null
+  recommendationUsageType?: string | null
+  recommendationChoice?: string | null
+  orderKind?: string
+  sourceOrderId?: string | null
   stripeSessionId?: string | null
   stripePaymentIntentId?: string | null
   paidAt?: Date | string | null
@@ -1670,6 +1893,13 @@ export type OrderUpdateWithoutCustomerEventsInput = {
   validityDaysAtPurchase?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   providerAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerProductIdAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationProductId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  recommendationTripLength?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationUsageType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationChoice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderKind?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1713,6 +1943,13 @@ export type OrderUncheckedUpdateWithoutCustomerEventsInput = {
   validityDaysAtPurchase?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   providerAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerProductIdAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationProductId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  recommendationTripLength?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationUsageType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationChoice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderKind?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1754,6 +1991,13 @@ export type OrderCreateManyCustomerAccountInput = {
   validityDaysAtPurchase?: number | null
   providerAtPurchase?: string | null
   providerProductIdAtPurchase?: string | null
+  recommendationProductId?: string | null
+  recommendationDataGb?: number | null
+  recommendationTripLength?: string | null
+  recommendationUsageType?: string | null
+  recommendationChoice?: string | null
+  orderKind?: string
+  sourceOrderId?: string | null
   stripeSessionId?: string | null
   stripePaymentIntentId?: string | null
   paidAt?: Date | string | null
@@ -1794,6 +2038,13 @@ export type OrderUpdateWithoutCustomerAccountInput = {
   validityDaysAtPurchase?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   providerAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerProductIdAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationProductId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  recommendationTripLength?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationUsageType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationChoice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderKind?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1836,6 +2087,13 @@ export type OrderUncheckedUpdateWithoutCustomerAccountInput = {
   validityDaysAtPurchase?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   providerAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerProductIdAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationProductId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  recommendationTripLength?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationUsageType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationChoice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderKind?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1878,6 +2136,13 @@ export type OrderUncheckedUpdateManyWithoutCustomerAccountInput = {
   validityDaysAtPurchase?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   providerAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerProductIdAtPurchase?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationProductId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationDataGb?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  recommendationTripLength?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationUsageType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  recommendationChoice?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderKind?: Prisma.StringFieldUpdateOperationsInput | string
+  sourceOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1959,6 +2224,13 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   validityDaysAtPurchase?: boolean
   providerAtPurchase?: boolean
   providerProductIdAtPurchase?: boolean
+  recommendationProductId?: boolean
+  recommendationDataGb?: boolean
+  recommendationTripLength?: boolean
+  recommendationUsageType?: boolean
+  recommendationChoice?: boolean
+  orderKind?: boolean
+  sourceOrderId?: boolean
   stripeSessionId?: boolean
   stripePaymentIntentId?: boolean
   paidAt?: boolean
@@ -2004,6 +2276,13 @@ export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   validityDaysAtPurchase?: boolean
   providerAtPurchase?: boolean
   providerProductIdAtPurchase?: boolean
+  recommendationProductId?: boolean
+  recommendationDataGb?: boolean
+  recommendationTripLength?: boolean
+  recommendationUsageType?: boolean
+  recommendationChoice?: boolean
+  orderKind?: boolean
+  sourceOrderId?: boolean
   stripeSessionId?: boolean
   stripePaymentIntentId?: boolean
   paidAt?: boolean
@@ -2046,6 +2325,13 @@ export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   validityDaysAtPurchase?: boolean
   providerAtPurchase?: boolean
   providerProductIdAtPurchase?: boolean
+  recommendationProductId?: boolean
+  recommendationDataGb?: boolean
+  recommendationTripLength?: boolean
+  recommendationUsageType?: boolean
+  recommendationChoice?: boolean
+  orderKind?: boolean
+  sourceOrderId?: boolean
   stripeSessionId?: boolean
   stripePaymentIntentId?: boolean
   paidAt?: boolean
@@ -2088,6 +2374,13 @@ export type OrderSelectScalar = {
   validityDaysAtPurchase?: boolean
   providerAtPurchase?: boolean
   providerProductIdAtPurchase?: boolean
+  recommendationProductId?: boolean
+  recommendationDataGb?: boolean
+  recommendationTripLength?: boolean
+  recommendationUsageType?: boolean
+  recommendationChoice?: boolean
+  orderKind?: boolean
+  sourceOrderId?: boolean
   stripeSessionId?: boolean
   stripePaymentIntentId?: boolean
   paidAt?: boolean
@@ -2114,7 +2407,7 @@ export type OrderSelectScalar = {
   createdAt?: boolean
 }
 
-export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderNumber" | "customer" | "customerId" | "productId" | "amount" | "currency" | "buyPriceAtPurchase" | "productNameAtPurchase" | "countryAtPurchase" | "dataAtPurchase" | "validityDaysAtPurchase" | "providerAtPurchase" | "providerProductIdAtPurchase" | "stripeSessionId" | "stripePaymentIntentId" | "paidAt" | "legalAcceptedAt" | "legalVersion" | "immediateDeliveryAcceptedAt" | "immediateDeliveryVersion" | "payment" | "fulfillment" | "esimStatus" | "providerOrderId" | "iccid" | "qrCodeUrl" | "activationCode" | "iosInstallUrl" | "androidInstallUrl" | "totalDataGb" | "usedDataGb" | "remainingDataGb" | "activationDeadlineAt" | "activatedAt" | "expiresAt" | "lastUsageSyncAt" | "createdAt", ExtArgs["result"]["order"]>
+export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderNumber" | "customer" | "customerId" | "productId" | "amount" | "currency" | "buyPriceAtPurchase" | "productNameAtPurchase" | "countryAtPurchase" | "dataAtPurchase" | "validityDaysAtPurchase" | "providerAtPurchase" | "providerProductIdAtPurchase" | "recommendationProductId" | "recommendationDataGb" | "recommendationTripLength" | "recommendationUsageType" | "recommendationChoice" | "orderKind" | "sourceOrderId" | "stripeSessionId" | "stripePaymentIntentId" | "paidAt" | "legalAcceptedAt" | "legalVersion" | "immediateDeliveryAcceptedAt" | "immediateDeliveryVersion" | "payment" | "fulfillment" | "esimStatus" | "providerOrderId" | "iccid" | "qrCodeUrl" | "activationCode" | "iosInstallUrl" | "androidInstallUrl" | "totalDataGb" | "usedDataGb" | "remainingDataGb" | "activationDeadlineAt" | "activatedAt" | "expiresAt" | "lastUsageSyncAt" | "createdAt", ExtArgs["result"]["order"]>
 export type OrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   customerAccount?: boolean | Prisma.Order$customerAccountArgs<ExtArgs>
   supportRequests?: boolean | Prisma.Order$supportRequestsArgs<ExtArgs>
@@ -2150,6 +2443,13 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     validityDaysAtPurchase: number | null
     providerAtPurchase: string | null
     providerProductIdAtPurchase: string | null
+    recommendationProductId: string | null
+    recommendationDataGb: number | null
+    recommendationTripLength: string | null
+    recommendationUsageType: string | null
+    recommendationChoice: string | null
+    orderKind: string
+    sourceOrderId: string | null
     stripeSessionId: string | null
     stripePaymentIntentId: string | null
     paidAt: Date | null
@@ -2614,6 +2914,13 @@ export interface OrderFieldRefs {
   readonly validityDaysAtPurchase: Prisma.FieldRef<"Order", 'Int'>
   readonly providerAtPurchase: Prisma.FieldRef<"Order", 'String'>
   readonly providerProductIdAtPurchase: Prisma.FieldRef<"Order", 'String'>
+  readonly recommendationProductId: Prisma.FieldRef<"Order", 'String'>
+  readonly recommendationDataGb: Prisma.FieldRef<"Order", 'Float'>
+  readonly recommendationTripLength: Prisma.FieldRef<"Order", 'String'>
+  readonly recommendationUsageType: Prisma.FieldRef<"Order", 'String'>
+  readonly recommendationChoice: Prisma.FieldRef<"Order", 'String'>
+  readonly orderKind: Prisma.FieldRef<"Order", 'String'>
+  readonly sourceOrderId: Prisma.FieldRef<"Order", 'String'>
   readonly stripeSessionId: Prisma.FieldRef<"Order", 'String'>
   readonly stripePaymentIntentId: Prisma.FieldRef<"Order", 'String'>
   readonly paidAt: Prisma.FieldRef<"Order", 'DateTime'>

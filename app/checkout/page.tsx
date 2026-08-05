@@ -87,6 +87,10 @@ export default async function CheckoutPage({
     consent?: string;
     marketingCampaign?: string;
     marketingSourceEventId?: string;
+    recommendedProductId?: string;
+    recommendationTripLength?: string;
+    recommendationUsageType?: string;
+    recommendationChoice?: string;
   }>;
 }) {
   const params = await searchParams;
@@ -96,6 +100,10 @@ export default async function CheckoutPage({
   const consentRequired = params.consent === "required";
   const marketingCampaign = params.marketingCampaign || "";
   const marketingSourceEventId = params.marketingSourceEventId || "";
+  const recommendedProductId = params.recommendedProductId || "";
+  const recommendationTripLength = params.recommendationTripLength || "";
+  const recommendationUsageType = params.recommendationUsageType || "";
+  const recommendationChoice = params.recommendationChoice || "";
   const testCheckoutEnabled =
     process.env.NODE_ENV !== "production" &&
     process.env.DALO_ENABLE_TEST_CHECKOUT === "true";
@@ -195,6 +203,10 @@ export default async function CheckoutPage({
             <input type="hidden" name="productId" value={product.id} />
             <input type="hidden" name="marketingCampaign" value={marketingCampaign} />
             <input type="hidden" name="marketingSourceEventId" value={marketingSourceEventId} />
+            <input type="hidden" name="recommendedProductId" value={recommendedProductId} />
+            <input type="hidden" name="recommendationTripLength" value={recommendationTripLength} />
+            <input type="hidden" name="recommendationUsageType" value={recommendationUsageType} />
+            <input type="hidden" name="recommendationChoice" value={recommendationChoice} />
             <CheckoutSessionInput />
 
             <div>
@@ -242,6 +254,10 @@ export default async function CheckoutPage({
                 <input type="hidden" name="productId" value={product.id} />
                 <input type="hidden" name="marketingCampaign" value={marketingCampaign} />
                 <input type="hidden" name="marketingSourceEventId" value={marketingSourceEventId} />
+                <input type="hidden" name="recommendedProductId" value={recommendedProductId} />
+                <input type="hidden" name="recommendationTripLength" value={recommendationTripLength} />
+                <input type="hidden" name="recommendationUsageType" value={recommendationUsageType} />
+                <input type="hidden" name="recommendationChoice" value={recommendationChoice} />
                 <CheckoutSessionInput />
                 <input
                   name="email"

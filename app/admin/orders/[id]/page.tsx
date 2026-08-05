@@ -113,11 +113,12 @@ export default async function OrderDetailPage({
     notFound();
   }
 
-  const product = await prisma.product.findUnique({
-    where: {
-      id: order.productId,
-    },
-  });
+  const [product, recommendedProduct] = await Promise.all([
+    prisma.product.findUnique({ where: { id: order.productId } }),
+    order.recommendationProductId
+      ? prisma.product.findUnique({ where: { id: order.recommendationProductId } })
+      : null,
+  ]);
 
   const amount = order.amount ?? product?.sellPrice ?? 0;
   const buyPrice = order.buyPriceAtPurchase ?? product?.buyPrice ?? 0;
@@ -210,6 +211,19 @@ export default async function OrderDetailPage({
           <DetailCard label="eSIM Status" value={order.esimStatus || "pending"} />
         </div>
       </div>
+
+      {order.recommendationProductId ? (
+        <div className="mb-8 rounded-[2rem] border border-blue-100 bg-blue-50 p-6">
+          <p className="text-sm font-bold uppercase tracking-wide text-blue-600">DALO recommendation</p>
+          <h2 className="mt-1 text-2xl font-bold text-slate-950">Recommendation outcome</h2>
+          <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <DetailCard label="Recommended" value={recommendedProduct?.name || `${formatNumber(order.recommendationDataGb)} GB`} />
+            <DetailCard label="Purchased" value={productName} />
+            <DetailCard label="Customer choice" value={order.recommendationChoice?.replaceAll("_", " ") || "—"} />
+            <DetailCard label="Quiz input" value={[order.recommendationTripLength, order.recommendationUsageType].filter(Boolean).join(" · ") || "—"} />
+          </div>
+        </div>
+      ) : null}
 
       <div className="mb-8 rounded-[2rem] border border-blue-100 bg-blue-50 p-6">
         <div className="flex flex-col gap-2">
