@@ -15,22 +15,22 @@
     "recommendations:audit": "DOTENV_CONFIG_PATH=.env.local tsx scripts/audit-recommendations.ts"
   },
   "dependencies": {
-    "@prisma/adapter-better-sqlite3": "^7.8.0",
+    "@prisma/adapter-better-sqlite3": "^7.9.1",
     "@prisma/adapter-pg": "^7.9.1",
-    "@prisma/client": "^7.8.0",
+    "@prisma/client": "^7.9.1",
     "@types/qrcode": "^1.5.6",
     "bcryptjs": "^3.0.3",
     "better-sqlite3": "^12.10.0",
     "dotenv": "^17.4.2",
     "next": "^16.3.0",
     "pg": "^8.22.0",
-    "prisma": "^7.8.0",
+    "prisma": "^7.9.1",
     "qrcode": "^1.5.4",
+    "read-excel-file": "^6.0.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "resend": "^6.12.4",
-    "stripe": "^22.2.0",
-    "xlsx": "^0.18.5"
+    "stripe": "^22.2.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

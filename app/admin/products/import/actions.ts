@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import * as XLSX from "xlsx";
+import readXlsxFile, { readSheetNames } from "read-excel-file/node";
 import fs from "fs";
 import path from "path";
 import { prisma } from "../../../../lib/db";
@@ -32,9 +32,30 @@ type ImportProductPreview = {
   description: string;
 };
 
+const MAX_RATE_SHEET_BYTES = 5 * 1024 * 1024;
+const MAX_RATE_SHEET_SHEETS = 20;
+const MAX_RATE_SHEET_ROWS = 5_000;
+
 function cleanCell(value: unknown) {
   if (value === null || value === undefined) return "";
   return String(value).trim();
+}
+
+function rowsToRecords(rows: readonly (readonly unknown[])[]) {
+  const [headerRow = [], ...dataRows] = rows;
+  const headers = headerRow.map((header) => cleanCell(header));
+
+  return dataRows
+    .filter((row) => row.some((cell) => cleanCell(cell) !== ""))
+    .map((row) => {
+      const record: Record<string, unknown> = {};
+
+      headers.forEach((header, index) => {
+        if (header) record[header] = row[index] ?? "";
+      });
+
+      return record;
+    });
 }
 
 function toNumber(value: unknown) {
@@ -203,24 +224,33 @@ export async function analyzeRateSheet(formData: FormData) {
     throw new Error("No file uploaded");
   }
 
+  if (!file.name.toLowerCase().endsWith(".xlsx")) {
+    throw new Error("Only .xlsx rate sheets are supported.");
+  }
+
+  if (file.size === 0 || file.size > MAX_RATE_SHEET_BYTES) {
+    throw new Error("The rate sheet must be smaller than 5 MB.");
+  }
+
   const buffer = Buffer.from(await file.arrayBuffer());
+  const sheetNames = await readSheetNames(buffer);
 
-  const workbook = XLSX.read(buffer, {
-    type: "buffer",
-  });
+  if (sheetNames.length === 0 || sheetNames.length > MAX_RATE_SHEET_SHEETS) {
+    throw new Error("The rate sheet must contain between 1 and 20 sheets.");
+  }
 
-  const previews: SheetPreview[] = workbook.SheetNames.map((sheetName) => {
-    const sheet = workbook.Sheets[sheetName];
+  const previews: SheetPreview[] = [];
+  let fixedRows: Record<string, unknown>[] | null = null;
 
-    const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet, {
-      defval: "",
-    });
+  for (const sheetName of sheetNames) {
+    const sheetRows = await readXlsxFile(buffer, { sheet: sheetName });
+    const rows = rowsToRecords(sheetRows);
 
-    const headers =
-      rows.length > 0
-        ? Object.keys(rows[0]).map((header) => cleanCell(header))
-        : [];
+    if (rows.length > MAX_RATE_SHEET_ROWS) {
+      throw new Error(`Sheet '${sheetName}' exceeds the 5,000 row limit.`);
+    }
 
+    const headers = sheetRows[0]?.map((header) => cleanCell(header)).filter(Boolean) ?? [];
     const sampleRows = rows.slice(0, 5).map((row) => {
       const cleanedRow: Record<string, string> = {};
 
@@ -231,30 +261,26 @@ export async function analyzeRateSheet(formData: FormData) {
       return cleanedRow;
     });
 
-    return {
+    previews.push({
       name: sheetName,
       totalRows: rows.length,
       headers,
       sampleRows,
-    };
-  });
+    });
 
-  const fixedSheet = workbook.Sheets["Standard - Fixed"];
-
-  if (!fixedSheet) {
-    throw new Error("Sheet 'Standard - Fixed' not found in uploaded rate sheet");
+    if (sheetName === "Standard - Fixed") fixedRows = rows;
   }
 
-  const fixedRows = XLSX.utils.sheet_to_json<Record<string, unknown>>(fixedSheet, {
-    defval: "",
-  });
+  if (!fixedRows) {
+    throw new Error("Sheet 'Standard - Fixed' not found in uploaded rate sheet");
+  }
 
   const importProducts = normalizeFixedProducts(fixedRows);
 
   const dataDirectory = path.join(process.cwd(), "data");
 
   if (!fs.existsSync(dataDirectory)) {
-    fs.mkdirSync(dataDirectory);
+    fs.mkdirSync(dataDirectory, { recursive: true });
   }
 
   fs.writeFileSync(

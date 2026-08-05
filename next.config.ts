@@ -47,6 +47,7 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  serverExternalPackages: ["read-excel-file", "unzipper"],
   images: {
     qualities: [45, 60, 68, 70, 72, 75, 82],
   },

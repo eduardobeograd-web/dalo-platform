@@ -52,7 +52,7 @@ export default function ImportProductsPage() {
               <input
                 name="file"
                 type="file"
-                accept=".xlsx,.xls"
+                accept=".xlsx"
                 required
                 className="mt-6 w-full rounded-2xl border border-slate-200 bg-white p-4"
               />

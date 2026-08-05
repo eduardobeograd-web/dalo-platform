@@ -20,6 +20,7 @@ export async function sendEmail({
   const apiKey = process.env.RESEND_API_KEY;
   const from =
     process.env.DALO_EMAIL_FROM || "DALO eSIM <onboarding@resend.dev>";
+  const replyTo = process.env.DALO_EMAIL_REPLY_TO?.trim() || undefined;
   const testRecipient =
     process.env.NODE_ENV !== "production"
       ? process.env.DALO_EMAIL_TEST_RECIPIENT?.trim()
@@ -41,6 +42,7 @@ export async function sendEmail({
   const { data, error } = await resend.emails.send({
     from,
     to: recipient,
+    replyTo,
     subject,
     html,
     attachments,
