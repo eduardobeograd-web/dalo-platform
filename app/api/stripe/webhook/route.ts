@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { stripe } from "@/lib/stripe";
 import { fulfillOrderMockById } from "@/lib/mock-fulfillment";
 import { sendOrderConfirmationEmail } from "@/lib/order-confirmation-email";
+import { sendInternalOrderNotification } from "@/lib/internal-order-notification";
 import { sendPaymentConfirmationEmail } from "@/lib/payment-confirmation-email";
 import { trackCustomerEvent } from "@/lib/customer-events";
 import { sendRefundConfirmationEmail } from "@/lib/refund-confirmation-email";
@@ -346,13 +347,17 @@ export async function POST(request: NextRequest) {
           deliveryOrder?.iosInstallUrl ||
           deliveryOrder?.androidInstallUrl
       );
-      const emailResult =
+      const isDeliveryReady =
         deliveryOrder?.payment === "Paid" &&
         deliveryOrder.fulfillment === "Delivered" &&
         deliveryOrder.esimStatus === "ready" &&
-        hasInstallDetails
-          ? await sendOrderConfirmationEmail(deliveryOrder.id)
-          : null;
+        hasInstallDetails;
+      const emailResult = isDeliveryReady
+        ? await sendOrderConfirmationEmail(deliveryOrder.id)
+        : null;
+      const internalEmailResult = isDeliveryReady
+        ? await sendInternalOrderNotification(deliveryOrder.id)
+        : null;
 
       return NextResponse.json({
         received: true,
@@ -361,6 +366,7 @@ export async function POST(request: NextRequest) {
         paymentEmailResult,
         fulfillmentResult,
         emailResult,
+        internalEmailResult,
       });
     }
 

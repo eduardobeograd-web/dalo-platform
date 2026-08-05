@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { prisma } from "../../../lib/db";
 import { fulfillOrderMockById } from "@/lib/mock-fulfillment";
 import { sendOrderConfirmationEmail } from "@/lib/order-confirmation-email";
+import { sendInternalOrderNotification } from "@/lib/internal-order-notification";
 import { ADMIN_PERMISSIONS } from "../../../lib/admin-permissions";
 import { requireAdminPermission } from "../../../lib/admin-auth";
 
@@ -46,6 +47,7 @@ async function sendDeliveryEmailIfReady(orderId: string) {
     Boolean(order.activationCode || order.qrCodeUrl || order.iosInstallUrl || order.androidInstallUrl)
   ) {
     await sendOrderConfirmationEmail(order.id);
+    await sendInternalOrderNotification(order.id);
   }
 }
 
