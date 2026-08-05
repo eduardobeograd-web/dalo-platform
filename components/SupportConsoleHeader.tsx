@@ -6,8 +6,10 @@ import SupportPushNotifications from "./SupportPushNotifications";
 
 export default function SupportConsoleHeader({
   adminName,
+  adminHomePath,
 }: {
   adminName: string;
+  adminHomePath: string;
 }) {
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200/80 bg-white/95 px-4 py-3 backdrop-blur sm:px-6">
@@ -30,6 +32,12 @@ export default function SupportConsoleHeader({
         </Link>
 
         <div className="flex shrink-0 items-center gap-2">
+          <Link
+            href={adminHomePath}
+            className="inline-flex min-h-11 items-center justify-center rounded-xl border border-blue-200 bg-blue-50 px-3 text-xs font-black text-blue-700 transition hover:border-blue-300 hover:bg-blue-100 sm:px-4 sm:text-sm"
+          >
+            Admin
+          </Link>
           <SupportPushNotifications
             publicKey={process.env.NEXT_PUBLIC_SUPPORT_VAPID_PUBLIC_KEY?.trim() || ""}
           />

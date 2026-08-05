@@ -37,7 +37,7 @@ export default async function AdminSupportPage({ searchParams }: { searchParams?
   };
 
   const [requests, count, open, inProgress] = await Promise.all([
-    prisma.supportRequest.findMany({ where, orderBy: { createdAt: "desc" }, skip: (page - 1) * PAGE_SIZE, take: PAGE_SIZE }),
+    prisma.supportRequest.findMany({ where, orderBy: { createdAt: "desc" }, skip: (page - 1) * PAGE_SIZE, take: PAGE_SIZE, include: { customer: { select: { name: true } } } }),
     prisma.supportRequest.count({ where }),
     prisma.supportRequest.count({ where: { status: "open" } }),
     prisma.supportRequest.count({ where: { status: "in_progress" } }),
@@ -85,7 +85,10 @@ export default async function AdminSupportPage({ searchParams }: { searchParams?
                 <p className="mt-2 font-black text-slate-950">{request.reason}</p>
                 <p className="mt-1 line-clamp-1 text-sm text-slate-500">{request.message}</p>
               </div>
-              <p className="truncate text-sm font-bold text-slate-700">{request.customerEmail}</p>
+              <div className="min-w-0">
+                <p className="truncate text-sm font-black text-slate-800">{request.customer?.name || "Name not provided"}</p>
+                <p className="mt-1 truncate text-xs text-slate-500">{request.customerEmail}</p>
+              </div>
               <div className="text-sm">
                 <p className="font-black text-slate-800">{request.orderNumber || "No order"}</p>
                 <p className="mt-1 text-slate-400">{request.iccid || "No ICCID"}</p>

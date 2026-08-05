@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import SupportConsoleHeader from "../../../components/SupportConsoleHeader";
 import { prisma } from "../../../lib/db";
 import { requireSupportConsole } from "../../../lib/support-console-auth";
+import { getFirstAllowedAdminPath } from "../../../lib/admin-auth";
 import { sendSupportReply, updateSupportRequestStatus } from "./actions";
 
 type PageProps = {
@@ -20,6 +21,7 @@ export default async function SupportRequestPage({ params, searchParams }: PageP
   const request = await prisma.supportRequest.findUnique({
     where: { id },
     include: {
+      customer: { select: { name: true } },
       replies: {
         include: { adminUser: { select: { name: true } } },
         orderBy: { createdAt: "asc" },
@@ -30,7 +32,10 @@ export default async function SupportRequestPage({ params, searchParams }: PageP
 
   return (
     <main className="min-h-screen bg-[#eef4fb] text-slate-950">
-      <SupportConsoleHeader adminName={admin.name || admin.email} />
+      <SupportConsoleHeader
+        adminName={admin.name || admin.email}
+        adminHomePath={getFirstAllowedAdminPath(admin)}
+      />
       <div className="mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-8">
         <Link href="/support-console" className="inline-flex min-h-11 items-center text-sm font-bold text-[#174dc8]">
           &larr; Back to support queue
@@ -46,7 +51,8 @@ export default async function SupportRequestPage({ params, searchParams }: PageP
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-[0.2em] text-blue-200">Support conversation</p>
                   <h1 className="mt-2 text-2xl font-black tracking-tight">{request.reason}</h1>
-                  <p className="mt-2 text-sm text-blue-100">{request.customerEmail}</p>
+                  <p className="mt-2 text-sm font-bold text-white">{request.customer?.name || "Name not provided"}</p>
+                  <p className="mt-1 text-sm text-blue-100">{request.customerEmail}</p>
                 </div>
                 <span className="rounded-full bg-white/15 px-3 py-1.5 text-xs font-extrabold uppercase tracking-wider">{request.status.replace("_", " ")}</span>
               </div>
@@ -66,7 +72,7 @@ export default async function SupportRequestPage({ params, searchParams }: PageP
               ))}
 
               <form action={sendSupportReply.bind(null, request.id)} className="border-t border-slate-200 pt-5">
-                <label htmlFor="message" className="text-sm font-extrabold">Reply to {request.customerEmail}</label>
+                <label htmlFor="message" className="text-sm font-extrabold">Reply to {request.customer?.name || request.customerEmail}</label>
                 <textarea id="message" name="message" required minLength={2} maxLength={5000} rows={7} placeholder="Write a clear, helpful answer..." className="mt-3 w-full resize-y rounded-2xl border border-slate-300 bg-white px-4 py-3 text-base leading-6 outline-none transition focus:border-[#2452cc] focus:ring-4 focus:ring-blue-100" />
                 <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
                   <p className="text-xs leading-5 text-slate-500">Sent as a branded DALO support email and recorded here.</p>

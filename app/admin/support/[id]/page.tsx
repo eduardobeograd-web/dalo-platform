@@ -40,6 +40,13 @@ export default async function AdminSupportDetailPage({
     where: {
       id,
     },
+    include: {
+      customer: {
+        select: {
+          name: true,
+        },
+      },
+    },
   });
 
   if (!request) {
@@ -165,6 +172,15 @@ export default async function AdminSupportDetailPage({
               </h2>
 
               <div className="mt-5 space-y-4">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                    Customer name
+                  </p>
+                  <p className="mt-1 text-sm font-bold text-slate-800">
+                    {request.customer?.name || "Name not provided"}
+                  </p>
+                </div>
+
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
                     Email

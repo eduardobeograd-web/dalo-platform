@@ -3,6 +3,7 @@ import Link from "next/link";
 import SupportConsoleHeader from "../../components/SupportConsoleHeader";
 import { prisma } from "../../lib/db";
 import { requireSupportConsole } from "../../lib/support-console-auth";
+import { getFirstAllowedAdminPath } from "../../lib/admin-auth";
 
 const PAGE_SIZE = 30;
 
@@ -62,6 +63,7 @@ export default async function SupportConsolePage({
       orderBy: { createdAt: "desc" },
       skip: (page - 1) * PAGE_SIZE,
       take: PAGE_SIZE,
+      include: { customer: { select: { name: true } } },
     }),
     prisma.supportRequest.count({ where: supportWhere }),
     prisma.supportRequest.count({ where: { status: "open" } }),
@@ -88,7 +90,10 @@ export default async function SupportConsolePage({
 
   return (
     <main className="min-h-screen bg-[#f3f6fc] text-slate-900">
-      <SupportConsoleHeader adminName={admin.name} />
+      <SupportConsoleHeader
+        adminName={admin.name}
+        adminHomePath={getFirstAllowedAdminPath(admin)}
+      />
 
       <div className="mx-auto max-w-7xl px-4 pb-20 pt-6 sm:px-6 lg:px-8">
         <section className="overflow-hidden rounded-[1.75rem] bg-[#10233a] p-6 text-white shadow-[0_22px_55px_rgba(16,35,58,0.2)] sm:p-8">
@@ -202,7 +207,7 @@ export default async function SupportConsolePage({
                   <span className="shrink-0 text-lg font-black text-blue-700">→</span>
                 </div>
                 <div className="mt-4 grid gap-1 border-t border-slate-100 pt-3 text-xs text-slate-500 sm:grid-cols-3">
-                  <p className="truncate"><strong className="text-slate-700">Customer:</strong> {request.customerEmail}</p>
+                  <p className="truncate"><strong className="text-slate-700">Customer:</strong> {request.customer?.name || "Name not provided"} · {request.customerEmail}</p>
                   <p className="truncate"><strong className="text-slate-700">Order:</strong> {request.orderNumber || "Not linked"}</p>
                   <p className="truncate"><strong className="text-slate-700">ICCID:</strong> {request.iccid || "Not assigned"}</p>
                 </div>
