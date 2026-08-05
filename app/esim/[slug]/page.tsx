@@ -16,7 +16,6 @@ import { getDestinationImage } from "../../../lib/destination-images";
 import { prisma } from "../../../lib/db";
 import {
   getSeoLandingPage,
-  seoLandingPages,
 } from "../../../lib/seo-pages";
 import { siteUrl as baseUrl } from "../../../lib/site-url";
 
@@ -114,17 +113,10 @@ function getPage(slug: string) {
 }
 
 export async function generateStaticParams() {
-  const managedPages = await prisma.destinationPage.findMany({
-    where: { published: true },
-    select: { slug: true },
-  });
-  const slugs = new Set([
-    ...Object.keys(landingPages),
-    ...Object.keys(seoLandingPages),
-    ...managedPages.map((page) => page.slug),
-  ]);
-
-  return Array.from(slugs).map((slug) => ({ slug }));
+  // Destination pages are generated on first request and then kept by ISR.
+  // Prebuilding every destination caused every deployment to repeatedly read
+  // the full product catalog from the production database.
+  return [];
 }
 
 function slugify(value: string) {
@@ -223,9 +215,34 @@ async function getProducts(
 
   if (!page && !managedPage) return [];
 
+  const destinationMatches = Array.from(
+    new Set(
+      [
+        ...(page?.countryMatches || []),
+        managedPage?.countryName,
+        managedPage?.displayName,
+      ].filter((value): value is string => Boolean(value?.trim())),
+    ),
+  );
+
   const products = await prisma.product.findMany({
     where: {
       active: true,
+      OR: [
+        { slug },
+        {
+          country: {
+            in: destinationMatches,
+            mode: "insensitive",
+          },
+        },
+        {
+          region: {
+            in: destinationMatches,
+            mode: "insensitive",
+          },
+        },
+      ],
     },
     orderBy: {
       sellPrice: "asc",

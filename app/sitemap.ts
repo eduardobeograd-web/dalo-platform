@@ -4,6 +4,8 @@ import { siteUrl as baseUrl } from "../lib/site-url";
 import { getDestinationSeoIssues } from "../lib/catalog-readiness";
 import { slugifyDestination } from "../lib/destination-pages";
 
+export const revalidate = 86_400;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [products, managedPages] = await Promise.all([
     prisma.product.findMany({
