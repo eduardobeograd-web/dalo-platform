@@ -14,7 +14,15 @@ type NavigatorWithStandalone = Navigator & {
   standalone?: boolean;
 };
 
-export default function PwaInstallButton() {
+export default function PwaInstallButton({
+  mobileLabel = "Install",
+  label = "Install DALO",
+  appName = "DALO",
+}: {
+  mobileLabel?: string;
+  label?: string;
+  appName?: string;
+} = {}) {
   const [installPrompt, setInstallPrompt] =
     useState<InstallPromptEvent | null>(null);
   const [showAppleInstructions, setShowAppleInstructions] = useState(false);
@@ -104,14 +112,14 @@ export default function PwaInstallButton() {
           <path d="M12 3v12m0 0 4-4m-4 4-4-4" strokeLinecap="round" strokeLinejoin="round" />
           <path d="M5 15v3.5A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5V15" strokeLinecap="round" />
         </svg>
-        <span className="sm:hidden">Install</span>
-        <span className="hidden sm:inline">Install DALO</span>
+        <span className="sm:hidden">{mobileLabel}</span>
+        <span className="hidden sm:inline">{label}</span>
       </button>
 
       {showAppleInstructions ? (
         <div className="absolute right-0 top-[calc(100%+0.6rem)] z-50 w-[min(19rem,calc(100vw-2rem))] rounded-2xl border border-blue-100 bg-white p-4 text-left shadow-[0_20px_55px_rgba(15,35,70,0.2)]">
           <p className="text-[10px] font-black uppercase tracking-[0.15em] text-blue-700">
-            Add DALO to your Home Screen
+            Add {appName} to your Home Screen
           </p>
           <p className="mt-2 text-sm leading-6 text-slate-600">
             Open Safari&apos;s Share menu, then choose{" "}

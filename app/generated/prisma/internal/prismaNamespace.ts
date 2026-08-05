@@ -409,6 +409,7 @@ export const ModelName = {
   ProviderConfig: 'ProviderConfig',
   DestinationPage: 'DestinationPage',
   AdminUser: 'AdminUser',
+  SupportReply: 'SupportReply',
   AdminSession: 'AdminSession',
   AdminAuditLog: 'AdminAuditLog'
 } as const
@@ -426,7 +427,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "recommendationSetting" | "product" | "countryNetworkCoverage" | "customer" | "customerSession" | "passwordResetToken" | "order" | "supportRequest" | "customerEvent" | "providerConfig" | "destinationPage" | "adminUser" | "adminSession" | "adminAuditLog"
+    modelProps: "recommendationSetting" | "product" | "countryNetworkCoverage" | "customer" | "customerSession" | "passwordResetToken" | "order" | "supportRequest" | "customerEvent" | "providerConfig" | "destinationPage" | "adminUser" | "supportReply" | "adminSession" | "adminAuditLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1318,6 +1319,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    SupportReply: {
+      payload: Prisma.$SupportReplyPayload<ExtArgs>
+      fields: Prisma.SupportReplyFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SupportReplyFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportReplyPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SupportReplyFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportReplyPayload>
+        }
+        findFirst: {
+          args: Prisma.SupportReplyFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportReplyPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SupportReplyFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportReplyPayload>
+        }
+        findMany: {
+          args: Prisma.SupportReplyFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportReplyPayload>[]
+        }
+        create: {
+          args: Prisma.SupportReplyCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportReplyPayload>
+        }
+        createMany: {
+          args: Prisma.SupportReplyCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SupportReplyCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportReplyPayload>[]
+        }
+        delete: {
+          args: Prisma.SupportReplyDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportReplyPayload>
+        }
+        update: {
+          args: Prisma.SupportReplyUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportReplyPayload>
+        }
+        deleteMany: {
+          args: Prisma.SupportReplyDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SupportReplyUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SupportReplyUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportReplyPayload>[]
+        }
+        upsert: {
+          args: Prisma.SupportReplyUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportReplyPayload>
+        }
+        aggregate: {
+          args: Prisma.SupportReplyAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSupportReply>
+        }
+        groupBy: {
+          args: Prisma.SupportReplyGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SupportReplyGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SupportReplyCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SupportReplyCountAggregateOutputType> | number
+        }
+      }
+    }
     AdminSession: {
       payload: Prisma.$AdminSessionPayload<ExtArgs>
       fields: Prisma.AdminSessionFieldRefs
@@ -1750,6 +1825,22 @@ export const AdminUserScalarFieldEnum = {
 export type AdminUserScalarFieldEnum = (typeof AdminUserScalarFieldEnum)[keyof typeof AdminUserScalarFieldEnum]
 
 
+export const SupportReplyScalarFieldEnum = {
+  id: 'id',
+  supportRequestId: 'supportRequestId',
+  adminUserId: 'adminUserId',
+  recipientEmail: 'recipientEmail',
+  subject: 'subject',
+  message: 'message',
+  deliveryStatus: 'deliveryStatus',
+  providerMessageId: 'providerMessageId',
+  sentAt: 'sentAt',
+  createdAt: 'createdAt'
+} as const
+
+export type SupportReplyScalarFieldEnum = (typeof SupportReplyScalarFieldEnum)[keyof typeof SupportReplyScalarFieldEnum]
+
+
 export const AdminSessionScalarFieldEnum = {
   id: 'id',
   adminUserId: 'adminUserId',
@@ -2067,6 +2158,7 @@ export type GlobalOmitConfig = {
   providerConfig?: Prisma.ProviderConfigOmit
   destinationPage?: Prisma.DestinationPageOmit
   adminUser?: Prisma.AdminUserOmit
+  supportReply?: Prisma.SupportReplyOmit
   adminSession?: Prisma.AdminSessionOmit
   adminAuditLog?: Prisma.AdminAuditLogOmit
 }

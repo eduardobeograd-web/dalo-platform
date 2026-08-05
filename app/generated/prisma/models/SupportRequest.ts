@@ -240,6 +240,7 @@ export type SupportRequestWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"SupportRequest"> | Date | string
   customer?: Prisma.XOR<Prisma.CustomerNullableScalarRelationFilter, Prisma.CustomerWhereInput> | null
   order?: Prisma.XOR<Prisma.OrderNullableScalarRelationFilter, Prisma.OrderWhereInput> | null
+  replies?: Prisma.SupportReplyListRelationFilter
 }
 
 export type SupportRequestOrderByWithRelationInput = {
@@ -257,6 +258,7 @@ export type SupportRequestOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   customer?: Prisma.CustomerOrderByWithRelationInput
   order?: Prisma.OrderOrderByWithRelationInput
+  replies?: Prisma.SupportReplyOrderByRelationAggregateInput
 }
 
 export type SupportRequestWhereUniqueInput = Prisma.AtLeast<{
@@ -277,6 +279,7 @@ export type SupportRequestWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"SupportRequest"> | Date | string
   customer?: Prisma.XOR<Prisma.CustomerNullableScalarRelationFilter, Prisma.CustomerWhereInput> | null
   order?: Prisma.XOR<Prisma.OrderNullableScalarRelationFilter, Prisma.OrderWhereInput> | null
+  replies?: Prisma.SupportReplyListRelationFilter
 }, "id">
 
 export type SupportRequestOrderByWithAggregationInput = {
@@ -328,6 +331,7 @@ export type SupportRequestCreateInput = {
   updatedAt?: Date | string
   customer?: Prisma.CustomerCreateNestedOneWithoutSupportRequestsInput
   order?: Prisma.OrderCreateNestedOneWithoutSupportRequestsInput
+  replies?: Prisma.SupportReplyCreateNestedManyWithoutSupportRequestInput
 }
 
 export type SupportRequestUncheckedCreateInput = {
@@ -343,6 +347,7 @@ export type SupportRequestUncheckedCreateInput = {
   productName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  replies?: Prisma.SupportReplyUncheckedCreateNestedManyWithoutSupportRequestInput
 }
 
 export type SupportRequestUpdateInput = {
@@ -358,6 +363,7 @@ export type SupportRequestUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customer?: Prisma.CustomerUpdateOneWithoutSupportRequestsNestedInput
   order?: Prisma.OrderUpdateOneWithoutSupportRequestsNestedInput
+  replies?: Prisma.SupportReplyUpdateManyWithoutSupportRequestNestedInput
 }
 
 export type SupportRequestUncheckedUpdateInput = {
@@ -373,6 +379,7 @@ export type SupportRequestUncheckedUpdateInput = {
   productName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  replies?: Prisma.SupportReplyUncheckedUpdateManyWithoutSupportRequestNestedInput
 }
 
 export type SupportRequestCreateManyInput = {
@@ -473,6 +480,11 @@ export type SupportRequestMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
+export type SupportRequestScalarRelationFilter = {
+  is?: Prisma.SupportRequestWhereInput
+  isNot?: Prisma.SupportRequestWhereInput
+}
+
 export type SupportRequestCreateNestedManyWithoutCustomerInput = {
   create?: Prisma.XOR<Prisma.SupportRequestCreateWithoutCustomerInput, Prisma.SupportRequestUncheckedCreateWithoutCustomerInput> | Prisma.SupportRequestCreateWithoutCustomerInput[] | Prisma.SupportRequestUncheckedCreateWithoutCustomerInput[]
   connectOrCreate?: Prisma.SupportRequestCreateOrConnectWithoutCustomerInput | Prisma.SupportRequestCreateOrConnectWithoutCustomerInput[]
@@ -557,6 +569,20 @@ export type SupportRequestUncheckedUpdateManyWithoutOrderNestedInput = {
   deleteMany?: Prisma.SupportRequestScalarWhereInput | Prisma.SupportRequestScalarWhereInput[]
 }
 
+export type SupportRequestCreateNestedOneWithoutRepliesInput = {
+  create?: Prisma.XOR<Prisma.SupportRequestCreateWithoutRepliesInput, Prisma.SupportRequestUncheckedCreateWithoutRepliesInput>
+  connectOrCreate?: Prisma.SupportRequestCreateOrConnectWithoutRepliesInput
+  connect?: Prisma.SupportRequestWhereUniqueInput
+}
+
+export type SupportRequestUpdateOneRequiredWithoutRepliesNestedInput = {
+  create?: Prisma.XOR<Prisma.SupportRequestCreateWithoutRepliesInput, Prisma.SupportRequestUncheckedCreateWithoutRepliesInput>
+  connectOrCreate?: Prisma.SupportRequestCreateOrConnectWithoutRepliesInput
+  upsert?: Prisma.SupportRequestUpsertWithoutRepliesInput
+  connect?: Prisma.SupportRequestWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.SupportRequestUpdateToOneWithWhereWithoutRepliesInput, Prisma.SupportRequestUpdateWithoutRepliesInput>, Prisma.SupportRequestUncheckedUpdateWithoutRepliesInput>
+}
+
 export type SupportRequestCreateWithoutCustomerInput = {
   id?: string
   customerEmail: string
@@ -569,6 +595,7 @@ export type SupportRequestCreateWithoutCustomerInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   order?: Prisma.OrderCreateNestedOneWithoutSupportRequestsInput
+  replies?: Prisma.SupportReplyCreateNestedManyWithoutSupportRequestInput
 }
 
 export type SupportRequestUncheckedCreateWithoutCustomerInput = {
@@ -583,6 +610,7 @@ export type SupportRequestUncheckedCreateWithoutCustomerInput = {
   productName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  replies?: Prisma.SupportReplyUncheckedCreateNestedManyWithoutSupportRequestInput
 }
 
 export type SupportRequestCreateOrConnectWithoutCustomerInput = {
@@ -641,6 +669,7 @@ export type SupportRequestCreateWithoutOrderInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   customer?: Prisma.CustomerCreateNestedOneWithoutSupportRequestsInput
+  replies?: Prisma.SupportReplyCreateNestedManyWithoutSupportRequestInput
 }
 
 export type SupportRequestUncheckedCreateWithoutOrderInput = {
@@ -655,6 +684,7 @@ export type SupportRequestUncheckedCreateWithoutOrderInput = {
   productName?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  replies?: Prisma.SupportReplyUncheckedCreateNestedManyWithoutSupportRequestInput
 }
 
 export type SupportRequestCreateOrConnectWithoutOrderInput = {
@@ -683,6 +713,82 @@ export type SupportRequestUpdateManyWithWhereWithoutOrderInput = {
   data: Prisma.XOR<Prisma.SupportRequestUpdateManyMutationInput, Prisma.SupportRequestUncheckedUpdateManyWithoutOrderInput>
 }
 
+export type SupportRequestCreateWithoutRepliesInput = {
+  id?: string
+  customerEmail: string
+  reason: string
+  message: string
+  status?: string
+  orderNumber?: string | null
+  iccid?: string | null
+  productName?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  customer?: Prisma.CustomerCreateNestedOneWithoutSupportRequestsInput
+  order?: Prisma.OrderCreateNestedOneWithoutSupportRequestsInput
+}
+
+export type SupportRequestUncheckedCreateWithoutRepliesInput = {
+  id?: string
+  customerId?: string | null
+  orderId?: string | null
+  customerEmail: string
+  reason: string
+  message: string
+  status?: string
+  orderNumber?: string | null
+  iccid?: string | null
+  productName?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type SupportRequestCreateOrConnectWithoutRepliesInput = {
+  where: Prisma.SupportRequestWhereUniqueInput
+  create: Prisma.XOR<Prisma.SupportRequestCreateWithoutRepliesInput, Prisma.SupportRequestUncheckedCreateWithoutRepliesInput>
+}
+
+export type SupportRequestUpsertWithoutRepliesInput = {
+  update: Prisma.XOR<Prisma.SupportRequestUpdateWithoutRepliesInput, Prisma.SupportRequestUncheckedUpdateWithoutRepliesInput>
+  create: Prisma.XOR<Prisma.SupportRequestCreateWithoutRepliesInput, Prisma.SupportRequestUncheckedCreateWithoutRepliesInput>
+  where?: Prisma.SupportRequestWhereInput
+}
+
+export type SupportRequestUpdateToOneWithWhereWithoutRepliesInput = {
+  where?: Prisma.SupportRequestWhereInput
+  data: Prisma.XOR<Prisma.SupportRequestUpdateWithoutRepliesInput, Prisma.SupportRequestUncheckedUpdateWithoutRepliesInput>
+}
+
+export type SupportRequestUpdateWithoutRepliesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  customerEmail?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  iccid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  productName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  customer?: Prisma.CustomerUpdateOneWithoutSupportRequestsNestedInput
+  order?: Prisma.OrderUpdateOneWithoutSupportRequestsNestedInput
+}
+
+export type SupportRequestUncheckedUpdateWithoutRepliesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerEmail?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.StringFieldUpdateOperationsInput | string
+  message?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.StringFieldUpdateOperationsInput | string
+  orderNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  iccid?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  productName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 export type SupportRequestCreateManyCustomerInput = {
   id?: string
   orderId?: string | null
@@ -709,6 +815,7 @@ export type SupportRequestUpdateWithoutCustomerInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   order?: Prisma.OrderUpdateOneWithoutSupportRequestsNestedInput
+  replies?: Prisma.SupportReplyUpdateManyWithoutSupportRequestNestedInput
 }
 
 export type SupportRequestUncheckedUpdateWithoutCustomerInput = {
@@ -723,6 +830,7 @@ export type SupportRequestUncheckedUpdateWithoutCustomerInput = {
   productName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  replies?: Prisma.SupportReplyUncheckedUpdateManyWithoutSupportRequestNestedInput
 }
 
 export type SupportRequestUncheckedUpdateManyWithoutCustomerInput = {
@@ -765,6 +873,7 @@ export type SupportRequestUpdateWithoutOrderInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customer?: Prisma.CustomerUpdateOneWithoutSupportRequestsNestedInput
+  replies?: Prisma.SupportReplyUpdateManyWithoutSupportRequestNestedInput
 }
 
 export type SupportRequestUncheckedUpdateWithoutOrderInput = {
@@ -779,6 +888,7 @@ export type SupportRequestUncheckedUpdateWithoutOrderInput = {
   productName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  replies?: Prisma.SupportReplyUncheckedUpdateManyWithoutSupportRequestNestedInput
 }
 
 export type SupportRequestUncheckedUpdateManyWithoutOrderInput = {
@@ -796,6 +906,35 @@ export type SupportRequestUncheckedUpdateManyWithoutOrderInput = {
 }
 
 
+/**
+ * Count Type SupportRequestCountOutputType
+ */
+
+export type SupportRequestCountOutputType = {
+  replies: number
+}
+
+export type SupportRequestCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  replies?: boolean | SupportRequestCountOutputTypeCountRepliesArgs
+}
+
+/**
+ * SupportRequestCountOutputType without action
+ */
+export type SupportRequestCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SupportRequestCountOutputType
+   */
+  select?: Prisma.SupportRequestCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * SupportRequestCountOutputType without action
+ */
+export type SupportRequestCountOutputTypeCountRepliesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SupportReplyWhereInput
+}
+
 
 export type SupportRequestSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -812,6 +951,8 @@ export type SupportRequestSelect<ExtArgs extends runtime.Types.Extensions.Intern
   updatedAt?: boolean
   customer?: boolean | Prisma.SupportRequest$customerArgs<ExtArgs>
   order?: boolean | Prisma.SupportRequest$orderArgs<ExtArgs>
+  replies?: boolean | Prisma.SupportRequest$repliesArgs<ExtArgs>
+  _count?: boolean | Prisma.SupportRequestCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["supportRequest"]>
 
 export type SupportRequestSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -867,6 +1008,8 @@ export type SupportRequestOmit<ExtArgs extends runtime.Types.Extensions.Internal
 export type SupportRequestInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   customer?: boolean | Prisma.SupportRequest$customerArgs<ExtArgs>
   order?: boolean | Prisma.SupportRequest$orderArgs<ExtArgs>
+  replies?: boolean | Prisma.SupportRequest$repliesArgs<ExtArgs>
+  _count?: boolean | Prisma.SupportRequestCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type SupportRequestIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   customer?: boolean | Prisma.SupportRequest$customerArgs<ExtArgs>
@@ -882,6 +1025,7 @@ export type $SupportRequestPayload<ExtArgs extends runtime.Types.Extensions.Inte
   objects: {
     customer: Prisma.$CustomerPayload<ExtArgs> | null
     order: Prisma.$OrderPayload<ExtArgs> | null
+    replies: Prisma.$SupportReplyPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1292,6 +1436,7 @@ export interface Prisma__SupportRequestClient<T, Null = never, ExtArgs extends r
   readonly [Symbol.toStringTag]: "PrismaPromise"
   customer<T extends Prisma.SupportRequest$customerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SupportRequest$customerArgs<ExtArgs>>): Prisma.Prisma__CustomerClient<runtime.Types.Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   order<T extends Prisma.SupportRequest$orderArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SupportRequest$orderArgs<ExtArgs>>): Prisma.Prisma__OrderClient<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  replies<T extends Prisma.SupportRequest$repliesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.SupportRequest$repliesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupportReplyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1769,6 +1914,30 @@ export type SupportRequest$orderArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   include?: Prisma.OrderInclude<ExtArgs> | null
   where?: Prisma.OrderWhereInput
+}
+
+/**
+ * SupportRequest.replies
+ */
+export type SupportRequest$repliesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SupportReply
+   */
+  select?: Prisma.SupportReplySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SupportReply
+   */
+  omit?: Prisma.SupportReplyOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SupportReplyInclude<ExtArgs> | null
+  where?: Prisma.SupportReplyWhereInput
+  orderBy?: Prisma.SupportReplyOrderByWithRelationInput | Prisma.SupportReplyOrderByWithRelationInput[]
+  cursor?: Prisma.SupportReplyWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SupportReplyScalarFieldEnum | Prisma.SupportReplyScalarFieldEnum[]
 }
 
 /**

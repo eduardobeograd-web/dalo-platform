@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
   CONSENT_CHANGED_EVENT,
@@ -23,9 +24,17 @@ type IdleWindow = Window & {
 };
 
 export default function DeferredDeviceCompatibilityCheck() {
+  const pathname = usePathname();
   const [ready, setReady] = useState(false);
+  const isInternalRoute =
+    pathname.startsWith("/admin") || pathname.startsWith("/support-console");
 
   useEffect(() => {
+    if (isInternalRoute) {
+      setReady(false);
+      return;
+    }
+
     let idleHandle: number | undefined;
     let timeoutHandle: number | undefined;
 
@@ -61,7 +70,7 @@ export default function DeferredDeviceCompatibilityCheck() {
         window.clearTimeout(timeoutHandle);
       }
     };
-  }, []);
+  }, [isInternalRoute]);
 
-  return ready ? <DeviceCompatibilityCheck /> : null;
+  return !isInternalRoute && ready ? <DeviceCompatibilityCheck /> : null;
 }

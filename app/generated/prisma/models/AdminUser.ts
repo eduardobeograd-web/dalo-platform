@@ -228,6 +228,7 @@ export type AdminUserWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"AdminUser"> | Date | string
   sessions?: Prisma.AdminSessionListRelationFilter
   auditLogs?: Prisma.AdminAuditLogListRelationFilter
+  supportReplies?: Prisma.SupportReplyListRelationFilter
 }
 
 export type AdminUserOrderByWithRelationInput = {
@@ -244,6 +245,7 @@ export type AdminUserOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   sessions?: Prisma.AdminSessionOrderByRelationAggregateInput
   auditLogs?: Prisma.AdminAuditLogOrderByRelationAggregateInput
+  supportReplies?: Prisma.SupportReplyOrderByRelationAggregateInput
 }
 
 export type AdminUserWhereUniqueInput = Prisma.AtLeast<{
@@ -263,6 +265,7 @@ export type AdminUserWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"AdminUser"> | Date | string
   sessions?: Prisma.AdminSessionListRelationFilter
   auditLogs?: Prisma.AdminAuditLogListRelationFilter
+  supportReplies?: Prisma.SupportReplyListRelationFilter
 }, "id" | "email">
 
 export type AdminUserOrderByWithAggregationInput = {
@@ -313,6 +316,7 @@ export type AdminUserCreateInput = {
   updatedAt?: Date | string
   sessions?: Prisma.AdminSessionCreateNestedManyWithoutAdminUserInput
   auditLogs?: Prisma.AdminAuditLogCreateNestedManyWithoutAdminUserInput
+  supportReplies?: Prisma.SupportReplyCreateNestedManyWithoutAdminUserInput
 }
 
 export type AdminUserUncheckedCreateInput = {
@@ -329,6 +333,7 @@ export type AdminUserUncheckedCreateInput = {
   updatedAt?: Date | string
   sessions?: Prisma.AdminSessionUncheckedCreateNestedManyWithoutAdminUserInput
   auditLogs?: Prisma.AdminAuditLogUncheckedCreateNestedManyWithoutAdminUserInput
+  supportReplies?: Prisma.SupportReplyUncheckedCreateNestedManyWithoutAdminUserInput
 }
 
 export type AdminUserUpdateInput = {
@@ -345,6 +350,7 @@ export type AdminUserUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.AdminSessionUpdateManyWithoutAdminUserNestedInput
   auditLogs?: Prisma.AdminAuditLogUpdateManyWithoutAdminUserNestedInput
+  supportReplies?: Prisma.SupportReplyUpdateManyWithoutAdminUserNestedInput
 }
 
 export type AdminUserUncheckedUpdateInput = {
@@ -361,6 +367,7 @@ export type AdminUserUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.AdminSessionUncheckedUpdateManyWithoutAdminUserNestedInput
   auditLogs?: Prisma.AdminAuditLogUncheckedUpdateManyWithoutAdminUserNestedInput
+  supportReplies?: Prisma.SupportReplyUncheckedUpdateManyWithoutAdminUserNestedInput
 }
 
 export type AdminUserCreateManyInput = {
@@ -455,6 +462,20 @@ export type AdminUserNullableScalarRelationFilter = {
   isNot?: Prisma.AdminUserWhereInput | null
 }
 
+export type AdminUserCreateNestedOneWithoutSupportRepliesInput = {
+  create?: Prisma.XOR<Prisma.AdminUserCreateWithoutSupportRepliesInput, Prisma.AdminUserUncheckedCreateWithoutSupportRepliesInput>
+  connectOrCreate?: Prisma.AdminUserCreateOrConnectWithoutSupportRepliesInput
+  connect?: Prisma.AdminUserWhereUniqueInput
+}
+
+export type AdminUserUpdateOneRequiredWithoutSupportRepliesNestedInput = {
+  create?: Prisma.XOR<Prisma.AdminUserCreateWithoutSupportRepliesInput, Prisma.AdminUserUncheckedCreateWithoutSupportRepliesInput>
+  connectOrCreate?: Prisma.AdminUserCreateOrConnectWithoutSupportRepliesInput
+  upsert?: Prisma.AdminUserUpsertWithoutSupportRepliesInput
+  connect?: Prisma.AdminUserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AdminUserUpdateToOneWithWhereWithoutSupportRepliesInput, Prisma.AdminUserUpdateWithoutSupportRepliesInput>, Prisma.AdminUserUncheckedUpdateWithoutSupportRepliesInput>
+}
+
 export type AdminUserCreateNestedOneWithoutSessionsInput = {
   create?: Prisma.XOR<Prisma.AdminUserCreateWithoutSessionsInput, Prisma.AdminUserUncheckedCreateWithoutSessionsInput>
   connectOrCreate?: Prisma.AdminUserCreateOrConnectWithoutSessionsInput
@@ -485,6 +506,86 @@ export type AdminUserUpdateOneWithoutAuditLogsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.AdminUserUpdateToOneWithWhereWithoutAuditLogsInput, Prisma.AdminUserUpdateWithoutAuditLogsInput>, Prisma.AdminUserUncheckedUpdateWithoutAuditLogsInput>
 }
 
+export type AdminUserCreateWithoutSupportRepliesInput = {
+  id?: string
+  email: string
+  name: string
+  passwordHash: string
+  role?: string
+  permissions: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  active?: boolean
+  mustChangePassword?: boolean
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.AdminSessionCreateNestedManyWithoutAdminUserInput
+  auditLogs?: Prisma.AdminAuditLogCreateNestedManyWithoutAdminUserInput
+}
+
+export type AdminUserUncheckedCreateWithoutSupportRepliesInput = {
+  id?: string
+  email: string
+  name: string
+  passwordHash: string
+  role?: string
+  permissions: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  active?: boolean
+  mustChangePassword?: boolean
+  lastLoginAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.AdminSessionUncheckedCreateNestedManyWithoutAdminUserInput
+  auditLogs?: Prisma.AdminAuditLogUncheckedCreateNestedManyWithoutAdminUserInput
+}
+
+export type AdminUserCreateOrConnectWithoutSupportRepliesInput = {
+  where: Prisma.AdminUserWhereUniqueInput
+  create: Prisma.XOR<Prisma.AdminUserCreateWithoutSupportRepliesInput, Prisma.AdminUserUncheckedCreateWithoutSupportRepliesInput>
+}
+
+export type AdminUserUpsertWithoutSupportRepliesInput = {
+  update: Prisma.XOR<Prisma.AdminUserUpdateWithoutSupportRepliesInput, Prisma.AdminUserUncheckedUpdateWithoutSupportRepliesInput>
+  create: Prisma.XOR<Prisma.AdminUserCreateWithoutSupportRepliesInput, Prisma.AdminUserUncheckedCreateWithoutSupportRepliesInput>
+  where?: Prisma.AdminUserWhereInput
+}
+
+export type AdminUserUpdateToOneWithWhereWithoutSupportRepliesInput = {
+  where?: Prisma.AdminUserWhereInput
+  data: Prisma.XOR<Prisma.AdminUserUpdateWithoutSupportRepliesInput, Prisma.AdminUserUncheckedUpdateWithoutSupportRepliesInput>
+}
+
+export type AdminUserUpdateWithoutSupportRepliesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  permissions?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.AdminSessionUpdateManyWithoutAdminUserNestedInput
+  auditLogs?: Prisma.AdminAuditLogUpdateManyWithoutAdminUserNestedInput
+}
+
+export type AdminUserUncheckedUpdateWithoutSupportRepliesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  permissions?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  active?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  mustChangePassword?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.AdminSessionUncheckedUpdateManyWithoutAdminUserNestedInput
+  auditLogs?: Prisma.AdminAuditLogUncheckedUpdateManyWithoutAdminUserNestedInput
+}
+
 export type AdminUserCreateWithoutSessionsInput = {
   id?: string
   email: string
@@ -498,6 +599,7 @@ export type AdminUserCreateWithoutSessionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   auditLogs?: Prisma.AdminAuditLogCreateNestedManyWithoutAdminUserInput
+  supportReplies?: Prisma.SupportReplyCreateNestedManyWithoutAdminUserInput
 }
 
 export type AdminUserUncheckedCreateWithoutSessionsInput = {
@@ -513,6 +615,7 @@ export type AdminUserUncheckedCreateWithoutSessionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   auditLogs?: Prisma.AdminAuditLogUncheckedCreateNestedManyWithoutAdminUserInput
+  supportReplies?: Prisma.SupportReplyUncheckedCreateNestedManyWithoutAdminUserInput
 }
 
 export type AdminUserCreateOrConnectWithoutSessionsInput = {
@@ -544,6 +647,7 @@ export type AdminUserUpdateWithoutSessionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   auditLogs?: Prisma.AdminAuditLogUpdateManyWithoutAdminUserNestedInput
+  supportReplies?: Prisma.SupportReplyUpdateManyWithoutAdminUserNestedInput
 }
 
 export type AdminUserUncheckedUpdateWithoutSessionsInput = {
@@ -559,6 +663,7 @@ export type AdminUserUncheckedUpdateWithoutSessionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   auditLogs?: Prisma.AdminAuditLogUncheckedUpdateManyWithoutAdminUserNestedInput
+  supportReplies?: Prisma.SupportReplyUncheckedUpdateManyWithoutAdminUserNestedInput
 }
 
 export type AdminUserCreateWithoutAuditLogsInput = {
@@ -574,6 +679,7 @@ export type AdminUserCreateWithoutAuditLogsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.AdminSessionCreateNestedManyWithoutAdminUserInput
+  supportReplies?: Prisma.SupportReplyCreateNestedManyWithoutAdminUserInput
 }
 
 export type AdminUserUncheckedCreateWithoutAuditLogsInput = {
@@ -589,6 +695,7 @@ export type AdminUserUncheckedCreateWithoutAuditLogsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   sessions?: Prisma.AdminSessionUncheckedCreateNestedManyWithoutAdminUserInput
+  supportReplies?: Prisma.SupportReplyUncheckedCreateNestedManyWithoutAdminUserInput
 }
 
 export type AdminUserCreateOrConnectWithoutAuditLogsInput = {
@@ -620,6 +727,7 @@ export type AdminUserUpdateWithoutAuditLogsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.AdminSessionUpdateManyWithoutAdminUserNestedInput
+  supportReplies?: Prisma.SupportReplyUpdateManyWithoutAdminUserNestedInput
 }
 
 export type AdminUserUncheckedUpdateWithoutAuditLogsInput = {
@@ -635,6 +743,7 @@ export type AdminUserUncheckedUpdateWithoutAuditLogsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   sessions?: Prisma.AdminSessionUncheckedUpdateManyWithoutAdminUserNestedInput
+  supportReplies?: Prisma.SupportReplyUncheckedUpdateManyWithoutAdminUserNestedInput
 }
 
 
@@ -645,11 +754,13 @@ export type AdminUserUncheckedUpdateWithoutAuditLogsInput = {
 export type AdminUserCountOutputType = {
   sessions: number
   auditLogs: number
+  supportReplies: number
 }
 
 export type AdminUserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | AdminUserCountOutputTypeCountSessionsArgs
   auditLogs?: boolean | AdminUserCountOutputTypeCountAuditLogsArgs
+  supportReplies?: boolean | AdminUserCountOutputTypeCountSupportRepliesArgs
 }
 
 /**
@@ -676,6 +787,13 @@ export type AdminUserCountOutputTypeCountAuditLogsArgs<ExtArgs extends runtime.T
   where?: Prisma.AdminAuditLogWhereInput
 }
 
+/**
+ * AdminUserCountOutputType without action
+ */
+export type AdminUserCountOutputTypeCountSupportRepliesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.SupportReplyWhereInput
+}
+
 
 export type AdminUserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -691,6 +809,7 @@ export type AdminUserSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   updatedAt?: boolean
   sessions?: boolean | Prisma.AdminUser$sessionsArgs<ExtArgs>
   auditLogs?: boolean | Prisma.AdminUser$auditLogsArgs<ExtArgs>
+  supportReplies?: boolean | Prisma.AdminUser$supportRepliesArgs<ExtArgs>
   _count?: boolean | Prisma.AdminUserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["adminUser"]>
 
@@ -740,6 +859,7 @@ export type AdminUserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs 
 export type AdminUserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   sessions?: boolean | Prisma.AdminUser$sessionsArgs<ExtArgs>
   auditLogs?: boolean | Prisma.AdminUser$auditLogsArgs<ExtArgs>
+  supportReplies?: boolean | Prisma.AdminUser$supportRepliesArgs<ExtArgs>
   _count?: boolean | Prisma.AdminUserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type AdminUserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -750,6 +870,7 @@ export type $AdminUserPayload<ExtArgs extends runtime.Types.Extensions.InternalA
   objects: {
     sessions: Prisma.$AdminSessionPayload<ExtArgs>[]
     auditLogs: Prisma.$AdminAuditLogPayload<ExtArgs>[]
+    supportReplies: Prisma.$SupportReplyPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1159,6 +1280,7 @@ export interface Prisma__AdminUserClient<T, Null = never, ExtArgs extends runtim
   readonly [Symbol.toStringTag]: "PrismaPromise"
   sessions<T extends Prisma.AdminUser$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AdminUser$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AdminSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   auditLogs<T extends Prisma.AdminUser$auditLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AdminUser$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AdminAuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  supportReplies<T extends Prisma.AdminUser$supportRepliesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.AdminUser$supportRepliesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupportReplyPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1637,6 +1759,30 @@ export type AdminUser$auditLogsArgs<ExtArgs extends runtime.Types.Extensions.Int
   take?: number
   skip?: number
   distinct?: Prisma.AdminAuditLogScalarFieldEnum | Prisma.AdminAuditLogScalarFieldEnum[]
+}
+
+/**
+ * AdminUser.supportReplies
+ */
+export type AdminUser$supportRepliesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the SupportReply
+   */
+  select?: Prisma.SupportReplySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the SupportReply
+   */
+  omit?: Prisma.SupportReplyOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.SupportReplyInclude<ExtArgs> | null
+  where?: Prisma.SupportReplyWhereInput
+  orderBy?: Prisma.SupportReplyOrderByWithRelationInput | Prisma.SupportReplyOrderByWithRelationInput[]
+  cursor?: Prisma.SupportReplyWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.SupportReplyScalarFieldEnum | Prisma.SupportReplyScalarFieldEnum[]
 }
 
 /**

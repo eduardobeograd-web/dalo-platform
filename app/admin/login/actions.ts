@@ -14,6 +14,10 @@ import { allowSecurityAttempt } from "../../../lib/security-rate-limit";
 export async function adminLogin(formData: FormData) {
   const email = String(formData.get("email") || "").trim().toLowerCase();
   const password = String(formData.get("password") || "");
+  const requestedPath = String(formData.get("next") || "");
+  const safeNextPath = requestedPath.startsWith("/support-console")
+    ? requestedPath
+    : null;
 
   if (
     !(await allowSecurityAttempt({
@@ -61,5 +65,5 @@ export async function adminLogin(formData: FormData) {
     redirect("/admin/change-password");
   }
 
-  redirect(getFirstAllowedAdminPath(admin));
+  redirect(safeNextPath || getFirstAllowedAdminPath(admin));
 }

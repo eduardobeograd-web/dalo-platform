@@ -187,6 +187,7 @@ model SupportRequest {
 
   customer Customer? @relation(fields: [customerId], references: [id])
   order    Order?    @relation(fields: [orderId], references: [id])
+  replies  SupportReply[]
 }
 
 model CustomerEvent {
@@ -276,9 +277,29 @@ model AdminUser {
 
   sessions AdminSession[]
   auditLogs AdminAuditLog[]
+  supportReplies SupportReply[]
 
   @@index([active])
   @@index([role])
+}
+
+model SupportReply {
+  id                String         @id @default(cuid())
+  supportRequestId  String
+  adminUserId       String
+  recipientEmail    String
+  subject           String
+  message           String
+  deliveryStatus    String         @default("pending")
+  providerMessageId String?
+  sentAt            DateTime?
+  createdAt         DateTime       @default(now())
+
+  supportRequest SupportRequest @relation(fields: [supportRequestId], references: [id], onDelete: Cascade)
+  adminUser      AdminUser      @relation(fields: [adminUserId], references: [id], onDelete: Restrict)
+
+  @@index([supportRequestId, createdAt])
+  @@index([adminUserId])
 }
 
 model AdminSession {

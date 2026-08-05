@@ -3,10 +3,13 @@ import { adminLogin } from "./actions";
 export default async function AdminLoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; next?: string }>;
 }) {
   const params = await searchParams;
   const hasError = params.error === "1";
+  const nextPath = params.next?.startsWith("/support-console")
+    ? params.next
+    : "";
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#F6F8FF] px-6 text-slate-900">
@@ -34,6 +37,7 @@ export default async function AdminLoginPage({
         )}
 
         <form action={adminLogin} className="space-y-5">
+          {nextPath ? <input type="hidden" name="next" value={nextPath} /> : null}
           <div>
             <label className="mb-2 block font-semibold">Email</label>
             <input

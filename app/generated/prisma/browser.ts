@@ -78,6 +78,11 @@ export type DestinationPage = Prisma.DestinationPageModel
  */
 export type AdminUser = Prisma.AdminUserModel
 /**
+ * Model SupportReply
+ * 
+ */
+export type SupportReply = Prisma.SupportReplyModel
+/**
  * Model AdminSession
  * 
  */
