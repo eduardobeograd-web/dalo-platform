@@ -15,7 +15,9 @@ const contentSecurityPolicy = [
   "connect-src 'self' https://api.stripe.com https://*.stripe.com https://challenges.cloudflare.com",
   "frame-src https://js.stripe.com https://hooks.stripe.com https://challenges.cloudflare.com",
   "worker-src 'self' blob:",
-  "upgrade-insecure-requests",
+  ...(process.env.NODE_ENV === "production"
+    ? ["upgrade-insecure-requests"]
+    : []),
 ].join("; ");
 
 const securityHeaders = [
