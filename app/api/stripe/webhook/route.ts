@@ -9,6 +9,8 @@ import { sendPaymentConfirmationEmail } from "@/lib/payment-confirmation-email";
 import { trackCustomerEvent } from "@/lib/customer-events";
 import { sendRefundConfirmationEmail } from "@/lib/refund-confirmation-email";
 import { addMonths } from "@/lib/esim-lifecycle";
+import { getEsimGoReadiness } from "@/lib/providers/esim-go/config";
+import { fulfillPaidOrderWithEsimGo } from "@/lib/providers/esim-go/fulfillment";
 
 export const runtime = "nodejs";
 
@@ -332,9 +334,31 @@ export async function POST(request: NextRequest) {
         }
       }
 
-      let fulfillmentResult = null;
+      let fulfillmentResult:
+        | Awaited<ReturnType<typeof fulfillPaidOrderWithEsimGo>>
+        | Awaited<ReturnType<typeof fulfillOrderMockById>>
+        | { fulfilled: false; reason: string }
+        | null = null;
+
+      const esimGoReadiness = getEsimGoReadiness();
 
       if (
+        result.orderId &&
+        esimGoReadiness.liveTransactionsEnabled
+      ) {
+        try {
+          fulfillmentResult = await fulfillPaidOrderWithEsimGo(result.orderId);
+        } catch (error) {
+          console.error("eSIM Go fulfillment could not start", {
+            orderId: result.orderId,
+            error: error instanceof Error ? error.message : "Unknown error",
+          });
+          fulfillmentResult = {
+            fulfilled: false,
+            reason: "live_fulfillment_preflight_failed",
+          };
+        }
+      } else if (
         result.updated &&
         result.orderId &&
         process.env.DALO_AUTO_MOCK_FULFILLMENT === "true"
@@ -356,10 +380,14 @@ export async function POST(request: NextRequest) {
         deliveryOrder.fulfillment === "Delivered" &&
         deliveryOrder.esimStatus === "ready" &&
         hasInstallDetails;
-      const emailResult = isDeliveryReady
+      const deliveryBecameReady =
+        fulfillmentResult !== null &&
+        "fulfilled" in fulfillmentResult &&
+        fulfillmentResult.fulfilled;
+      const emailResult = isDeliveryReady && deliveryBecameReady
         ? await sendOrderConfirmationEmail(deliveryOrder.id)
         : null;
-      const internalEmailResult = isDeliveryReady
+      const internalEmailResult = isDeliveryReady && deliveryBecameReady
         ? await sendInternalOrderNotification(deliveryOrder.id)
         : null;
 

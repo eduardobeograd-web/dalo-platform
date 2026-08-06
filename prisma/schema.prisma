@@ -5,7 +5,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-
 }
 
 model SiteConfiguration {
@@ -15,27 +14,26 @@ model SiteConfiguration {
   updatedAt         DateTime @updatedAt
 }
 
-
 model RecommendationSetting {
-  id                      String   @id @default(cuid())
-  usageType               String   @unique
-  label                   String
+  id        String @id @default(cuid())
+  usageType String @unique
+  label     String
 
-  gbPerDay                Float
-  minimumGb               Float
-  maxBestMatchMultiple    Float    @default(2.5)
+  gbPerDay             Float
+  minimumGb            Float
+  maxBestMatchMultiple Float @default(2.5)
 
-  budgetMinNeedMultiple   Float    @default(0.5)
-  comfortMinNeedMultiple  Float    @default(1.5)
-  heavyMinGb              Float    @default(20)
+  budgetMinNeedMultiple  Float @default(0.5)
+  comfortMinNeedMultiple Float @default(1.5)
+  heavyMinGb             Float @default(20)
 
-  active                  Boolean  @default(true)
-  createdAt               DateTime @default(now())
-  updatedAt               DateTime @updatedAt
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Product {
-  id                String   @id @default(cuid())
+  id                String  @id @default(cuid())
   country           String
   isoCode           String?
   region            String?
@@ -49,21 +47,21 @@ model Product {
   sellPrice         Float
   oldPrice          Float?
   provider          String
-  providerProductId String   @unique
+  providerProductId String  @unique
   image             String
   description       String
 
-  slug              String?  @unique
-  seoTitle          String?
-  seoDescription    String?
-  seoKeywords       String?
-  seoText           String?
+  slug           String? @unique
+  seoTitle       String?
+  seoDescription String?
+  seoKeywords    String?
+  seoText        String?
 
-  active            Boolean  @default(true)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  customerEvents    CustomerEvent[]
+  customerEvents CustomerEvent[]
 
   @@index([active, country])
   @@index([active, region])
@@ -81,40 +79,41 @@ model CountryNetworkCoverage {
 }
 
 model Customer {
-  id                  String   @id @default(cuid())
-  email               String   @unique
-  name                String?
-  passwordHash        String?
-  billingCompany      String?
-  billingAddressLine1 String?
-  billingAddressLine2 String?
-  billingCity         String?
-  billingState        String?
-  billingPostalCode   String?
-  billingCountry      String?
-  marketingEmailConsent Boolean  @default(false)
-  marketingEmailConsentAt DateTime?
+  id                             String    @id @default(cuid())
+  email                          String    @unique
+  name                           String?
+  passwordHash                   String?
+  billingCompany                 String?
+  billingAddressLine1            String?
+  billingAddressLine2            String?
+  billingCity                    String?
+  billingState                   String?
+  billingPostalCode              String?
+  billingCountry                 String?
+  marketingEmailConsent          Boolean   @default(false)
+  marketingEmailConsentAt        DateTime?
   marketingEmailConsentRevokedAt DateTime?
-  marketingEmailConsentSource String?
-  marketingEmailConsentVersion String?
-  active              Boolean  @default(true)
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  marketingEmailConsentSource    String?
+  marketingEmailConsentVersion   String?
+  active                         Boolean   @default(true)
+  createdAt                      DateTime  @default(now())
+  updatedAt                      DateTime  @updatedAt
 
-  sessions        CustomerSession[]
+  sessions            CustomerSession[]
   passwordResetTokens PasswordResetToken[]
-  orders          Order[]
-  supportRequests SupportRequest[]
-  customerEvents  CustomerEvent[]
+  orders              Order[]
+  supportRequests     SupportRequest[]
+  customerEvents      CustomerEvent[]
+  esimProfiles        EsimProfile[]
 }
 
 model CustomerSession {
-  id         String   @id @default(cuid())
+  id         String    @id @default(cuid())
   customerId String
-  token      String   @unique
+  token      String    @unique
   expiresAt  DateTime
   usedAt     DateTime?
-  createdAt  DateTime @default(now())
+  createdAt  DateTime  @default(now())
 
   customer Customer @relation(fields: [customerId], references: [id])
 
@@ -142,39 +141,39 @@ model Order {
   customer    String
   customerId  String?
 
-  productId   String
-  amount      Float?
-  currency    String?
-  buyPriceAtPurchase Float?
-  productNameAtPurchase String?
-  countryAtPurchase String?
-  dataAtPurchase String?
-  validityDaysAtPurchase Int?
-  providerAtPurchase String?
+  productId                   String
+  amount                      Float?
+  currency                    String?
+  buyPriceAtPurchase          Float?
+  productNameAtPurchase       String?
+  countryAtPurchase           String?
+  dataAtPurchase              String?
+  validityDaysAtPurchase      Int?
+  providerAtPurchase          String?
   providerProductIdAtPurchase String?
-  recommendationProductId String?
-  recommendationDataGb Float?
-  recommendationTripLength String?
-  recommendationUsageType String?
-  recommendationChoice String?
-  orderKind String @default("new_esim")
-  sourceOrderId String?
-  stripeSessionId String? @unique
-  stripePaymentIntentId String?
-  paidAt DateTime?
-  legalAcceptedAt DateTime?
-  legalVersion String?
+  recommendationProductId     String?
+  recommendationDataGb        Float?
+  recommendationTripLength    String?
+  recommendationUsageType     String?
+  recommendationChoice        String?
+  orderKind                   String    @default("new_esim")
+  sourceOrderId               String?
+  stripeSessionId             String?   @unique
+  stripePaymentIntentId       String?
+  paidAt                      DateTime?
+  legalAcceptedAt             DateTime?
+  legalVersion                String?
   immediateDeliveryAcceptedAt DateTime?
-  immediateDeliveryVersion String?
-  payment     String
-  fulfillment String
+  immediateDeliveryVersion    String?
+  payment                     String
+  fulfillment                 String
 
-  esimStatus      String?
-  providerOrderId String?
-  iccid           String?
-  qrCodeUrl       String?
-  activationCode  String?
-  iosInstallUrl   String?
+  esimStatus        String?
+  providerOrderId   String?
+  iccid             String?
+  qrCodeUrl         String?
+  activationCode    String?
+  iosInstallUrl     String?
   androidInstallUrl String?
 
   totalDataGb     Float?
@@ -182,16 +181,21 @@ model Order {
   remainingDataGb Float?
 
   activationDeadlineAt DateTime?
-  activatedAt     DateTime?
-  expiresAt       DateTime?
-  lastUsageSyncAt DateTime?
+  activatedAt          DateTime?
+  expiresAt            DateTime?
+  lastUsageSyncAt      DateTime?
+
+  esimProfileId String?
 
   createdAt DateTime @default(now())
 
-  customerAccount Customer? @relation(fields: [customerId], references: [id])
+  customerAccount Customer?    @relation(fields: [customerId], references: [id])
+  esimProfile     EsimProfile? @relation(fields: [esimProfileId], references: [id], onDelete: SetNull)
+  esimBundle      EsimBundle?
 
-  supportRequests SupportRequest[]
-  customerEvents  CustomerEvent[]
+  supportRequests    SupportRequest[]
+  customerEvents     CustomerEvent[]
+  providerOperations ProviderOperation[]
 
   @@index([customerId, createdAt])
   @@index([customer, createdAt])
@@ -201,6 +205,139 @@ model Order {
   @@index([productId])
   @@index([recommendationProductId])
   @@index([orderKind, createdAt])
+  @@index([esimProfileId, createdAt])
+}
+
+model EsimProfile {
+  id         String  @id @default(cuid())
+  customerId String?
+  provider   String  @default("eSIM Go")
+  iccid      String  @unique
+
+  customerReference String?
+  status            String  @default("provisioning")
+  matchingId        String?
+  smdpAddress       String?
+  pin               String?
+  puk               String?
+  profileStatus     String?
+
+  iosInstallUrl     String?
+  androidInstallUrl String?
+  qrCodeUrl         String?
+
+  firstInstalledAt    DateTime?
+  firstAttachedAt     DateTime?
+  firstUsedAt         DateTime?
+  reusableUntil       DateTime?
+  deletionScheduledAt DateTime?
+  deactivatedAt       DateTime?
+  lastLocation        String?
+  lastNetwork         String?
+  lastSyncedAt        DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  customer           Customer?              @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  orders             Order[]
+  bundles            EsimBundle[]
+  providerOperations ProviderOperation[]
+  webhookEvents      ProviderWebhookEvent[]
+
+  @@index([customerId, createdAt])
+  @@index([status, updatedAt])
+}
+
+model EsimBundle {
+  id            String  @id @default(cuid())
+  esimProfileId String
+  orderId       String? @unique
+  productId     String?
+
+  providerBundleName          String
+  providerAssignmentId        String? @unique
+  providerAssignmentReference String? @unique
+  status                      String  @default("processing")
+
+  countryCode            String?
+  dataGb                 Float?
+  initialQuantityBytes   Float?
+  remainingQuantityBytes Float?
+  unlimited              Boolean @default(false)
+
+  assignedAt            DateTime?
+  startedAt             DateTime?
+  expiresAt             DateTime?
+  lastUsageSyncAt       DateTime?
+  lastUsageAlertPercent Int?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  esimProfile        EsimProfile         @relation(fields: [esimProfileId], references: [id], onDelete: Cascade)
+  order              Order?              @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  providerOperations ProviderOperation[]
+
+  @@index([esimProfileId, status])
+  @@index([providerBundleName])
+  @@index([expiresAt])
+}
+
+model ProviderOperation {
+  id            String  @id @default(cuid())
+  orderId       String?
+  esimProfileId String?
+  esimBundleId  String?
+
+  provider           String @default("eSIM Go")
+  operationKind      String
+  mode               String
+  idempotencyKey     String @unique
+  requestFingerprint String
+  status             String @default("created")
+  attemptCount       Int    @default(0)
+
+  providerReference String?
+  requestSummary    Json?
+  responseSummary   Json?
+  lastErrorCode     String?
+  lastErrorMessage  String?
+  startedAt         DateTime?
+  finishedAt        DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  order       Order?       @relation(fields: [orderId], references: [id], onDelete: SetNull)
+  esimProfile EsimProfile? @relation(fields: [esimProfileId], references: [id], onDelete: SetNull)
+  esimBundle  EsimBundle?  @relation(fields: [esimBundleId], references: [id], onDelete: SetNull)
+
+  @@index([orderId, createdAt])
+  @@index([status, updatedAt])
+  @@index([providerReference])
+}
+
+model ProviderWebhookEvent {
+  id                  String    @id @default(cuid())
+  esimProfileId       String?
+  provider            String    @default("eSIM Go")
+  eventKey            String    @unique
+  eventType           String
+  iccid               String?
+  assignmentId        String?
+  assignmentReference String?
+  signatureValid      Boolean
+  status              String    @default("received")
+  payload             Json
+  errorMessage        String?
+  processedAt         DateTime?
+  receivedAt          DateTime  @default(now())
+
+  esimProfile EsimProfile? @relation(fields: [esimProfileId], references: [id], onDelete: SetNull)
+
+  @@index([iccid, receivedAt])
+  @@index([status, receivedAt])
+  @@index([eventType, receivedAt])
 }
 
 model SupportRequest {
@@ -221,8 +358,8 @@ model SupportRequest {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  customer Customer? @relation(fields: [customerId], references: [id])
-  order    Order?    @relation(fields: [orderId], references: [id])
+  customer Customer?      @relation(fields: [customerId], references: [id])
+  order    Order?         @relation(fields: [orderId], references: [id])
   replies  SupportReply[]
 
   @@index([status, createdAt])
@@ -262,17 +399,17 @@ model ProviderConfig {
   slug String @unique
   type String
 
-  status String @default("planned")
-  active Boolean @default(true)
-  priority Int @default(100)
+  status   String  @default("planned")
+  active   Boolean @default(true)
+  priority Int     @default(100)
 
-  baseUrl String?
-  apiKeyEnvName String?
+  baseUrl            String?
+  apiKeyEnvName      String?
   productSearchQuery String?
 
   fulfillmentEnabled Boolean @default(false)
-  catalogueEnabled Boolean @default(false)
-  usageSyncEnabled Boolean @default(false)
+  catalogueEnabled   Boolean @default(false)
+  usageSyncEnabled   Boolean @default(false)
 
   notes String?
 
@@ -303,21 +440,21 @@ model DestinationPage {
 }
 
 model AdminUser {
-  id                 String   @id @default(cuid())
-  email              String   @unique
+  id                 String    @id @default(cuid())
+  email              String    @unique
   name               String
   passwordHash       String
-  role               String   @default("READ_ONLY")
+  role               String    @default("READ_ONLY")
   permissions        Json
-  active             Boolean  @default(true)
-  mustChangePassword Boolean  @default(true)
+  active             Boolean   @default(true)
+  mustChangePassword Boolean   @default(true)
   lastLoginAt        DateTime?
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 
-  sessions AdminSession[]
-  auditLogs AdminAuditLog[]
-  supportReplies SupportReply[]
+  sessions                 AdminSession[]
+  auditLogs                AdminAuditLog[]
+  supportReplies           SupportReply[]
   supportPushSubscriptions SupportPushSubscription[]
 
   @@index([active])
@@ -325,16 +462,16 @@ model AdminUser {
 }
 
 model SupportReply {
-  id                String         @id @default(cuid())
+  id                String    @id @default(cuid())
   supportRequestId  String
   adminUserId       String
   recipientEmail    String
   subject           String
   message           String
-  deliveryStatus    String         @default("pending")
+  deliveryStatus    String    @default("pending")
   providerMessageId String?
   sentAt            DateTime?
-  createdAt         DateTime       @default(now())
+  createdAt         DateTime  @default(now())
 
   supportRequest SupportRequest @relation(fields: [supportRequestId], references: [id], onDelete: Cascade)
   adminUser      AdminUser      @relation(fields: [adminUserId], references: [id], onDelete: Restrict)
@@ -344,16 +481,16 @@ model SupportReply {
 }
 
 model SupportPushSubscription {
-  id            String   @id @default(cuid())
+  id            String    @id @default(cuid())
   adminUserId   String
-  endpoint      String   @unique
+  endpoint      String    @unique
   p256dh        String
   auth          String
   userAgent     String?
-  failureCount  Int      @default(0)
+  failureCount  Int       @default(0)
   lastSuccessAt DateTime?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   adminUser AdminUser @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
 

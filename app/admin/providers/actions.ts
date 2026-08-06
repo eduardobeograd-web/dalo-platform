@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import { prisma } from "../../../lib/db";
 import { ADMIN_PERMISSIONS } from "../../../lib/admin-permissions";
 import { requireAdminPermission } from "../../../lib/admin-auth";
+import { getEsimGoReadiness } from "../../../lib/providers/esim-go/config";
+import { getEsimGoNetworks } from "../../../lib/providers/esim-go/client";
 
 function getString(formData: FormData, key: string) {
   const value = formData.get(key);
@@ -108,11 +110,6 @@ type EsimGoNetwork = {
   speed?: unknown;
 };
 
-type EsimGoCountryNetworks = {
-  name?: unknown;
-  networks?: unknown;
-};
-
 function cleanNetwork(value: EsimGoNetwork) {
   const name =
     typeof value.brandName === "string" && value.brandName.trim()
@@ -136,30 +133,21 @@ function cleanNetwork(value: EsimGoNetwork) {
 
 export async function syncEsimGoNetworks() {
   await requireAdminPermission(ADMIN_PERMISSIONS.PROVIDERS_WRITE);
-  const apiKey = process.env.ESIM_GO_API_KEY;
-  const baseUrl = (
-    process.env.ESIM_GO_BASE_URL || "https://api.esim-go.com/v2.5"
-  ).replace(/\/$/, "");
-
-  if (!apiKey) {
-    redirect("/admin/providers/esim-go?networkSync=missing-key");
-  }
-
-  const response = await fetch(`${baseUrl}/networks?returnAll=true`, {
-    headers: {
-      "X-API-Key": apiKey,
-      Accept: "application/json",
-    },
-    cache: "no-store",
+  const readiness = getEsimGoReadiness();
+  const provider = await prisma.providerConfig.findUnique({
+    where: { slug: "esim-go" },
+    select: { active: true, catalogueEnabled: true },
   });
 
-  if (!response.ok) {
-    throw new Error(`Network sync failed with status ${response.status}.`);
+  if (
+    !readiness.readAccessEnabled ||
+    !provider?.active ||
+    !provider.catalogueEnabled
+  ) {
+    redirect("/admin/providers/esim-go?networkSync=read-disabled");
   }
 
-  const payload = (await response.json()) as {
-    countryNetworks?: EsimGoCountryNetworks[];
-  };
+  const payload = await getEsimGoNetworks();
   const countries = Array.isArray(payload.countryNetworks)
     ? payload.countryNetworks
     : [];

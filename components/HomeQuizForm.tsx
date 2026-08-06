@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import DeviceCompatibilityCheck from "./DeviceCompatibilityCheck";
 
 const durationOptions = [
   { value: "1-3", label: "1-3" },
@@ -93,30 +92,26 @@ export default function HomeQuizForm() {
         id="quiz"
         action="/searching"
         method="get"
-        className="relative overflow-hidden rounded-[1.5rem] border-2 border-[#2148c0]/30 bg-white/[0.96] p-3 shadow-[0_30px_80px_rgba(33,72,192,0.24),0_8px_24px_rgba(16,35,58,0.10)] ring-1 ring-white/90 backdrop-blur-md sm:rounded-[2rem] sm:p-4 md:p-5 lg:mt-10"
+        className="relative overflow-hidden rounded-[1.5rem] border-[3px] border-[#2148c0]/55 bg-white/[0.96] p-3 shadow-[0_32px_85px_rgba(33,72,192,0.30),0_8px_24px_rgba(16,35,58,0.12)] ring-2 ring-white/90 backdrop-blur-md sm:rounded-[2rem] sm:p-4 md:p-5 lg:mt-6"
       >
         <div className="pointer-events-none absolute inset-x-0 top-0 h-1.5 bg-[linear-gradient(90deg,#2148c0_0%,#2148c0_82%,#e98b3a_82%,#e98b3a_100%)] shadow-[0_2px_12px_rgba(33,72,192,0.35)]" />
         <div className="pointer-events-none absolute -left-2 top-1/2 h-4 w-4 rounded-full bg-[#f7fafc]" />
         <div className="pointer-events-none absolute -right-2 top-1/2 h-4 w-4 rounded-full bg-[#f7fafc]" />
 
-        <div className="mb-2 flex items-center justify-between gap-2 border-b border-dashed border-slate-300/80 pb-2 sm:mb-3 sm:items-end sm:pb-3">
-          <div className="min-w-0">
-            <p className="inline-flex rounded-full bg-[#eaf0ff] px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.14em] text-[#2148c0] ring-1 ring-[#cbd8ff] sm:text-[10px]">Start here · 60 sec</p>
-            <h2 className="mt-1 text-xl font-extrabold tracking-[-0.035em] text-[#10233a] sm:text-2xl md:text-[1.7rem]">Your trip. Your eSIM.</h2>
-          </div>
-          <div className="flex shrink-0 items-center">
-            <DeviceCompatibilityCheck variant="quiz" />
+        <div className="mb-2 border-b border-dashed border-slate-300/80 pb-2 sm:mb-3 sm:pb-3">
+          <div>
+            <h2 className="text-xl font-extrabold tracking-[-0.035em] text-[#10233a] sm:text-2xl md:text-[1.7rem]">Your trip. Your eSIM.</h2>
           </div>
         </div>
 
         <div className="pb-2 sm:pb-3">
-          <label htmlFor="quiz-country" className="mb-1.5 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.1em] text-slate-700 sm:mb-2 sm:text-[11px]">
-            <span className="flex h-5 w-5 items-center justify-center rounded-md bg-[#2148c0] text-[10px] text-white">1</span>
-            Destination
+          <label htmlFor="quiz-country" className="mb-2 flex items-center gap-2.5 text-[11px] font-extrabold uppercase tracking-[0.11em] text-slate-800 sm:mb-2.5 sm:text-xs">
+            <span className="flex h-6 w-6 items-center justify-center rounded-md bg-[#2148c0] text-[11px] text-white shadow-sm">1</span>
+            Where are you going?
           </label>
           <div className="relative">
-            <div className="flex items-center gap-2.5 rounded-xl border border-[#c9d6f7] bg-[#f8faff] px-3 py-2 shadow-sm transition focus-within:border-[#2148c0] focus-within:bg-white focus-within:ring-4 focus-within:ring-[#dbe6ff]/80 sm:px-3.5 sm:py-2.5">
-              <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" className="h-5 w-5 shrink-0 text-[#2148c0]">
+            <div className="flex min-h-14 items-center gap-3 rounded-xl border-2 border-[#7892dc] bg-white px-4 py-3 shadow-[0_8px_22px_rgba(33,72,192,0.14)] transition focus-within:border-[#2148c0] focus-within:ring-4 focus-within:ring-[#dbe6ff]/80 sm:min-h-16 sm:px-5 sm:py-3.5">
+              <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" className="h-6 w-6 shrink-0 text-[#d96f2d]">
                 <path d="M16 8.5c0 4.25-6 8-6 8s-6-3.75-6-8a6 6 0 1 1 12 0Z" stroke="currentColor" strokeWidth="1.5" />
                 <circle cx="10" cy="8.5" r="2" stroke="currentColor" strokeWidth="1.5" />
               </svg>
@@ -136,11 +131,11 @@ export default function HomeQuizForm() {
                   if (selectedDestination) setCountry(selectedDestination);
                   setDestinationSuggestionsOpen(false);
                 }}
-                placeholder="Where are you going?"
+                placeholder="Type a country or region"
                 autoComplete="off"
                 aria-autocomplete="list"
                 aria-expanded={destinationSuggestionsOpen}
-                className="w-full bg-transparent text-sm font-semibold text-slate-900 outline-none placeholder:font-normal placeholder:text-slate-400"
+                className="w-full bg-transparent text-base font-bold text-slate-900 outline-none placeholder:font-semibold placeholder:italic placeholder:text-slate-500 sm:text-lg"
               />
               <input type="hidden" name="country" value={selectedDestination || ""} />
             </div>
@@ -166,9 +161,8 @@ export default function HomeQuizForm() {
               </div>
             ) : null}
           </div>
-          {country.trim().length === 0 ? <p className="mt-1.5 hidden text-xs text-slate-500 sm:block">Start typing to see destinations with active eSIM products.</p> : null}
           {country.trim().length > 0 && !selectedDestinationIsAvailable ? <p className="mt-1.5 text-xs font-semibold text-red-600">Please choose an available destination from the list.</p> : null}
-          {country.trim().length > 0 && selectedDestinationIsAvailable ? <p className="mt-1.5 text-xs text-slate-500">Only destinations with active eSIM products are shown.</p> : null}
+          {country.trim().length > 0 && selectedDestinationIsAvailable ? <p className="mt-1.5 text-xs text-slate-500">Available destination selected.</p> : null}
         </div>
 
         <fieldset className="border-t border-dashed border-slate-300/80 py-2 sm:py-3">
@@ -223,7 +217,11 @@ export default function HomeQuizForm() {
         </fieldset>
 
         <button disabled={!selectedDestinationIsAvailable} type="submit" className="mt-2.5 block w-full rounded-xl bg-[#2148c0] px-5 py-3 text-center text-sm font-bold text-white transition duration-200 hover:bg-[#17389b] focus:outline-none focus:ring-4 focus:ring-[#dbe6ff] active:translate-y-px disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 sm:mt-3 sm:py-3.5">
-          Find My eSIM <span aria-hidden="true">-&gt;</span>
+          {selectedDestinationIsAvailable ? (
+            <>Find My eSIM <span aria-hidden="true">-&gt;</span></>
+          ) : (
+            "Choose a destination to continue"
+          )}
         </button>
         <p className="hidden text-center text-[10px] font-medium text-slate-500 sm:block">No contracts <span className="mx-1.5 text-slate-300">|</span> Instant recommendation <span className="mx-1.5 text-slate-300">|</span> Secure checkout</p>
       </form>

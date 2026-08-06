@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Prisma } from "../../generated/prisma/client";
 import AdminShell from "../../../components/AdminShell";
 import { prisma } from "../../../lib/db";
+import { getEsimGoReadiness } from "../../../lib/providers/esim-go/config";
 
 const PAGE_SIZE = 25;
 
@@ -38,7 +39,9 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
   const query = first(params.q).trim();
   const status = first(params.status) || "all";
   const page = Math.max(1, Number(first(params.page)) || 1);
-  const automatedFulfillmentConfigured = Boolean(process.env.ESIM_GO_API_KEY);
+  const esimGoReadiness = getEsimGoReadiness();
+  const automatedFulfillmentConfigured =
+    esimGoReadiness.liveTransactionsEnabled;
 
   const filters: Prisma.OrderWhereInput[] = [];
   if (query) {
@@ -99,7 +102,11 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
         <div className={`rounded-2xl border px-5 py-4 ${automatedFulfillmentConfigured ? "border-emerald-200 bg-emerald-50" : "border-amber-200 bg-amber-50"}`}>
           <p className="text-xs font-black uppercase tracking-wide text-slate-500">Automatic fulfillment</p>
           <p className={`mt-1 font-black ${automatedFulfillmentConfigured ? "text-emerald-700" : "text-amber-700"}`}>
-            {automatedFulfillmentConfigured ? "Provider connection configured" : "Manual fallback active"}
+            {automatedFulfillmentConfigured
+              ? "Live provider fulfillment enabled"
+              : esimGoReadiness.apiKeyConfigured
+                ? "Provider key ready · live purchases locked"
+                : "Manual fallback active"}
           </p>
         </div>
       </div>

@@ -1,10 +1,11 @@
 import Link from "next/link";
 import AdminShell from "../../../components/AdminShell";
 import { prisma } from "../../../lib/db";
+import { getEsimGoReadiness } from "../../../lib/providers/esim-go/config";
 
 export const dynamic = "force-dynamic";
 
-type ProviderStatus = "configured" | "missing" | "mock" | "planned" | "manual";
+type ProviderStatus = "configured" | "locked" | "missing" | "mock" | "planned" | "manual";
 
 type ProductForProviderStats = {
   provider: string | null;
@@ -37,6 +38,8 @@ function StatusBadge({ status, label }: { status: ProviderStatus; label: string 
   const styles =
     status === "configured"
       ? "bg-green-100 text-green-700"
+      : status === "locked"
+      ? "bg-amber-100 text-amber-800"
       : status === "mock"
       ? "bg-blue-100 text-blue-700"
       : status === "missing"
@@ -104,9 +107,7 @@ export default async function AdminProvidersPage() {
     },
   });
 
-  const esimGoConfigured = Boolean(process.env.ESIM_GO_API_KEY);
-  const esimGoBaseUrl =
-    process.env.ESIM_GO_BASE_URL || "https://api.esim-go.com/v2.5";
+  const esimGoReadiness = getEsimGoReadiness();
 
   const esimGoStats = getProviderStats(products, [
     "esim go",
@@ -121,17 +122,25 @@ export default async function AdminProvidersPage() {
       name: "eSIM Go",
       slug: "esim-go",
       type: "Wholesaler API",
-      status: esimGoConfigured ? "configured" : "missing",
-      statusLabel: esimGoConfigured ? "Configured" : "Missing API Key",
-      baseUrl: esimGoBaseUrl,
+      status: esimGoReadiness.liveTransactionsEnabled
+        ? "configured"
+        : esimGoReadiness.apiKeyConfigured
+          ? "locked"
+          : "missing",
+      statusLabel: esimGoReadiness.liveTransactionsEnabled
+        ? "Live fulfillment enabled"
+        : esimGoReadiness.apiKeyConfigured
+          ? "API key ready · live locked"
+          : "Missing API Key",
+      baseUrl: esimGoReadiness.baseUrl,
       description:
         "Main live provider candidate for catalogue sync, bundle application, QR retrieval and later usage checks.",
       products: esimGoStats.products,
       activeProducts: esimGoStats.activeProducts,
       mappedProducts: esimGoStats.mappedProducts,
-      fulfillment: esimGoConfigured,
-      catalogue: esimGoConfigured,
-      usageSync: esimGoConfigured,
+      fulfillment: esimGoReadiness.liveTransactionsEnabled,
+      catalogue: esimGoReadiness.readAccessEnabled,
+      usageSync: esimGoReadiness.webhookEnabled,
       detailsHref: "/admin/providers/esim-go",
       primaryActionLabel: "Provider Details",
       primaryActionHref: "/admin/providers/esim-go",
@@ -293,10 +302,12 @@ export default async function AdminProvidersPage() {
           <p className="text-sm font-semibold text-slate-500">eSIM Go Key</p>
           <h2
             className={`mt-3 text-3xl font-bold ${
-              esimGoConfigured ? "text-green-700" : "text-red-700"
+              esimGoReadiness.apiKeyConfigured
+                ? "text-green-700"
+                : "text-red-700"
             }`}
           >
-            {esimGoConfigured ? "Ready" : "Missing"}
+            {esimGoReadiness.apiKeyConfigured ? "Ready" : "Missing"}
           </h2>
           <p className="mt-2 text-sm text-slate-500">
             ESIM_GO_API_KEY environment
@@ -473,17 +484,23 @@ export default async function AdminProvidersPage() {
               <Link
                 href="/admin/providers/esim-go"
                 className={`block rounded-2xl p-4 transition hover:-translate-y-1 ${
-                  esimGoConfigured ? "bg-green-50" : "bg-red-50"
+                  esimGoReadiness.apiKeyConfigured
+                    ? "bg-green-50"
+                    : "bg-red-50"
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <span className="font-semibold">ESIM_GO_API_KEY</span>
                   <span
                     className={`font-bold ${
-                      esimGoConfigured ? "text-green-700" : "text-red-700"
+                      esimGoReadiness.apiKeyConfigured
+                        ? "text-green-700"
+                        : "text-red-700"
                     }`}
                   >
-                    {esimGoConfigured ? "Configured" : "Missing"}
+                    {esimGoReadiness.apiKeyConfigured
+                      ? "Configured"
+                      : "Missing"}
                   </span>
                 </div>
               </Link>
@@ -494,8 +511,32 @@ export default async function AdminProvidersPage() {
               >
                 <p className="font-semibold">ESIM_GO_BASE_URL</p>
                 <p className="mt-2 break-all text-sm font-bold text-blue-700">
-                  {esimGoBaseUrl}
+                  {esimGoReadiness.baseUrl}
                 </p>
+              </Link>
+
+              <Link
+                href="/admin/providers/esim-go"
+                className={`block rounded-2xl p-4 transition hover:-translate-y-1 ${
+                  esimGoReadiness.liveTransactionsEnabled
+                    ? "bg-green-50"
+                    : "bg-amber-50"
+                }`}
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <span className="font-semibold">Real purchases</span>
+                  <span
+                    className={`text-right font-bold ${
+                      esimGoReadiness.liveTransactionsEnabled
+                        ? "text-green-700"
+                        : "text-amber-800"
+                    }`}
+                  >
+                    {esimGoReadiness.liveTransactionsEnabled
+                      ? "Enabled"
+                      : "Safely locked"}
+                  </span>
+                </div>
               </Link>
 
             </div>

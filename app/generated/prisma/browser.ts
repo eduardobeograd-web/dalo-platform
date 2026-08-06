@@ -58,6 +58,26 @@ export type PasswordResetToken = Prisma.PasswordResetTokenModel
  */
 export type Order = Prisma.OrderModel
 /**
+ * Model EsimProfile
+ * 
+ */
+export type EsimProfile = Prisma.EsimProfileModel
+/**
+ * Model EsimBundle
+ * 
+ */
+export type EsimBundle = Prisma.EsimBundleModel
+/**
+ * Model ProviderOperation
+ * 
+ */
+export type ProviderOperation = Prisma.ProviderOperationModel
+/**
+ * Model ProviderWebhookEvent
+ * 
+ */
+export type ProviderWebhookEvent = Prisma.ProviderWebhookEventModel
+/**
  * Model SupportRequest
  * 
  */

@@ -405,6 +405,10 @@ export const ModelName = {
   CustomerSession: 'CustomerSession',
   PasswordResetToken: 'PasswordResetToken',
   Order: 'Order',
+  EsimProfile: 'EsimProfile',
+  EsimBundle: 'EsimBundle',
+  ProviderOperation: 'ProviderOperation',
+  ProviderWebhookEvent: 'ProviderWebhookEvent',
   SupportRequest: 'SupportRequest',
   CustomerEvent: 'CustomerEvent',
   ProviderConfig: 'ProviderConfig',
@@ -429,7 +433,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "siteConfiguration" | "recommendationSetting" | "product" | "countryNetworkCoverage" | "customer" | "customerSession" | "passwordResetToken" | "order" | "supportRequest" | "customerEvent" | "providerConfig" | "destinationPage" | "adminUser" | "supportReply" | "supportPushSubscription" | "adminSession" | "adminAuditLog"
+    modelProps: "siteConfiguration" | "recommendationSetting" | "product" | "countryNetworkCoverage" | "customer" | "customerSession" | "passwordResetToken" | "order" | "esimProfile" | "esimBundle" | "providerOperation" | "providerWebhookEvent" | "supportRequest" | "customerEvent" | "providerConfig" | "destinationPage" | "adminUser" | "supportReply" | "supportPushSubscription" | "adminSession" | "adminAuditLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1022,6 +1026,302 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.OrderCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.OrderCountAggregateOutputType> | number
+        }
+      }
+    }
+    EsimProfile: {
+      payload: Prisma.$EsimProfilePayload<ExtArgs>
+      fields: Prisma.EsimProfileFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EsimProfileFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EsimProfilePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EsimProfileFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EsimProfilePayload>
+        }
+        findFirst: {
+          args: Prisma.EsimProfileFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EsimProfilePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EsimProfileFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EsimProfilePayload>
+        }
+        findMany: {
+          args: Prisma.EsimProfileFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EsimProfilePayload>[]
+        }
+        create: {
+          args: Prisma.EsimProfileCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EsimProfilePayload>
+        }
+        createMany: {
+          args: Prisma.EsimProfileCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EsimProfileCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EsimProfilePayload>[]
+        }
+        delete: {
+          args: Prisma.EsimProfileDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EsimProfilePayload>
+        }
+        update: {
+          args: Prisma.EsimProfileUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EsimProfilePayload>
+        }
+        deleteMany: {
+          args: Prisma.EsimProfileDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EsimProfileUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EsimProfileUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EsimProfilePayload>[]
+        }
+        upsert: {
+          args: Prisma.EsimProfileUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EsimProfilePayload>
+        }
+        aggregate: {
+          args: Prisma.EsimProfileAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEsimProfile>
+        }
+        groupBy: {
+          args: Prisma.EsimProfileGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EsimProfileGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EsimProfileCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EsimProfileCountAggregateOutputType> | number
+        }
+      }
+    }
+    EsimBundle: {
+      payload: Prisma.$EsimBundlePayload<ExtArgs>
+      fields: Prisma.EsimBundleFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.EsimBundleFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EsimBundlePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.EsimBundleFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EsimBundlePayload>
+        }
+        findFirst: {
+          args: Prisma.EsimBundleFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EsimBundlePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.EsimBundleFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EsimBundlePayload>
+        }
+        findMany: {
+          args: Prisma.EsimBundleFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EsimBundlePayload>[]
+        }
+        create: {
+          args: Prisma.EsimBundleCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EsimBundlePayload>
+        }
+        createMany: {
+          args: Prisma.EsimBundleCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.EsimBundleCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EsimBundlePayload>[]
+        }
+        delete: {
+          args: Prisma.EsimBundleDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EsimBundlePayload>
+        }
+        update: {
+          args: Prisma.EsimBundleUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EsimBundlePayload>
+        }
+        deleteMany: {
+          args: Prisma.EsimBundleDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.EsimBundleUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.EsimBundleUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EsimBundlePayload>[]
+        }
+        upsert: {
+          args: Prisma.EsimBundleUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$EsimBundlePayload>
+        }
+        aggregate: {
+          args: Prisma.EsimBundleAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEsimBundle>
+        }
+        groupBy: {
+          args: Prisma.EsimBundleGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EsimBundleGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.EsimBundleCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.EsimBundleCountAggregateOutputType> | number
+        }
+      }
+    }
+    ProviderOperation: {
+      payload: Prisma.$ProviderOperationPayload<ExtArgs>
+      fields: Prisma.ProviderOperationFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ProviderOperationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProviderOperationPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ProviderOperationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProviderOperationPayload>
+        }
+        findFirst: {
+          args: Prisma.ProviderOperationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProviderOperationPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ProviderOperationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProviderOperationPayload>
+        }
+        findMany: {
+          args: Prisma.ProviderOperationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProviderOperationPayload>[]
+        }
+        create: {
+          args: Prisma.ProviderOperationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProviderOperationPayload>
+        }
+        createMany: {
+          args: Prisma.ProviderOperationCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ProviderOperationCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProviderOperationPayload>[]
+        }
+        delete: {
+          args: Prisma.ProviderOperationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProviderOperationPayload>
+        }
+        update: {
+          args: Prisma.ProviderOperationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProviderOperationPayload>
+        }
+        deleteMany: {
+          args: Prisma.ProviderOperationDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ProviderOperationUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ProviderOperationUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProviderOperationPayload>[]
+        }
+        upsert: {
+          args: Prisma.ProviderOperationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProviderOperationPayload>
+        }
+        aggregate: {
+          args: Prisma.ProviderOperationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProviderOperation>
+        }
+        groupBy: {
+          args: Prisma.ProviderOperationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProviderOperationGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ProviderOperationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProviderOperationCountAggregateOutputType> | number
+        }
+      }
+    }
+    ProviderWebhookEvent: {
+      payload: Prisma.$ProviderWebhookEventPayload<ExtArgs>
+      fields: Prisma.ProviderWebhookEventFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ProviderWebhookEventFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProviderWebhookEventPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ProviderWebhookEventFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProviderWebhookEventPayload>
+        }
+        findFirst: {
+          args: Prisma.ProviderWebhookEventFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProviderWebhookEventPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ProviderWebhookEventFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProviderWebhookEventPayload>
+        }
+        findMany: {
+          args: Prisma.ProviderWebhookEventFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProviderWebhookEventPayload>[]
+        }
+        create: {
+          args: Prisma.ProviderWebhookEventCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProviderWebhookEventPayload>
+        }
+        createMany: {
+          args: Prisma.ProviderWebhookEventCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ProviderWebhookEventCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProviderWebhookEventPayload>[]
+        }
+        delete: {
+          args: Prisma.ProviderWebhookEventDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProviderWebhookEventPayload>
+        }
+        update: {
+          args: Prisma.ProviderWebhookEventUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProviderWebhookEventPayload>
+        }
+        deleteMany: {
+          args: Prisma.ProviderWebhookEventDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ProviderWebhookEventUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ProviderWebhookEventUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProviderWebhookEventPayload>[]
+        }
+        upsert: {
+          args: Prisma.ProviderWebhookEventUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProviderWebhookEventPayload>
+        }
+        aggregate: {
+          args: Prisma.ProviderWebhookEventAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProviderWebhookEvent>
+        }
+        groupBy: {
+          args: Prisma.ProviderWebhookEventGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProviderWebhookEventGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ProviderWebhookEventCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProviderWebhookEventCountAggregateOutputType> | number
         }
       }
     }
@@ -1897,10 +2197,114 @@ export const OrderScalarFieldEnum = {
   activatedAt: 'activatedAt',
   expiresAt: 'expiresAt',
   lastUsageSyncAt: 'lastUsageSyncAt',
+  esimProfileId: 'esimProfileId',
   createdAt: 'createdAt'
 } as const
 
 export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum]
+
+
+export const EsimProfileScalarFieldEnum = {
+  id: 'id',
+  customerId: 'customerId',
+  provider: 'provider',
+  iccid: 'iccid',
+  customerReference: 'customerReference',
+  status: 'status',
+  matchingId: 'matchingId',
+  smdpAddress: 'smdpAddress',
+  pin: 'pin',
+  puk: 'puk',
+  profileStatus: 'profileStatus',
+  iosInstallUrl: 'iosInstallUrl',
+  androidInstallUrl: 'androidInstallUrl',
+  qrCodeUrl: 'qrCodeUrl',
+  firstInstalledAt: 'firstInstalledAt',
+  firstAttachedAt: 'firstAttachedAt',
+  firstUsedAt: 'firstUsedAt',
+  reusableUntil: 'reusableUntil',
+  deletionScheduledAt: 'deletionScheduledAt',
+  deactivatedAt: 'deactivatedAt',
+  lastLocation: 'lastLocation',
+  lastNetwork: 'lastNetwork',
+  lastSyncedAt: 'lastSyncedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EsimProfileScalarFieldEnum = (typeof EsimProfileScalarFieldEnum)[keyof typeof EsimProfileScalarFieldEnum]
+
+
+export const EsimBundleScalarFieldEnum = {
+  id: 'id',
+  esimProfileId: 'esimProfileId',
+  orderId: 'orderId',
+  productId: 'productId',
+  providerBundleName: 'providerBundleName',
+  providerAssignmentId: 'providerAssignmentId',
+  providerAssignmentReference: 'providerAssignmentReference',
+  status: 'status',
+  countryCode: 'countryCode',
+  dataGb: 'dataGb',
+  initialQuantityBytes: 'initialQuantityBytes',
+  remainingQuantityBytes: 'remainingQuantityBytes',
+  unlimited: 'unlimited',
+  assignedAt: 'assignedAt',
+  startedAt: 'startedAt',
+  expiresAt: 'expiresAt',
+  lastUsageSyncAt: 'lastUsageSyncAt',
+  lastUsageAlertPercent: 'lastUsageAlertPercent',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EsimBundleScalarFieldEnum = (typeof EsimBundleScalarFieldEnum)[keyof typeof EsimBundleScalarFieldEnum]
+
+
+export const ProviderOperationScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  esimProfileId: 'esimProfileId',
+  esimBundleId: 'esimBundleId',
+  provider: 'provider',
+  operationKind: 'operationKind',
+  mode: 'mode',
+  idempotencyKey: 'idempotencyKey',
+  requestFingerprint: 'requestFingerprint',
+  status: 'status',
+  attemptCount: 'attemptCount',
+  providerReference: 'providerReference',
+  requestSummary: 'requestSummary',
+  responseSummary: 'responseSummary',
+  lastErrorCode: 'lastErrorCode',
+  lastErrorMessage: 'lastErrorMessage',
+  startedAt: 'startedAt',
+  finishedAt: 'finishedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProviderOperationScalarFieldEnum = (typeof ProviderOperationScalarFieldEnum)[keyof typeof ProviderOperationScalarFieldEnum]
+
+
+export const ProviderWebhookEventScalarFieldEnum = {
+  id: 'id',
+  esimProfileId: 'esimProfileId',
+  provider: 'provider',
+  eventKey: 'eventKey',
+  eventType: 'eventType',
+  iccid: 'iccid',
+  assignmentId: 'assignmentId',
+  assignmentReference: 'assignmentReference',
+  signatureValid: 'signatureValid',
+  status: 'status',
+  payload: 'payload',
+  errorMessage: 'errorMessage',
+  processedAt: 'processedAt',
+  receivedAt: 'receivedAt'
+} as const
+
+export type ProviderWebhookEventScalarFieldEnum = (typeof ProviderWebhookEventScalarFieldEnum)[keyof typeof ProviderWebhookEventScalarFieldEnum]
 
 
 export const SupportRequestScalarFieldEnum = {
@@ -2344,6 +2748,10 @@ export type GlobalOmitConfig = {
   customerSession?: Prisma.CustomerSessionOmit
   passwordResetToken?: Prisma.PasswordResetTokenOmit
   order?: Prisma.OrderOmit
+  esimProfile?: Prisma.EsimProfileOmit
+  esimBundle?: Prisma.EsimBundleOmit
+  providerOperation?: Prisma.ProviderOperationOmit
+  providerWebhookEvent?: Prisma.ProviderWebhookEventOmit
   supportRequest?: Prisma.SupportRequestOmit
   customerEvent?: Prisma.CustomerEventOmit
   providerConfig?: Prisma.ProviderConfigOmit

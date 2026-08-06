@@ -1,9 +1,14 @@
+import Link from "next/link";
 import { prisma } from "../../lib/db";
 import { createCheckoutOrder } from "./actions";
 import CheckoutSessionInput from "../../components/tracking/CheckoutSessionInput";
 import CheckoutEmailInput from "../../components/tracking/CheckoutEmailInput";
 import SiteFooter from "../../components/SiteFooter";
 import SiteHeader from "../../components/SiteHeader";
+import { getCurrentCustomer } from "../../lib/customer-auth";
+import { getProviderConfigBySlug } from "../../lib/providers/provider-configs";
+import { getEsimGoReadiness } from "../../lib/providers/esim-go/config";
+import { checkEsimGoCompatibility } from "../../lib/providers/esim-go/client";
 
 function formatPrice(value: number) {
   return `$${value.toFixed(2)}`;
@@ -92,6 +97,8 @@ export default async function CheckoutPage({
     recommendationTripLength?: string;
     recommendationUsageType?: string;
     recommendationChoice?: string;
+    topUpProfileId?: string;
+    sourceOrderId?: string;
   }>;
 }) {
   const params = await searchParams;
@@ -106,6 +113,8 @@ export default async function CheckoutPage({
   const recommendationTripLength = params.recommendationTripLength || "";
   const recommendationUsageType = params.recommendationUsageType || "";
   const recommendationChoice = params.recommendationChoice || "";
+  const topUpProfileId = params.topUpProfileId?.trim() || "";
+  const sourceOrderId = params.sourceOrderId?.trim() || "";
   const testCheckoutEnabled =
     process.env.NODE_ENV !== "production" &&
     process.env.DALO_ENABLE_TEST_CHECKOUT === "true";
@@ -146,17 +155,64 @@ export default async function CheckoutPage({
               Go back and choose a valid eSIM product.
             </p>
 
-            <a
+            <Link
               href="/"
               className="mt-8 inline-block rounded-2xl bg-blue-600 px-8 py-4 font-bold text-white"
             >
               Back Home
-            </a>
+            </Link>
           </div>
         </section>
         <SiteFooter />
       </main>
     );
+  }
+
+  let topUpReady = !topUpProfileId;
+  if (topUpProfileId) {
+    const readiness = getEsimGoReadiness();
+    const [customer, providerConfig] = await Promise.all([
+      getCurrentCustomer(),
+      getProviderConfigBySlug("esim-go"),
+    ]);
+
+    if (
+      readiness.topUpsEnabled &&
+      customer &&
+      providerConfig?.active &&
+      providerConfig.fulfillmentEnabled &&
+      sourceOrderId
+    ) {
+      const [profile, sourceOrder] = await Promise.all([
+        prisma.esimProfile.findFirst({
+          where: {
+            id: topUpProfileId,
+            customerId: customer.id,
+            status: { notIn: ["deactivated", "deleted"] },
+          },
+        }),
+        prisma.order.findFirst({
+          where: {
+            id: sourceOrderId,
+            customerId: customer.id,
+            esimProfileId: topUpProfileId,
+            payment: "Paid",
+          },
+        }),
+      ]);
+
+      if (profile && sourceOrder) {
+        try {
+          const compatibility = await checkEsimGoCompatibility(
+            profile.iccid,
+            product.providerProductId,
+          );
+          topUpReady = compatibility.compatible;
+        } catch {
+          topUpReady = false;
+        }
+      }
+    }
   }
 
   return (
@@ -170,11 +226,13 @@ export default async function CheckoutPage({
           </p>
 
           <h1 className="mt-2 text-[2rem] font-bold leading-tight text-slate-950 sm:text-4xl">
-            Complete your order
+            {topUpProfileId ? "Add data to your eSIM" : "Complete your order"}
           </h1>
 
           <p className="mt-3 text-slate-600">
-            Enter your email so DALO can prepare your eSIM order.
+            {topUpProfileId
+              ? "Keep using your installed eSIM — no new installation is needed."
+              : "Enter your email so DALO can prepare your eSIM order."}
           </p>
 
           <div className="mt-5 flex items-center justify-between gap-4 rounded-2xl border border-blue-100 bg-blue-50/70 p-4 lg:hidden">
@@ -210,12 +268,21 @@ export default async function CheckoutPage({
             </div>
           )}
 
+          {topUpProfileId && !topUpReady ? (
+            <div className="mt-6 rounded-2xl bg-amber-50 p-4 text-sm font-semibold text-amber-800">
+              This top-up is not available for the selected eSIM yet. No payment
+              has been started.
+            </div>
+          ) : null}
+
           <form
             action="/api/stripe/checkout"
             method="POST"
             className="mt-6 space-y-4 sm:mt-8 sm:space-y-5"
           >
             <input type="hidden" name="productId" value={product.id} />
+            <input type="hidden" name="topUpProfileId" value={topUpProfileId} />
+            <input type="hidden" name="sourceOrderId" value={sourceOrderId} />
             <input
               type="hidden"
               name="providerProductId"
@@ -254,13 +321,14 @@ export default async function CheckoutPage({
 
             <button
               type="submit"
-              className="min-h-14 w-full rounded-2xl bg-[#2148c0] px-3 py-3 text-sm font-bold text-white shadow-lg shadow-blue-200 transition hover:bg-[#17389b] focus:outline-none focus:ring-4 focus:ring-blue-100 sm:p-5 sm:text-lg"
+              disabled={!topUpReady}
+              className="min-h-14 w-full rounded-2xl bg-[#2148c0] px-3 py-3 text-sm font-bold text-white shadow-lg shadow-blue-200 transition hover:bg-[#17389b] focus:outline-none focus:ring-4 focus:ring-blue-100 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none sm:p-5 sm:text-lg"
             >
               Continue to secure payment →
             </button>
           </form>
 
-          {testCheckoutEnabled && (
+          {testCheckoutEnabled && !topUpProfileId && (
             <details className="mt-5 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4">
               <summary className="cursor-pointer text-sm font-bold text-slate-600">
                 Development test order

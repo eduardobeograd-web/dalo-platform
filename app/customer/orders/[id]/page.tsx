@@ -4,6 +4,8 @@ import { prisma } from "../../../../lib/db";
 import SiteFooter from "../../../../components/SiteFooter";
 import SiteHeader from "../../../../components/SiteHeader";
 import { getEsimLifecycleStatus } from "../../../../lib/esim-lifecycle";
+import { getEsimGoReadiness } from "../../../../lib/providers/esim-go/config";
+import { getProviderConfigBySlug } from "../../../../lib/providers/provider-configs";
 
 function formatDate(date?: Date | null) {
   if (!date) return "Not available yet";
@@ -137,6 +139,32 @@ export default async function CustomerOrderDetailPage({
   if (!product) {
     redirect("/customer/dashboard");
   }
+
+  const esimGoReadiness = getEsimGoReadiness();
+  const providerConfig = esimGoReadiness.topUpsEnabled
+    ? await getProviderConfigBySlug("esim-go")
+    : null;
+  const topUpsOperational = Boolean(
+    esimGoReadiness.topUpsEnabled &&
+      providerConfig?.active &&
+      providerConfig.fulfillmentEnabled &&
+      order.esimProfileId,
+  );
+  const topUpProducts = topUpsOperational
+    ? await prisma.product.findMany({
+        where: {
+          active: true,
+          country: product.country,
+          OR: [
+            { provider: { equals: "eSIM Go", mode: "insensitive" } },
+            { provider: { equals: "esim-go", mode: "insensitive" } },
+            { provider: { equals: "esimgo", mode: "insensitive" } },
+          ],
+        },
+        orderBy: [{ sellPrice: "asc" }, { data: "asc" }],
+        take: 4,
+      })
+    : [];
 
   const status = getCustomerStatus(order);
   const isRefunded = order.payment === "Refunded";
@@ -365,15 +393,29 @@ export default async function CustomerOrderDetailPage({
                           </p>
                         </div>
                         <span className="shrink-0 rounded-full bg-blue-50 px-3 py-1 text-[10px] font-black uppercase tracking-wide text-blue-700">
-                          Coming soon
+                          {topUpProducts.length ? "Available" : "Coming soon"}
                         </span>
                       </div>
-                      <button
-                        disabled
-                        className="mt-4 min-h-11 w-full cursor-not-allowed rounded-xl bg-blue-100 px-4 text-sm font-bold text-blue-400"
-                      >
-                        Buy more data
-                      </button>
+                      {topUpProducts.length ? (
+                        <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                          {topUpProducts.map((topUpProduct) => (
+                            <a
+                              key={topUpProduct.id}
+                              href={`/checkout?productId=${encodeURIComponent(topUpProduct.id)}&topUpProfileId=${encodeURIComponent(order.esimProfileId || "")}&sourceOrderId=${encodeURIComponent(order.id)}`}
+                              className="rounded-xl border border-blue-100 bg-blue-50 px-4 py-3 text-sm font-bold text-blue-800 transition hover:border-blue-300 hover:bg-blue-100"
+                            >
+                              {topUpProduct.data} · ${topUpProduct.sellPrice.toFixed(2)}
+                            </a>
+                          ))}
+                        </div>
+                      ) : (
+                        <button
+                          disabled
+                          className="mt-4 min-h-11 w-full cursor-not-allowed rounded-xl bg-blue-100 px-4 text-sm font-bold text-blue-400"
+                        >
+                          Buy more data
+                        </button>
+                      )}
 
                       <div className="mt-4 border-t border-slate-200 pt-4">
                         <p className="text-sm font-black text-slate-950">

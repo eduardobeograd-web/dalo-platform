@@ -59,6 +59,10 @@ export const ModelName = {
   CustomerSession: 'CustomerSession',
   PasswordResetToken: 'PasswordResetToken',
   Order: 'Order',
+  EsimProfile: 'EsimProfile',
+  EsimBundle: 'EsimBundle',
+  ProviderOperation: 'ProviderOperation',
+  ProviderWebhookEvent: 'ProviderWebhookEvent',
   SupportRequest: 'SupportRequest',
   CustomerEvent: 'CustomerEvent',
   ProviderConfig: 'ProviderConfig',
@@ -253,10 +257,114 @@ export const OrderScalarFieldEnum = {
   activatedAt: 'activatedAt',
   expiresAt: 'expiresAt',
   lastUsageSyncAt: 'lastUsageSyncAt',
+  esimProfileId: 'esimProfileId',
   createdAt: 'createdAt'
 } as const
 
 export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum]
+
+
+export const EsimProfileScalarFieldEnum = {
+  id: 'id',
+  customerId: 'customerId',
+  provider: 'provider',
+  iccid: 'iccid',
+  customerReference: 'customerReference',
+  status: 'status',
+  matchingId: 'matchingId',
+  smdpAddress: 'smdpAddress',
+  pin: 'pin',
+  puk: 'puk',
+  profileStatus: 'profileStatus',
+  iosInstallUrl: 'iosInstallUrl',
+  androidInstallUrl: 'androidInstallUrl',
+  qrCodeUrl: 'qrCodeUrl',
+  firstInstalledAt: 'firstInstalledAt',
+  firstAttachedAt: 'firstAttachedAt',
+  firstUsedAt: 'firstUsedAt',
+  reusableUntil: 'reusableUntil',
+  deletionScheduledAt: 'deletionScheduledAt',
+  deactivatedAt: 'deactivatedAt',
+  lastLocation: 'lastLocation',
+  lastNetwork: 'lastNetwork',
+  lastSyncedAt: 'lastSyncedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EsimProfileScalarFieldEnum = (typeof EsimProfileScalarFieldEnum)[keyof typeof EsimProfileScalarFieldEnum]
+
+
+export const EsimBundleScalarFieldEnum = {
+  id: 'id',
+  esimProfileId: 'esimProfileId',
+  orderId: 'orderId',
+  productId: 'productId',
+  providerBundleName: 'providerBundleName',
+  providerAssignmentId: 'providerAssignmentId',
+  providerAssignmentReference: 'providerAssignmentReference',
+  status: 'status',
+  countryCode: 'countryCode',
+  dataGb: 'dataGb',
+  initialQuantityBytes: 'initialQuantityBytes',
+  remainingQuantityBytes: 'remainingQuantityBytes',
+  unlimited: 'unlimited',
+  assignedAt: 'assignedAt',
+  startedAt: 'startedAt',
+  expiresAt: 'expiresAt',
+  lastUsageSyncAt: 'lastUsageSyncAt',
+  lastUsageAlertPercent: 'lastUsageAlertPercent',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EsimBundleScalarFieldEnum = (typeof EsimBundleScalarFieldEnum)[keyof typeof EsimBundleScalarFieldEnum]
+
+
+export const ProviderOperationScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  esimProfileId: 'esimProfileId',
+  esimBundleId: 'esimBundleId',
+  provider: 'provider',
+  operationKind: 'operationKind',
+  mode: 'mode',
+  idempotencyKey: 'idempotencyKey',
+  requestFingerprint: 'requestFingerprint',
+  status: 'status',
+  attemptCount: 'attemptCount',
+  providerReference: 'providerReference',
+  requestSummary: 'requestSummary',
+  responseSummary: 'responseSummary',
+  lastErrorCode: 'lastErrorCode',
+  lastErrorMessage: 'lastErrorMessage',
+  startedAt: 'startedAt',
+  finishedAt: 'finishedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProviderOperationScalarFieldEnum = (typeof ProviderOperationScalarFieldEnum)[keyof typeof ProviderOperationScalarFieldEnum]
+
+
+export const ProviderWebhookEventScalarFieldEnum = {
+  id: 'id',
+  esimProfileId: 'esimProfileId',
+  provider: 'provider',
+  eventKey: 'eventKey',
+  eventType: 'eventType',
+  iccid: 'iccid',
+  assignmentId: 'assignmentId',
+  assignmentReference: 'assignmentReference',
+  signatureValid: 'signatureValid',
+  status: 'status',
+  payload: 'payload',
+  errorMessage: 'errorMessage',
+  processedAt: 'processedAt',
+  receivedAt: 'receivedAt'
+} as const
+
+export type ProviderWebhookEventScalarFieldEnum = (typeof ProviderWebhookEventScalarFieldEnum)[keyof typeof ProviderWebhookEventScalarFieldEnum]
 
 
 export const SupportRequestScalarFieldEnum = {

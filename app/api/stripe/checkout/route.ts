@@ -7,6 +7,10 @@ import {
   CHECKOUT_LEGAL_VERSION,
   hasRequiredCheckoutConsent,
 } from "../../../../lib/checkout-consent";
+import { getCurrentCustomerFromRequest } from "../../../../lib/customer-auth";
+import { getProviderConfigBySlug } from "../../../../lib/providers/provider-configs";
+import { getEsimGoReadiness } from "../../../../lib/providers/esim-go/config";
+import { checkEsimGoCompatibility } from "../../../../lib/providers/esim-go/client";
 
 const ORDER_NUMBER_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
 
@@ -72,6 +76,8 @@ export async function POST(request: Request) {
   let createdStripeSessionId: string | null = null;
   let submittedProductId = "";
   let submittedProviderProductId = "";
+  let submittedTopUpProfileId = "";
+  let submittedSourceOrderId = "";
 
   try {
     const formData = await request.formData();
@@ -82,6 +88,10 @@ export async function POST(request: Request) {
     ).slice(0, 160);
     submittedProductId = productId;
     submittedProviderProductId = providerProductId;
+    const topUpProfileId = String(formData.get("topUpProfileId") || "").slice(0, 128);
+    const sourceOrderId = String(formData.get("sourceOrderId") || "").slice(0, 128);
+    submittedTopUpProfileId = topUpProfileId;
+    submittedSourceOrderId = sourceOrderId;
     const email = normalizeEmail(String(formData.get("email") || ""));
     const customerName = String(formData.get("name") || "")
       .trim()
@@ -105,17 +115,32 @@ export async function POST(request: Request) {
     const recommendationChoice = ["best_match", "upgrade", "regional"].includes(requestedChoice)
       ? requestedChoice
       : null;
+    const retryPath = (state: "error" | "consent" | "stripe") => {
+      const retryParams = new URLSearchParams({
+        productId,
+        [state]:
+          state === "consent"
+            ? "required"
+            : state === "stripe"
+              ? "missing"
+              : "1",
+      });
+      if (providerProductId) retryParams.set("providerProductId", providerProductId);
+      if (topUpProfileId) retryParams.set("topUpProfileId", topUpProfileId);
+      if (sourceOrderId) retryParams.set("sourceOrderId", sourceOrderId);
+      return `/checkout?${retryParams.toString()}`;
+    };
 
     if (!productId || productId.length > 128 || !isValidEmail(email)) {
       return NextResponse.redirect(
-        new URL(`/checkout?productId=${productId}&error=1`, request.url)
+        new URL(retryPath("error"), request.url)
       );
     }
 
     if (!hasRequiredCheckoutConsent(formData)) {
       return NextResponse.redirect(
         new URL(
-          `/checkout?productId=${productId}&consent=required`,
+          retryPath("consent"),
           request.url
         )
       );
@@ -123,7 +148,7 @@ export async function POST(request: Request) {
 
     if (!(await allowCheckoutAttempt(request, email))) {
       return NextResponse.redirect(
-        new URL(`/checkout?productId=${productId}&error=1`, request.url)
+        new URL(retryPath("error"), request.url)
       );
     }
 
@@ -132,7 +157,7 @@ export async function POST(request: Request) {
       process.env.STRIPE_SECRET_KEY === "sk_test_placeholder"
     ) {
       return NextResponse.redirect(
-        new URL(`/checkout?productId=${productId}&stripe=missing`, request.url)
+        new URL(retryPath("stripe"), request.url)
       );
     }
 
@@ -156,7 +181,58 @@ export async function POST(request: Request) {
     }
 
     if (!product) {
-      return NextResponse.redirect(new URL("/checkout?error=1", request.url));
+      return NextResponse.redirect(new URL(retryPath("error"), request.url));
+    }
+
+    const isTopUp = Boolean(topUpProfileId || sourceOrderId);
+    if (isTopUp) {
+      const readiness = getEsimGoReadiness();
+      const [authenticatedCustomer, providerConfig] = await Promise.all([
+        getCurrentCustomerFromRequest(request),
+        getProviderConfigBySlug("esim-go"),
+      ]);
+
+      if (
+        !topUpProfileId ||
+        !sourceOrderId ||
+        !readiness.topUpsEnabled ||
+        !providerConfig?.active ||
+        !providerConfig.fulfillmentEnabled ||
+        !authenticatedCustomer ||
+        authenticatedCustomer.email.toLowerCase() !== email
+      ) {
+        return NextResponse.redirect(new URL(retryPath("error"), request.url));
+      }
+
+      const [profile, sourceOrder] = await Promise.all([
+        prisma.esimProfile.findFirst({
+          where: {
+            id: topUpProfileId,
+            customerId: authenticatedCustomer.id,
+            status: { notIn: ["deactivated", "deleted"] },
+          },
+        }),
+        prisma.order.findFirst({
+          where: {
+            id: sourceOrderId,
+            customerId: authenticatedCustomer.id,
+            esimProfileId: topUpProfileId,
+            payment: "Paid",
+          },
+        }),
+      ]);
+
+      if (!profile || !sourceOrder) {
+        return NextResponse.redirect(new URL(retryPath("error"), request.url));
+      }
+
+      const compatibility = await checkEsimGoCompatibility(
+        profile.iccid,
+        product.providerProductId,
+      );
+      if (!compatibility.compatible) {
+        return NextResponse.redirect(new URL(retryPath("error"), request.url));
+      }
     }
 
     const existingCustomer = await prisma.customer.findUnique({
@@ -165,7 +241,7 @@ export async function POST(request: Request) {
 
     if (existingCustomer && !existingCustomer.active) {
       return NextResponse.redirect(
-        new URL(`/checkout?productId=${productId}&error=1`, request.url)
+        new URL(retryPath("error"), request.url)
       );
     }
 
@@ -214,6 +290,15 @@ export async function POST(request: Request) {
         recommendationTripLength: recommendationTripLength || null,
         recommendationUsageType: recommendationUsageType || null,
         recommendationChoice,
+        orderKind: isTopUp ? "top_up" : "new_esim",
+        sourceOrderId: isTopUp ? sourceOrderId : null,
+        ...(isTopUp
+          ? {
+              esimProfile: {
+                connect: { id: topUpProfileId },
+              },
+            }
+          : {}),
         legalAcceptedAt: consentAcceptedAt,
         legalVersion: CHECKOUT_LEGAL_VERSION,
         immediateDeliveryAcceptedAt: consentAcceptedAt,
@@ -256,6 +341,9 @@ export async function POST(request: Request) {
       recommendationTripLength,
       recommendationUsageType,
       recommendationChoice: recommendationChoice || "",
+      orderKind: isTopUp ? "top_up" : "new_esim",
+      sourceOrderId: isTopUp ? sourceOrderId : "",
+      esimProfileId: isTopUp ? topUpProfileId : "",
       legalVersion: CHECKOUT_LEGAL_VERSION,
       legalAcceptedAt: consentAcceptedAt.toISOString(),
       immediateDeliveryAcceptedAt: consentAcceptedAt.toISOString(),
@@ -307,7 +395,7 @@ export async function POST(request: Request) {
       ],
       metadata: stripeMetadata,
       success_url: `${siteUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${siteUrl}/checkout?productId=${product.id}`,
+      cancel_url: `${siteUrl}${retryPath("error").replace("&error=1", "")}`,
     });
     createdStripeSessionId = stripeSession.id;
 
@@ -347,6 +435,12 @@ export async function POST(request: Request) {
 
     if (submittedProviderProductId) {
       retryParams.set("providerProductId", submittedProviderProductId);
+    }
+    if (submittedTopUpProfileId) {
+      retryParams.set("topUpProfileId", submittedTopUpProfileId);
+    }
+    if (submittedSourceOrderId) {
+      retryParams.set("sourceOrderId", submittedSourceOrderId);
     }
 
     return NextResponse.redirect(

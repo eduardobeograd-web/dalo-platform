@@ -5,7 +5,7 @@ export function HomeWhyDalo() {
   return (
     <>
       {/* WHY DALO */}
-      <section className="mx-auto max-w-7xl px-6 pb-5 pt-12">
+      <section className="mx-auto max-w-6xl px-5 pb-4 pt-14 sm:px-6 sm:pt-16">
         <div className="relative overflow-hidden rounded-[2rem] bg-[#10233a] text-white shadow-[0_24px_70px_rgba(16,35,58,0.18)]">
           <div className="pointer-events-none absolute -right-24 -top-24 h-80 w-80 rounded-full border border-white/10" />
           <div className="pointer-events-none absolute -right-10 -top-10 h-52 w-52 rounded-full border border-white/10" />
@@ -15,7 +15,7 @@ export function HomeWhyDalo() {
               <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#f2a45f]">
                 Why DALO
               </p>
-              <h2 className="mt-3 max-w-xl text-4xl font-bold tracking-[-0.035em] sm:text-[2.7rem]">
+              <h2 className="mt-3 max-w-xl text-3xl font-bold tracking-[-0.035em] sm:text-4xl">
                 Built for choosing, not browsing.
               </h2>
               <p className="mt-4 max-w-xl text-base leading-relaxed text-slate-300">
@@ -95,25 +95,25 @@ export function HomeHowItWorks() {
   return (
     <>
       {/* HOW IT WORKS */}
-      <section id="how" className="relative rounded-t-[2.5rem] bg-[#F6F8FF] pb-14 pt-12">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+      <section id="how" className="relative bg-[#F6F8FF] py-14 sm:py-16">
+        <div className="mx-auto max-w-6xl px-5 sm:px-6">
+          <div className="mx-auto mb-10 max-w-2xl text-center">
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#2148c0]">
                 From planning to connected
               </p>
-              <h2 className="mt-2 max-w-xl text-4xl font-bold tracking-tight text-slate-950">
+              <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
                 Three simple moments. One smoother trip.
               </h2>
             </div>
-            <p className="max-w-md text-sm leading-relaxed text-slate-600 md:text-right">
+            <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-slate-600">
               No technical comparison and no airport SIM counter. DALO guides you from trip details to installation.
             </p>
           </div>
 
           <div className="grid gap-5 md:grid-cols-3">
-            <article className="group overflow-hidden rounded-[1.75rem] bg-white shadow-[0_16px_40px_rgba(30,64,120,0.1)]">
-              <div className="relative h-56 overflow-hidden">
+            <article className="group overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white shadow-[0_16px_40px_rgba(30,64,120,0.08)]">
+              <div className="relative h-52 overflow-hidden">
                 <Image
                   src="/travel/how-match-v2.webp"
                   alt="Traveler photographing a city with a smartphone"
@@ -134,8 +134,8 @@ export function HomeHowItWorks() {
               </div>
             </article>
 
-            <article className="group overflow-hidden rounded-[1.75rem] bg-white shadow-[0_16px_40px_rgba(30,64,120,0.1)]">
-              <div className="relative h-56 overflow-hidden">
+            <article className="group overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white shadow-[0_16px_40px_rgba(30,64,120,0.08)]">
+              <div className="relative h-52 overflow-hidden">
                 <Image
                   src="/travel/how-recommend-v2.webp"
                   alt="Traveler preparing luggage with a smartphone"
@@ -156,8 +156,8 @@ export function HomeHowItWorks() {
               </div>
             </article>
 
-            <article className="group overflow-hidden rounded-[1.75rem] bg-white shadow-[0_16px_40px_rgba(30,64,120,0.1)]">
-              <div className="relative h-56 overflow-hidden">
+            <article className="group overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white shadow-[0_16px_40px_rgba(30,64,120,0.08)]">
+              <div className="relative h-52 overflow-hidden">
                 <Image
                   src="/travel/how-install-v2.webp"
                   alt="Traveler using a smartphone beside an airplane window"
@@ -188,13 +188,13 @@ export function HomeFaq() {
   return (
     <>
       {/* FAQ */}
-      <section id="faq" className="mx-auto grid max-w-6xl gap-6 px-6 py-16 lg:grid-cols-[0.72fr_1.28fr] lg:items-start">
+      <section id="faq" className="mx-auto grid max-w-6xl gap-6 px-5 py-14 sm:px-6 sm:py-16 lg:grid-cols-[0.72fr_1.28fr] lg:items-start">
         <div className="relative overflow-hidden rounded-[2rem] bg-[#10233a] p-7 text-white shadow-[0_24px_65px_rgba(16,35,58,0.2)] sm:p-9 lg:sticky lg:top-6">
           <div className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full border border-white/10" />
           <div className="pointer-events-none absolute -bottom-16 -left-16 h-44 w-44 rounded-full bg-[#2148c0]/30 blur-2xl" />
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#f2a45f]">DALO travel confidence</p>
-            <h2 className="mt-3 text-4xl font-bold tracking-[-0.04em] text-white">
+            <h2 className="mt-3 text-3xl font-bold tracking-[-0.04em] text-white sm:text-4xl">
               Travel data without the usual surprises.
             </h2>
           </div>
@@ -328,17 +328,17 @@ export function HomePopularDestinations() {
   return (
     <>
       {/* DESTINATIONS */}
-      <section id="destinations" className="mx-auto max-w-7xl px-6 py-16">
-        <div className="mb-9 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+      <section id="destinations" className="mx-auto max-w-6xl px-5 py-14 sm:px-6 sm:py-16">
+        <div className="mx-auto mb-9 max-w-2xl text-center">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.16em] text-blue-700">
               Explore with DALO
             </p>
-            <h2 className="mt-2 text-4xl font-bold tracking-tight text-slate-950">
+            <h2 className="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
               Popular destinations
             </h2>
           </div>
-          <p className="max-w-sm text-sm leading-relaxed text-slate-600 sm:text-right">
+          <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-slate-600">
             Start with the places our travelers search for most.
           </p>
         </div>

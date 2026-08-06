@@ -14,7 +14,7 @@ const globalForPrisma = globalThis as unknown as {
   prismaSchemaVersion: string | undefined;
 };
 
-const PRISMA_SCHEMA_VERSION = "2026-08-05-esim-lifecycle-support-replies";
+const PRISMA_SCHEMA_VERSION = "2026-08-07-esim-go-lifecycle";
 
 const connectionString = process.env.DATABASE_URL;
 

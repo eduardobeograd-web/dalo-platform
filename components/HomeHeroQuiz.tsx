@@ -24,62 +24,37 @@ export default function HomeHeroQuiz() {
         <SiteHeader />
 
         {/* HERO */}
-        <div className="relative mx-auto max-w-7xl px-5 pt-1 sm:px-6 sm:pt-3">
-          <div className="pointer-events-none absolute left-[43%] top-6 hidden items-center gap-2 rounded-full border border-white/80 bg-white/75 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-700 shadow-sm backdrop-blur-md xl:flex">
-            <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" className="h-3.5 w-3.5 text-[#2148c0]"><path d="M16 8.5c0 4.25-6 8-6 8s-6-3.75-6-8a6 6 0 1 1 12 0Z" stroke="currentColor" strokeWidth="1.5" /><circle cx="10" cy="8.5" r="2" fill="currentColor" /></svg>
-            Cefalù, Sicily
-          </div>
+        <div className="relative mx-auto max-w-6xl px-5 pt-1 sm:px-6 sm:pt-3">
           <div className="grid items-start gap-3 sm:gap-5 lg:grid-cols-[minmax(0,1fr)_580px] lg:gap-5">
-            <div className="self-center py-2 pr-0 sm:py-5 sm:pr-4 lg:py-8 lg:pr-7">
+            <div className="self-center py-2 pr-0 sm:py-5 sm:pr-4 lg:py-8 lg:pl-4 lg:pr-7">
               <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.18em] text-blue-700 sm:mb-4 sm:text-xs">
-                The travel eSIM recommendation engine
+                Your answers do the searching
               </p>
 
               <h1 className="max-w-[37rem] text-[2.05rem] font-bold leading-[0.98] tracking-[-0.045em] text-slate-950 sm:text-5xl lg:text-[3.45rem]">
-                <span className="block">DALO finds your</span>
-                <span className="block text-[#2148c0]">right eSIM.</span>
-                <span className="mt-3 hidden text-[0.52em] font-semibold tracking-[-0.01em] text-slate-700 sm:block">
-                  Built around your trip.
-                </span>
+                <span className="block">DALO finds the</span>
+                <span className="block text-[#2148c0]">right eSIM</span>
+                <span className="block">for your trip.</span>
               </h1>
 
-              <p className="mt-2 max-w-md text-[13px] leading-relaxed text-slate-700 sm:mt-5 sm:text-lg">
-                Find the right eSIM for international travel without comparing
-                endless plans. Tell DALO about your trip and get one clear recommendation.
+              <p className="mt-3 max-w-md text-[13px] leading-relaxed text-slate-700 sm:mt-5 sm:text-lg">
+                Answer three quick questions. DALO compares prepaid travel
+                eSIMs for your destination and recommends one clear match.
               </p>
 
-              <div className="mt-5 hidden max-w-xl rounded-2xl border border-white/80 bg-white/80 p-4 shadow-[0_16px_35px_rgba(15,80,110,0.1)] backdrop-blur-sm sm:block">
-                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-blue-700">
-                  Why DALO is different
-                </p>
-                <p className="mt-2 max-w-lg text-lg font-bold leading-snug text-slate-950">
-                  Other eSIM shops make you compare plans. DALO recommends the one that fits your trip.
-                </p>
-                <div className="mt-3 grid gap-3 border-t border-slate-200 pt-3 sm:grid-cols-3">
-                  <div className="border-b border-slate-200 pb-3 sm:border-b-0 sm:border-r sm:pb-0 sm:pr-3">
-                    <span className="mb-2 block h-2 w-2 rounded-full bg-blue-600" />
-                    <p className="text-sm font-bold leading-snug text-slate-900">Matched to your destination</p>
-                  </div>
-                  <div className="border-b border-slate-200 pb-3 sm:border-b-0 sm:border-r sm:pb-0 sm:pr-3">
-                    <span className="mb-2 block h-2 w-2 rounded-full bg-cyan-500" />
-                    <p className="text-sm font-bold leading-snug text-slate-900">Matched to your usage</p>
-                  </div>
-                  <div>
-                    <span className="mb-2 block h-2 w-2 rounded-full bg-amber-500" />
-                    <p className="text-sm font-bold leading-snug text-slate-900">Ready in minutes</p>
-                  </div>
-                </div>
-              </div>
             </div>
 
           {/* QUIZ */}
-          <HomeQuizForm />
+          <div className="relative">
+            <div className="pointer-events-none absolute inset-x-8 bottom-6 top-12 rounded-[2.5rem] bg-[#2148c0]/20 blur-3xl" />
+            <HomeQuizForm />
+          </div>
           </div>
         </div>
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(to_bottom,transparent,rgba(246,248,255,0.98))]" />
       </section>
 
-      <section className="relative z-10 mx-auto -mt-10 max-w-7xl px-5 sm:px-6">
+      <section className="relative z-10 mx-auto -mt-10 max-w-6xl px-5 sm:px-6">
         <div className="grid overflow-hidden rounded-[1.5rem] border border-white bg-white shadow-[0_20px_55px_rgba(30,64,120,0.14)] sm:grid-cols-3 lg:grid-cols-[0.85fr_repeat(3,1fr)]">
           <div className="relative bg-[#2148c0] px-6 py-5 text-white sm:col-span-3 lg:col-span-1">
             <div className="pointer-events-none absolute -right-8 -top-12 h-32 w-32 rounded-full border border-white/15" />

@@ -6,6 +6,7 @@ import {
   getProviderEnvStatus,
   getProviderStatusLabel,
 } from "../../../../lib/providers/provider-configs";
+import { getEsimGoReadiness } from "../../../../lib/providers/esim-go/config";
 import { syncEsimGoNetworks, updateProviderConfig } from "../actions";
 
 type ProviderDetailPageProps = {
@@ -46,7 +47,14 @@ export default async function ProviderDetailPage({
   }
 
   const envStatus = getProviderEnvStatus(provider);
-  const statusLabel = getProviderStatusLabel(provider);
+  const esimGoReadiness = slug === "esim-go" ? getEsimGoReadiness() : null;
+  const statusLabel = esimGoReadiness
+    ? esimGoReadiness.liveTransactionsEnabled
+      ? "Live fulfillment enabled"
+      : esimGoReadiness.apiKeyConfigured
+        ? "API key ready · live locked"
+        : "Missing API Key"
+    : getProviderStatusLabel(provider);
   const updateProviderWithId = updateProviderConfig.bind(null, provider.id);
 
   const productsHref = provider.productSearchQuery
@@ -119,12 +127,12 @@ export default async function ProviderDetailPage({
         </div>
       </div>
 
-      {networkSync === "missing-key" ? (
+      {networkSync === "read-disabled" ? (
         <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-amber-900">
-          <p className="font-bold">Network sync is not configured yet.</p>
+          <p className="font-bold">Network sync is safely disabled.</p>
           <p className="mt-1 text-sm leading-6">
-            Add ESIM_GO_API_KEY to the Vercel environment and redeploy before
-            starting the network coverage sync.
+            It requires the new API key, ESIM_GO_READ_ENABLED and the provider
+            catalogue switch. This does not enable real purchases.
           </p>
         </div>
       ) : networkSync ? (

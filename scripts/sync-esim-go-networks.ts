@@ -20,6 +20,11 @@ async function main() {
   ).replace(/\/$/, "");
 
   if (!apiKey) throw new Error("ESIM_GO_API_KEY is not configured.");
+  if (process.env.ESIM_GO_READ_ENABLED?.trim().toLowerCase() !== "true") {
+    throw new Error(
+      "ESIM_GO_READ_ENABLED must be true before provider network data can be read.",
+    );
+  }
 
   const response = await fetch(`${baseUrl}/networks?returnAll=true`, {
     headers: { "X-API-Key": apiKey, Accept: "application/json" },
