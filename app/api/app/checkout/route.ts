@@ -15,6 +15,7 @@ const corsHeaders = {
 
 type CheckoutBody = {
   productId?: unknown;
+  providerProductId?: unknown;
   customerEmail?: unknown;
   email?: unknown;
   platform?: unknown;
