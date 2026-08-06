@@ -397,6 +397,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 
 export const ModelName = {
+  SiteConfiguration: 'SiteConfiguration',
   RecommendationSetting: 'RecommendationSetting',
   Product: 'Product',
   CountryNetworkCoverage: 'CountryNetworkCoverage',
@@ -428,10 +429,84 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "recommendationSetting" | "product" | "countryNetworkCoverage" | "customer" | "customerSession" | "passwordResetToken" | "order" | "supportRequest" | "customerEvent" | "providerConfig" | "destinationPage" | "adminUser" | "supportReply" | "supportPushSubscription" | "adminSession" | "adminAuditLog"
+    modelProps: "siteConfiguration" | "recommendationSetting" | "product" | "countryNetworkCoverage" | "customer" | "customerSession" | "passwordResetToken" | "order" | "supportRequest" | "customerEvent" | "providerConfig" | "destinationPage" | "adminUser" | "supportReply" | "supportPushSubscription" | "adminSession" | "adminAuditLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
+    SiteConfiguration: {
+      payload: Prisma.$SiteConfigurationPayload<ExtArgs>
+      fields: Prisma.SiteConfigurationFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SiteConfigurationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteConfigurationPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SiteConfigurationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteConfigurationPayload>
+        }
+        findFirst: {
+          args: Prisma.SiteConfigurationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteConfigurationPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SiteConfigurationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteConfigurationPayload>
+        }
+        findMany: {
+          args: Prisma.SiteConfigurationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteConfigurationPayload>[]
+        }
+        create: {
+          args: Prisma.SiteConfigurationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteConfigurationPayload>
+        }
+        createMany: {
+          args: Prisma.SiteConfigurationCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SiteConfigurationCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteConfigurationPayload>[]
+        }
+        delete: {
+          args: Prisma.SiteConfigurationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteConfigurationPayload>
+        }
+        update: {
+          args: Prisma.SiteConfigurationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteConfigurationPayload>
+        }
+        deleteMany: {
+          args: Prisma.SiteConfigurationDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SiteConfigurationUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SiteConfigurationUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteConfigurationPayload>[]
+        }
+        upsert: {
+          args: Prisma.SiteConfigurationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SiteConfigurationPayload>
+        }
+        aggregate: {
+          args: Prisma.SiteConfigurationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSiteConfiguration>
+        }
+        groupBy: {
+          args: Prisma.SiteConfigurationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SiteConfigurationGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SiteConfigurationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SiteConfigurationCountAggregateOutputType> | number
+        }
+      }
+    }
     RecommendationSetting: {
       payload: Prisma.$RecommendationSettingPayload<ExtArgs>
       fields: Prisma.RecommendationSettingFieldRefs
@@ -1655,6 +1730,16 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
 
 
+export const SiteConfigurationScalarFieldEnum = {
+  id: 'id',
+  teamAccessEnabled: 'teamAccessEnabled',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SiteConfigurationScalarFieldEnum = (typeof SiteConfigurationScalarFieldEnum)[keyof typeof SiteConfigurationScalarFieldEnum]
+
+
 export const RecommendationSettingScalarFieldEnum = {
   id: 'id',
   usageType: 'usageType',
@@ -2039,20 +2124,6 @@ export type ListStringFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMod
 
 
 /**
- * Reference to a field of type 'Float'
- */
-export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
-    
-
-
-/**
- * Reference to a field of type 'Float[]'
- */
-export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
-    
-
-
-/**
  * Reference to a field of type 'Boolean'
  */
 export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
@@ -2070,6 +2141,20 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'DateTime[]'
  */
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Float'
+ */
+export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
+    
+
+
+/**
+ * Reference to a field of type 'Float[]'
+ */
+export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
     
 
 
@@ -2251,6 +2336,7 @@ export interface PrismaClientOptionsWithAdapter extends PrismaClientBaseOptions 
  */
 export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaClientOptionsWithAdapter
 export type GlobalOmitConfig = {
+  siteConfiguration?: Prisma.SiteConfigurationOmit
   recommendationSetting?: Prisma.RecommendationSettingOmit
   product?: Prisma.ProductOmit
   countryNetworkCoverage?: Prisma.CountryNetworkCoverageOmit

@@ -18,6 +18,11 @@ export { Prisma }
 export * as $Enums from './enums'
 export * from './enums';
 /**
+ * Model SiteConfiguration
+ * 
+ */
+export type SiteConfiguration = Prisma.SiteConfigurationModel
+/**
  * Model RecommendationSetting
  * 
  */

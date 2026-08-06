@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { createTestAccessToken, safeTokenEqual } from "./lib/test-access";
+import { getTeamAccessEnabled } from "./lib/site-configuration";
 
 const ACCESS_COOKIE = "dalo_test_access";
 
@@ -12,9 +13,19 @@ export async function proxy(request: NextRequest) {
   const isExternalServiceRoute = pathname === "/api/stripe/webhook";
   const isPublicPwaAsset =
     pathname === "/manifest.webmanifest" || pathname === "/sw.js";
+  let teamAccessEnabled = Boolean(testPassword);
+
+  if (testPassword) {
+    try {
+      teamAccessEnabled = await getTeamAccessEnabled();
+    } catch (error) {
+      console.error("Could not read team access setting:", error);
+    }
+  }
 
   if (
     testPassword &&
+    teamAccessEnabled &&
     !isAccessRoute &&
     !isExternalServiceRoute &&
     !isPublicPwaAsset
