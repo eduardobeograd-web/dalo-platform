@@ -93,15 +93,15 @@ export default function HomeQuizForm() {
         id="quiz"
         action="/searching"
         method="get"
-        className="relative overflow-hidden rounded-[1.5rem] border border-white/80 bg-white/[0.82] p-3 shadow-[0_24px_65px_rgba(37,66,88,0.16)] backdrop-blur-md sm:rounded-[2rem] sm:p-4 md:p-5 lg:mt-10"
+        className="relative overflow-hidden rounded-[1.5rem] border-2 border-[#2148c0]/30 bg-white/[0.96] p-3 shadow-[0_30px_80px_rgba(33,72,192,0.24),0_8px_24px_rgba(16,35,58,0.10)] ring-1 ring-white/90 backdrop-blur-md sm:rounded-[2rem] sm:p-4 md:p-5 lg:mt-10"
       >
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,#2148c0_0%,#2148c0_85%,#e98b3a_85%,#e98b3a_100%)]" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-1.5 bg-[linear-gradient(90deg,#2148c0_0%,#2148c0_82%,#e98b3a_82%,#e98b3a_100%)] shadow-[0_2px_12px_rgba(33,72,192,0.35)]" />
         <div className="pointer-events-none absolute -left-2 top-1/2 h-4 w-4 rounded-full bg-[#f7fafc]" />
         <div className="pointer-events-none absolute -right-2 top-1/2 h-4 w-4 rounded-full bg-[#f7fafc]" />
 
         <div className="mb-2 flex items-center justify-between gap-2 border-b border-dashed border-slate-300/80 pb-2 sm:mb-3 sm:items-end sm:pb-3">
           <div className="min-w-0">
-            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-[#2148c0]">Find your plan</p>
+            <p className="inline-flex rounded-full bg-[#eaf0ff] px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[0.14em] text-[#2148c0] ring-1 ring-[#cbd8ff] sm:text-[10px]">Start here · 60 sec</p>
             <h2 className="mt-1 text-xl font-extrabold tracking-[-0.035em] text-[#10233a] sm:text-2xl md:text-[1.7rem]">Your trip. Your eSIM.</h2>
           </div>
           <div className="flex shrink-0 items-center">
@@ -115,7 +115,7 @@ export default function HomeQuizForm() {
             Destination
           </label>
           <div className="relative">
-            <div className="flex items-center gap-2.5 rounded-xl border border-white/80 bg-white/55 px-3 py-2 transition focus-within:border-[#2148c0] focus-within:bg-white/85 focus-within:ring-4 focus-within:ring-[#dbe6ff]/80 sm:px-3.5 sm:py-2.5">
+            <div className="flex items-center gap-2.5 rounded-xl border border-[#c9d6f7] bg-[#f8faff] px-3 py-2 shadow-sm transition focus-within:border-[#2148c0] focus-within:bg-white focus-within:ring-4 focus-within:ring-[#dbe6ff]/80 sm:px-3.5 sm:py-2.5">
               <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" className="h-5 w-5 shrink-0 text-[#2148c0]">
                 <path d="M16 8.5c0 4.25-6 8-6 8s-6-3.75-6-8a6 6 0 1 1 12 0Z" stroke="currentColor" strokeWidth="1.5" />
                 <circle cx="10" cy="8.5" r="2" stroke="currentColor" strokeWidth="1.5" />
@@ -178,13 +178,13 @@ export default function HomeQuizForm() {
           </legend>
           <div className="grid grid-cols-3 gap-1.5 sm:grid-cols-[repeat(6,minmax(0,1fr))_1.2fr]">
             {durationOptions.map((option) => (
-              <label key={option.value} className="cursor-pointer rounded-lg border border-white/80 bg-white/50 px-1 py-1.5 text-center text-slate-700 transition hover:border-[#8aa3ed] hover:bg-white/80 has-[:checked]:border-[#2148c0] has-[:checked]:bg-[#2148c0] has-[:checked]:text-white">
+              <label key={option.value} className="cursor-pointer rounded-lg border border-[#dbe3f7] bg-[#f8faff] px-1 py-1.5 text-center text-slate-700 transition hover:border-[#8aa3ed] hover:bg-white has-[:checked]:border-[#2148c0] has-[:checked]:bg-[#2148c0] has-[:checked]:text-white">
                 <input className="sr-only" type="radio" name="days" value={option.value} checked={days === option.value} onChange={() => setDays(option.value)} />
                 <span className="block text-xs font-bold">{option.label}</span>
                 <span className="block text-[9px] opacity-70">days</span>
               </label>
             ))}
-            <label className="col-span-2 flex min-h-[42px] cursor-pointer flex-col items-center justify-center rounded-lg border border-white/80 bg-white/75 px-2 text-slate-700 transition hover:border-[#8aa3ed] has-[:checked]:border-[#2148c0] has-[:checked]:bg-[#eef3ff] has-[:checked]:text-[#2148c0] sm:col-span-1 sm:min-h-[46px]">
+            <label className="col-span-2 flex min-h-[42px] cursor-pointer flex-col items-center justify-center rounded-lg border border-[#dbe3f7] bg-[#f8faff] px-2 text-slate-700 transition hover:border-[#8aa3ed] has-[:checked]:border-[#2148c0] has-[:checked]:bg-[#eef3ff] has-[:checked]:text-[#2148c0] sm:col-span-1 sm:min-h-[46px]">
               <input className="sr-only" type="radio" name="days" value={days} checked={!durationValues.includes(days)} readOnly />
               <span className="text-[9px] font-bold uppercase tracking-[0.08em]">Exact</span>
               <span className="flex items-baseline justify-center gap-1">
@@ -208,7 +208,7 @@ export default function HomeQuizForm() {
           </legend>
           <div className="grid gap-1.5 sm:grid-cols-3 sm:gap-2">
             {usageOptions.map((item) => (
-              <label key={item.id} className="relative flex cursor-pointer items-start gap-2 rounded-xl border border-white/80 bg-white/50 p-2 text-left transition duration-200 hover:border-[#8aa3ed] hover:bg-white/80 has-[:checked]:border-[#2148c0] has-[:checked]:bg-[#eef3ff] sm:min-h-24 sm:flex-col sm:p-2.5">
+              <label key={item.id} className="relative flex cursor-pointer items-start gap-2 rounded-xl border border-[#dbe3f7] bg-[#f8faff] p-2 text-left transition duration-200 hover:border-[#8aa3ed] hover:bg-white has-[:checked]:border-[#2148c0] has-[:checked]:bg-[#eef3ff] sm:min-h-24 sm:flex-col sm:p-2.5">
                 <input className="peer sr-only" type="radio" name="type" value={item.id} checked={userType === item.id} onChange={() => setUserType(item.id)} />
                 <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-white/70 text-slate-500 peer-checked:border-[#b8c9ff] peer-checked:bg-white peer-checked:text-[#2148c0]" aria-hidden="true">{item.icon}</span>
                 <span className="min-w-0 flex-1">

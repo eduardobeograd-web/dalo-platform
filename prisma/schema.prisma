@@ -8,6 +8,13 @@ datasource db {
 
 }
 
+model SiteConfiguration {
+  id                String   @id @default("default")
+  teamAccessEnabled Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
 
 model RecommendationSetting {
   id                      String   @id @default(cuid())

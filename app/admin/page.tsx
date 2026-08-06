@@ -1,5 +1,17 @@
+import { revalidatePath } from "next/cache";
 import AdminShell from "../../components/AdminShell";
 import { prisma } from "../../lib/db";
+import {
+  getTeamAccessEnabled,
+  setTeamAccessEnabled,
+} from "../../lib/site-configuration";
+
+async function updateTeamAccess(formData: FormData) {
+  "use server";
+
+  await setTeamAccessEnabled(formData.get("enabled") === "true");
+  revalidatePath("/admin");
+}
 
 function formatPrice(value: number) {
   return `$${value.toFixed(2)}`;
@@ -18,6 +30,7 @@ export default async function AdminDashboard() {
     openSupportRequests,
     inProgressSupportRequests,
     operationalOrders,
+    teamAccessEnabled,
   ] = await Promise.all([
     prisma.order.count({ where: { createdAt: { gte: today } } }),
     prisma.order.aggregate({
@@ -64,6 +77,7 @@ export default async function AdminDashboard() {
         createdAt: true,
       },
     }),
+    getTeamAccessEnabled(),
   ]);
 
   const todaysRevenue = todaysPaidTotals._sum.amount || 0;
@@ -125,6 +139,48 @@ export default async function AdminDashboard() {
           View website
         </a>
       </div>
+
+      <section className={`mb-6 rounded-[1.5rem] border p-5 sm:p-6 ${
+        teamAccessEnabled
+          ? "border-amber-200 bg-amber-50"
+          : "border-emerald-200 bg-emerald-50"
+      }`}>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className={`text-xs font-black uppercase tracking-[0.14em] ${
+              teamAccessEnabled ? "text-amber-700" : "text-emerald-700"
+            }`}>
+              Website access
+            </p>
+            <h2 className="mt-1 text-xl font-black text-slate-950">
+              Team Access is {teamAccessEnabled ? "ON" : "OFF"}
+            </h2>
+            <p className="mt-1 text-sm font-medium text-slate-600">
+              {teamAccessEnabled
+                ? "The website is protected by the team password."
+                : "The website is public and visitors do not need the team password."}
+            </p>
+          </div>
+
+          <form action={updateTeamAccess}>
+            <input
+              type="hidden"
+              name="enabled"
+              value={teamAccessEnabled ? "false" : "true"}
+            />
+            <button
+              type="submit"
+              className={`min-h-11 rounded-xl px-5 text-sm font-black text-white transition ${
+                teamAccessEnabled
+                  ? "bg-emerald-700 hover:bg-emerald-800"
+                  : "bg-amber-600 hover:bg-amber-700"
+              }`}
+            >
+              {teamAccessEnabled ? "Make website public" : "Enable Team Access"}
+            </button>
+          </form>
+        </div>
+      </section>
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {metrics.map((metric) => (

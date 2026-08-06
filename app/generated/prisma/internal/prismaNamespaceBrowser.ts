@@ -51,6 +51,7 @@ export const AnyNull = runtime.AnyNull
 
 
 export const ModelName = {
+  SiteConfiguration: 'SiteConfiguration',
   RecommendationSetting: 'RecommendationSetting',
   Product: 'Product',
   CountryNetworkCoverage: 'CountryNetworkCoverage',
@@ -83,6 +84,16 @@ export const TransactionIsolationLevel = runtime.makeStrictEnum({
 } as const)
 
 export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof typeof TransactionIsolationLevel]
+
+
+export const SiteConfigurationScalarFieldEnum = {
+  id: 'id',
+  teamAccessEnabled: 'teamAccessEnabled',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SiteConfigurationScalarFieldEnum = (typeof SiteConfigurationScalarFieldEnum)[keyof typeof SiteConfigurationScalarFieldEnum]
 
 
 export const RecommendationSettingScalarFieldEnum = {
