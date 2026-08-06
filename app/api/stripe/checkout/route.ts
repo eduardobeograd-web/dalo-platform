@@ -70,6 +70,8 @@ async function createUniqueOrderNumber() {
 export async function POST(request: Request) {
   let pendingOrderId: string | null = null;
   let createdStripeSessionId: string | null = null;
+  let submittedProductId = "";
+  let submittedProviderProductId = "";
 
   try {
     const formData = await request.formData();
@@ -78,6 +80,8 @@ export async function POST(request: Request) {
     const providerProductId = String(
       formData.get("providerProductId") || ""
     ).slice(0, 160);
+    submittedProductId = productId;
+    submittedProviderProductId = providerProductId;
     const email = normalizeEmail(String(formData.get("email") || ""));
     const customerName = String(formData.get("name") || "")
       .trim()
@@ -335,6 +339,18 @@ export async function POST(request: Request) {
       }).catch(() => null);
     }
 
-    return NextResponse.redirect(new URL("/checkout?error=1", request.url));
+    const retryParams = new URLSearchParams({ error: "1" });
+
+    if (submittedProductId) {
+      retryParams.set("productId", submittedProductId);
+    }
+
+    if (submittedProviderProductId) {
+      retryParams.set("providerProductId", submittedProviderProductId);
+    }
+
+    return NextResponse.redirect(
+      new URL(`/checkout?${retryParams.toString()}`, request.url)
+    );
   }
 }

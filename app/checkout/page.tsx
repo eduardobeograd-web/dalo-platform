@@ -193,7 +193,8 @@ export default async function CheckoutPage({
 
           {hasError && (
             <div className="mt-6 rounded-2xl bg-red-50 p-4 text-sm font-semibold text-red-700">
-              Please enter a valid email address and try again.
+              We could not start the secure payment. Your selected plan is still
+              saved here. Please check your details and try again.
             </div>
           )}
 
