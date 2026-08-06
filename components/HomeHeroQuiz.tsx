@@ -1,12 +1,15 @@
 import Image from "next/image";
+import Link from "next/link";
 import SiteHeader from "./SiteHeader";
 import HomeQuizForm from "./HomeQuizForm";
+
+const popularTrips = ["Italy", "Spain", "Japan", "Thailand"];
 
 export default function HomeHeroQuiz() {
   return (
     <>
-      <section className="relative overflow-hidden bg-[#f7fafc] pb-10 sm:pb-14">
-        <div className="pointer-events-none absolute bottom-0 left-[8%] top-0 w-[86%]">
+      <section className="relative overflow-hidden bg-[#f7fafc] pb-8 sm:pb-12">
+        <div className="pointer-events-none absolute bottom-0 left-[4%] top-0 w-[92%]">
           <Image
             src="/travel/dalo-hero-sicily.webp"
             alt=""
@@ -18,8 +21,8 @@ export default function HomeHeroQuiz() {
             className="object-cover object-[48%_center] saturate-[1.08]"
           />
         </div>
-        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,#f7fafc_0%,rgba(247,250,252,0.94)_22%,rgba(247,250,252,0.16)_49%,rgba(247,250,252,0.46)_74%,#f7fafc_100%)]" />
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#f7fafc] via-[#f7fafc]/90 to-transparent" />
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,#f7fafc_0%,rgba(247,250,252,0.88)_22%,rgba(247,250,252,0.08)_49%,rgba(247,250,252,0.28)_74%,#f7fafc_100%)]" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-[#f7fafc] via-[#f7fafc]/75 to-transparent" />
 
         <SiteHeader />
 
@@ -42,6 +45,24 @@ export default function HomeHeroQuiz() {
                 eSIMs for your destination and recommends one clear match.
               </p>
 
+              <div className="mt-5 max-w-lg border-t border-slate-900/10 pt-4 sm:mt-7 sm:pt-5">
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-2.5">
+                  <span className="mr-1 inline-flex items-center gap-2 text-[10px] font-extrabold uppercase tracking-[0.14em] text-[#b45411] sm:text-[11px]">
+                    <span className="h-2 w-2 rounded-full bg-[#e98b3a] shadow-[0_0_0_4px_rgba(233,139,58,0.14)]" />
+                    Popular trips
+                  </span>
+                  {popularTrips.map((destination) => (
+                    <Link
+                      key={destination}
+                      href={`/?country=${encodeURIComponent(destination)}#quiz`}
+                      className="rounded-full border border-white/80 bg-white/75 px-3 py-1.5 text-xs font-bold text-slate-700 shadow-[0_5px_16px_rgba(30,64,120,0.09)] backdrop-blur-sm transition hover:-translate-y-0.5 hover:border-[#7892dc] hover:bg-white hover:text-[#2148c0] focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 sm:text-sm"
+                    >
+                      {destination}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+
             </div>
 
           {/* QUIZ */}
@@ -54,7 +75,7 @@ export default function HomeHeroQuiz() {
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-[linear-gradient(to_bottom,transparent,rgba(246,248,255,0.98))]" />
       </section>
 
-      <section className="relative z-10 mx-auto -mt-10 max-w-6xl px-5 sm:px-6">
+      <section className="relative z-10 mx-auto -mt-12 max-w-6xl px-5 sm:px-6">
         <div className="grid overflow-hidden rounded-[1.5rem] border border-white bg-white shadow-[0_20px_55px_rgba(30,64,120,0.14)] sm:grid-cols-3 lg:grid-cols-[0.85fr_repeat(3,1fr)]">
           <div className="relative bg-[#2148c0] px-6 py-5 text-white sm:col-span-3 lg:col-span-1">
             <div className="pointer-events-none absolute -right-8 -top-12 h-32 w-32 rounded-full border border-white/15" />
