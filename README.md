@@ -1,36 +1,52 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DALO Platform
 
-## Getting Started
+DALO is a travel eSIM recommendation, checkout and customer-service platform.
+It asks travelers about their destination, trip length and data needs, then
+recommends a suitable plan instead of exposing the full provider catalogue.
 
-First, run the development server:
+## Current platform
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Next.js 16.3 with React 19 and TypeScript
+- PostgreSQL through Prisma 7; production is designed for Neon
+- Stripe Checkout and verified Stripe webhooks
+- Resend transactional email delivery
+- Customer accounts, orders, invoices, eSIM details, settings and support
+- Role-based admin, database-backed sessions and audit logging
+- Product, margin, recommendation, order, provider, support and SEO tools
+- Country landing pages with controlled publication and indexability
+- Installable PWA with manifest, icons and service worker
+- Fail-closed eSIM Go integration prepared for staged activation
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Local development
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Copy `.env.example` to `.env.local` and provide development credentials.
+2. Install dependencies with `npm install`.
+3. Generate Prisma Client with `npx prisma generate` when the schema changes.
+4. Start the site with `npm run dev`.
+5. Open `http://localhost:3000`.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Never commit `.env.local`, API keys, database credentials or generated test
+data.
 
-## Learn More
+## Verification
 
-To learn more about Next.js, take a look at the following resources:
+- `npx tsc --noEmit` — TypeScript check
+- `npm run lint` — lint check
+- `npm run build` — production build
+- `npm run production:check` — production environment safety check
+- `npm run prices:check-margins` — product margin audit
+- `npm run recommendations:audit` — recommendation audit
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Operational documentation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- `PROJECT_TODO.md` — canonical current task list
+- `docs/PROJECT_VISION.md` — product direction and current phase
+- `docs/ARCHITECTURE.md` — current technical architecture
+- `docs/DECISIONS.md` — decisions that should guide future changes
+- `docs/ESIM_GO_ROLLOUT.md` — mandatory staged provider activation runbook
 
-## Deploy on Vercel
+## Deployment safety
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The presence of an eSIM Go API key does not enable provider calls or purchases.
+Provider access, validation, callbacks, live fulfillment and top-ups use
+separate flags. Follow `docs/ESIM_GO_ROLLOUT.md` in order.

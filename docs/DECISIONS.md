@@ -1,314 +1,110 @@
-# DALO Architecture Decisions
+# DALO Architecture and Product Decisions
 
-## Decision 1: Use Next.js
+Last updated: 7 August 2026
 
-DALO uses Next.js because it supports:
+## 1. DALO recommends; it does not expose provider complexity
 
-* landing pages
-* app routing
-* server components
-* API routes
-* future deployment on Vercel
-* good performance foundation
+The customer sees one primary recommendation and an optional alternative.
+Provider IDs, internal states and catalogue complexity stay in Admin.
 
-## Decision 2: Use Prisma and SQLite locally
+## 2. Next.js remains the shared web platform
 
-For the local MVP, DALO uses Prisma with SQLite.
+Public pages, account pages, Admin, API routes, SEO and PWA behavior live in one
+Next.js App Router application. This keeps product and order rules shared.
 
-Reason:
+## 3. PostgreSQL is the system of record
 
-* simple local development
-* easy database setup
-* good enough for MVP
-* structured product, customer, order and support data
+Prisma uses PostgreSQL. Neon is the managed production database target. SQLite
+scripts exist only for historical migration and backup support, not as the
+production architecture.
 
-Future production should not rely on local SQLite.
-Before deployment, DALO should move to an online database such as Postgres through a provider like Supabase, Neon, or another managed database.
+## 4. Orders preserve the purchase-time truth
 
-## Decision 3: Build Admin first
+An order stores the customer-visible price, currency, provider cost, product
+description and provider mapping from the moment of purchase. Later product
+imports or price changes must not alter old orders.
 
-The project focuses on Admin early because DALO depends on product management.
+Payment status and fulfillment status remain separate.
 
-The admin must allow:
+## 5. Stripe and provider fulfillment are separate systems
 
-* adding products
-* editing products
-* activating/deactivating products
-* checking margins
-* viewing orders
-* managing support requests
-* changing support request status
-* managing provider product IDs
-* previewing Excel rate sheets
+A verified Stripe payment does not imply successful eSIM delivery. Paid orders
+can remain available for manual handling when provider fulfillment is disabled,
+fails or needs reconciliation.
 
-## Decision 4: Use a shared AdminShell
+## 6. An eSIM profile can contain multiple bundles
 
-Admin pages should use:
+`EsimProfile` represents the installed ICCID. `EsimBundle` represents each data
+package. Reuse lifetime, activation deadline and bundle expiry are separate.
 
-`components/AdminShell.tsx`
+Before a top-up, DALO must verify that the requested bundle is compatible with
+the existing ICCID. If a new installation is required, it must be sold and
+explained as a new eSIM rather than a top-up.
 
-Reason:
+## 7. Provider activation is fail closed and staged
 
-* avoid repeated sidebar code
-* easier navigation changes
-* consistent desktop and mobile admin layout
+API key, reads, validation, callbacks, live fulfillment and top-ups are
+independent capabilities. Live fulfillment also requires the Admin provider
+switch. The order in `ESIM_GO_ROLLOUT.md` is mandatory.
 
-Current AdminShell navigation includes:
+Unknown provider outcomes are reconciled manually. They are never blindly
+retried because a duplicate transaction could create a second charge or bundle.
 
-* Dashboard
-* Products
-* Recommendations
-* Upsells
-* Orders
-* Support
-* API Providers
+## 8. Admin uses database identities and least privilege
 
-## Decision 5: Use a shared recommendation engine
+Admin access uses password hashes, database-backed sessions, forced password
+changes, roles, granular permissions and audit logs. Reversible operational
+controls remain available for support and controlled testing.
 
-Recommendation logic lives in:
+## 9. Product imports must not overwrite editorial or historical data
 
-`lib/recommendation.ts`
+Provider imports can update catalogue facts. They must not overwrite destination
+editorial content or purchase-time order snapshots. Imports require preview,
+mapping, validation and deliberate confirmation.
 
-Reason:
+## 10. Recommendations optimize fit, not only price
 
-* result page and admin preview should use the same logic
-* avoid different pages showing different recommendations
-* make future product logic easier to improve
+The shared recommendation engine considers destination, duration, usage,
+minimum practical data and active products. Very small or emergency-only plans
+must not become the main recommendation merely because they are cheapest.
 
-Current logic considers:
+Recommendation outcomes and usage events should improve the rules over time.
 
-* country
-* region
-* trip days
-* usage type
-* active products
-* sell price
-* upsell product
+## 11. SEO pages require editorial quality
 
-Important recommendation principle:
+Destination pages are published and indexed independently. Incomplete,
+duplicated or productless pages should remain `noindex`. Each priority page
+should provide verified, useful travel and connectivity information.
 
-Cheapest does not always mean best recommendation.
+## 12. PWA is the first app experience
 
-## Decision 6: Checkout first, Stripe later
+The existing PWA is the primary installable mobile experience. Native or
+store-packaged apps come after the checkout, account, provider and support flows
+are proven. App clients should reuse the same protected APIs and backend rules.
 
-The checkout currently creates test orders in the local database.
+## 13. Team Access is temporary launch control
 
-Reason:
+The site can be protected during private testing through the Team Access switch
+and shared test password. It must be intentionally turned off for public launch.
 
-* safer than connecting Stripe too early
-* allows testing the full customer-to-admin flow
-* keeps the product moving without payment risk
+## 14. Customer language stays simple
 
-Current flow:
+Use customer-facing states such as `Purchased`, `Activate by`, `Plan valid
+until` and `eSIM reusable until`. Do not surface provider jargon unless it helps
+installation or support.
 
-Checkout → Create Pending Order → Success Page → Customer account → Dashboard → Order detail.
+## 15. Git protects working releases
 
-Stripe is prepared but not live.
+Inspect the worktree before changes, avoid unrelated files, verify in proportion
+to risk and commit coherent working blocks. Database migrations, live provider
+flags and payment changes require extra review.
 
-## Decision 7: Orders track payment and delivery separately
+## 16. Documentation has one source for each purpose
 
-Orders have two separate statuses:
+- `PROJECT_TODO.md` is the canonical open-task list.
+- `PROJECT_VISION.md` describes direction.
+- `ARCHITECTURE.md` describes the current implementation.
+- `DECISIONS.md` describes rules future changes must respect.
+- `ESIM_GO_ROLLOUT.md` controls provider activation.
 
-* Payment Status
-* eSIM Delivery
-
-Reason:
-
-A customer can pay successfully, but eSIM delivery can still fail.
-
-Example:
-
-Payment: Paid
-eSIM Delivery: Failed
-
-This means the money was received, but the provider API or delivery process failed.
-
-## Decision 8: Admin order controls are reversible
-
-Admin Orders includes manual controls:
-
-* Mark Paid
-* Reset Payment
-* Delivered
-* Failed
-* Reset Delivery
-
-Reason:
-
-During MVP testing, mistakes must be reversible.
-
-Later, Stripe and provider API will automate these states, but manual controls are useful for testing and support.
-
-## Decision 9: Excel import should be careful
-
-DALO should not blindly import thousands of rate sheet rows.
-
-Safer flow:
-
-Upload Excel → Preview sheets → Choose sheet → Map columns → Preview products → Admin confirms import.
-
-Current state:
-
-Excel preview works.
-Full import is not automated yet.
-
-## Decision 10: Keep customer experience simple
-
-Customer-facing pages should not expose admin complexity.
-
-Customer should see:
-
-* one recommendation
-* one optional upgrade
-* one checkout path
-* simple success page
-* simple customer dashboard
-* simple order detail page
-* simple support form if something goes wrong
-
-Customer should not see:
-
-* admin links
-* provider IDs unless useful
-* internal order controls
-* confusing technical states
-
-## Decision 11: Use Git before risky changes
-
-Before major changes:
-
-`git status`
-
-If clean, continue.
-
-After successful block:
-
-Commit to main and push origin.
-
-If something unexpected changes:
-
-`git status`
-
-If needed:
-
-`git restore <file>`
-
-## Decision 12: New chats need these docs
-
-Future ChatGPT chats should first read:
-
-* `docs/PROJECT_VISION.md`
-* `docs/ARCHITECTURE.md`
-* `docs/DECISIONS.md`
-
-Then continue from the current project state.
-
-The founder prefers:
-
-* full file replacements
-* clear terminal commands
-* fewer explanations
-* safe step-by-step progress
-* no risky partial edits
-
-## Decision 13: Support requests belong in the database
-
-Customer support should not be handled only by email or hidden form submissions.
-
-DALO stores support messages in the database through the `SupportRequest` model.
-
-Reason:
-
-* support can be linked to a customer
-* support can be linked to an order
-* admin can see the order number, ICCID and product context
-* admin can track status
-* support history can later be shown to the customer if needed
-
-Current support statuses:
-
-* open
-* in_progress
-* resolved
-
-Current admin support pages:
-
-* `/admin/support`
-* `/admin/support/[id]`
-
-## Decision 14: Homepage destination selection must not overwhelm customers
-
-DALO should not show a huge confusing country list as the first interaction.
-
-Current decision:
-
-* no default country
-* no automatic alphabetic first country like Aaland Islands
-* popular destinations shown first
-* search all destinations through the input
-* destination search should be case-insensitive
-* missing flags should fall back to `🌍`
-* friendly UI labels may differ from database names
-
-Example:
-
-* Database country: `United States of America`
-* Customer-facing label: `United States`
-
-Reason:
-
-DALO should feel like a smart travel assistant, not like a raw database dropdown.
-
-## Decision 15: Destination cards are not the final destination UX
-
-The homepage currently shows destination cards from available products.
-
-Current behavior:
-
-Clicking a destination card scrolls back to the quiz and selects that destination.
-
-Issue:
-
-This can feel confusing because it looks like the user is being sent back to the start.
-
-Future solution:
-
-Clicking a destination should open a modal or dedicated destination view.
-
-That view should show around 3 available offers for the selected destination.
-
-The user can then choose a plan directly or continue with the recommendation quiz.
-
-Current status:
-
-Keep current behavior for now.
-Revisit after the product database, recommendation flow and mobile/PWA experience are stable.
-
-## Decision 16: Start mobile with PWA, not native apps
-
-DALO should not start with fully native iOS and Android apps.
-
-Current decision:
-
-Start with a mobile-friendly web app and PWA.
-
-Recommended path:
-
-Mobile-friendly web app → PWA → installable app-like experience → native iOS/Android later only if needed.
-
-Reason:
-
-* the Next.js app already exists
-* customer login, dashboard, order detail and support already exist
-* eSIM delivery mainly needs installation links, QR code, status and support
-* native apps would add App Store and Play Store complexity too early
-* PWA gives a faster path to an app-like experience
-
-First mobile/PWA tasks:
-
-* test customer pages on mobile
-* improve mobile dashboard
-* improve mobile order detail
-* add PWA manifest
-* add app icons
-* support installable experience on iPhone and Android
+Old chats are historical context, not the current source of truth.

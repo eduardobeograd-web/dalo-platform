@@ -1,112 +1,92 @@
-    # DALO Project Vision
+# DALO Project Vision
 
-    ## What DALO is
+Last updated: 7 August 2026
 
-    DALO is a travel eSIM recommendation platform.
+## What DALO is
 
-    The goal is not to show customers a confusing list of hundreds of eSIM plans.
-    The goal is to ask a few simple questions and recommend the best matching eSIM plan for their trip.
+DALO is a travel eSIM recommendation and management platform. Its purpose is
+not to show travelers hundreds of nearly identical plans. DALO compares the
+destination, trip length and expected usage, then explains one strong match and
+an optional alternative.
 
-    The customer journey should feel simple:
+The intended journey is:
 
-    1. Choose destination
-    2. Choose trip length
-    3. Choose usage type
-    4. DALO calculates the best eSIM
-    5. Customer buys the recommended plan
-    6. eSIM is delivered digitally
+1. Choose a destination.
+2. Describe the trip and expected data use.
+3. Receive a clear recommendation.
+4. Pay securely.
+5. Receive and install the eSIM digitally.
+6. Track the plan, get support and later add a compatible bundle.
 
-    ## Core idea
+## Customer promise
 
-    DALO should become a smart comparison and recommendation layer between travelers and eSIM providers.
+Customers should immediately understand:
 
-    Instead of being only one eSIM reseller, DALO should later connect multiple eSIM providers and compare their products internally.
+- why a plan fits their trip;
+- data amount, validity and price;
+- when activation begins;
+- how installation and delivery work;
+- what support is available;
+- whether the installed eSIM can be reused.
 
-    The customer does not need to know all provider complexity.
-    DALO handles the logic and shows one clear recommendation.
+Provider names, internal IDs, reconciliation states and catalogue complexity
+remain internal unless a detail is genuinely useful to the customer.
 
-    ## Customer promise
+## Current product state
 
-    DALO helps travelers find the right eSIM faster.
+The repository currently contains:
 
-    The customer should understand immediately:
+- homepage destination quiz, recommendation flow and result page;
+- country and region sales pages with SEO controls;
+- Stripe checkout, webhook processing and purchase-time order snapshots;
+- customer login, password recovery, dashboard, order detail, invoice,
+  settings and support;
+- transactional order and delivery email templates;
+- installable PWA experience;
+- role-based admin, team-access switch, audit log and activity views;
+- product catalogue, imports, margin checks and recommendation settings;
+- order, support, destination, SEO audit and provider administration;
+- PostgreSQL/Neon Prisma schema and migrations;
+- separate eSIM profile, bundle and provider-operation records;
+- eSIM Go read, validation, webhook, fulfillment, usage and top-up code behind
+  fail-closed capability flags.
 
-    * which eSIM fits their trip
-    * how much data they get
-    * how long it is valid
-    * what it costs
-    * how they receive it
-    * why this plan was recommended
+Implementation in the repository does not mean a production capability is
+enabled. Provider transactions and top-ups remain gated until the rollout
+runbook is completed.
 
-    ## Business model
+## Current phase
 
-    DALO can make money through:
+DALO is in controlled launch preparation. The priority is operational proof,
+not more surface area:
 
-    * margin between wholesale buy price and customer sell price
-    * upsells to larger or better plans
-    * later partner integrations
-    * later white-label or reseller models
-    * later multiple provider comparison
+1. verify the latest database migration in the intended Neon environment;
+2. add the dedicated DALO eSIM Go key securely;
+3. complete read-only, validation and signed-callback testing;
+4. prove one controlled new-eSIM transaction end to end;
+5. verify email, customer account, support and reconciliation behavior;
+6. enable top-ups separately only after new-eSIM fulfillment is reliable;
+7. finish production, legal, support and SEO launch checks.
 
-    ## Product principle
+## Longer-term direction
 
-    DALO should not overwhelm the customer.
+- Compare multiple eSIM providers internally while keeping one simple customer
+  recommendation.
+- Improve recommendations using real conversion and usage outcomes.
+- Expand individually reviewed destination content based on Search Console and
+  customer demand.
+- Add lifecycle communications, usage alerts and safe renewal/top-up journeys.
+- Publish mobile-store apps only when the existing PWA and app APIs are stable
+  enough to justify the additional release process.
+- Explore partner, reseller and white-label models after the direct customer
+  journey is proven.
 
-    The frontend should show:
+## Product principles
 
-    * one main recommendation
-    * one optional upgrade
-    * one clear checkout path
-
-    Admin can manage complexity in the backend.
-
-    ## Current MVP status
-
-    The current local MVP includes:
-
-    * Landing page
-    * Improved homepage destination quiz
-    * Quiz flow
-    * Searching transition page
-    * Result page
-    * Checkout preview
-    * Pending order creation
-    * Customer login/dashboard/order detail
-    * Customer support page
-    * Support request database storage
-    * Admin login/logout
-    * Product database
-    * Add/edit/deactivate products
-    * Admin dashboard
-    * Admin orders
-    * Manual order status controls
-    * Admin support request list
-    * Admin support request detail page
-    * Admin support status controls
-    * Excel rate sheet preview
-    * Stripe route prepared but not live
-
-    ## Future direction
-
-    The next major goals are:
-
-    1. Prepare DALO as a mobile-friendly PWA before considering native iOS/Android apps
-    2. Improve product recommendation logic
-    3. Add real Stripe checkout
-    4. Connect provider API fulfillment
-    5. Build safer Excel import mapping
-    6. Deploy with a real online database
-    7. Add SEO landing pages for countries and travel use cases
-
-    ## Important note for future chats
-
-    This project is being built by a non-technical founder step by step.
-
-    When helping with the project:
-
-    * give full file replacements when possible
-    * avoid small risky code edits
-    * explain only what is necessary
-    * always protect the working state with Git
-    * use `git status` before risky changes
-    * commit after every working block
+- One clear recommendation is better than a raw catalogue.
+- Cheapest is not automatically best.
+- Never hide an operational failure behind a successful payment state.
+- Never sell a top-up when a new eSIM installation is required.
+- Keep eSIM profile lifetime separate from bundle activation and expiry.
+- Publish useful destination pages, not mass-generated thin pages.
+- Keep provider activation reversible and fail closed.

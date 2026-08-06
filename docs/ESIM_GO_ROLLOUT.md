@@ -1,5 +1,12 @@
 # eSIM Go staged rollout
 
+Last reviewed: 7 August 2026
+
+Current repository status: the guarded integration, lifecycle data model and
+migration are implemented. This document describes operational activation; it
+does not claim that the migration, API key or flags are active in any specific
+Vercel or Neon environment.
+
 This integration is fail-closed. Adding an API key does not enable provider
 reads, validation, callbacks, top-ups or paid transactions.
 
@@ -11,6 +18,8 @@ reads, validation, callbacks, top-ups or paid transactions.
 - Keep the eSIM Go `Fulfillment enabled` switch off in DALO Admin.
 - Apply the lifecycle migration before deploying code that uses the new
   profile, bundle, provider-operation and callback tables.
+- Run the production environment check and confirm the intended Neon database
+  before changing any capability flag.
 
 ## Rollout order
 
