@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentCustomer } from "../../../lib/customer-auth";
 import { prisma } from "../../../lib/db";
@@ -17,7 +18,12 @@ function formatDate(value?: Date | null) {
 
 function formatGb(value?: number | null) {
   if (value === null || value === undefined) return null;
-  return `${value.toFixed(1)}GB`;
+  if (value < 1) {
+    const megabytes = value * 1_000;
+    if (megabytes > 0 && megabytes < 1) return "<1 MB";
+    return `${Math.round(megabytes)} MB`;
+  }
+  return `${value.toFixed(1)} GB`;
 }
 
 function getUsagePercent(total?: number | null, used?: number | null) {
@@ -135,12 +141,12 @@ export default async function CustomerDashboardPage() {
               Once you buy an eSIM with this email address, it will appear here.
             </p>
 
-            <a
+            <Link
               href="/"
               className="mt-6 inline-flex min-h-12 items-center justify-center rounded-2xl bg-blue-600 px-6 font-bold text-white sm:mt-8"
             >
               Find an eSIM
-            </a>
+            </Link>
           </div>
         ) : (
           <div className="mt-5 grid gap-4 sm:mt-10 sm:gap-6">
@@ -159,14 +165,6 @@ export default async function CustomerDashboardPage() {
                 order.totalDataGb !== undefined &&
                 order.usedDataGb !== null &&
                 order.usedDataGb !== undefined;
-
-              const hasInstallDetails =
-                !isRefunded &&
-                (order.iosInstallUrl ||
-                  order.androidInstallUrl ||
-                  order.qrCodeUrl ||
-                  order.activationCode ||
-                  order.iccid);
 
               return (
                 <div
