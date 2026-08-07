@@ -7,6 +7,7 @@ import SiteHeader from "../../../../components/SiteHeader";
 import { getEsimLifecycleStatus } from "../../../../lib/esim-lifecycle";
 import { getEsimGoReadiness } from "../../../../lib/providers/esim-go/config";
 import { getProviderConfigBySlug } from "../../../../lib/providers/provider-configs";
+import { refreshCustomerEsimGoUsage } from "./actions";
 
 function formatDate(date?: Date | null) {
   if (!date) return "Not available yet";
@@ -109,8 +110,10 @@ function getCustomerStatus(order: {
 
 export default async function CustomerOrderDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ usageSync?: string }>;
 }) {
   const customer = await getCurrentCustomer();
 
@@ -118,7 +121,7 @@ export default async function CustomerOrderDetailPage({
     redirect("/customer/login");
   }
 
-  const { id } = await params;
+  const [{ id }, query] = await Promise.all([params, searchParams]);
 
   const order = await prisma.order.findFirst({
     where: {
@@ -142,9 +145,17 @@ export default async function CustomerOrderDetailPage({
   }
 
   const esimGoReadiness = getEsimGoReadiness();
-  const providerConfig = esimGoReadiness.topUpsEnabled
+  const providerConfig =
+    esimGoReadiness.readAccessEnabled || esimGoReadiness.topUpsEnabled
     ? await getProviderConfigBySlug("esim-go")
     : null;
+  const usageRefreshOperational = Boolean(
+    order.payment === "Paid" &&
+      order.esimProfileId &&
+      esimGoReadiness.readAccessEnabled &&
+      providerConfig?.active &&
+      providerConfig.usageSyncEnabled,
+  );
   const topUpsOperational = Boolean(
     esimGoReadiness.topUpsEnabled &&
       providerConfig?.active &&
@@ -359,6 +370,32 @@ export default async function CustomerOrderDetailPage({
                 <div className="mt-4 rounded-[1.5rem] bg-white p-4 shadow-xl shadow-blue-50 sm:mt-6 sm:rounded-[2rem] sm:p-6">
                   <h3 className="text-xl font-bold sm:text-2xl">Data usage</h3>
 
+                  {query.usageSync === "passed" ? (
+                    <div className="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800">
+                      Your latest data usage has been loaded.
+                    </div>
+                  ) : null}
+
+                  {query.usageSync === "recent" ? (
+                    <div className="mt-4 rounded-2xl border border-blue-200 bg-blue-50 p-4 text-sm font-semibold text-blue-800">
+                      Your usage is already up to date. Please wait a minute
+                      before refreshing again.
+                    </div>
+                  ) : null}
+
+                  {query.usageSync === "failed" ? (
+                    <div className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-900">
+                      Usage could not be refreshed right now. No purchase or
+                      change was made. Please try again later.
+                    </div>
+                  ) : null}
+
+                  {query.usageSync === "unavailable" ? (
+                    <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-semibold text-slate-700">
+                      Usage refresh is not available for this order yet.
+                    </div>
+                  ) : null}
+
                   {hasUsageData ? (
                     <div className="mt-4 sm:mt-5">
                       <div className="flex items-center justify-between gap-4">
@@ -392,6 +429,22 @@ export default async function CustomerOrderDetailPage({
                       provider usage sync is connected.
                     </div>
                   )}
+
+                  {usageRefreshOperational ? (
+                    <form action={refreshCustomerEsimGoUsage} className="mt-4">
+                      <input type="hidden" name="orderId" value={order.id} />
+                      <button
+                        type="submit"
+                        className="inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm font-bold text-blue-700 transition hover:border-blue-300 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                      >
+                        Refresh data usage
+                      </button>
+                      <p className="mt-2 text-center text-xs leading-5 text-slate-500">
+                        Checks this DALO eSIM only. This cannot buy or change a
+                        plan.
+                      </p>
+                    </form>
+                  ) : null}
 
                   {!isRefunded ? (
                     <div id="top-up" className="mt-5 scroll-mt-24 border-t border-slate-200 pt-5">
