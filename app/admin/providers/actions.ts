@@ -4,9 +4,15 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "../../../lib/db";
 import { ADMIN_PERMISSIONS } from "../../../lib/admin-permissions";
-import { requireAdminPermission } from "../../../lib/admin-auth";
+import {
+  requireAdminPermission,
+  writeAdminAuditLog,
+} from "../../../lib/admin-auth";
 import { getEsimGoReadiness } from "../../../lib/providers/esim-go/config";
-import { getEsimGoNetworks } from "../../../lib/providers/esim-go/client";
+import {
+  getEsimGoNetworks,
+  validateEsimGoOrder,
+} from "../../../lib/providers/esim-go/client";
 
 function getString(formData: FormData, key: string) {
   const value = formData.get(key);
@@ -188,4 +194,123 @@ export async function syncEsimGoNetworks() {
   }
 
   redirect(`/admin/providers/esim-go?networkSync=${updated}`);
+}
+
+export async function validateEsimGoSerbiaOneGb(productId: string) {
+  const actor = await requireAdminPermission(
+    ADMIN_PERMISSIONS.PROVIDERS_WRITE,
+  );
+  const readiness = getEsimGoReadiness();
+
+  if (!readiness.validationEnabled) {
+    redirect("/admin/providers/esim-go?validation=disabled");
+  }
+
+  const [provider, product] = await Promise.all([
+    prisma.providerConfig.findUnique({
+      where: { slug: "esim-go" },
+      select: { active: true, catalogueEnabled: true },
+    }),
+    prisma.product.findFirst({
+      where: {
+        id: productId,
+        active: true,
+        provider: "eSIM Go",
+        isoCode: "RS",
+        data: "1GB",
+        validityDays: 7,
+      },
+      select: {
+        id: true,
+        name: true,
+        buyPrice: true,
+        providerProductId: true,
+      },
+    }),
+  ]);
+
+  if (
+    !provider?.active ||
+    !provider.catalogueEnabled ||
+    !product ||
+    !product.providerProductId.trim() ||
+    !Number.isFinite(product.buyPrice) ||
+    product.buyPrice <= 0
+  ) {
+    redirect("/admin/providers/esim-go?validation=invalid-product");
+  }
+
+  let validation = "failed";
+  let total: number | null = null;
+  let currency: string | null = null;
+  let failureMessage = "Unknown validation error.";
+
+  try {
+    const result = await validateEsimGoOrder({
+      bundleName: product.providerProductId,
+    });
+    total = Number(result.total);
+    currency = result.currency?.trim().toUpperCase() || null;
+
+    if (result.valid !== true) {
+      throw new Error(result.statusMessage || "Provider rejected the bundle.");
+    }
+
+    if (!Number.isFinite(total)) {
+      throw new Error("Provider validation returned no usable total.");
+    }
+
+    if (currency !== "USD") {
+      throw new Error(`Unexpected provider currency: ${currency || "missing"}.`);
+    }
+
+    if (total > product.buyPrice + 0.01) {
+      throw new Error(
+        `Provider total ${total.toFixed(2)} exceeds the stored buy price ${product.buyPrice.toFixed(2)}.`,
+      );
+    }
+
+    await writeAdminAuditLog({
+      adminUserId: actor.id,
+      action: "ESIM_GO_PRODUCT_VALIDATION_PASSED",
+      resource: "PRODUCT",
+      resourceId: product.id,
+      metadata: {
+        productName: product.name,
+        providerProductId: product.providerProductId,
+        providerTotal: total,
+        storedBuyPrice: product.buyPrice,
+        currency,
+        purchaseCreated: false,
+      },
+    });
+    validation = "passed";
+  } catch (error) {
+    failureMessage =
+      error instanceof Error ? error.message.slice(0, 300) : failureMessage;
+
+    await writeAdminAuditLog({
+      adminUserId: actor.id,
+      action: "ESIM_GO_PRODUCT_VALIDATION_FAILED",
+      resource: "PRODUCT",
+      resourceId: product.id,
+      metadata: {
+        productName: product.name,
+        providerProductId: product.providerProductId,
+        providerTotal: Number.isFinite(total) ? total : null,
+        storedBuyPrice: product.buyPrice,
+        currency,
+        error: failureMessage,
+        purchaseCreated: false,
+      },
+    });
+  }
+
+  const query = new URLSearchParams({ validation });
+  if (validation === "passed" && total !== null && currency) {
+    query.set("validationTotal", total.toFixed(2));
+    query.set("validationCurrency", currency);
+  }
+
+  redirect(`/admin/providers/esim-go?${query.toString()}`);
 }

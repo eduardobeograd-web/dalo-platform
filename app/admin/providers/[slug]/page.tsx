@@ -7,7 +7,12 @@ import {
   getProviderStatusLabel,
 } from "../../../../lib/providers/provider-configs";
 import { getEsimGoReadiness } from "../../../../lib/providers/esim-go/config";
-import { syncEsimGoNetworks, updateProviderConfig } from "../actions";
+import { prisma } from "../../../../lib/db";
+import {
+  syncEsimGoNetworks,
+  updateProviderConfig,
+  validateEsimGoSerbiaOneGb,
+} from "../actions";
 
 type ProviderDetailPageProps = {
   params: Promise<{
@@ -15,6 +20,9 @@ type ProviderDetailPageProps = {
   }>;
   searchParams: Promise<{
     networkSync?: string;
+    validation?: string;
+    validationTotal?: string;
+    validationCurrency?: string;
   }>;
 };
 
@@ -39,7 +47,8 @@ export default async function ProviderDetailPage({
   searchParams,
 }: ProviderDetailPageProps) {
   const { slug } = await params;
-  const { networkSync } = await searchParams;
+  const { networkSync, validation, validationTotal, validationCurrency } =
+    await searchParams;
   const provider = await getProviderConfigBySlug(slug);
 
   if (!provider) {
@@ -48,6 +57,25 @@ export default async function ProviderDetailPage({
 
   const envStatus = getProviderEnvStatus(provider);
   const esimGoReadiness = slug === "esim-go" ? getEsimGoReadiness() : null;
+  const validationProduct =
+    slug === "esim-go"
+      ? await prisma.product.findFirst({
+          where: {
+            active: true,
+            provider: "eSIM Go",
+            isoCode: "RS",
+            data: "1GB",
+            validityDays: 7,
+          },
+          select: {
+            id: true,
+            name: true,
+            buyPrice: true,
+            providerProductId: true,
+          },
+          orderBy: { updatedAt: "desc" },
+        })
+      : null;
   const statusLabel = esimGoReadiness
     ? esimGoReadiness.liveTransactionsEnabled
       ? "Live fulfillment enabled"
@@ -138,6 +166,36 @@ export default async function ProviderDetailPage({
       ) : networkSync ? (
         <div className="mb-6 rounded-2xl border border-green-200 bg-green-50 px-5 py-4 font-semibold text-green-800">
           Network coverage updated for {networkSync} countries.
+        </div>
+      ) : null}
+
+      {validation === "passed" ? (
+        <div className="mb-6 rounded-2xl border border-green-200 bg-green-50 px-5 py-4 text-green-900">
+          <p className="font-bold">Serbia 1 GB validation passed — no purchase.</p>
+          <p className="mt-1 text-sm leading-6">
+            eSIM Go confirmed the bundle at {validationTotal} {validationCurrency}.
+            No order or eSIM was created.
+          </p>
+        </div>
+      ) : validation === "failed" ? (
+        <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-red-900">
+          <p className="font-bold">Serbia 1 GB validation failed safely.</p>
+          <p className="mt-1 text-sm leading-6">
+            No purchase was attempted. Details are recorded in the admin audit log.
+          </p>
+        </div>
+      ) : validation === "disabled" ? (
+        <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-amber-900">
+          <p className="font-bold">Order validation is still locked.</p>
+          <p className="mt-1 text-sm leading-6">
+            ESIM_GO_VALIDATE_ENABLED must be enabled separately. Live fulfillment
+            remains off.
+          </p>
+        </div>
+      ) : validation === "invalid-product" ? (
+        <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-red-900">
+          The exact active Serbia 1 GB / 7 days eSIM Go product could not be verified.
+          No provider request was sent.
         </div>
       ) : null}
 
@@ -333,6 +391,37 @@ export default async function ProviderDetailPage({
                     ? "Sync network coverage"
                     : "API key required for network sync"}
                 </button>
+              ) : null}
+
+              {provider.slug === "esim-go" && validationProduct ? (
+                <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-amber-950">
+                  <p className="font-bold">Safe validation test</p>
+                  <p className="mt-1 text-sm leading-6">
+                    {validationProduct.name}<br />
+                    Provider price ceiling: ${validationProduct.buyPrice.toFixed(2)} USD
+                  </p>
+                  <button
+                    type="submit"
+                    formAction={validateEsimGoSerbiaOneGb.bind(
+                      null,
+                      validationProduct.id,
+                    )}
+                    disabled={!esimGoReadiness?.validationEnabled}
+                    className={`mt-3 w-full rounded-xl border px-4 py-3 font-bold transition ${
+                      esimGoReadiness?.validationEnabled
+                        ? "border-amber-300 bg-white text-amber-950 hover:bg-amber-100"
+                        : "cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400"
+                    }`}
+                  >
+                    {esimGoReadiness?.validationEnabled
+                      ? "Validate Serbia 1 GB — no purchase"
+                      : "Validation locked — no purchase possible"}
+                  </button>
+                  <p className="mt-3 text-xs leading-5 text-amber-800">
+                    Sends only eSIM Go order type “validate”. Transaction mode,
+                    fulfillment and eSIM assignment remain disabled.
+                  </p>
+                </div>
               ) : null}
 
               <Link
