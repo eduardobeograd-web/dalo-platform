@@ -1,12 +1,14 @@
 import "server-only";
 
 import { prisma } from "@/lib/db";
+import { getProviderEsimStatus } from "@/lib/esim-lifecycle";
 import {
+  getEsimGoProfileDetails,
   listEsimGoBundles,
   type EsimGoBundleAssignment,
 } from "./client";
 
-function asDate(value: string | undefined) {
+function asDate(value: string | number | undefined) {
   if (!value) return null;
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? null : date;
@@ -43,9 +45,39 @@ export async function syncEsimGoProfileUsage(esimProfileId: string) {
 
   if (!profile) throw new Error("eSIM profile not found.");
 
-  const response = await listEsimGoBundles(profile.iccid, true);
+  const [response, providerProfile] = await Promise.all([
+    listEsimGoBundles(profile.iccid, true),
+    getEsimGoProfileDetails(profile.iccid).catch((error) => {
+      console.error("eSIM Go profile status sync failed", {
+        profileId: profile.id,
+        message: error instanceof Error ? error.message : "Unknown error",
+      });
+      return null;
+    }),
+  ]);
   const now = new Date();
+  const firstInstalledAt = asDate(providerProfile?.firstInstalledDateTime);
+  const profileOnlyStatus = getProviderEsimStatus({
+    providerState: providerProfile?.state,
+    profileStatus: providerProfile?.profileStatus,
+    firstInstalledAt,
+    now,
+  });
   let syncedAssignments = 0;
+
+  if (providerProfile) {
+    await prisma.order.updateMany({
+      where: {
+        esimProfileId: profile.id,
+        payment: "Paid",
+        fulfillment: "Delivered",
+        ...(profileOnlyStatus === "suspended"
+          ? {}
+          : { esimStatus: { in: ["ready", "installed"] } }),
+      },
+      data: { esimStatus: profileOnlyStatus },
+    });
+  }
 
   for (const providerBundle of response.bundles || []) {
     const bundleName = providerBundle.name?.trim();
@@ -77,17 +109,31 @@ export async function syncEsimGoProfileUsage(esimProfileId: string) {
 
       const initialBytes = asQuantity(assignment.initialQuantity);
       const remainingBytes = asQuantity(assignment.remainingQuantity);
+      const startedAt = asDate(assignment.startTime);
+      const expiresAt = asDate(assignment.endTime);
+      const bundleStatus = assignmentStatus(assignment);
+      const customerStatus = getProviderEsimStatus({
+        providerState: providerProfile?.state,
+        profileStatus: providerProfile?.profileStatus,
+        firstInstalledAt,
+        bundleStatus,
+        initialQuantityBytes: initialBytes,
+        remainingQuantityBytes: remainingBytes,
+        startedAt,
+        expiresAt,
+        now,
+      });
       const data = {
         providerBundleName: bundleName,
         providerAssignmentId: assignmentId,
         providerAssignmentReference: assignmentReference,
-        status: assignmentStatus(assignment),
+        status: bundleStatus,
         initialQuantityBytes: initialBytes,
         remainingQuantityBytes: remainingBytes,
         unlimited: assignment.unlimited === true,
         assignedAt: asDate(assignment.assignmentDateTime),
-        startedAt: asDate(assignment.startTime),
-        expiresAt: asDate(assignment.endTime),
+        startedAt,
+        expiresAt,
         lastUsageSyncAt: now,
       };
 
@@ -115,8 +161,9 @@ export async function syncEsimGoProfileUsage(esimProfileId: string) {
               initialGb !== null && remainingGb !== null
                 ? Math.max(0, initialGb - remainingGb)
                 : undefined,
-            activatedAt: asDate(assignment.startTime) || undefined,
-            expiresAt: asDate(assignment.endTime) || undefined,
+            esimStatus: customerStatus,
+            activatedAt: startedAt || undefined,
+            expiresAt: expiresAt || undefined,
             lastUsageSyncAt: now,
           },
         });
@@ -128,7 +175,24 @@ export async function syncEsimGoProfileUsage(esimProfileId: string) {
 
   await prisma.esimProfile.update({
     where: { id: profile.id },
-    data: { lastSyncedAt: now },
+    data: {
+      status:
+        profileOnlyStatus === "suspended"
+          ? "suspended"
+          : profileOnlyStatus === "installed"
+            ? "installed"
+            : profile.status === "provisioning"
+              ? "ready"
+              : profile.status,
+      profileStatus: providerProfile?.profileStatus || undefined,
+      firstInstalledAt: firstInstalledAt || undefined,
+      iosInstallUrl: providerProfile?.appleInstallUrl || undefined,
+      androidInstallUrl:
+        providerProfile?.androidInstallUrl ||
+        providerProfile?.installUrl ||
+        undefined,
+      lastSyncedAt: now,
+    },
   });
 
   return {

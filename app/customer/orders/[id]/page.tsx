@@ -68,6 +68,16 @@ function getCustomerStatus(order: {
     };
   }
 
+  if (lifecycleStatus === "suspended") {
+    return {
+      label: "Your eSIM is suspended",
+      description:
+        "The provider has suspended this eSIM. Please contact DALO support before making changes on your phone.",
+      badge: "Suspended",
+      badgeStyle: "bg-red-100 text-red-700",
+    };
+  }
+
   if (lifecycleStatus === "expired") {
     return {
       label: "This eSIM has expired",
@@ -77,12 +87,21 @@ function getCustomerStatus(order: {
     };
   }
 
-  if (lifecycleStatus === "data_used") {
+  if (lifecycleStatus === "no_data") {
     return {
-      label: "Your data has been used",
+      label: "You have no data left",
       description: "The included data allowance has been fully used.",
-      badge: "Data used",
+      badge: "No data left",
       badgeStyle: "bg-slate-100 text-slate-700",
+    };
+  }
+
+  if (lifecycleStatus === "low_data") {
+    return {
+      label: "Your data is running low",
+      description: "Less than 20% of your included data remains.",
+      badge: "Low data",
+      badgeStyle: "bg-amber-100 text-amber-800",
     };
   }
 
@@ -92,6 +111,16 @@ function getCustomerStatus(order: {
       description: "Your eSIM has connected and started using mobile data.",
       badge: "Active",
       badgeStyle: "bg-emerald-100 text-emerald-700",
+    };
+  }
+
+  if (lifecycleStatus === "installed") {
+    return {
+      label: "Your eSIM is installed",
+      description:
+        "Installation is complete. Your data plan becomes active when it first connects to a supported network.",
+      badge: "Installed",
+      badgeStyle: "bg-blue-100 text-blue-700",
     };
   }
 
@@ -252,21 +281,23 @@ export default async function CustomerOrderDetailPage({
             </div>
 
             <div className="grid gap-4 p-4 sm:gap-8 sm:p-8 md:p-10 lg:grid-cols-[1fr_360px]">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-wide text-blue-600 sm:text-sm">
-                  Your eSIM
-                </p>
+              <div className="flex flex-col">
+                <div className="order-1">
+                  <p className="text-xs font-bold uppercase tracking-wide text-blue-600 sm:text-sm">
+                    Your eSIM
+                  </p>
 
-                <h2 className="mt-2 text-2xl font-black tracking-tight sm:mt-3 sm:text-3xl">
-                  {product.name}
-                </h2>
+                  <h2 className="mt-2 text-2xl font-black tracking-tight sm:mt-3 sm:text-3xl">
+                    {product.name}
+                  </h2>
 
-                <p className="mt-2 text-sm text-slate-600 sm:mt-3 sm:text-base">
-                  {product.country} · {product.data} · {product.validityDays}{" "}
-                  days
-                </p>
+                  <p className="mt-2 text-sm text-slate-600 sm:mt-3 sm:text-base">
+                    {product.country} · {product.data} · {product.validityDays}{" "}
+                    days
+                  </p>
+                </div>
 
-                <div className="mt-4 rounded-[1.5rem] bg-slate-50 p-4 sm:mt-8 sm:rounded-[2rem] sm:p-6">
+                <div className="order-3 mt-4 rounded-[1.5rem] bg-slate-50 p-4 sm:order-2 sm:mt-8 sm:rounded-[2rem] sm:p-6">
                   <h3 className="text-xl font-black sm:text-2xl">
                     {isRefunded ? "Installation unavailable" : "Install your eSIM"}
                   </h3>
@@ -372,7 +403,7 @@ export default async function CustomerOrderDetailPage({
                   ) : null}
                 </div>
 
-                <div className="mt-4 rounded-[1.5rem] bg-white p-4 shadow-xl shadow-blue-50 sm:mt-6 sm:rounded-[2rem] sm:p-6">
+                <div className="order-2 mt-4 rounded-[1.5rem] border border-blue-100 bg-white p-4 shadow-xl shadow-blue-50 sm:order-3 sm:mt-6 sm:rounded-[2rem] sm:border-0 sm:p-6">
                   <h3 className="text-xl font-bold sm:text-2xl">Data usage</h3>
 
                   {query.usageSync === "passed" ? (

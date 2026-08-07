@@ -29,6 +29,7 @@ export type EsimGoInstallDetails = {
   matchingId?: string;
   smdpAddress?: string;
   profileStatus?: string;
+  state?: string;
   pin?: string;
   puk?: string;
   firstInstalledDateTime?: string | number;
@@ -201,6 +202,15 @@ export async function getEsimGoBundleStatus(
   return requestJson<{ assignments?: EsimGoBundleAssignment[] }>({
     capability: "read",
     path: `/esims/${encodePath(iccid)}/bundles/${encodePath(bundleName)}`,
+  });
+}
+
+export async function getEsimGoProfileDetails(iccid: string) {
+  const params = new URLSearchParams({ additionalFields: "installUrl" });
+
+  return requestJson<EsimGoInstallDetails>({
+    capability: "read",
+    path: `/esims/${encodePath(iccid)}?${params.toString()}`,
   });
 }
 

@@ -31,6 +31,31 @@ function getUsagePercent(total?: number | null, used?: number | null) {
   return Math.min(100, Math.round((used / total) * 100));
 }
 
+function getStatusBadge(status: ReturnType<typeof getEsimLifecycleStatus>) {
+  switch (status) {
+    case "refunded":
+      return { label: "Refunded", style: "bg-amber-100 text-amber-800" };
+    case "delivery_issue":
+      return { label: "Delivery issue", style: "bg-red-100 text-red-700" };
+    case "suspended":
+      return { label: "Suspended", style: "bg-red-100 text-red-700" };
+    case "expired":
+      return { label: "Expired", style: "bg-slate-100 text-slate-700" };
+    case "no_data":
+      return { label: "No data left", style: "bg-slate-100 text-slate-700" };
+    case "low_data":
+      return { label: "Low data", style: "bg-amber-100 text-amber-800" };
+    case "active":
+      return { label: "Active", style: "bg-emerald-100 text-emerald-700" };
+    case "installed":
+      return { label: "Installed", style: "bg-blue-100 text-blue-700" };
+    case "ready":
+      return { label: "Ready to install", style: "bg-green-100 text-green-700" };
+    default:
+      return { label: "Installation pending", style: "bg-yellow-100 text-yellow-700" };
+  }
+}
+
 export default async function CustomerDashboardPage() {
   const customer = await getCurrentCustomer();
 
@@ -66,14 +91,7 @@ export default async function CustomerDashboardPage() {
 
   const productById = new Map(products.map((product) => [product.id, product]));
   const installationReadyCount = orders.filter(
-    (order) =>
-      order.payment !== "Refunded" &&
-      (order.usedDataGb || 0) <= 0 &&
-      (order.iosInstallUrl ||
-        order.androidInstallUrl ||
-        order.qrCodeUrl ||
-        order.activationCode ||
-        order.iccid)
+    (order) => getEsimLifecycleStatus(order) === "ready"
   ).length;
 
   return (
@@ -153,6 +171,7 @@ export default async function CustomerDashboardPage() {
             {orders.map((order) => {
               const product = productById.get(order.productId);
               const lifecycleStatus = getEsimLifecycleStatus(order);
+              const statusBadge = getStatusBadge(lifecycleStatus);
               const isRefunded = lifecycleStatus === "refunded";
 
               const usagePercent = getUsagePercent(
@@ -175,32 +194,10 @@ export default async function CustomerDashboardPage() {
                   <div className="grid gap-4 p-4 sm:gap-6 sm:p-8 lg:grid-cols-[1fr_320px]">
                     <div>
                       <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                        <span className={`rounded-full px-3 py-1.5 text-[11px] font-bold sm:px-4 sm:py-2 sm:text-sm ${
-                          lifecycleStatus === "refunded"
-                            ? "bg-amber-100 text-amber-800"
-                            : lifecycleStatus === "delivery_issue"
-                              ? "bg-red-100 text-red-700"
-                              : lifecycleStatus === "active"
-                                ? "bg-emerald-100 text-emerald-700"
-                                : lifecycleStatus === "ready"
-                                  ? "bg-green-100 text-green-700"
-                                  : lifecycleStatus === "pending"
-                                    ? "bg-yellow-100 text-yellow-700"
-                                    : "bg-slate-100 text-slate-700"
-                        }`}>
-                          {lifecycleStatus === "refunded"
-                            ? "Refunded"
-                            : lifecycleStatus === "delivery_issue"
-                              ? "Delivery issue"
-                              : lifecycleStatus === "active"
-                                ? "Active"
-                                : lifecycleStatus === "expired"
-                                  ? "Expired"
-                                  : lifecycleStatus === "data_used"
-                                    ? "Data used"
-                                    : lifecycleStatus === "ready"
-                                  ? "Ready to install"
-                                  : "Installation pending"}
+                        <span
+                          className={`rounded-full px-3 py-1.5 text-[11px] font-bold sm:px-4 sm:py-2 sm:text-sm ${statusBadge.style}`}
+                        >
+                          {statusBadge.label}
                         </span>
                       </div>
 
