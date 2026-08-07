@@ -11,6 +11,9 @@ export function getEsimGoReadiness() {
   const liveTransactionsRequested = enabled(
     "ESIM_GO_LIVE_FULFILLMENT_ENABLED",
   );
+  const automaticFulfillmentRequested = enabled(
+    "ESIM_GO_AUTOMATIC_FULFILLMENT_ENABLED",
+  );
   const webhookRequested = enabled("ESIM_GO_WEBHOOK_ENABLED");
   const topUpsRequested = enabled("ESIM_GO_TOP_UPS_ENABLED");
 
@@ -18,6 +21,8 @@ export function getEsimGoReadiness() {
   const validationEnabled = readAccessEnabled && validationRequested;
   const liveTransactionsEnabled =
     validationEnabled && liveTransactionsRequested;
+  const automaticFulfillmentEnabled =
+    liveTransactionsEnabled && automaticFulfillmentRequested;
   const webhookEnabled = apiKeyConfigured && webhookRequested;
   const topUpsEnabled = liveTransactionsEnabled && topUpsRequested;
 
@@ -29,6 +34,8 @@ export function getEsimGoReadiness() {
     validationEnabled,
     liveTransactionsRequested,
     liveTransactionsEnabled,
+    automaticFulfillmentRequested,
+    automaticFulfillmentEnabled,
     webhookRequested,
     webhookEnabled,
     topUpsRequested,

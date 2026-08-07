@@ -57,7 +57,7 @@ function activationCode(details: EsimGoInstallDetails | null) {
   return `LPA:1$${details.smdpAddress}$${details.matchingId}`;
 }
 
-function asDate(value: string | undefined) {
+function asDate(value: string | number | undefined) {
   if (!value) return null;
   const date = new Date(value);
   return Number.isNaN(date.getTime()) ? null : date;
@@ -276,7 +276,7 @@ export async function fulfillPaidOrderWithEsimGo(orderId: string) {
           puk: order.esimProfile?.puk || undefined,
           firstInstalledDateTime:
             order.esimProfile?.firstInstalledAt?.toISOString(),
-          installUrl: order.esimProfile?.androidInstallUrl || undefined,
+          androidInstallUrl: order.esimProfile?.androidInstallUrl || undefined,
           appleInstallUrl: order.esimProfile?.iosInstallUrl || undefined,
         }
       : responseProfile;
@@ -297,7 +297,8 @@ export async function fulfillPaidOrderWithEsimGo(orderId: string) {
         puk: details?.puk || undefined,
         profileStatus: details?.profileStatus || undefined,
         iosInstallUrl: details?.appleInstallUrl || undefined,
-        androidInstallUrl: details?.installUrl || undefined,
+        androidInstallUrl:
+          details?.androidInstallUrl || details?.installUrl || undefined,
         firstInstalledAt: asDate(details?.firstInstalledDateTime) || undefined,
         lastSyncedAt: new Date(),
       },
@@ -311,7 +312,8 @@ export async function fulfillPaidOrderWithEsimGo(orderId: string) {
         puk: details?.puk || null,
         profileStatus: details?.profileStatus || null,
         iosInstallUrl: details?.appleInstallUrl || null,
-        androidInstallUrl: details?.installUrl || null,
+        androidInstallUrl:
+          details?.androidInstallUrl || details?.installUrl || null,
         firstInstalledAt: asDate(details?.firstInstalledDateTime),
         lastSyncedAt: new Date(),
       },
@@ -342,7 +344,8 @@ export async function fulfillPaidOrderWithEsimGo(orderId: string) {
           iccid,
           activationCode: lpa,
           iosInstallUrl: details?.appleInstallUrl || null,
-          androidInstallUrl: details?.installUrl || null,
+          androidInstallUrl:
+            details?.androidInstallUrl || details?.installUrl || null,
           remainingDataGb: order.totalDataGb,
           usedDataGb: 0,
           lastUsageSyncAt: new Date(),

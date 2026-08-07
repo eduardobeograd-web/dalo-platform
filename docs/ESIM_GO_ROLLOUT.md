@@ -36,17 +36,22 @@ reads, validation, callbacks, top-ups or paid transactions.
 5. Test a paid Stripe order while the DALO Admin provider fulfillment switch
    remains off. It must stay in manual fulfillment.
 6. Turn on the DALO Admin provider fulfillment switch, then set
-   `ESIM_GO_LIVE_FULFILLMENT_ENABLED=true` for one controlled transaction.
+   `ESIM_GO_LIVE_FULFILLMENT_ENABLED=true` for one controlled manual
+   transaction. Keep `ESIM_GO_AUTOMATIC_FULFILLMENT_ENABLED=false` until that
+   order has been reconciled successfully.
 7. Verify the provider reference, ICCID, install data, customer email, bundle
    assignment and usage sync before wider use.
-8. Keep `ESIM_GO_TOP_UPS_ENABLED=false` until new-eSIM fulfillment is proven.
+8. Enable `ESIM_GO_AUTOMATIC_FULFILLMENT_ENABLED=true` only after the manual
+   transaction is proven and automatic Stripe-webhook fulfillment is intended.
+9. Keep `ESIM_GO_TOP_UPS_ENABLED=false` until new-eSIM fulfillment is proven.
    Enable it separately, test an existing ICCID, and confirm compatibility and
    no second eSIM installation.
 
 ## Emergency stop
 
-Set `ESIM_GO_LIVE_FULFILLMENT_ENABLED=false` and
-`ESIM_GO_TOP_UPS_ENABLED=false`, and turn off `Fulfillment enabled` in DALO
+Set `ESIM_GO_LIVE_FULFILLMENT_ENABLED=false`,
+`ESIM_GO_AUTOMATIC_FULFILLMENT_ENABLED=false` and
+`ESIM_GO_TOP_UPS_ENABLED=false`, then turn off `Fulfillment enabled` in DALO
 Admin. This leaves paid orders available for manual handling and keeps stored
 provider operations for reconciliation.
 

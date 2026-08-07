@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import QRCode from "qrcode";
 import { getCurrentCustomer } from "../../../../lib/customer-auth";
 import { prisma } from "../../../../lib/db";
 import SiteFooter from "../../../../components/SiteFooter";
@@ -168,6 +169,15 @@ export default async function CustomerOrderDetailPage({
 
   const status = getCustomerStatus(order);
   const isRefunded = order.payment === "Refunded";
+  const generatedQrCodeUrl =
+    !isRefunded && order.activationCode
+      ? await QRCode.toDataURL(order.activationCode, {
+          width: 320,
+          margin: 2,
+          errorCorrectionLevel: "M",
+        })
+      : null;
+  const displayedQrCodeUrl = order.qrCodeUrl || generatedQrCodeUrl;
   const canDownloadInvoice =
     Boolean(order.stripeSessionId) &&
     (order.payment === "Paid" || order.payment === "Refunded");
@@ -175,7 +185,7 @@ export default async function CustomerOrderDetailPage({
   const hasInstallButtons =
     !isRefunded && (order.iosInstallUrl || order.androidInstallUrl);
   const hasAlternativeSetup =
-    !isRefunded && (order.qrCodeUrl || order.activationCode);
+    !isRefunded && (displayedQrCodeUrl || order.activationCode);
 
   const hasUsageData =
     order.totalDataGb !== null &&
@@ -317,14 +327,14 @@ export default async function CustomerOrderDetailPage({
                         </span>
                       </summary>
 
-                      {order.qrCodeUrl ? (
+                      {displayedQrCodeUrl ? (
                         <div className="mt-4">
                           <p className="text-sm font-semibold text-slate-500">
                             QR Code
                           </p>
 
                           <img
-                            src={order.qrCodeUrl}
+                            src={displayedQrCodeUrl}
                             alt="eSIM QR Code"
                             className="mt-3 h-40 w-40 rounded-xl bg-slate-50 object-contain p-3 sm:h-48 sm:w-48"
                           />

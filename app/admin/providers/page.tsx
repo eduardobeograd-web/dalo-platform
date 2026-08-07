@@ -128,7 +128,9 @@ export default async function AdminProvidersPage() {
           ? "locked"
           : "missing",
       statusLabel: esimGoReadiness.liveTransactionsEnabled
-        ? "Live fulfillment enabled"
+        ? esimGoReadiness.automaticFulfillmentEnabled
+          ? "Automatic fulfillment enabled"
+          : "Live transactions · manual only"
         : esimGoReadiness.apiKeyConfigured
           ? "API key ready · live locked"
           : "Missing API Key",
