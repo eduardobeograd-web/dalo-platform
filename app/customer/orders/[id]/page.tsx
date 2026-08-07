@@ -21,6 +21,11 @@ function formatDate(date?: Date | null) {
 
 function formatData(value?: number | null) {
   if (value === null || value === undefined) return "Not available yet";
+  if (value < 1) {
+    const megabytes = value * 1_000;
+    if (megabytes > 0 && megabytes < 1) return "<1 MB";
+    return `${Math.round(megabytes)} MB`;
+  }
   return `${value.toFixed(1)} GB`;
 }
 
