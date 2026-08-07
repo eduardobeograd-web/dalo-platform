@@ -10,6 +10,7 @@ import { getEsimGoReadiness } from "../../../../lib/providers/esim-go/config";
 import { prisma } from "../../../../lib/db";
 import {
   syncEsimGoNetworks,
+  testEsimGoSignedWebhook,
   updateProviderConfig,
   validateEsimGoSerbiaOneGb,
 } from "../actions";
@@ -23,6 +24,7 @@ type ProviderDetailPageProps = {
     validation?: string;
     validationTotal?: string;
     validationCurrency?: string;
+    webhookTest?: string;
   }>;
 };
 
@@ -47,8 +49,13 @@ export default async function ProviderDetailPage({
   searchParams,
 }: ProviderDetailPageProps) {
   const { slug } = await params;
-  const { networkSync, validation, validationTotal, validationCurrency } =
-    await searchParams;
+  const {
+    networkSync,
+    validation,
+    validationTotal,
+    validationCurrency,
+    webhookTest,
+  } = await searchParams;
   const provider = await getProviderConfigBySlug(slug);
 
   if (!provider) {
@@ -198,6 +205,24 @@ export default async function ProviderDetailPage({
         <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-red-900">
           The exact active Serbia 1 GB / 7 days eSIM Go product could not be verified.
           No provider request was sent.
+        </div>
+      ) : null}
+
+      {webhookTest === "passed" ? (
+        <div className="mb-6 rounded-2xl border border-green-200 bg-green-50 px-5 py-4 text-green-900">
+          <p className="font-bold">Signed webhook self-test passed.</p>
+          <p className="mt-1 text-sm leading-6">
+            DALO rejected an invalid signature and accepted the correctly signed
+            V3 test callback. No customer or eSIM data was changed.
+          </p>
+        </div>
+      ) : webhookTest === "disabled" ? (
+        <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-amber-900">
+          Signed webhook testing remains locked until ESIM_GO_WEBHOOK_ENABLED is enabled.
+        </div>
+      ) : webhookTest === "failed" ? (
+        <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-red-900">
+          Signed webhook self-test failed. No purchase was attempted. Review the audit log before continuing.
         </div>
       ) : null}
 
@@ -424,6 +449,23 @@ export default async function ProviderDetailPage({
                     fulfillment and eSIM assignment remain disabled.
                   </p>
                 </div>
+              ) : null}
+
+              {provider.slug === "esim-go" ? (
+                <button
+                  type="submit"
+                  formAction={testEsimGoSignedWebhook}
+                  disabled={!esimGoReadiness?.webhookEnabled}
+                  className={`rounded-2xl border p-4 font-bold transition ${
+                    esimGoReadiness?.webhookEnabled
+                      ? "border-emerald-200 bg-emerald-50 text-emerald-800 hover:bg-emerald-100"
+                      : "cursor-not-allowed border-slate-200 bg-slate-100 text-slate-400"
+                  }`}
+                >
+                  {esimGoReadiness?.webhookEnabled
+                    ? "Test signed V3 webhook — no purchase"
+                    : "Signed webhook test locked"}
+                </button>
               ) : null}
 
               <Link

@@ -1,5 +1,6 @@
 "use server";
 
+import { createHmac } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "../../../lib/db";
@@ -8,7 +9,10 @@ import {
   requireAdminPermission,
   writeAdminAuditLog,
 } from "../../../lib/admin-auth";
-import { getEsimGoReadiness } from "../../../lib/providers/esim-go/config";
+import {
+  getEsimGoReadiness,
+  requireEsimGoCapability,
+} from "../../../lib/providers/esim-go/config";
 import {
   getEsimGoNetworks,
   validateEsimGoOrder,
@@ -313,4 +317,103 @@ export async function validateEsimGoSerbiaOneGb(productId: string) {
   }
 
   redirect(`/admin/providers/esim-go?${query.toString()}`);
+}
+
+export async function testEsimGoSignedWebhook() {
+  const actor = await requireAdminPermission(
+    ADMIN_PERMISSIONS.PROVIDERS_WRITE,
+  );
+  const readiness = getEsimGoReadiness();
+
+  if (!readiness.webhookEnabled) {
+    redirect("/admin/providers/esim-go?webhookTest=disabled");
+  }
+
+  let status = "failed";
+  let invalidSignatureStatus: number | null = null;
+  let validSignatureStatus: number | null = null;
+  let errorMessage: string | null = null;
+
+  try {
+    const { apiKey } = requireEsimGoCapability("webhook");
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL;
+    if (!siteUrl) throw new Error("NEXT_PUBLIC_SITE_URL is missing.");
+
+    const endpoint = new URL("/api/esim-go/webhook", siteUrl).toString();
+    const body = JSON.stringify({
+      iccid: `DALO-WEBHOOK-TEST-${Date.now()}`,
+      alertType: "DALOConfigurationTest",
+      bundle: {
+        id: `test-${Date.now()}`,
+        reference: "dalo-signed-webhook-self-test",
+        name: "DALO_WEBHOOK_SELF_TEST",
+        initialQuantity: 1_000_000_000,
+        remainingQuantity: 1_000_000_000,
+        unlimited: false,
+      },
+    });
+
+    const invalidResponse = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Signature-SHA256": "invalid-signature",
+      },
+      body,
+      cache: "no-store",
+      signal: AbortSignal.timeout(15_000),
+    });
+    invalidSignatureStatus = invalidResponse.status;
+
+    const signature = createHmac("sha256", apiKey)
+      .update(body)
+      .digest("hex");
+    const validResponse = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Signature-SHA256": signature,
+      },
+      body,
+      cache: "no-store",
+      signal: AbortSignal.timeout(15_000),
+    });
+    validSignatureStatus = validResponse.status;
+    const validPayload = (await validResponse.json()) as {
+      received?: unknown;
+      matched?: unknown;
+    };
+
+    if (
+      invalidSignatureStatus !== 401 ||
+      !validResponse.ok ||
+      validPayload.received !== true ||
+      validPayload.matched !== false
+    ) {
+      throw new Error("Webhook signature self-test returned an unexpected result.");
+    }
+
+    status = "passed";
+  } catch (error) {
+    errorMessage =
+      error instanceof Error ? error.message.slice(0, 300) : "Unknown error.";
+  }
+
+  await writeAdminAuditLog({
+    adminUserId: actor.id,
+    action:
+      status === "passed"
+        ? "ESIM_GO_WEBHOOK_SELF_TEST_PASSED"
+        : "ESIM_GO_WEBHOOK_SELF_TEST_FAILED",
+    resource: "PROVIDER",
+    resourceId: "esim-go",
+    metadata: {
+      invalidSignatureStatus,
+      validSignatureStatus,
+      unmatchedTestProfile: true,
+      error: errorMessage,
+    },
+  });
+
+  redirect(`/admin/providers/esim-go?webhookTest=${status}`);
 }
