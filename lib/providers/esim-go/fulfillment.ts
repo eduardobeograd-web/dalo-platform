@@ -57,6 +57,26 @@ function activationCode(details: EsimGoInstallDetails | null) {
   return `LPA:1$${details.smdpAddress}$${details.matchingId}`;
 }
 
+function installDetails(details: EsimGoInstallDetails | null) {
+  const lpa = activationCode(details);
+  const cardData = lpa ? encodeURIComponent(lpa) : null;
+
+  return {
+    activationCode: lpa,
+    iosInstallUrl:
+      details?.appleInstallUrl?.trim() ||
+      (cardData
+        ? `https://esimsetup.apple.com/esim_qrcode_provisioning?carddata=${cardData}`
+        : null),
+    androidInstallUrl:
+      details?.androidInstallUrl?.trim() ||
+      details?.installUrl?.trim() ||
+      (cardData
+        ? `https://esimsetup.android.com/esim_qrcode_provisioning?carddata=${cardData}`
+        : null),
+  };
+}
+
 function asDate(value: string | number | undefined) {
   if (!value) return null;
   const date = new Date(value);
@@ -286,6 +306,7 @@ export async function fulfillPaidOrderWithEsimGo(orderId: string) {
       );
     }
 
+    const directInstall = installDetails(details);
     const profile = await prisma.esimProfile.upsert({
       where: { iccid },
       update: {
@@ -296,9 +317,8 @@ export async function fulfillPaidOrderWithEsimGo(orderId: string) {
         pin: details?.pin || undefined,
         puk: details?.puk || undefined,
         profileStatus: details?.profileStatus || undefined,
-        iosInstallUrl: details?.appleInstallUrl || undefined,
-        androidInstallUrl:
-          details?.androidInstallUrl || details?.installUrl || undefined,
+        iosInstallUrl: directInstall.iosInstallUrl || undefined,
+        androidInstallUrl: directInstall.androidInstallUrl || undefined,
         firstInstalledAt: asDate(details?.firstInstalledDateTime) || undefined,
         lastSyncedAt: new Date(),
       },
@@ -311,9 +331,8 @@ export async function fulfillPaidOrderWithEsimGo(orderId: string) {
         pin: details?.pin || null,
         puk: details?.puk || null,
         profileStatus: details?.profileStatus || null,
-        iosInstallUrl: details?.appleInstallUrl || null,
-        androidInstallUrl:
-          details?.androidInstallUrl || details?.installUrl || null,
+        iosInstallUrl: directInstall.iosInstallUrl,
+        androidInstallUrl: directInstall.androidInstallUrl,
         firstInstalledAt: asDate(details?.firstInstalledDateTime),
         lastSyncedAt: new Date(),
       },
@@ -332,7 +351,6 @@ export async function fulfillPaidOrderWithEsimGo(orderId: string) {
       },
     });
 
-    const lpa = activationCode(details);
     await prisma.$transaction([
       prisma.order.update({
         where: { id: order.id },
@@ -342,10 +360,9 @@ export async function fulfillPaidOrderWithEsimGo(orderId: string) {
           esimStatus: "ready",
           providerOrderId: orderReference,
           iccid,
-          activationCode: lpa,
-          iosInstallUrl: details?.appleInstallUrl || null,
-          androidInstallUrl:
-            details?.androidInstallUrl || details?.installUrl || null,
+          activationCode: directInstall.activationCode,
+          iosInstallUrl: directInstall.iosInstallUrl,
+          androidInstallUrl: directInstall.androidInstallUrl,
           remainingDataGb: order.totalDataGb,
           usedDataGb: 0,
           lastUsageSyncAt: new Date(),
