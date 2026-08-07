@@ -1,12 +1,17 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { prisma } from "../../../lib/db";
 import { fulfillOrderMockById } from "@/lib/mock-fulfillment";
+import { fulfillPaidOrderWithEsimGo } from "@/lib/providers/esim-go/fulfillment";
 import { sendOrderConfirmationEmail } from "@/lib/order-confirmation-email";
 import { sendInternalOrderNotification } from "@/lib/internal-order-notification";
 import { ADMIN_PERMISSIONS } from "../../../lib/admin-permissions";
-import { requireAdminPermission } from "../../../lib/admin-auth";
+import {
+  requireAdminPermission,
+  writeAdminAuditLog,
+} from "../../../lib/admin-auth";
 import { addMonths, getFirstUsageLifecycleUpdate } from "../../../lib/esim-lifecycle";
 
 async function requireOrderWrite() {
@@ -203,4 +208,79 @@ export async function fulfillOrderMock(orderId: string) {
     await sendDeliveryEmailIfReady(orderId);
   }
   revalidateOrderPages(orderId);
+}
+
+export async function fulfillSerbiaOneGbWithEsimGo(
+  orderId: string,
+  formData: FormData,
+) {
+  const actor = await requireOrderWrite();
+  const confirmed = formData.get("confirmLivePurchase") === "yes";
+
+  if (!confirmed) {
+    redirect(`/admin/orders/${orderId}?liveFulfillment=confirmation-required`);
+  }
+
+  const order = await prisma.order.findUnique({ where: { id: orderId } });
+
+  if (!order) {
+    redirect(`/admin/orders/${orderId}?liveFulfillment=missing`);
+  }
+
+  if (order.fulfillment === "Delivered" && order.esimStatus === "ready") {
+    redirect(`/admin/orders/${orderId}?liveFulfillment=already-delivered`);
+  }
+
+  const isControlledTestOrder =
+    order.payment === "Paid" &&
+    order.orderKind === "new_esim" &&
+    order.providerAtPurchase?.toLowerCase() === "esim go" &&
+    order.providerProductIdAtPurchase === "esim_1GB_7D_RS_V2" &&
+    order.countryAtPurchase === "Serbia" &&
+    order.dataAtPurchase === "1GB";
+
+  if (!isControlledTestOrder) {
+    redirect(`/admin/orders/${orderId}?liveFulfillment=ineligible`);
+  }
+
+  let status = "failed";
+  let reason = "Unknown live fulfillment error.";
+
+  try {
+    const result = await fulfillPaidOrderWithEsimGo(order.id);
+    reason =
+      "reason" in result && typeof result.reason === "string"
+        ? result.reason
+        : "completed";
+
+    if (result.fulfilled) {
+      await sendDeliveryEmailIfReady(order.id);
+      status = "passed";
+    }
+  } catch (error) {
+    reason =
+      error instanceof Error
+        ? error.message.slice(0, 300)
+        : "Unknown live fulfillment error.";
+  }
+
+  await writeAdminAuditLog({
+    adminUserId: actor.id,
+    action:
+      status === "passed"
+        ? "ESIM_GO_CONTROLLED_FULFILLMENT_PASSED"
+        : "ESIM_GO_CONTROLLED_FULFILLMENT_FAILED",
+    resource: "ORDER",
+    resourceId: order.id,
+    metadata: {
+      orderNumber: order.orderNumber,
+      providerProductId: order.providerProductIdAtPurchase,
+      status,
+      reason,
+      controlledTest: true,
+    },
+  });
+
+  revalidateOrderPages(order.id);
+  redirect(`/admin/orders/${order.id}?liveFulfillment=${status}`);
 }

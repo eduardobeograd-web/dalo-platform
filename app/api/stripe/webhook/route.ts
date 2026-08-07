@@ -344,7 +344,7 @@ export async function POST(request: NextRequest) {
 
       if (
         result.orderId &&
-        esimGoReadiness.liveTransactionsEnabled
+        esimGoReadiness.automaticFulfillmentEnabled
       ) {
         try {
           fulfillmentResult = await fulfillPaidOrderWithEsimGo(result.orderId);

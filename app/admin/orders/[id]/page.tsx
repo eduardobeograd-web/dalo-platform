@@ -7,9 +7,12 @@ import {
 } from "../../../../lib/admin-auth";
 import { ADMIN_PERMISSIONS } from "../../../../lib/admin-permissions";
 import { prisma } from "../../../../lib/db";
+import { getEsimGoReadiness } from "../../../../lib/providers/esim-go/config";
+import { getProviderConfigBySlug } from "../../../../lib/providers/provider-configs";
 import {
   deleteTestOrder,
   fulfillOrderMock,
+  fulfillSerbiaOneGbWithEsimGo,
   markOrderDelivered,
   markOrderFailed,
   markOrderPaid,
@@ -89,8 +92,10 @@ function TextInput({
 
 export default async function OrderDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ liveFulfillment?: string }>;
 }) {
   const admin = await requireAdminPermission(ADMIN_PERMISSIONS.ORDERS_READ);
   const canManageOrders = adminHasPermission(
@@ -98,6 +103,7 @@ export default async function OrderDetailPage({
     ADMIN_PERMISSIONS.ORDERS_WRITE,
   );
   const { id } = await params;
+  const { liveFulfillment } = await searchParams;
 
   if (!id) {
     notFound();
@@ -136,6 +142,20 @@ export default async function OrderDetailPage({
     order.providerProductIdAtPurchase ||
     product?.providerProductId ||
     "—";
+  const esimGoReadiness = getEsimGoReadiness();
+  const esimGoProvider = await getProviderConfigBySlug("esim-go");
+  const isControlledSerbiaTestOrder =
+    order.payment === "Paid" &&
+    order.orderKind === "new_esim" &&
+    order.providerAtPurchase?.toLowerCase() === "esim go" &&
+    order.providerProductIdAtPurchase === "esim_1GB_7D_RS_V2" &&
+    order.countryAtPurchase === "Serbia" &&
+    order.dataAtPurchase === "1GB";
+  const controlledLiveFulfillmentReady = Boolean(
+    esimGoReadiness.liveTransactionsEnabled &&
+      esimGoProvider?.active &&
+      esimGoProvider.fulfillmentEnabled,
+  );
 
   const markPaidWithId = markOrderPaid.bind(null, order.id);
   const markPendingWithId = markOrderPending.bind(null, order.id);
@@ -144,6 +164,10 @@ export default async function OrderDetailPage({
   const markWaitingWithId = markOrderWaiting.bind(null, order.id);
   const deleteTestOrderWithId = deleteTestOrder.bind(null, order.id);
   const fulfillOrderMockWithId = fulfillOrderMock.bind(null, order.id);
+  const fulfillSerbiaOneGbWithId = fulfillSerbiaOneGbWithEsimGo.bind(
+    null,
+    order.id,
+  );
   const updateOrderFulfillmentWithId = updateOrderFulfillment.bind(null, order.id);
 
   return (
@@ -211,6 +235,18 @@ export default async function OrderDetailPage({
           <DetailCard label="eSIM Status" value={order.esimStatus || "pending"} />
         </div>
       </div>
+
+      {liveFulfillment === "passed" ? (
+        <div className="mb-8 rounded-2xl border border-green-200 bg-green-50 p-5 text-green-900">
+          <p className="font-bold">Controlled eSIM Go fulfillment completed.</p>
+          <p className="mt-1 text-sm">Install data and customer delivery are now available for verification.</p>
+        </div>
+      ) : liveFulfillment ? (
+        <div className="mb-8 rounded-2xl border border-red-200 bg-red-50 p-5 text-red-900">
+          <p className="font-bold">Controlled fulfillment did not complete.</p>
+          <p className="mt-1 text-sm">Status: {liveFulfillment}. Do not retry before checking the provider operation.</p>
+        </div>
+      ) : null}
 
       {order.recommendationProductId ? (
         <div className="mb-8 rounded-[2rem] border border-blue-100 bg-blue-50 p-6">
@@ -454,6 +490,43 @@ export default async function OrderDetailPage({
 
             <div>
               <p className="mb-3 font-bold text-slate-700">Provider Fulfillment</p>
+
+              {isControlledSerbiaTestOrder &&
+              order.fulfillment !== "Delivered" ? (
+                <div className="mb-6 rounded-2xl border border-red-300 bg-red-50 p-4 text-red-950">
+                  <p className="font-bold">Controlled live eSIM Go purchase</p>
+                  <p className="mt-1 text-sm leading-6">
+                    Restricted to this paid Serbia 1 GB / 7 days test order.
+                    This creates one real eSIM and charges the eSIM Go balance.
+                    Automatic Stripe fulfillment remains separately disabled.
+                  </p>
+
+                  <form action={fulfillSerbiaOneGbWithId} className="mt-4">
+                    <label className="flex items-start gap-3 rounded-xl bg-white p-3 text-sm font-semibold">
+                      <input
+                        type="checkbox"
+                        name="confirmLivePurchase"
+                        value="yes"
+                        required
+                        className="mt-1"
+                      />
+                      I confirm this one real eSIM Go purchase.
+                    </label>
+                    <button
+                      disabled={!controlledLiveFulfillmentReady}
+                      className={`mt-3 w-full rounded-2xl px-5 py-4 font-bold text-white transition ${
+                        controlledLiveFulfillmentReady
+                          ? "bg-red-700 hover:bg-red-800"
+                          : "cursor-not-allowed bg-slate-400"
+                      }`}
+                    >
+                      {controlledLiveFulfillmentReady
+                        ? "Buy and fulfill Serbia 1 GB once"
+                        : "Live transaction remains safely locked"}
+                    </button>
+                  </form>
+                </div>
+              ) : null}
 
               <div className="mb-6 rounded-2xl border border-orange-200 bg-orange-50 p-4">
                 <p className="font-bold text-orange-800">

@@ -78,7 +78,9 @@ export default async function ProviderDetailPage({
       : null;
   const statusLabel = esimGoReadiness
     ? esimGoReadiness.liveTransactionsEnabled
-      ? "Live fulfillment enabled"
+      ? esimGoReadiness.automaticFulfillmentEnabled
+        ? "Automatic fulfillment enabled"
+        : "Live transactions · manual only"
       : esimGoReadiness.apiKeyConfigured
         ? "API key ready · live locked"
         : "Missing API Key"

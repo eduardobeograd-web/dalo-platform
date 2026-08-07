@@ -31,9 +31,10 @@ export type EsimGoInstallDetails = {
   profileStatus?: string;
   pin?: string;
   puk?: string;
-  firstInstalledDateTime?: string;
+  firstInstalledDateTime?: string | number;
   installUrl?: string;
   appleInstallUrl?: string;
+  androidInstallUrl?: string;
 };
 
 export type EsimGoOrderItem = {
@@ -206,7 +207,7 @@ export async function getEsimGoBundleStatus(
 export async function getEsimGoInstallDetails(reference: string) {
   const params = new URLSearchParams({
     reference: reference.trim(),
-    additionalFields: "installUrl,appleInstallUrl",
+    additionalFields: "installUrl",
   });
 
   return requestJson<EsimGoInstallDetails | EsimGoInstallDetails[]>({
