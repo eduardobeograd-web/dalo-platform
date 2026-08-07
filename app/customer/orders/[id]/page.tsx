@@ -358,8 +358,8 @@ export default async function CustomerOrderDetailPage({
                         <p className="text-xs font-semibold text-slate-500 sm:text-sm">
                           eSIM Status
                         </p>
-                        <p className="mt-1 text-sm font-bold capitalize sm:mt-2 sm:text-base">
-                          {order.esimStatus || "Pending"}
+                        <p className="mt-1 text-sm font-bold sm:mt-2 sm:text-base">
+                          {status.badge}
                         </p>
                       </div>
                     </div>
