@@ -68,6 +68,16 @@ function getCustomerStatus(order: {
     };
   }
 
+  if (lifecycleStatus === "suspended") {
+    return {
+      label: "Your eSIM is suspended",
+      description:
+        "The provider has suspended this eSIM. Please contact DALO support before making changes on your phone.",
+      badge: "Suspended",
+      badgeStyle: "bg-red-100 text-red-700",
+    };
+  }
+
   if (lifecycleStatus === "expired") {
     return {
       label: "This eSIM has expired",
@@ -77,12 +87,21 @@ function getCustomerStatus(order: {
     };
   }
 
-  if (lifecycleStatus === "data_used") {
+  if (lifecycleStatus === "no_data") {
     return {
-      label: "Your data has been used",
+      label: "You have no data left",
       description: "The included data allowance has been fully used.",
-      badge: "Data used",
+      badge: "No data left",
       badgeStyle: "bg-slate-100 text-slate-700",
+    };
+  }
+
+  if (lifecycleStatus === "low_data") {
+    return {
+      label: "Your data is running low",
+      description: "Less than 20% of your included data remains.",
+      badge: "Low data",
+      badgeStyle: "bg-amber-100 text-amber-800",
     };
   }
 
@@ -92,6 +111,16 @@ function getCustomerStatus(order: {
       description: "Your eSIM has connected and started using mobile data.",
       badge: "Active",
       badgeStyle: "bg-emerald-100 text-emerald-700",
+    };
+  }
+
+  if (lifecycleStatus === "installed") {
+    return {
+      label: "Your eSIM is installed",
+      description:
+        "Installation is complete. Your data plan becomes active when it first connects to a supported network.",
+      badge: "Installed",
+      badgeStyle: "bg-blue-100 text-blue-700",
     };
   }
 
