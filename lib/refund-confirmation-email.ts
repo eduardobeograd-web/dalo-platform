@@ -4,6 +4,9 @@ import {
   refundConfirmationHtml,
   refundConfirmationSubject,
 } from "@/lib/email-templates/refund-confirmation";
+import { wasOrderEsimDelivered } from "@/lib/order-delivery";
+import { getOrderPurchaseDetails } from "@/lib/order-purchase-details";
+import { formatCurrencyAmount } from "@/lib/money";
 
 const EVENT_TYPE = "refund_confirmation_email_sent";
 
@@ -42,28 +45,22 @@ export async function sendRefundConfirmationEmail(input: {
     where: { id: order.productId },
   });
 
-  if (!product) {
-    return {
-      sent: false as const,
-      skipped: true as const,
-      reason: "product_not_found",
-    };
-  }
-
   const siteUrl =
     process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
   const orderNumber = order.orderNumber || order.id;
   const partial = order.payment === "Partially Refunded";
-  const wasDelivered =
-    order.fulfillment === "Delivered" || order.esimStatus === "ready";
+  const wasDelivered = wasOrderEsimDelivered(order);
+  const purchase = getOrderPurchaseDetails(order, product);
+  const currency = (order.currency || "USD").trim().toUpperCase();
+  const amount = formatCurrencyAmount(input.amountRefunded, currency);
 
   const result = await sendEmail({
     to: order.customer,
     subject: refundConfirmationSubject(orderNumber, partial),
     html: refundConfirmationHtml({
       orderNumber,
-      productName: order.productNameAtPurchase || product.name,
-      amount: `$${input.amountRefunded.toFixed(2)}`,
+      productName: purchase.productName,
+      amount,
       paymentStatus: order.payment,
       wasDelivered,
       accountUrl: `${siteUrl}/customer/orders/${order.id}`,
@@ -82,12 +79,13 @@ export async function sendRefundConfirmationEmail(input: {
     data: {
       customerId: order.customerId,
       orderId: order.id,
-      productId: product.id,
+      productId: product?.id || null,
       eventType: EVENT_TYPE,
       metadata: {
         recipient: order.customer,
         orderNumber,
         amountRefunded: input.amountRefunded,
+        currency,
         paymentStatus: order.payment,
         wasDelivered,
       },
