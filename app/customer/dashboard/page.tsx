@@ -4,7 +4,10 @@ import { getCurrentCustomer } from "../../../lib/customer-auth";
 import { prisma } from "../../../lib/db";
 import SiteFooter from "../../../components/SiteFooter";
 import SiteHeader from "../../../components/SiteHeader";
+import { canCustomerArchiveOrder } from "../../../lib/customer-order-archive";
 import { getEsimLifecycleStatus } from "../../../lib/esim-lifecycle";
+import { getOrderPurchaseDetails } from "../../../lib/order-purchase-details";
+import { setCustomerOrderArchived } from "./actions";
 
 function formatDate(value?: Date | null) {
   if (!value) return "Not available";
@@ -90,7 +93,9 @@ export default async function CustomerDashboardPage() {
   });
 
   const productById = new Map(products.map((product) => [product.id, product]));
-  const installationReadyCount = orders.filter(
+  const currentOrders = orders.filter((order) => !order.customerArchivedAt);
+  const archivedOrders = orders.filter((order) => order.customerArchivedAt);
+  const installationReadyCount = currentOrders.filter(
     (order) => getEsimLifecycleStatus(order) === "ready"
   ).length;
 
@@ -121,9 +126,9 @@ export default async function CustomerDashboardPage() {
 
           <div className="mt-5 grid grid-cols-2 gap-2 border-t border-white/15 pt-4 sm:max-w-md sm:gap-4">
             <div>
-              <p className="text-2xl font-black">{orders.length}</p>
+              <p className="text-2xl font-black">{currentOrders.length}</p>
               <p className="text-xs font-semibold text-blue-100">
-                {orders.length === 1 ? "eSIM order" : "eSIM orders"}
+                {currentOrders.length === 1 ? "current eSIM" : "current eSIMs"}
               </p>
             </div>
             <div className="border-l border-white/15 pl-4">
@@ -135,7 +140,7 @@ export default async function CustomerDashboardPage() {
           </div>
         </section>
 
-        {orders.length === 0 ? (
+        {currentOrders.length === 0 ? (
           <div className="mt-5 rounded-[2rem] bg-white p-6 shadow-xl shadow-blue-100 sm:mt-10 sm:p-10">
             <div className="grid h-12 w-12 place-items-center rounded-2xl bg-blue-50 text-blue-700">
               <svg
@@ -152,11 +157,13 @@ export default async function CustomerDashboardPage() {
             </div>
 
             <h2 className="mt-5 text-2xl font-bold sm:text-3xl">
-              No eSIM orders yet
+              {archivedOrders.length ? "No current eSIMs" : "No eSIM orders yet"}
             </h2>
 
             <p className="mt-3 text-slate-600">
-              Once you buy an eSIM with this email address, it will appear here.
+              {archivedOrders.length
+                ? "Your past eSIMs are safely stored in the archive below."
+                : "Once you buy an eSIM with this email address, it will appear here."}
             </p>
 
             <Link
@@ -168,8 +175,9 @@ export default async function CustomerDashboardPage() {
           </div>
         ) : (
           <div className="mt-5 grid gap-4 sm:mt-10 sm:gap-6">
-            {orders.map((order) => {
+            {currentOrders.map((order) => {
               const product = productById.get(order.productId);
+              const purchase = getOrderPurchaseDetails(order, product);
               const lifecycleStatus = getEsimLifecycleStatus(order);
               const statusBadge = getStatusBadge(lifecycleStatus);
               const isRefunded = lifecycleStatus === "refunded";
@@ -202,7 +210,7 @@ export default async function CustomerDashboardPage() {
                       </div>
 
                       <h2 className="mt-4 text-2xl font-black tracking-tight sm:mt-5 sm:text-3xl">
-                        {product?.name || "DALO eSIM"}
+                        {purchase.productName}
                       </h2>
 
                       <p className="mt-1 text-sm text-slate-600 sm:mt-2 sm:text-base">
@@ -219,7 +227,7 @@ export default async function CustomerDashboardPage() {
                             Package
                           </p>
                           <p className="mt-1 break-words text-base font-black sm:mt-2 sm:text-xl">
-                            {product?.data || "Not available"}
+                            {purchase.data}
                           </p>
                         </div>
 
@@ -228,8 +236,8 @@ export default async function CustomerDashboardPage() {
                             Validity
                           </p>
                           <p className="mt-1 break-words text-base font-black sm:mt-2 sm:text-xl">
-                            {product
-                              ? `${product.validityDays} days`
+                            {purchase.validityDays !== null
+                              ? `${purchase.validityDays} days`
                               : "Not available"}
                           </p>
                         </div>
@@ -338,6 +346,19 @@ export default async function CustomerDashboardPage() {
                         >
                           Add another destination · Coming soon
                         </span>
+
+                        {canCustomerArchiveOrder(order) ? (
+                          <form action={setCustomerOrderArchived} className="col-span-2">
+                            <input type="hidden" name="orderId" value={order.id} />
+                            <input type="hidden" name="archiveAction" value="archive" />
+                            <button
+                              type="submit"
+                              className="inline-flex min-h-11 w-full items-center justify-center rounded-xl border border-white/15 px-3 text-center text-xs font-bold text-slate-300 transition hover:bg-white/10 hover:text-white sm:rounded-2xl sm:px-5 sm:py-4 sm:text-sm"
+                            >
+                              Archive eSIM
+                            </button>
+                          </form>
+                        ) : null}
                       </div>
 
                       <div className="hidden">
@@ -364,6 +385,71 @@ export default async function CustomerDashboardPage() {
             })}
           </div>
         )}
+
+        {archivedOrders.length ? (
+          <details className="mt-6 overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-lg shadow-blue-50 sm:mt-8">
+            <summary className="cursor-pointer list-none px-5 py-5 font-black text-slate-950 marker:hidden sm:px-8 sm:py-6">
+              <span className="flex items-center justify-between gap-4">
+                <span>Archived eSIMs</span>
+                <span className="rounded-full bg-slate-100 px-3 py-1 text-sm text-slate-600">
+                  {archivedOrders.length}
+                </span>
+              </span>
+            </summary>
+
+            <div className="space-y-3 border-t border-slate-100 p-4 sm:p-6">
+              {archivedOrders.map((order) => {
+                const product = productById.get(order.productId);
+                const purchase = getOrderPurchaseDetails(order, product);
+                const statusBadge = getStatusBadge(getEsimLifecycleStatus(order));
+
+                return (
+                  <div
+                    key={order.id}
+                    className="flex flex-col gap-4 rounded-2xl bg-slate-50 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5"
+                  >
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="truncate font-black text-slate-950">
+                          {purchase.productName}
+                        </p>
+                        <span className={`rounded-full px-2.5 py-1 text-[11px] font-bold ${statusBadge.style}`}>
+                          {statusBadge.label}
+                        </span>
+                      </div>
+                      <p className="mt-1 text-sm text-slate-600">
+                        {purchase.data}
+                        {purchase.validityDays !== null
+                          ? ` · ${purchase.validityDays} days`
+                          : ""}
+                        {` · Ordered ${formatDate(order.createdAt)}`}
+                      </p>
+                    </div>
+
+                    <div className="flex shrink-0 gap-2">
+                      <Link
+                        href={`/customer/orders/${order.id}`}
+                        className="inline-flex min-h-11 items-center justify-center rounded-xl border border-slate-200 bg-white px-4 text-sm font-bold text-slate-700"
+                      >
+                        View
+                      </Link>
+                      <form action={setCustomerOrderArchived}>
+                        <input type="hidden" name="orderId" value={order.id} />
+                        <input type="hidden" name="archiveAction" value="restore" />
+                        <button
+                          type="submit"
+                          className="inline-flex min-h-11 items-center justify-center rounded-xl bg-blue-600 px-4 text-sm font-bold text-white"
+                        >
+                          Restore
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </details>
+        ) : null}
       </div>
       <SiteFooter />
     </main>

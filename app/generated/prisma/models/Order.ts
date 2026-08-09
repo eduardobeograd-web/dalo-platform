@@ -91,6 +91,7 @@ export type OrderMinAggregateOutputType = {
   activatedAt: Date | null
   expiresAt: Date | null
   lastUsageSyncAt: Date | null
+  customerArchivedAt: Date | null
   esimProfileId: string | null
   createdAt: Date | null
 }
@@ -140,6 +141,7 @@ export type OrderMaxAggregateOutputType = {
   activatedAt: Date | null
   expiresAt: Date | null
   lastUsageSyncAt: Date | null
+  customerArchivedAt: Date | null
   esimProfileId: string | null
   createdAt: Date | null
 }
@@ -189,6 +191,7 @@ export type OrderCountAggregateOutputType = {
   activatedAt: number
   expiresAt: number
   lastUsageSyncAt: number
+  customerArchivedAt: number
   esimProfileId: number
   createdAt: number
   _all: number
@@ -260,6 +263,7 @@ export type OrderMinAggregateInputType = {
   activatedAt?: true
   expiresAt?: true
   lastUsageSyncAt?: true
+  customerArchivedAt?: true
   esimProfileId?: true
   createdAt?: true
 }
@@ -309,6 +313,7 @@ export type OrderMaxAggregateInputType = {
   activatedAt?: true
   expiresAt?: true
   lastUsageSyncAt?: true
+  customerArchivedAt?: true
   esimProfileId?: true
   createdAt?: true
 }
@@ -358,6 +363,7 @@ export type OrderCountAggregateInputType = {
   activatedAt?: true
   expiresAt?: true
   lastUsageSyncAt?: true
+  customerArchivedAt?: true
   esimProfileId?: true
   createdAt?: true
   _all?: true
@@ -494,6 +500,7 @@ export type OrderGroupByOutputType = {
   activatedAt: Date | null
   expiresAt: Date | null
   lastUsageSyncAt: Date | null
+  customerArchivedAt: Date | null
   esimProfileId: string | null
   createdAt: Date
   _count: OrderCountAggregateOutputType | null
@@ -566,6 +573,7 @@ export type OrderWhereInput = {
   activatedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   expiresAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   lastUsageSyncAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  customerArchivedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   esimProfileId?: Prisma.StringNullableFilter<"Order"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   customerAccount?: Prisma.XOR<Prisma.CustomerNullableScalarRelationFilter, Prisma.CustomerWhereInput> | null
@@ -621,6 +629,7 @@ export type OrderOrderByWithRelationInput = {
   activatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   expiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   lastUsageSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  customerArchivedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   esimProfileId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   customerAccount?: Prisma.CustomerOrderByWithRelationInput
@@ -679,6 +688,7 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   activatedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   expiresAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   lastUsageSyncAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  customerArchivedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   esimProfileId?: Prisma.StringNullableFilter<"Order"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   customerAccount?: Prisma.XOR<Prisma.CustomerNullableScalarRelationFilter, Prisma.CustomerWhereInput> | null
@@ -734,6 +744,7 @@ export type OrderOrderByWithAggregationInput = {
   activatedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   expiresAt?: Prisma.SortOrderInput | Prisma.SortOrder
   lastUsageSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  customerArchivedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   esimProfileId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.OrderCountOrderByAggregateInput
@@ -791,6 +802,7 @@ export type OrderScalarWhereWithAggregatesInput = {
   activatedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
   expiresAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
   lastUsageSyncAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
+  customerArchivedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
   esimProfileId?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string
 }
@@ -839,6 +851,7 @@ export type OrderCreateInput = {
   activatedAt?: Date | string | null
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
+  customerArchivedAt?: Date | string | null
   createdAt?: Date | string
   customerAccount?: Prisma.CustomerCreateNestedOneWithoutOrdersInput
   esimProfile?: Prisma.EsimProfileCreateNestedOneWithoutOrdersInput
@@ -893,6 +906,7 @@ export type OrderUncheckedCreateInput = {
   activatedAt?: Date | string | null
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
+  customerArchivedAt?: Date | string | null
   esimProfileId?: string | null
   createdAt?: Date | string
   esimBundle?: Prisma.EsimBundleUncheckedCreateNestedOneWithoutOrderInput
@@ -945,6 +959,7 @@ export type OrderUpdateInput = {
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerArchivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customerAccount?: Prisma.CustomerUpdateOneWithoutOrdersNestedInput
   esimProfile?: Prisma.EsimProfileUpdateOneWithoutOrdersNestedInput
@@ -999,6 +1014,7 @@ export type OrderUncheckedUpdateInput = {
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerArchivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   esimProfileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   esimBundle?: Prisma.EsimBundleUncheckedUpdateOneWithoutOrderNestedInput
@@ -1052,6 +1068,7 @@ export type OrderCreateManyInput = {
   activatedAt?: Date | string | null
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
+  customerArchivedAt?: Date | string | null
   esimProfileId?: string | null
   createdAt?: Date | string
 }
@@ -1100,6 +1117,7 @@ export type OrderUpdateManyMutationInput = {
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerArchivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -1148,6 +1166,7 @@ export type OrderUncheckedUpdateManyInput = {
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerArchivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   esimProfileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1207,6 +1226,7 @@ export type OrderCountOrderByAggregateInput = {
   activatedAt?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   lastUsageSyncAt?: Prisma.SortOrder
+  customerArchivedAt?: Prisma.SortOrder
   esimProfileId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -1266,6 +1286,7 @@ export type OrderMaxOrderByAggregateInput = {
   activatedAt?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   lastUsageSyncAt?: Prisma.SortOrder
+  customerArchivedAt?: Prisma.SortOrder
   esimProfileId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -1315,6 +1336,7 @@ export type OrderMinOrderByAggregateInput = {
   activatedAt?: Prisma.SortOrder
   expiresAt?: Prisma.SortOrder
   lastUsageSyncAt?: Prisma.SortOrder
+  customerArchivedAt?: Prisma.SortOrder
   esimProfileId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -1534,6 +1556,7 @@ export type OrderCreateWithoutCustomerAccountInput = {
   activatedAt?: Date | string | null
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
+  customerArchivedAt?: Date | string | null
   createdAt?: Date | string
   esimProfile?: Prisma.EsimProfileCreateNestedOneWithoutOrdersInput
   esimBundle?: Prisma.EsimBundleCreateNestedOneWithoutOrderInput
@@ -1586,6 +1609,7 @@ export type OrderUncheckedCreateWithoutCustomerAccountInput = {
   activatedAt?: Date | string | null
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
+  customerArchivedAt?: Date | string | null
   esimProfileId?: string | null
   createdAt?: Date | string
   esimBundle?: Prisma.EsimBundleUncheckedCreateNestedOneWithoutOrderInput
@@ -1668,6 +1692,7 @@ export type OrderScalarWhereInput = {
   activatedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   expiresAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   lastUsageSyncAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
+  customerArchivedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
   esimProfileId?: Prisma.StringNullableFilter<"Order"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
 }
@@ -1716,6 +1741,7 @@ export type OrderCreateWithoutEsimProfileInput = {
   activatedAt?: Date | string | null
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
+  customerArchivedAt?: Date | string | null
   createdAt?: Date | string
   customerAccount?: Prisma.CustomerCreateNestedOneWithoutOrdersInput
   esimBundle?: Prisma.EsimBundleCreateNestedOneWithoutOrderInput
@@ -1769,6 +1795,7 @@ export type OrderUncheckedCreateWithoutEsimProfileInput = {
   activatedAt?: Date | string | null
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
+  customerArchivedAt?: Date | string | null
   createdAt?: Date | string
   esimBundle?: Prisma.EsimBundleUncheckedCreateNestedOneWithoutOrderInput
   supportRequests?: Prisma.SupportRequestUncheckedCreateNestedManyWithoutOrderInput
@@ -1846,6 +1873,7 @@ export type OrderCreateWithoutEsimBundleInput = {
   activatedAt?: Date | string | null
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
+  customerArchivedAt?: Date | string | null
   createdAt?: Date | string
   customerAccount?: Prisma.CustomerCreateNestedOneWithoutOrdersInput
   esimProfile?: Prisma.EsimProfileCreateNestedOneWithoutOrdersInput
@@ -1899,6 +1927,7 @@ export type OrderUncheckedCreateWithoutEsimBundleInput = {
   activatedAt?: Date | string | null
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
+  customerArchivedAt?: Date | string | null
   esimProfileId?: string | null
   createdAt?: Date | string
   supportRequests?: Prisma.SupportRequestUncheckedCreateNestedManyWithoutOrderInput
@@ -1966,6 +1995,7 @@ export type OrderUpdateWithoutEsimBundleInput = {
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerArchivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customerAccount?: Prisma.CustomerUpdateOneWithoutOrdersNestedInput
   esimProfile?: Prisma.EsimProfileUpdateOneWithoutOrdersNestedInput
@@ -2019,6 +2049,7 @@ export type OrderUncheckedUpdateWithoutEsimBundleInput = {
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerArchivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   esimProfileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   supportRequests?: Prisma.SupportRequestUncheckedUpdateManyWithoutOrderNestedInput
@@ -2070,6 +2101,7 @@ export type OrderCreateWithoutProviderOperationsInput = {
   activatedAt?: Date | string | null
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
+  customerArchivedAt?: Date | string | null
   createdAt?: Date | string
   customerAccount?: Prisma.CustomerCreateNestedOneWithoutOrdersInput
   esimProfile?: Prisma.EsimProfileCreateNestedOneWithoutOrdersInput
@@ -2123,6 +2155,7 @@ export type OrderUncheckedCreateWithoutProviderOperationsInput = {
   activatedAt?: Date | string | null
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
+  customerArchivedAt?: Date | string | null
   esimProfileId?: string | null
   createdAt?: Date | string
   esimBundle?: Prisma.EsimBundleUncheckedCreateNestedOneWithoutOrderInput
@@ -2190,6 +2223,7 @@ export type OrderUpdateWithoutProviderOperationsInput = {
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerArchivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customerAccount?: Prisma.CustomerUpdateOneWithoutOrdersNestedInput
   esimProfile?: Prisma.EsimProfileUpdateOneWithoutOrdersNestedInput
@@ -2243,6 +2277,7 @@ export type OrderUncheckedUpdateWithoutProviderOperationsInput = {
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerArchivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   esimProfileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   esimBundle?: Prisma.EsimBundleUncheckedUpdateOneWithoutOrderNestedInput
@@ -2294,6 +2329,7 @@ export type OrderCreateWithoutSupportRequestsInput = {
   activatedAt?: Date | string | null
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
+  customerArchivedAt?: Date | string | null
   createdAt?: Date | string
   customerAccount?: Prisma.CustomerCreateNestedOneWithoutOrdersInput
   esimProfile?: Prisma.EsimProfileCreateNestedOneWithoutOrdersInput
@@ -2347,6 +2383,7 @@ export type OrderUncheckedCreateWithoutSupportRequestsInput = {
   activatedAt?: Date | string | null
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
+  customerArchivedAt?: Date | string | null
   esimProfileId?: string | null
   createdAt?: Date | string
   esimBundle?: Prisma.EsimBundleUncheckedCreateNestedOneWithoutOrderInput
@@ -2414,6 +2451,7 @@ export type OrderUpdateWithoutSupportRequestsInput = {
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerArchivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customerAccount?: Prisma.CustomerUpdateOneWithoutOrdersNestedInput
   esimProfile?: Prisma.EsimProfileUpdateOneWithoutOrdersNestedInput
@@ -2467,6 +2505,7 @@ export type OrderUncheckedUpdateWithoutSupportRequestsInput = {
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerArchivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   esimProfileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   esimBundle?: Prisma.EsimBundleUncheckedUpdateOneWithoutOrderNestedInput
@@ -2518,6 +2557,7 @@ export type OrderCreateWithoutCustomerEventsInput = {
   activatedAt?: Date | string | null
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
+  customerArchivedAt?: Date | string | null
   createdAt?: Date | string
   customerAccount?: Prisma.CustomerCreateNestedOneWithoutOrdersInput
   esimProfile?: Prisma.EsimProfileCreateNestedOneWithoutOrdersInput
@@ -2571,6 +2611,7 @@ export type OrderUncheckedCreateWithoutCustomerEventsInput = {
   activatedAt?: Date | string | null
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
+  customerArchivedAt?: Date | string | null
   esimProfileId?: string | null
   createdAt?: Date | string
   esimBundle?: Prisma.EsimBundleUncheckedCreateNestedOneWithoutOrderInput
@@ -2638,6 +2679,7 @@ export type OrderUpdateWithoutCustomerEventsInput = {
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerArchivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customerAccount?: Prisma.CustomerUpdateOneWithoutOrdersNestedInput
   esimProfile?: Prisma.EsimProfileUpdateOneWithoutOrdersNestedInput
@@ -2691,6 +2733,7 @@ export type OrderUncheckedUpdateWithoutCustomerEventsInput = {
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerArchivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   esimProfileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   esimBundle?: Prisma.EsimBundleUncheckedUpdateOneWithoutOrderNestedInput
@@ -2742,6 +2785,7 @@ export type OrderCreateManyCustomerAccountInput = {
   activatedAt?: Date | string | null
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
+  customerArchivedAt?: Date | string | null
   esimProfileId?: string | null
   createdAt?: Date | string
 }
@@ -2790,6 +2834,7 @@ export type OrderUpdateWithoutCustomerAccountInput = {
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerArchivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   esimProfile?: Prisma.EsimProfileUpdateOneWithoutOrdersNestedInput
   esimBundle?: Prisma.EsimBundleUpdateOneWithoutOrderNestedInput
@@ -2842,6 +2887,7 @@ export type OrderUncheckedUpdateWithoutCustomerAccountInput = {
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerArchivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   esimProfileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   esimBundle?: Prisma.EsimBundleUncheckedUpdateOneWithoutOrderNestedInput
@@ -2894,6 +2940,7 @@ export type OrderUncheckedUpdateManyWithoutCustomerAccountInput = {
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerArchivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   esimProfileId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -2943,6 +2990,7 @@ export type OrderCreateManyEsimProfileInput = {
   activatedAt?: Date | string | null
   expiresAt?: Date | string | null
   lastUsageSyncAt?: Date | string | null
+  customerArchivedAt?: Date | string | null
   createdAt?: Date | string
 }
 
@@ -2990,6 +3038,7 @@ export type OrderUpdateWithoutEsimProfileInput = {
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerArchivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   customerAccount?: Prisma.CustomerUpdateOneWithoutOrdersNestedInput
   esimBundle?: Prisma.EsimBundleUpdateOneWithoutOrderNestedInput
@@ -3043,6 +3092,7 @@ export type OrderUncheckedUpdateWithoutEsimProfileInput = {
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerArchivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   esimBundle?: Prisma.EsimBundleUncheckedUpdateOneWithoutOrderNestedInput
   supportRequests?: Prisma.SupportRequestUncheckedUpdateManyWithoutOrderNestedInput
@@ -3095,6 +3145,7 @@ export type OrderUncheckedUpdateManyWithoutEsimProfileInput = {
   activatedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   expiresAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastUsageSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerArchivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -3192,6 +3243,7 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   activatedAt?: boolean
   expiresAt?: boolean
   lastUsageSyncAt?: boolean
+  customerArchivedAt?: boolean
   esimProfileId?: boolean
   createdAt?: boolean
   customerAccount?: boolean | Prisma.Order$customerAccountArgs<ExtArgs>
@@ -3248,6 +3300,7 @@ export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   activatedAt?: boolean
   expiresAt?: boolean
   lastUsageSyncAt?: boolean
+  customerArchivedAt?: boolean
   esimProfileId?: boolean
   createdAt?: boolean
   customerAccount?: boolean | Prisma.Order$customerAccountArgs<ExtArgs>
@@ -3299,6 +3352,7 @@ export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   activatedAt?: boolean
   expiresAt?: boolean
   lastUsageSyncAt?: boolean
+  customerArchivedAt?: boolean
   esimProfileId?: boolean
   createdAt?: boolean
   customerAccount?: boolean | Prisma.Order$customerAccountArgs<ExtArgs>
@@ -3350,11 +3404,12 @@ export type OrderSelectScalar = {
   activatedAt?: boolean
   expiresAt?: boolean
   lastUsageSyncAt?: boolean
+  customerArchivedAt?: boolean
   esimProfileId?: boolean
   createdAt?: boolean
 }
 
-export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderNumber" | "customer" | "customerId" | "productId" | "amount" | "currency" | "buyPriceAtPurchase" | "productNameAtPurchase" | "countryAtPurchase" | "dataAtPurchase" | "validityDaysAtPurchase" | "providerAtPurchase" | "providerProductIdAtPurchase" | "recommendationProductId" | "recommendationDataGb" | "recommendationTripLength" | "recommendationUsageType" | "recommendationChoice" | "orderKind" | "sourceOrderId" | "stripeSessionId" | "stripePaymentIntentId" | "paidAt" | "legalAcceptedAt" | "legalVersion" | "immediateDeliveryAcceptedAt" | "immediateDeliveryVersion" | "payment" | "fulfillment" | "esimStatus" | "providerOrderId" | "iccid" | "qrCodeUrl" | "activationCode" | "iosInstallUrl" | "androidInstallUrl" | "totalDataGb" | "usedDataGb" | "remainingDataGb" | "activationDeadlineAt" | "activatedAt" | "expiresAt" | "lastUsageSyncAt" | "esimProfileId" | "createdAt", ExtArgs["result"]["order"]>
+export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderNumber" | "customer" | "customerId" | "productId" | "amount" | "currency" | "buyPriceAtPurchase" | "productNameAtPurchase" | "countryAtPurchase" | "dataAtPurchase" | "validityDaysAtPurchase" | "providerAtPurchase" | "providerProductIdAtPurchase" | "recommendationProductId" | "recommendationDataGb" | "recommendationTripLength" | "recommendationUsageType" | "recommendationChoice" | "orderKind" | "sourceOrderId" | "stripeSessionId" | "stripePaymentIntentId" | "paidAt" | "legalAcceptedAt" | "legalVersion" | "immediateDeliveryAcceptedAt" | "immediateDeliveryVersion" | "payment" | "fulfillment" | "esimStatus" | "providerOrderId" | "iccid" | "qrCodeUrl" | "activationCode" | "iosInstallUrl" | "androidInstallUrl" | "totalDataGb" | "usedDataGb" | "remainingDataGb" | "activationDeadlineAt" | "activatedAt" | "expiresAt" | "lastUsageSyncAt" | "customerArchivedAt" | "esimProfileId" | "createdAt", ExtArgs["result"]["order"]>
 export type OrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   customerAccount?: boolean | Prisma.Order$customerAccountArgs<ExtArgs>
   esimProfile?: boolean | Prisma.Order$esimProfileArgs<ExtArgs>
@@ -3428,6 +3483,7 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     activatedAt: Date | null
     expiresAt: Date | null
     lastUsageSyncAt: Date | null
+    customerArchivedAt: Date | null
     esimProfileId: string | null
     createdAt: Date
   }, ExtArgs["result"]["order"]>
@@ -3903,6 +3959,7 @@ export interface OrderFieldRefs {
   readonly activatedAt: Prisma.FieldRef<"Order", 'DateTime'>
   readonly expiresAt: Prisma.FieldRef<"Order", 'DateTime'>
   readonly lastUsageSyncAt: Prisma.FieldRef<"Order", 'DateTime'>
+  readonly customerArchivedAt: Prisma.FieldRef<"Order", 'DateTime'>
   readonly esimProfileId: Prisma.FieldRef<"Order", 'String'>
   readonly createdAt: Prisma.FieldRef<"Order", 'DateTime'>
 }

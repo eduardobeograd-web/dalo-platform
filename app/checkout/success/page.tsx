@@ -1,7 +1,9 @@
+import Link from "next/link";
 import { prisma } from "../../../lib/db";
 import { stripe } from "../../../lib/stripe";
 import SiteFooter from "../../../components/SiteFooter";
 import SiteHeader from "../../../components/SiteHeader";
+import { getOrderPurchaseDetails } from "../../../lib/order-purchase-details";
 import { enablePostPurchaseMarketing } from "./actions";
 
 function formatPrice(value: number) {
@@ -78,7 +80,7 @@ export default async function CheckoutSuccessPage({
         })
       : null;
 
-  if (!order || !product) {
+  if (!order) {
     return (
       <main className="dalo-page min-h-screen bg-[#F6F8FF] text-slate-900">
         <SiteHeader mode="checkout" />
@@ -93,12 +95,12 @@ export default async function CheckoutSuccessPage({
               We could not find this checkout order.
             </p>
 
-            <a
+            <Link
               href="/"
               className="mt-8 inline-block rounded-2xl bg-blue-600 px-8 py-4 font-bold text-white"
             >
               Back Home
-            </a>
+            </Link>
           </div>
         </section>
         <SiteFooter />
@@ -106,6 +108,7 @@ export default async function CheckoutSuccessPage({
     );
   }
 
+  const purchase = getOrderPurchaseDetails(order, product);
   const hasPassword = Boolean(customer?.passwordHash);
   const encodedEmail = encodeURIComponent(order.customer);
 
@@ -188,13 +191,16 @@ export default async function CheckoutSuccessPage({
 
             <div className="rounded-2xl bg-slate-50 p-5">
               <div className="text-sm text-slate-500">Product</div>
-              <div className="mt-1 font-bold">{product.name}</div>
+              <div className="mt-1 font-bold">{purchase.productName}</div>
             </div>
 
             <div className="rounded-2xl bg-slate-50 p-5">
               <div className="text-sm text-slate-500">Plan</div>
               <div className="mt-1 font-bold">
-                {product.data} / {product.validityDays} Days
+                {purchase.data}
+                {purchase.validityDays !== null
+                  ? ` / ${purchase.validityDays} Days`
+                  : ""}
               </div>
             </div>
 
@@ -211,7 +217,12 @@ export default async function CheckoutSuccessPage({
 
           <div className="mt-10 rounded-2xl bg-blue-50 p-6 text-left text-blue-700">
             <div className="font-bold">
-              Total: {formatPrice(order.amount ?? product.sellPrice)}
+              Total:{" "}
+              {order.amount !== null && order.amount !== undefined
+                ? formatPrice(order.amount)
+                : product
+                  ? formatPrice(product.sellPrice)
+                  : "Not available"}
             </div>
             <div className="mt-1">
               {order.esimStatus === "ready"
@@ -249,12 +260,12 @@ export default async function CheckoutSuccessPage({
           ) : null}
 
           <div className="mt-10">
-            <a
+            <Link
               href="/"
               className="inline-block rounded-2xl bg-slate-100 px-8 py-4 font-bold text-slate-700"
             >
               Back Home
-            </a>
+            </Link>
           </div>
         </div>
       </section>

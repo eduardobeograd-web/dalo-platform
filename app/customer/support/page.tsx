@@ -5,6 +5,7 @@ import { prisma } from "../../../lib/db";
 import { createSupportRequest } from "./actions";
 import SiteFooter from "../../../components/SiteFooter";
 import SiteHeader from "../../../components/SiteHeader";
+import { getOrderPurchaseDetails } from "../../../lib/order-purchase-details";
 
 export default async function CustomerSupportPage({
   searchParams,
@@ -52,6 +53,9 @@ export default async function CustomerSupportPage({
           id: selectedOrder.productId,
         },
       })
+    : null;
+  const purchase = selectedOrder
+    ? getOrderPurchaseDetails(selectedOrder, product)
     : null;
 
   return (
@@ -190,7 +194,7 @@ export default async function CustomerSupportPage({
                   <div>
                     <p className="text-sm text-slate-400">Product</p>
                     <p className="mt-1 font-bold">
-                      {product?.name || "Product not found"}
+                      {purchase?.productName || "Product not found"}
                     </p>
                   </div>
 
