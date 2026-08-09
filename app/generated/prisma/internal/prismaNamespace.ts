@@ -2197,6 +2197,7 @@ export const OrderScalarFieldEnum = {
   activatedAt: 'activatedAt',
   expiresAt: 'expiresAt',
   lastUsageSyncAt: 'lastUsageSyncAt',
+  customerArchivedAt: 'customerArchivedAt',
   esimProfileId: 'esimProfileId',
   createdAt: 'createdAt'
 } as const

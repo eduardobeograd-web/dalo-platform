@@ -184,6 +184,7 @@ model Order {
   activatedAt          DateTime?
   expiresAt            DateTime?
   lastUsageSyncAt      DateTime?
+  customerArchivedAt  DateTime?
 
   esimProfileId String?
 
@@ -198,7 +199,9 @@ model Order {
   providerOperations ProviderOperation[]
 
   @@index([customerId, createdAt])
+  @@index([customerId, customerArchivedAt, createdAt])
   @@index([customer, createdAt])
+  @@index([customer, customerArchivedAt, createdAt])
   @@index([payment, createdAt])
   @@index([fulfillment, createdAt])
   @@index([esimStatus])

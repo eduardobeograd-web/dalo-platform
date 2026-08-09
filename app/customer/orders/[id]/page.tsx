@@ -7,6 +7,7 @@ import SiteHeader from "../../../../components/SiteHeader";
 import { getEsimLifecycleStatus } from "../../../../lib/esim-lifecycle";
 import { getEsimGoReadiness } from "../../../../lib/providers/esim-go/config";
 import { getProviderConfigBySlug } from "../../../../lib/providers/provider-configs";
+import { getOrderPurchaseDetails } from "../../../../lib/order-purchase-details";
 import { refreshCustomerEsimGoUsage } from "./actions";
 
 function formatDate(date?: Date | null) {
@@ -174,9 +175,7 @@ export default async function CustomerOrderDetailPage({
     },
   });
 
-  if (!product) {
-    redirect("/customer/dashboard");
-  }
+  const purchase = getOrderPurchaseDetails(order, product);
 
   const esimGoReadiness = getEsimGoReadiness();
   const providerConfig =
@@ -196,11 +195,11 @@ export default async function CustomerOrderDetailPage({
       providerConfig.fulfillmentEnabled &&
       order.esimProfileId,
   );
-  const topUpProducts = topUpsOperational
+  const topUpProducts = topUpsOperational && purchase.country !== "Destination unavailable"
     ? await prisma.product.findMany({
         where: {
           active: true,
-          country: product.country,
+          country: purchase.country,
           OR: [
             { provider: { equals: "eSIM Go", mode: "insensitive" } },
             { provider: { equals: "esim-go", mode: "insensitive" } },
@@ -288,12 +287,14 @@ export default async function CustomerOrderDetailPage({
                   </p>
 
                   <h2 className="mt-2 text-2xl font-black tracking-tight sm:mt-3 sm:text-3xl">
-                    {product.name}
+                    {purchase.productName}
                   </h2>
 
                   <p className="mt-2 text-sm text-slate-600 sm:mt-3 sm:text-base">
-                    {product.country} · {product.data} · {product.validityDays}{" "}
-                    days
+                    {purchase.country} · {purchase.data}
+                    {purchase.validityDays !== null
+                      ? ` · ${purchase.validityDays} days`
+                      : ""}
                   </p>
                 </div>
 
