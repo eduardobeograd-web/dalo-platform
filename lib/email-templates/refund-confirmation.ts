@@ -71,13 +71,21 @@ export function refundConfirmationHtml({
 
           <div style="margin:26px 0;border-left:4px solid #f59e0b;padding:2px 0 2px 18px;">
             <div style="font-size:18px;font-weight:800;color:#020617;">
-              ${wasDelivered ? "Your delivered eSIM remains visible" : "This order will not be delivered"}
+              ${
+                wasDelivered
+                  ? "Your delivered eSIM remains recorded"
+                  : partial
+                    ? "Check the latest delivery status in your account"
+                    : "This order will not be delivered"
+              }
             </div>
             <p style="margin:8px 0 0;font-size:14px;line-height:1.6;color:#475569;">
               ${
                 wasDelivered
-                  ? "The eSIM was already delivered before the refund. A Stripe refund does not automatically revoke an issued provider bundle, so the installation record remains available in your account."
-                  : "The refund was recorded before delivery. DALO has cancelled the pending eSIM delivery."
+                  ? "The eSIM was already delivered before the refund. A refund does not automatically remove an eSIM that is already installed on a device. Your order remains visible in your account."
+                  : partial
+                    ? "This is a partial refund. It does not by itself confirm that delivery was cancelled. Open your account to see the latest status of this order."
+                    : "The full refund was recorded before delivery. DALO has cancelled the pending eSIM delivery."
               }
             </p>
           </div>

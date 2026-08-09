@@ -3,12 +3,10 @@ import { prisma } from "../../../lib/db";
 import { stripe } from "../../../lib/stripe";
 import SiteFooter from "../../../components/SiteFooter";
 import SiteHeader from "../../../components/SiteHeader";
+import { getCheckoutSuccessCopy } from "../../../lib/checkout-success-copy";
+import { formatCurrencyAmount } from "../../../lib/money";
 import { getOrderPurchaseDetails } from "../../../lib/order-purchase-details";
 import { enablePostPurchaseMarketing } from "./actions";
-
-function formatPrice(value: number) {
-  return `$${value.toFixed(2)}`;
-}
 
 async function loadStripeCheckoutOrder(sessionId: string) {
   if (!process.env.STRIPE_SECRET_KEY) {
@@ -22,12 +20,17 @@ async function loadStripeCheckoutOrder(sessionId: string) {
     return null;
   }
 
-  return prisma.order.findFirst({
+  const order = await prisma.order.findFirst({
     where: {
       id: orderId,
       stripeSessionId: stripeSession.id,
     },
   });
+
+  return {
+    order,
+    isTestMode: !stripeSession.livemode,
+  };
 }
 
 export default async function CheckoutSuccessPage({
@@ -41,9 +44,11 @@ export default async function CheckoutSuccessPage({
 }) {
   const params = await searchParams;
 
-  let order = params.session_id
+  const stripeCheckout = params.session_id
     ? await loadStripeCheckoutOrder(params.session_id)
     : null;
+  let order = stripeCheckout?.order || null;
+  let isTestMode = stripeCheckout?.isTestMode || false;
 
   if (
     !order &&
@@ -56,6 +61,7 @@ export default async function CheckoutSuccessPage({
         id: params.orderId,
       },
     });
+    isTestMode = true;
   }
 
   const product = order
@@ -111,6 +117,13 @@ export default async function CheckoutSuccessPage({
   const purchase = getOrderPurchaseDetails(order, product);
   const hasPassword = Boolean(customer?.passwordHash);
   const encodedEmail = encodeURIComponent(order.customer);
+  const isDeliveryReady = order.esimStatus === "ready";
+  const { statusMessage, deliveryMessage } = getCheckoutSuccessCopy({
+    isTestMode,
+    isDeliveryReady,
+  });
+  const currency = (order.currency || "USD").trim().toUpperCase();
+  const amount = order.amount ?? product?.sellPrice ?? null;
 
   return (
     <main className="dalo-page min-h-screen bg-[#F6F8FF] text-slate-900">
@@ -131,9 +144,7 @@ export default async function CheckoutSuccessPage({
           </h1>
 
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-slate-600">
-            {order.esimStatus === "ready"
-              ? "Your test payment was received and your test eSIM is ready."
-              : "Your payment was received in test mode. Your eSIM is now being prepared."}
+            {statusMessage}
           </p>
 
           <div className="mt-8 rounded-[2rem] bg-blue-600 p-7 text-left text-white shadow-xl shadow-blue-100">
@@ -218,16 +229,12 @@ export default async function CheckoutSuccessPage({
           <div className="mt-10 rounded-2xl bg-blue-50 p-6 text-left text-blue-700">
             <div className="font-bold">
               Total:{" "}
-              {order.amount !== null && order.amount !== undefined
-                ? formatPrice(order.amount)
-                : product
-                  ? formatPrice(product.sellPrice)
-                  : "Not available"}
+              {amount !== null
+                ? formatCurrencyAmount(amount, currency)
+                : "Not available"}
             </div>
             <div className="mt-1">
-              {order.esimStatus === "ready"
-                ? "Stripe test payment and test eSIM delivery completed successfully."
-                : "Stripe test payment completed. Your eSIM delivery is being prepared."}
+              {deliveryMessage}
             </div>
           </div>
 
