@@ -70,6 +70,11 @@ requireValue(
   "DALO_EMAIL_FROM is missing. Use an address on the verified sender domain.",
 );
 
+requireValue(
+  "DALO_EMAIL_REPLY_TO",
+  "DALO_EMAIL_REPLY_TO is missing. Use an inbox that is actively monitored by DALO support.",
+);
+
 if (emailFrom.includes("onboarding@resend.dev")) {
   errors.push(
     "DALO_EMAIL_FROM still uses the Resend onboarding sender. Verify a DALO domain.",

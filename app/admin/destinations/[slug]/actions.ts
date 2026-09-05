@@ -33,6 +33,7 @@ export async function updateDestinationPage(
       String(formData.get("compatibilityText") || "").trim() || null,
     hotspotText: String(formData.get("hotspotText") || "").trim() || null,
     faq,
+    planFinderEnabled: formData.get("planFinderEnabled") === "on",
     published,
     indexable: published && formData.get("indexable") === "on",
   };

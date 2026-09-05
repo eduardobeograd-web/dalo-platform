@@ -436,6 +436,7 @@ model DestinationPage {
   compatibilityText String?
   hotspotText       String?
   faq               Json?
+  planFinderEnabled Boolean  @default(true)
   published         Boolean  @default(false)
   indexable         Boolean  @default(false)
   createdAt         DateTime @default(now())

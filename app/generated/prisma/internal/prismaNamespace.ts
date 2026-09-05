@@ -2378,6 +2378,7 @@ export const DestinationPageScalarFieldEnum = {
   compatibilityText: 'compatibilityText',
   hotspotText: 'hotspotText',
   faq: 'faq',
+  planFinderEnabled: 'planFinderEnabled',
   published: 'published',
   indexable: 'indexable',
   createdAt: 'createdAt',

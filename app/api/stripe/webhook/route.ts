@@ -9,8 +9,10 @@ import { sendPaymentConfirmationEmail } from "@/lib/payment-confirmation-email";
 import { trackCustomerEvent } from "@/lib/customer-events";
 import { sendRefundConfirmationEmail } from "@/lib/refund-confirmation-email";
 import { addMonths } from "@/lib/esim-lifecycle";
+import { wasOrderEsimDelivered } from "@/lib/order-delivery";
 import { getEsimGoReadiness } from "@/lib/providers/esim-go/config";
 import { fulfillPaidOrderWithEsimGo } from "@/lib/providers/esim-go/fulfillment";
+import { getCheckoutCustomerEmailKind } from "@/lib/checkout-email-routing";
 
 export const runtime = "nodejs";
 
@@ -215,8 +217,7 @@ async function markOrderRefunded(charge: Stripe.Charge) {
     };
   }
 
-  const wasDelivered =
-    order.fulfillment === "Delivered" || order.esimStatus === "ready";
+  const wasDelivered = wasOrderEsimDelivered(order);
 
   await prisma.order.update({
     where: { id: order.id },
@@ -307,7 +308,6 @@ export async function POST(request: NextRequest) {
     ) {
       const session = event.data.object as Stripe.Checkout.Session;
       const result = await markOrderPaid(session);
-      let paymentEmailResult = null;
 
       if (result.updated && result.orderId) {
         const paidOrder = await prisma.order.findUnique({
@@ -329,8 +329,6 @@ export async function POST(request: NextRequest) {
               currency: paidOrder.currency,
             },
           });
-
-          paymentEmailResult = await sendPaymentConfirmationEmail(paidOrder.id);
         }
       }
 
@@ -369,25 +367,14 @@ export async function POST(request: NextRequest) {
       const deliveryOrder = result.orderId
         ? await prisma.order.findUnique({ where: { id: result.orderId } })
         : null;
-      const hasInstallDetails = Boolean(
-        deliveryOrder?.activationCode ||
-          deliveryOrder?.qrCodeUrl ||
-          deliveryOrder?.iosInstallUrl ||
-          deliveryOrder?.androidInstallUrl
-      );
-      const isDeliveryReady =
-        deliveryOrder?.payment === "Paid" &&
-        deliveryOrder.fulfillment === "Delivered" &&
-        deliveryOrder.esimStatus === "ready" &&
-        hasInstallDetails;
-      const deliveryBecameReady =
-        fulfillmentResult !== null &&
-        "fulfilled" in fulfillmentResult &&
-        fulfillmentResult.fulfilled;
-      const emailResult = isDeliveryReady && deliveryBecameReady
+      const customerEmailKind = getCheckoutCustomerEmailKind(deliveryOrder);
+      const emailResult = customerEmailKind === "order_confirmation" && deliveryOrder
         ? await sendOrderConfirmationEmail(deliveryOrder.id)
         : null;
-      const internalEmailResult = isDeliveryReady && deliveryBecameReady
+      const paymentEmailResult = customerEmailKind === "payment_confirmation" && result.orderId
+        ? await sendPaymentConfirmationEmail(result.orderId)
+        : null;
+      const internalEmailResult = customerEmailKind === "order_confirmation" && deliveryOrder
         ? await sendInternalOrderNotification(deliveryOrder.id)
         : null;
 
