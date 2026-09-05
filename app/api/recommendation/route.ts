@@ -12,6 +12,7 @@ type RecommendationApiInput = {
 
 type PublicProduct = {
   id?: unknown;
+  providerProductId?: unknown;
   country?: unknown;
   region?: unknown;
   name?: unknown;
@@ -135,6 +136,7 @@ function safeProduct(product?: PublicProduct | null) {
 
   return {
     id: product.id,
+    providerProductId: product.providerProductId,
     country: product.country,
     region: product.region,
     name: product.name,
@@ -171,7 +173,6 @@ function safeUpsellOffer(offer?: PublicUpsellOffer | null) {
 
 function toPublicRecommendation(
   recommendation: RecommendationLike | null,
-  debug: boolean
 ) {
   if (!recommendation) {
     return null;
@@ -218,7 +219,6 @@ async function getRecommendationResponse(input: RecommendationApiInput) {
     input: publicInput,
     recommendation: toPublicRecommendation(
       recommendation as RecommendationLike | null,
-      false
     ),
   };
 }

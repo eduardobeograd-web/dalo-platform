@@ -10,33 +10,51 @@ import {
 
 const hiddenPrefixes = ["/admin", "/customer"];
 const OPEN_DEVICE_CHECK_EVENT = "dalo:open-device-check";
+const DEVICE_COMPATIBILITY_CONFIRMED_KEY =
+  "dalo_device_compatibility_confirmed_v1";
 type DevicePlatform = "iphone" | "ipad" | "samsung" | "android" | "other";
+
+function detectDevicePlatform(): DevicePlatform {
+  if (typeof navigator === "undefined") return "other";
+
+  const userAgent = navigator.userAgent;
+  const isIPadOs =
+    navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
+
+  if (/iPhone|iPod/i.test(userAgent)) return "iphone";
+  if (/iPad/i.test(userAgent) || isIPadOs) return "ipad";
+  if (/Android/i.test(userAgent) && /Samsung|SM-[A-Z0-9]+/i.test(userAgent)) {
+    return "samsung";
+  }
+  if (/Android/i.test(userAgent)) return "android";
+  return "other";
+}
+
+function readCompatibilityConfirmation() {
+  if (typeof window === "undefined") return false;
+
+  try {
+    return (
+      window.localStorage.getItem(DEVICE_COMPATIBILITY_CONFIRMED_KEY) ===
+      "true"
+    );
+  } catch {
+    return false;
+  }
+}
 
 export default function DeviceCompatibilityCheck({ variant = "floating" }: { variant?: "floating" | "quiz" }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [platform, setPlatform] = useState<DevicePlatform>("other");
-  const [consentDecided, setConsentDecided] = useState(false);
+  const [platform] = useState<DevicePlatform>(detectDevicePlatform);
+  const [consentDecided, setConsentDecided] = useState(() =>
+    typeof window === "undefined" ? false : Boolean(readConsent()),
+  );
+  const [compatibilityConfirmed, setCompatibilityConfirmed] = useState(
+    readCompatibilityConfirmation,
+  );
 
   useEffect(() => {
-    const userAgent = navigator.userAgent;
-    const isIPadOs =
-      navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1;
-
-    if (/iPhone|iPod/i.test(userAgent)) {
-      setPlatform("iphone");
-    } else if (/iPad/i.test(userAgent) || isIPadOs) {
-      setPlatform("ipad");
-    } else if (/Android/i.test(userAgent) && /Samsung|SM-[A-Z0-9]+/i.test(userAgent)) {
-      setPlatform("samsung");
-    } else if (/Android/i.test(userAgent)) {
-      setPlatform("android");
-    }
-  }, []);
-
-  useEffect(() => {
-    setConsentDecided(Boolean(readConsent()));
-
     function showAfterConsentChoice() {
       setConsentDecided(true);
     }
@@ -77,6 +95,9 @@ export default function DeviceCompatibilityCheck({ variant = "floating" }: { var
   ) {
     return null;
   }
+
+  const hideFloatingLauncher =
+    variant === "floating" && compatibilityConfirmed;
 
   const platformLabel =
     platform === "iphone"
@@ -127,21 +148,22 @@ export default function DeviceCompatibilityCheck({ variant = "floating" }: { var
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => {
-          if (variant === "quiz") {
-            window.dispatchEvent(new Event(OPEN_DEVICE_CHECK_EVENT));
-            return;
-          }
-          setOpen(true);
-        }}
-        aria-haspopup="dialog"
-        aria-label="Check device compatibility"
-        className={variant === "quiz"
-          ? "group relative flex min-h-12 shrink-0 items-center gap-2 rounded-xl border border-blue-200 bg-blue-50/90 px-2.5 py-1.5 text-left shadow-sm transition hover:border-blue-400 hover:bg-blue-100 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200"
-          : `group fixed bottom-24 right-3 z-40 h-12 w-auto items-center justify-center gap-2 rounded-2xl border border-blue-400 bg-blue-800 px-2.5 text-left text-white shadow-[0_14px_35px_rgba(13,54,140,0.32)] transition hover:-translate-y-1 hover:bg-blue-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 sm:bottom-5 sm:right-5 sm:h-auto sm:min-w-[330px] sm:justify-start sm:gap-3 sm:px-4 sm:py-3.5 ${pathname === "/" ? "hidden" : "flex"}`}
-      >
+      {!hideFloatingLauncher ? (
+        <button
+          type="button"
+          onClick={() => {
+            if (variant === "quiz") {
+              window.dispatchEvent(new Event(OPEN_DEVICE_CHECK_EVENT));
+              return;
+            }
+            setOpen(true);
+          }}
+          aria-haspopup="dialog"
+          aria-label="Check device compatibility"
+          className={variant === "quiz"
+            ? "group relative flex min-h-12 shrink-0 items-center gap-2 rounded-xl border border-blue-200 bg-blue-50/90 px-2.5 py-1.5 text-left shadow-sm transition hover:border-blue-400 hover:bg-blue-100 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200"
+            : `group fixed bottom-24 right-3 z-40 h-12 w-auto items-center justify-center gap-2 rounded-2xl border border-blue-400 bg-blue-800 px-2.5 text-left text-white shadow-[0_14px_35px_rgba(13,54,140,0.32)] transition hover:-translate-y-1 hover:bg-blue-900 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200 sm:bottom-5 sm:right-5 sm:h-auto sm:min-w-[330px] sm:justify-start sm:gap-3 sm:px-4 sm:py-3.5 ${pathname === "/" ? "hidden" : "flex"}`}
+        >
         <span className="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-white sm:h-11 sm:w-11" aria-hidden="true">
           <span className="flex h-9 w-6 flex-col items-center justify-center gap-1 rounded-lg border-2 border-blue-900 bg-slate-950 p-1 shadow-[0_4px_12px_rgba(15,23,42,0.35)]">
             <span className="h-2 w-2 rounded-full bg-red-950 ring-1 ring-red-600/60" />
@@ -170,7 +192,8 @@ export default function DeviceCompatibilityCheck({ variant = "floating" }: { var
         <span className={`${variant === "quiz" ? "hidden" : "hidden sm:block"} shrink-0 rounded-lg bg-white/15 px-2.5 py-1.5 text-xs font-black uppercase tracking-wide transition group-hover:bg-white group-hover:text-blue-900`}>
           Check now
         </span>
-      </button>
+        </button>
+      ) : null}
 
       {variant === "floating" && open ? (
         <div
@@ -266,7 +289,18 @@ export default function DeviceCompatibilityCheck({ variant = "floating" }: { var
               <div className="flex flex-col gap-3 pt-1 sm:flex-row">
                 <button
                   type="button"
-                  onClick={() => setOpen(false)}
+                  onClick={() => {
+                    try {
+                      window.localStorage.setItem(
+                        DEVICE_COMPATIBILITY_CONFIRMED_KEY,
+                        "true",
+                      );
+                    } catch {
+                      // The current session still remembers the choice.
+                    }
+                    setCompatibilityConfirmed(true);
+                    setOpen(false);
+                  }}
                   className="inline-flex min-h-12 flex-1 items-center justify-center rounded-xl bg-blue-700 px-5 font-bold text-white transition hover:bg-blue-800 focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-200"
                 >
                   My device is compatible

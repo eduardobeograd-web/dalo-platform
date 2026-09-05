@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { recoverCustomerOrder } from "../recovery-actions";
 import { notFound } from "next/navigation";
 import AdminShell from "../../../../components/AdminShell";
 import {
@@ -95,7 +96,7 @@ export default async function OrderDetailPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ liveFulfillment?: string }>;
+  searchParams: Promise<{ liveFulfillment?: string; recovery?: string }>;
 }) {
   const admin = await requireAdminPermission(ADMIN_PERMISSIONS.ORDERS_READ);
   const canManageOrders = adminHasPermission(
@@ -103,7 +104,7 @@ export default async function OrderDetailPage({
     ADMIN_PERMISSIONS.ORDERS_WRITE,
   );
   const { id } = await params;
-  const { liveFulfillment } = await searchParams;
+  const { liveFulfillment, recovery } = await searchParams;
 
   if (!id) {
     notFound();
@@ -196,6 +197,16 @@ export default async function OrderDetailPage({
         </Link>
       </div>
 
+      <section className="mb-6 rounded-2xl border border-blue-200 bg-blue-50 p-5">
+        <h2 className="text-xl font-bold">Delivery recovery</h2>
+        <p className="mt-2 text-sm">These actions recover existing installation details, refresh usage or retry the delivery email. They cannot purchase another eSIM.</p>
+        {recovery ? <p role="status" className="mt-3 font-bold">{recovery}</p> : null}
+        {canManageOrders ? <div className="mt-4 flex flex-wrap gap-3">{[["installation", "Recover installation"], ["usage", "Refresh usage"], ["email", "Retry delivery email"]].map(([value, label]) => <form key={value} action={recoverCustomerOrder}>
+          <input type="hidden" name="orderId" value={order.id}/><input type="hidden" name="recoveryAction" value={value}/>
+          <button className="rounded-xl bg-blue-700 px-4 py-3 font-bold text-white">{label}</button>
+        </form>)}</div> : null}
+        <Link href="/admin/orders/attention" className="mt-3 inline-block font-bold text-blue-700">View provider issues →</Link>
+      </section>
       <div className="mb-8 rounded-[2rem] bg-white p-6 shadow-xl shadow-blue-50">
         <div className="flex flex-col justify-between gap-4 border-b border-slate-100 pb-6 md:flex-row md:items-center">
           <div>

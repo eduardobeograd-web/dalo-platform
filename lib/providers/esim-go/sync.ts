@@ -1,5 +1,6 @@
 import "server-only";
 
+import { matchBundle } from "@/lib/purchase-safety";
 import { prisma } from "@/lib/db";
 import { getProviderEsimStatus } from "@/lib/esim-lifecycle";
 import {
@@ -34,7 +35,10 @@ function assignmentStatus(assignment: EsimGoBundleAssignment) {
 }
 
 export async function syncEsimGoProfileUsage(esimProfileId: string) {
-  const profile = await prisma.esimProfile.findUnique({
+  const identity = await prisma.esimProfile.findUniqueOrThrow({ where: { id: esimProfileId }, select: { iccid: true } });
+  return prisma.$transaction(async (tx) => {
+  await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${"dalo-usage:" + identity.iccid}))`;
+  const profile = await tx.esimProfile.findUnique({
     where: { id: esimProfileId },
     include: {
       bundles: {
@@ -55,6 +59,7 @@ export async function syncEsimGoProfileUsage(esimProfileId: string) {
       return null;
     }),
   ]);
+  if (!Array.isArray(response.bundles)) throw new Error("Provider returned no valid bundle list.");
   const now = new Date();
   const firstInstalledAt = asDate(providerProfile?.firstInstalledDateTime);
   const profileOnlyStatus = getProviderEsimStatus({
@@ -66,7 +71,7 @@ export async function syncEsimGoProfileUsage(esimProfileId: string) {
   let syncedAssignments = 0;
 
   if (providerProfile) {
-    await prisma.order.updateMany({
+    await tx.order.updateMany({
       where: {
         esimProfileId: profile.id,
         payment: "Paid",
@@ -83,32 +88,21 @@ export async function syncEsimGoProfileUsage(esimProfileId: string) {
     const bundleName = providerBundle.name?.trim();
     if (!bundleName) continue;
 
+    if (profile.bundles.some((bundle) => bundle.providerBundleName === bundleName && !bundle.providerAssignmentId && !bundle.providerAssignmentReference) &&
+        response.bundles.filter((bundle) => bundle.name?.trim() === bundleName).flatMap((bundle) => bundle.assignments || []).length > 1) {
+      throw new Error("Multiple provider assignments require manual order matching before usage sync.");
+    }
+
     for (const assignment of providerBundle.assignments || []) {
       const assignmentId = assignment.id?.trim() || null;
       const assignmentReference =
         assignment.assignmentReference?.trim() || null;
 
-      const existing =
-        (assignmentId
-          ? profile.bundles.find(
-              (bundle) => bundle.providerAssignmentId === assignmentId,
-            )
-          : null) ||
-        (assignmentReference
-          ? profile.bundles.find(
-              (bundle) =>
-                bundle.providerAssignmentReference === assignmentReference,
-            )
-          : null) ||
-        profile.bundles.find(
-          (bundle) =>
-            bundle.providerBundleName === bundleName &&
-            !bundle.providerAssignmentId &&
-            !bundle.providerAssignmentReference,
-        );
-
+      if (!assignmentId && !assignmentReference) throw new Error("Provider assignment has no stable identifier.");
+      const existing = matchBundle(profile.bundles, bundleName, assignmentId, assignmentReference);
       const initialBytes = asQuantity(assignment.initialQuantity);
       const remainingBytes = asQuantity(assignment.remainingQuantity);
+      if (initialBytes === null || remainingBytes === null || remainingBytes > initialBytes) throw new Error("Provider returned incomplete usage quantities.");
       const startedAt = asDate(assignment.startTime);
       const expiresAt = asDate(assignment.endTime);
       const bundleStatus = assignmentStatus(assignment);
@@ -138,21 +132,24 @@ export async function syncEsimGoProfileUsage(esimProfileId: string) {
       };
 
       const saved = existing
-        ? await prisma.esimBundle.update({
+        ? await tx.esimBundle.update({
             where: { id: existing.id },
             data,
           })
-        : await prisma.esimBundle.create({
+        : await tx.esimBundle.create({
             data: {
               esimProfileId: profile.id,
               ...data,
             },
           });
 
+      const savedIndex = profile.bundles.findIndex((bundle) => bundle.id === saved.id);
+      if (savedIndex >= 0) profile.bundles[savedIndex] = saved;
+      else profile.bundles.push(saved);
       if (saved.orderId) {
         const initialGb = bytesToGb(initialBytes);
         const remainingGb = bytesToGb(remainingBytes);
-        await prisma.order.update({
+        await tx.order.update({
           where: { id: saved.orderId },
           data: {
             totalDataGb: initialGb,
@@ -173,7 +170,7 @@ export async function syncEsimGoProfileUsage(esimProfileId: string) {
     }
   }
 
-  await prisma.esimProfile.update({
+  await tx.esimProfile.update({
     where: { id: profile.id },
     data: {
       status:
@@ -195,10 +192,14 @@ export async function syncEsimGoProfileUsage(esimProfileId: string) {
     },
   });
 
+  if (!syncedAssignments && profile.bundles.some((bundle) => bundle.orderId)) {
+    throw new Error("Provider returned no assignments for the purchased bundles.");
+  }
   return {
     profileId: profile.id,
     iccid: profile.iccid,
     syncedAssignments,
     syncedAt: now,
   };
+  }, { timeout: 45000, maxWait: 10000 });
 }

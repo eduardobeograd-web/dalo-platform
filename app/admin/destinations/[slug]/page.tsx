@@ -269,7 +269,21 @@ export default async function EditDestinationPage({
         </section>
 
         <section className="rounded-[2rem] bg-white p-7 shadow-sm">
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-4 md:grid-cols-3">
+            <label className="flex items-start gap-3 rounded-2xl bg-blue-50 p-5">
+              <input
+                name="planFinderEnabled"
+                type="checkbox"
+                defaultChecked={page?.planFinderEnabled ?? true}
+                className="mt-1 h-5 w-5"
+              />
+              <span>
+                <span className="block font-black">Show compact plan finder</span>
+                <span className="mt-1 block text-sm text-slate-500">
+                  Lets travelers get a recommendation without choosing this destination again.
+                </span>
+              </span>
+            </label>
             <label className="flex items-start gap-3 rounded-2xl bg-slate-50 p-5">
               <input
                 name="published"

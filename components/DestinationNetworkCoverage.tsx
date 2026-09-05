@@ -1,79 +1,38 @@
-import { prisma } from "../lib/db";
+import type { DestinationSupportedNetwork } from "./DestinationNetworkHeroBadge";
 
 type DestinationNetworkCoverageProps = {
-  slug: string;
+  destination: string;
+  networks: DestinationSupportedNetwork[];
+  syncedAt: Date | null;
 };
 
-type StoredNetwork = {
-  name?: unknown;
-  speeds?: unknown;
-};
-
-export default async function DestinationNetworkCoverage({
-  slug,
+export default function DestinationNetworkCoverage({
+  destination,
+  networks,
+  syncedAt,
 }: DestinationNetworkCoverageProps) {
-  const destination = await prisma.destinationPage.findFirst({
-    where: { slug, published: true },
-    select: { displayName: true, countryName: true },
-  });
-
-  if (!destination) return null;
-
-  const product = await prisma.product.findFirst({
-    where: {
-      active: true,
-      isoCode: { not: null },
-      OR: [
-        { country: destination.countryName },
-        { country: destination.displayName },
-      ],
-    },
-    select: { isoCode: true },
-  });
-
-  if (!product?.isoCode) return null;
-
-  let coverage: { networks: unknown; syncedAt: Date } | null = null;
-
-  try {
-    coverage = await prisma.countryNetworkCoverage.findUnique({
-      where: { isoCode: product.isoCode },
-      select: { networks: true, syncedAt: true },
-    });
-  } catch {
-    return null;
-  }
-
-  const rawNetworks = Array.isArray(coverage?.networks)
-    ? (coverage.networks as StoredNetwork[])
-    : [];
-  const networks = rawNetworks
-    .map((network) => ({
-      name: typeof network.name === "string" ? network.name.trim() : "",
-      speeds: Array.isArray(network.speeds)
-        ? network.speeds.filter(
-            (speed): speed is string => typeof speed === "string",
-          )
-        : [],
-    }))
-    .filter((network) => network.name);
-
   if (networks.length === 0) return null;
 
   return (
-    <section className="mx-auto w-full max-w-6xl px-5 pb-12 sm:px-7 lg:px-8">
-      <div className="rounded-[28px] border border-blue-100 bg-[#f5f8ff] p-6 sm:p-8">
+    <section
+      aria-labelledby="destination-supported-networks"
+      className="mt-6 sm:mt-10"
+    >
+      <div className="rounded-[2rem] border border-blue-200 bg-[#f5f8ff] p-5 shadow-[0_16px_40px_rgba(33,72,192,0.08)] sm:p-7">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#2852cc]">
-              Local connectivity
+              eSIM Go network coverage
             </p>
-            <h2 className="mt-2 text-2xl font-bold tracking-tight text-slate-950">
-              Partner networks in {destination.displayName}
+            <h2
+              id="destination-supported-networks"
+              className="mt-2 text-2xl font-bold tracking-tight text-slate-950"
+            >
+              Supported mobile networks in {destination}
             </h2>
           </div>
           <p className="max-w-md text-sm leading-6 text-slate-600">
-            Your eSIM automatically connects to an available supported network.
+            Your eSIM automatically connects to an available supported operator.
           </p>
         </div>
 
@@ -95,13 +54,13 @@ export default async function DestinationNetworkCoverage({
         </div>
 
         <p className="mt-5 text-xs leading-5 text-slate-500">
-          Network availability, routing and speed vary by location, device and
-          local conditions. Coverage information was last synchronized on{" "}
-          {coverage?.syncedAt.toLocaleDateString("en-US", {
+          Operator availability, routing and speed can vary by location, device
+          and local conditions. Official eSIM Go network data was last synchronized on{" "}
+          {syncedAt?.toLocaleDateString("en-US", {
             year: "numeric",
             month: "short",
             day: "numeric",
-          })}.
+          }) || "recently"}.
         </p>
       </div>
     </section>

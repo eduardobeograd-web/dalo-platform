@@ -39,6 +39,7 @@ export type DestinationPageMinAggregateOutputType = {
   activationText: string | null
   compatibilityText: string | null
   hotspotText: string | null
+  planFinderEnabled: boolean | null
   published: boolean | null
   indexable: boolean | null
   createdAt: Date | null
@@ -60,6 +61,7 @@ export type DestinationPageMaxAggregateOutputType = {
   activationText: string | null
   compatibilityText: string | null
   hotspotText: string | null
+  planFinderEnabled: boolean | null
   published: boolean | null
   indexable: boolean | null
   createdAt: Date | null
@@ -82,6 +84,7 @@ export type DestinationPageCountAggregateOutputType = {
   compatibilityText: number
   hotspotText: number
   faq: number
+  planFinderEnabled: number
   published: number
   indexable: number
   createdAt: number
@@ -105,6 +108,7 @@ export type DestinationPageMinAggregateInputType = {
   activationText?: true
   compatibilityText?: true
   hotspotText?: true
+  planFinderEnabled?: true
   published?: true
   indexable?: true
   createdAt?: true
@@ -126,6 +130,7 @@ export type DestinationPageMaxAggregateInputType = {
   activationText?: true
   compatibilityText?: true
   hotspotText?: true
+  planFinderEnabled?: true
   published?: true
   indexable?: true
   createdAt?: true
@@ -148,6 +153,7 @@ export type DestinationPageCountAggregateInputType = {
   compatibilityText?: true
   hotspotText?: true
   faq?: true
+  planFinderEnabled?: true
   published?: true
   indexable?: true
   createdAt?: true
@@ -243,6 +249,7 @@ export type DestinationPageGroupByOutputType = {
   compatibilityText: string | null
   hotspotText: string | null
   faq: runtime.JsonValue | null
+  planFinderEnabled: boolean
   published: boolean
   indexable: boolean
   createdAt: Date
@@ -286,6 +293,7 @@ export type DestinationPageWhereInput = {
   compatibilityText?: Prisma.StringNullableFilter<"DestinationPage"> | string | null
   hotspotText?: Prisma.StringNullableFilter<"DestinationPage"> | string | null
   faq?: Prisma.JsonNullableFilter<"DestinationPage">
+  planFinderEnabled?: Prisma.BoolFilter<"DestinationPage"> | boolean
   published?: Prisma.BoolFilter<"DestinationPage"> | boolean
   indexable?: Prisma.BoolFilter<"DestinationPage"> | boolean
   createdAt?: Prisma.DateTimeFilter<"DestinationPage"> | Date | string
@@ -308,6 +316,7 @@ export type DestinationPageOrderByWithRelationInput = {
   compatibilityText?: Prisma.SortOrderInput | Prisma.SortOrder
   hotspotText?: Prisma.SortOrderInput | Prisma.SortOrder
   faq?: Prisma.SortOrderInput | Prisma.SortOrder
+  planFinderEnabled?: Prisma.SortOrder
   published?: Prisma.SortOrder
   indexable?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -333,6 +342,7 @@ export type DestinationPageWhereUniqueInput = Prisma.AtLeast<{
   compatibilityText?: Prisma.StringNullableFilter<"DestinationPage"> | string | null
   hotspotText?: Prisma.StringNullableFilter<"DestinationPage"> | string | null
   faq?: Prisma.JsonNullableFilter<"DestinationPage">
+  planFinderEnabled?: Prisma.BoolFilter<"DestinationPage"> | boolean
   published?: Prisma.BoolFilter<"DestinationPage"> | boolean
   indexable?: Prisma.BoolFilter<"DestinationPage"> | boolean
   createdAt?: Prisma.DateTimeFilter<"DestinationPage"> | Date | string
@@ -355,6 +365,7 @@ export type DestinationPageOrderByWithAggregationInput = {
   compatibilityText?: Prisma.SortOrderInput | Prisma.SortOrder
   hotspotText?: Prisma.SortOrderInput | Prisma.SortOrder
   faq?: Prisma.SortOrderInput | Prisma.SortOrder
+  planFinderEnabled?: Prisma.SortOrder
   published?: Prisma.SortOrder
   indexable?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -383,6 +394,7 @@ export type DestinationPageScalarWhereWithAggregatesInput = {
   compatibilityText?: Prisma.StringNullableWithAggregatesFilter<"DestinationPage"> | string | null
   hotspotText?: Prisma.StringNullableWithAggregatesFilter<"DestinationPage"> | string | null
   faq?: Prisma.JsonNullableWithAggregatesFilter<"DestinationPage">
+  planFinderEnabled?: Prisma.BoolWithAggregatesFilter<"DestinationPage"> | boolean
   published?: Prisma.BoolWithAggregatesFilter<"DestinationPage"> | boolean
   indexable?: Prisma.BoolWithAggregatesFilter<"DestinationPage"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"DestinationPage"> | Date | string
@@ -405,6 +417,7 @@ export type DestinationPageCreateInput = {
   compatibilityText?: string | null
   hotspotText?: string | null
   faq?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  planFinderEnabled?: boolean
   published?: boolean
   indexable?: boolean
   createdAt?: Date | string
@@ -427,6 +440,7 @@ export type DestinationPageUncheckedCreateInput = {
   compatibilityText?: string | null
   hotspotText?: string | null
   faq?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  planFinderEnabled?: boolean
   published?: boolean
   indexable?: boolean
   createdAt?: Date | string
@@ -449,6 +463,7 @@ export type DestinationPageUpdateInput = {
   compatibilityText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hotspotText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   faq?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  planFinderEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   indexable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -471,6 +486,7 @@ export type DestinationPageUncheckedUpdateInput = {
   compatibilityText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hotspotText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   faq?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  planFinderEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   indexable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -493,6 +509,7 @@ export type DestinationPageCreateManyInput = {
   compatibilityText?: string | null
   hotspotText?: string | null
   faq?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  planFinderEnabled?: boolean
   published?: boolean
   indexable?: boolean
   createdAt?: Date | string
@@ -515,6 +532,7 @@ export type DestinationPageUpdateManyMutationInput = {
   compatibilityText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hotspotText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   faq?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  planFinderEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   indexable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -537,6 +555,7 @@ export type DestinationPageUncheckedUpdateManyInput = {
   compatibilityText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   hotspotText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   faq?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  planFinderEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   published?: Prisma.BoolFieldUpdateOperationsInput | boolean
   indexable?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -559,6 +578,7 @@ export type DestinationPageCountOrderByAggregateInput = {
   compatibilityText?: Prisma.SortOrder
   hotspotText?: Prisma.SortOrder
   faq?: Prisma.SortOrder
+  planFinderEnabled?: Prisma.SortOrder
   published?: Prisma.SortOrder
   indexable?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -580,6 +600,7 @@ export type DestinationPageMaxOrderByAggregateInput = {
   activationText?: Prisma.SortOrder
   compatibilityText?: Prisma.SortOrder
   hotspotText?: Prisma.SortOrder
+  planFinderEnabled?: Prisma.SortOrder
   published?: Prisma.SortOrder
   indexable?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -601,6 +622,7 @@ export type DestinationPageMinOrderByAggregateInput = {
   activationText?: Prisma.SortOrder
   compatibilityText?: Prisma.SortOrder
   hotspotText?: Prisma.SortOrder
+  planFinderEnabled?: Prisma.SortOrder
   published?: Prisma.SortOrder
   indexable?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -625,6 +647,7 @@ export type DestinationPageSelect<ExtArgs extends runtime.Types.Extensions.Inter
   compatibilityText?: boolean
   hotspotText?: boolean
   faq?: boolean
+  planFinderEnabled?: boolean
   published?: boolean
   indexable?: boolean
   createdAt?: boolean
@@ -647,6 +670,7 @@ export type DestinationPageSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   compatibilityText?: boolean
   hotspotText?: boolean
   faq?: boolean
+  planFinderEnabled?: boolean
   published?: boolean
   indexable?: boolean
   createdAt?: boolean
@@ -669,6 +693,7 @@ export type DestinationPageSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   compatibilityText?: boolean
   hotspotText?: boolean
   faq?: boolean
+  planFinderEnabled?: boolean
   published?: boolean
   indexable?: boolean
   createdAt?: boolean
@@ -691,13 +716,14 @@ export type DestinationPageSelectScalar = {
   compatibilityText?: boolean
   hotspotText?: boolean
   faq?: boolean
+  planFinderEnabled?: boolean
   published?: boolean
   indexable?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type DestinationPageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "countryName" | "displayName" | "seoTitle" | "seoDescription" | "headline" | "intro" | "heroImage" | "heroImageAlt" | "coverageText" | "activationText" | "compatibilityText" | "hotspotText" | "faq" | "published" | "indexable" | "createdAt" | "updatedAt", ExtArgs["result"]["destinationPage"]>
+export type DestinationPageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "countryName" | "displayName" | "seoTitle" | "seoDescription" | "headline" | "intro" | "heroImage" | "heroImageAlt" | "coverageText" | "activationText" | "compatibilityText" | "hotspotText" | "faq" | "planFinderEnabled" | "published" | "indexable" | "createdAt" | "updatedAt", ExtArgs["result"]["destinationPage"]>
 
 export type $DestinationPagePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "DestinationPage"
@@ -718,6 +744,7 @@ export type $DestinationPagePayload<ExtArgs extends runtime.Types.Extensions.Int
     compatibilityText: string | null
     hotspotText: string | null
     faq: runtime.JsonValue | null
+    planFinderEnabled: boolean
     published: boolean
     indexable: boolean
     createdAt: Date
@@ -1160,6 +1187,7 @@ export interface DestinationPageFieldRefs {
   readonly compatibilityText: Prisma.FieldRef<"DestinationPage", 'String'>
   readonly hotspotText: Prisma.FieldRef<"DestinationPage", 'String'>
   readonly faq: Prisma.FieldRef<"DestinationPage", 'Json'>
+  readonly planFinderEnabled: Prisma.FieldRef<"DestinationPage", 'Boolean'>
   readonly published: Prisma.FieldRef<"DestinationPage", 'Boolean'>
   readonly indexable: Prisma.FieldRef<"DestinationPage", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"DestinationPage", 'DateTime'>

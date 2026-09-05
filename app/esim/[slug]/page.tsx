@@ -7,6 +7,10 @@ import SiteHeader from "../../../components/SiteHeader";
 import SiteFooter from "../../../components/SiteFooter";
 import DestinationAtAGlance from "../../../components/DestinationAtAGlance";
 import DestinationNetworkCoverage from "../../../components/DestinationNetworkCoverage";
+import DestinationNetworkHeroBadge, {
+  type DestinationSupportedNetwork,
+} from "../../../components/DestinationNetworkHeroBadge";
+import DestinationPlanFinder from "../../../components/DestinationPlanFinder";
 import DestinationMap, {
   hasDestinationMap,
 } from "../../../components/DestinationMap";
@@ -144,6 +148,27 @@ function getPlanHint(dataAmount: string) {
   }
 
   return "Best for light travel use";
+}
+
+function normalizeSupportedNetworks(value: unknown) {
+  if (!Array.isArray(value)) return [];
+
+  return value
+    .map((network): DestinationSupportedNetwork => {
+      const item = network && typeof network === "object"
+        ? (network as { name?: unknown; speeds?: unknown })
+        : {};
+
+      return {
+        name: typeof item.name === "string" ? item.name.trim() : "",
+        speeds: Array.isArray(item.speeds)
+          ? item.speeds.filter(
+              (speed): speed is string => typeof speed === "string",
+            )
+          : [],
+      };
+    })
+    .filter((network) => network.name);
 }
 
 type TravelerPlanCandidate = {
@@ -400,6 +425,17 @@ export default async function EsimLandingPage({ params }: PageProps) {
 
   if (!bestProduct) notFound();
 
+  const networkCoverage =
+    bestProduct.isoCode && /^[A-Z]{2}$/.test(bestProduct.isoCode)
+      ? await prisma.countryNetworkCoverage.findUnique({
+          where: { isoCode: bestProduct.isoCode },
+          select: { networks: true, syncedAt: true },
+        })
+      : null;
+  const supportedNetworks = normalizeSupportedNetworks(
+    networkCoverage?.networks,
+  );
+
   const productSchema = bestProduct
     ? {
         "@context": "https://schema.org",
@@ -576,24 +612,34 @@ export default async function EsimLandingPage({ params }: PageProps) {
               ) : null}
             </div>
             {hasDestinationMap(slug) ? (
-              <DestinationMap destination={displayName} slug={slug} />
-            ) : (
-              <Image
-                width={640}
-                height={320}
-                preload
-                quality={60}
-                sizes="(max-width: 639px) 100vw, 320px"
-                src={destinationImage}
-                alt={
-                  managedPage?.heroImageAlt ||
-                  `${displayName} travel destination`
-                }
-                className="h-40 min-h-0 w-full object-cover sm:h-60 lg:h-full lg:min-h-72"
+              <DestinationMap
+                destination={displayName}
+                networks={supportedNetworks}
+                slug={slug}
               />
+            ) : (
+              <div className="relative min-h-40 overflow-hidden sm:min-h-60 lg:min-h-72">
+                <Image
+                  fill
+                  preload
+                  quality={60}
+                  sizes="(max-width: 1023px) 100vw, 40vw"
+                  src={destinationImage}
+                  alt={
+                    managedPage?.heroImageAlt ||
+                    `${displayName} travel destination`
+                  }
+                  className="object-cover"
+                />
+                <DestinationNetworkHeroBadge networks={supportedNetworks} />
+              </div>
             )}
           </div>
         </div>
+
+        {managedPage?.planFinderEnabled !== false ? (
+          <DestinationPlanFinder destination={displayName} />
+        ) : null}
 
         {products.length ? (
           <section id="plans" className="mt-6 grid gap-4 sm:mt-10 sm:gap-6 md:grid-cols-3">
@@ -677,6 +723,12 @@ export default async function EsimLandingPage({ params }: PageProps) {
             </Link>
           </section>
         )}
+
+        <DestinationNetworkCoverage
+          destination={displayName}
+          networks={supportedNetworks}
+          syncedAt={networkCoverage?.syncedAt || null}
+        />
 
         {travelerPlanPicks.length > 1 ? (
           <section className="mt-10">
@@ -924,10 +976,17 @@ export default async function EsimLandingPage({ params }: PageProps) {
               </p>
             </div>
             <Link
-              href="/#quiz"
+              href={
+                managedPage?.planFinderEnabled !== false
+                  ? "#plan-finder"
+                  : "/#quiz"
+              }
               className="inline-flex min-h-12 items-center justify-center rounded-xl bg-white px-6 py-3 font-black text-blue-800 transition hover:bg-blue-50 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
             >
-              Find my eSIM <span aria-hidden="true" className="ml-2">→</span>
+              {managedPage?.planFinderEnabled !== false
+                ? "Use quick plan finder"
+                : "Find my eSIM"}{" "}
+              <span aria-hidden="true" className="ml-2">→</span>
             </Link>
           </div>
         </section>
@@ -973,7 +1032,6 @@ export default async function EsimLandingPage({ params }: PageProps) {
         </section>
       </section>
       <DestinationAtAGlance slug={slug} />
-      <DestinationNetworkCoverage slug={slug} />
       <SiteFooter />
     </main>
   );

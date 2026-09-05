@@ -1,10 +1,13 @@
 import Image from "next/image";
+import DestinationNetworkHeroBadge, {
+  type DestinationSupportedNetwork,
+} from "./DestinationNetworkHeroBadge";
 import { destinationMapAliases } from "../lib/destination-map-registry";
-import { getDestinationTravelEssentials } from "../lib/destination-travel-essentials";
 
 type DestinationMapProps = {
   slug: string;
   destination: string;
+  networks?: DestinationSupportedNetwork[];
 };
 
 export function hasDestinationMap(slug: string) {
@@ -14,33 +17,10 @@ export function hasDestinationMap(slug: string) {
 export default function DestinationMap({
   slug,
   destination,
+  networks = [],
 }: DestinationMapProps) {
   const countryCode = destinationMapAliases[slug];
   if (!countryCode) return null;
-
-  const essentials = getDestinationTravelEssentials(slug);
-  const facts: Array<{ label: string; value: string }> = [
-    {
-      label: essentials?.referenceCity ? "Local" : "Destination",
-      value: essentials?.referenceCity || destination,
-    },
-  ];
-
-  if (essentials?.currencyCode) {
-    facts.push({ label: "Currency", value: essentials.currencyCode });
-  }
-
-  if (essentials?.emergencyNumbers) {
-    facts.push({ label: "Emergency", value: essentials.emergencyNumbers });
-  }
-
-  if (facts.length < 3) {
-    facts.push({ label: "Delivery", value: "By email" });
-  }
-
-  if (facts.length < 3) {
-    facts.push({ label: "Setup", value: "Fully digital" });
-  }
 
   return (
     <div className="relative h-full min-h-[320px] overflow-hidden rounded-[2rem] border border-white/70 bg-[#eaf3f8] shadow-[0_24px_70px_rgba(15,43,76,0.16)]">
@@ -60,25 +40,9 @@ export default function DestinationMap({
         {destination} · destination ready
       </div>
 
-      <div className="absolute inset-x-4 bottom-4 grid grid-cols-3 overflow-hidden rounded-2xl border border-white/80 bg-white/92 shadow-[0_14px_34px_rgba(20,54,86,0.13)] backdrop-blur-md">
-        {facts.slice(0, 3).map((fact, index) => (
-          <div
-            className={
-              index < 2 ? "border-r border-[#dce7ed] px-3 py-3" : "px-3 py-3"
-            }
-            key={fact.label}
-          >
-            <p className="text-[9px] font-extrabold uppercase tracking-[0.16em] text-[#788b9f]">
-              {fact.label}
-            </p>
-            <p className="mt-1 truncate text-xs font-bold text-[#102a4c]">
-              {fact.value}
-            </p>
-          </div>
-        ))}
-      </div>
+      <DestinationNetworkHeroBadge networks={networks} />
 
-      <p className="absolute bottom-[74px] right-5 text-[8px] font-semibold uppercase tracking-[0.12em] text-[#577083]/70">
+      <p className="absolute bottom-[58px] right-5 text-[8px] font-semibold uppercase tracking-[0.12em] text-[#577083]/70">
         Map data · Natural Earth
       </p>
     </div>

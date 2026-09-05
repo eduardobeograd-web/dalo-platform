@@ -10,7 +10,7 @@ export async function proxy(request: NextRequest) {
   const testPassword = process.env.DALO_TEST_PASSWORD;
   const isAccessRoute =
     pathname === "/test-access" || pathname === "/api/test-access";
-  const isExternalServiceRoute = pathname === "/api/stripe/webhook";
+  const isExternalServiceRoute = ["/api/stripe/webhook", "/api/esim-go/webhook"].includes(pathname);
   const isPublicPwaAsset =
     pathname === "/manifest.webmanifest" || pathname === "/sw.js";
   let teamAccessEnabled = Boolean(testPassword);
