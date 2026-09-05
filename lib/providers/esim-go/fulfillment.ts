@@ -15,6 +15,7 @@ import {
 } from "./client";
 import { getEsimGoReadiness } from "./config";
 import { syncEsimGoProfileUsage } from "./sync";
+import { validateProviderQuote } from "@/lib/purchase-safety";
 
 function fingerprint(value: unknown) {
   return createHash("sha256").update(JSON.stringify(value)).digest("hex");
@@ -103,6 +104,9 @@ async function loadFulfillableOrder(orderId: string) {
 
   if (!order) throw new Error("Order not found.");
   if (order.payment !== "Paid") throw new Error("Order is not paid.");
+  if (!["esim go", "esim-go", "esimgo"].includes(order.providerAtPurchase?.trim().toLowerCase() || "")) {
+    throw new Error("Order is not assigned to eSIM Go.");
+  }
   if (!order.providerProductIdAtPurchase) {
     throw new Error("Order has no provider bundle mapping.");
   }
@@ -113,11 +117,14 @@ async function loadFulfillableOrder(orderId: string) {
   ) {
     throw new Error("Order has no verified purchase-time provider cost.");
   }
-  if (order.fulfillment === "Delivered" && order.esimStatus === "ready") {
+  if (order.fulfillment === "Delivered") {
     throw new Error("Order is already delivered.");
   }
   if (order.orderKind !== "new_esim" && !order.esimProfile) {
     throw new Error("Top-up order has no reusable eSIM profile.");
+  }
+  if (order.esimProfile && order.esimProfile.customerId !== order.customerId) {
+    throw new Error("eSIM profile ownership does not match the order.");
   }
 
   return order;
@@ -174,6 +181,7 @@ export async function validatePaidOrderWithEsimGo(orderId: string) {
 
   try {
     const result = await validateEsimGoOrder(input);
+    validateProviderQuote(result, order.buyPriceAtPurchase!);
 
     if (result.valid === false) {
       throw new Error("eSIM Go rejected the order validation.");
@@ -307,6 +315,13 @@ export async function fulfillPaidOrderWithEsimGo(orderId: string) {
     }
 
     const directInstall = installDetails(details);
+    if (!directInstall.activationCode || (details?.iccid && details.iccid !== iccid)) {
+      throw new Error("Installation details are missing or belong to another eSIM. Reconcile the existing provider order; do not purchase again.");
+    }
+    const existingProfile = await prisma.esimProfile.findUnique({ where: { iccid } });
+    if (existingProfile && existingProfile.customerId !== order.customerId) {
+      throw new Error("Provider returned an eSIM owned by another customer.");
+    }
     const profile = await prisma.esimProfile.upsert({
       where: { iccid },
       update: {

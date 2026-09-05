@@ -41,7 +41,7 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
   const page = Math.max(1, Number(first(params.page)) || 1);
   const esimGoReadiness = getEsimGoReadiness();
   const automatedFulfillmentConfigured =
-    esimGoReadiness.liveTransactionsEnabled;
+    esimGoReadiness.automaticFulfillmentEnabled;
 
   const filters: Prisma.OrderWhereInput[] = [];
   if (query) {
@@ -59,18 +59,18 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
   if (status === "pending") filters.push({ payment: "Pending" });
   if (status === "failed") filters.push({ payment: "Failed" });
   if (status === "refunded") filters.push({ payment: "Refunded" });
-  if (status === "delivered") filters.push({ fulfillment: "Delivered", esimStatus: "ready" });
+  if (status === "delivered") filters.push({ fulfillment: "Delivered" });
   if (status === "needs_fulfillment") {
     filters.push({
       payment: "Paid",
-      OR: [{ fulfillment: { not: "Delivered" } }, { esimStatus: { not: "ready" } }],
+      fulfillment: { not: "Delivered" },
     });
   }
   const where: Prisma.OrderWhereInput = filters.length ? { AND: filters } : {};
 
   const needsFulfillmentWhere: Prisma.OrderWhereInput = {
     payment: "Paid",
-    OR: [{ fulfillment: { not: "Delivered" } }, { esimStatus: { not: "ready" } }],
+    fulfillment: { not: "Delivered" },
   };
 
   const [orders, filteredCount, totalOrders, paidTotals, needsFulfillmentCount] = await Promise.all([
@@ -111,6 +111,7 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
         </div>
       </div>
 
+      <Link href="/admin/orders/attention" className="mt-5 inline-block font-bold text-blue-700">Delivery and usage issues →</Link>
       <div className="mt-7 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {[
           ["Total orders", String(totalOrders)],
@@ -150,7 +151,7 @@ export default async function OrdersPage({ searchParams }: OrdersPageProps) {
             const country = order.countryAtPurchase || product?.country || "Unknown destination";
             const name = order.productNameAtPurchase || product?.name || "Unknown product";
             const amount = order.amount ?? product?.sellPrice ?? 0;
-            const needsAttention = order.payment === "Paid" && (order.fulfillment !== "Delivered" || order.esimStatus !== "ready");
+            const needsAttention = order.payment === "Paid" && order.fulfillment !== "Delivered";
             return (
               <Link key={order.id} href={`/admin/orders/${order.id}`} className="grid gap-4 px-5 py-5 transition hover:bg-blue-50/40 lg:grid-cols-[1.1fr_1.4fr_0.7fr_0.9fr_auto] lg:items-center">
                 <div>

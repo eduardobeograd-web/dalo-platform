@@ -13,6 +13,7 @@ import { wasOrderEsimDelivered } from "@/lib/order-delivery";
 import { getEsimGoReadiness } from "@/lib/providers/esim-go/config";
 import { fulfillPaidOrderWithEsimGo } from "@/lib/providers/esim-go/fulfillment";
 import { getCheckoutCustomerEmailKind } from "@/lib/checkout-email-routing";
+import { paymentMatchesOrder, automaticPurchaseAllowed } from "@/lib/purchase-safety";
 
 export const runtime = "nodejs";
 
@@ -64,11 +65,15 @@ async function markOrderPaid(session: Stripe.Checkout.Session) {
   }
 
   const stripePaymentIntentId =
+    // Only a matching signed payment can advance this order.
     typeof session.payment_intent === "string"
       ? session.payment_intent
       : session.payment_intent?.id || null;
 
   const paidAt = order.paidAt || new Date();
+  if (!paymentMatchesOrder(order, session)) {
+    throw new Error("Stripe payment does not match the stored order, session, amount or currency.");
+  }
   const updateResult = await prisma.order.updateMany({
     where: {
       id: order.id,
@@ -342,7 +347,8 @@ export async function POST(request: NextRequest) {
 
       if (
         result.orderId &&
-        esimGoReadiness.automaticFulfillmentEnabled
+        esimGoReadiness.automaticFulfillmentEnabled &&
+        automaticPurchaseAllowed(session.livemode, result.orderId, process.env.ESIM_GO_TEST_ORDER_IDS)
       ) {
         try {
           fulfillmentResult = await fulfillPaidOrderWithEsimGo(result.orderId);
