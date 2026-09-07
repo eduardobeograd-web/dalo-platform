@@ -8,6 +8,7 @@ import { prisma } from "../../../lib/db";
 import {
   createCustomerToken,
   hashCustomerToken,
+  setCustomerSessionCookie,
 } from "../../../lib/customer-auth";
 
 function hashToken(token: string) {
@@ -98,5 +99,6 @@ export async function setCustomerPassword(formData: FormData) {
   });
 
   revalidatePath("/customer/set-password");
-  redirect(`/customer/magic?token=${sessionToken}`);
+  await setCustomerSessionCookie(sessionToken);
+  redirect("/customer/dashboard");
 }

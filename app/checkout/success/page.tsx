@@ -13,7 +13,8 @@ async function loadStripeCheckoutOrder(sessionId: string) {
     return null;
   }
 
-  const stripeSession = await stripe.checkout.sessions.retrieve(sessionId);
+  const stripeSession = await stripe.checkout.sessions.retrieve(sessionId).catch(() => null);
+  if (!stripeSession) return null;
   const orderId = stripeSession.metadata?.orderId;
 
   if (!orderId) {
@@ -117,10 +118,11 @@ export default async function CheckoutSuccessPage({
   const purchase = getOrderPurchaseDetails(order, product);
   const hasPassword = Boolean(customer?.passwordHash);
   const encodedEmail = encodeURIComponent(order.customer);
-  const isDeliveryReady = order.esimStatus === "ready";
-  const { statusMessage, deliveryMessage } = getCheckoutSuccessCopy({
+  const isDeliveryReady = order.fulfillment === "Delivered";
+  const { statusMessage, deliveryMessage, title, label, confirmed } = getCheckoutSuccessCopy({
     isTestMode,
     isDeliveryReady,
+    payment: order.payment,
   });
   const currency = (order.currency || "USD").trim().toUpperCase();
   const amount = order.amount ?? product?.sellPrice ?? null;
@@ -131,16 +133,16 @@ export default async function CheckoutSuccessPage({
 
       <section className="mx-auto max-w-4xl px-6 py-16">
         <div className="rounded-[2.5rem] bg-white p-10 text-center shadow-2xl shadow-blue-100">
-          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-green-100 text-4xl">
-            ✓
+          <div className={`mx-auto flex h-20 w-20 items-center justify-center rounded-full text-4xl ${confirmed ? "bg-green-100" : "bg-slate-100"}`} aria-hidden="true">
+            {confirmed ? "✓" : "i"}
           </div>
 
           <p className="mt-8 text-sm font-bold uppercase tracking-wide text-blue-600">
-            Order Confirmed
+            {label}
           </p>
 
           <h1 className="mt-3 text-5xl font-bold text-slate-950">
-            Your eSIM order is confirmed
+            {title}
           </h1>
 
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-slate-600">
@@ -157,8 +159,7 @@ export default async function CheckoutSuccessPage({
             </h2>
 
             <p className="mt-3 text-blue-50">
-              Create a password to access your order, eSIM details, future
-              top-ups and support information.
+              {hasPassword ? "Log in to view your order, eSIM details and support information." : "Create a password to access your order, eSIM details and support information."}
             </p>
 
             <div className="mt-6 flex flex-col gap-3 sm:flex-row">
@@ -178,12 +179,6 @@ export default async function CheckoutSuccessPage({
                 </a>
               )}
 
-              <a
-                href="/customer/login"
-                className="rounded-2xl border border-blue-200 px-6 py-4 text-center font-bold text-white"
-              >
-                Already have an account?
-              </a>
             </div>
           </div>
 
@@ -238,7 +233,7 @@ export default async function CheckoutSuccessPage({
             </div>
           </div>
 
-          {params.session_id && customer ? (
+          {confirmed && params.session_id && customer ? (
             <div className="mt-6 rounded-2xl border border-blue-100 bg-white p-6 text-left shadow-sm">
               {customer.marketingEmailConsent || params.marketing === "saved" ? (
                 <div>

@@ -1,4 +1,5 @@
 import { revalidatePath } from "next/cache";
+import Link from "next/link";
 import AdminShell from "../../components/AdminShell";
 import { prisma } from "../../lib/db";
 import {
@@ -40,10 +41,7 @@ export default async function AdminDashboard() {
     prisma.order.count({
       where: {
         payment: "Paid",
-        OR: [
-          { fulfillment: { not: "Delivered" } },
-          { esimStatus: { not: "ready" } },
-        ],
+        fulfillment: { not: "Delivered" },
       },
     }),
     prisma.order.count({ where: { payment: "Failed" } }),
@@ -57,10 +55,7 @@ export default async function AdminDashboard() {
         OR: [
           {
             payment: "Paid",
-            OR: [
-              { fulfillment: { not: "Delivered" } },
-              { esimStatus: { not: "ready" } },
-            ],
+            fulfillment: { not: "Delivered" },
           },
           { payment: "Failed" },
         ],
@@ -132,12 +127,12 @@ export default async function AdminDashboard() {
           </p>
         </div>
 
-        <a
+        <Link
           href="/"
           className="inline-flex min-h-11 w-fit items-center justify-center rounded-xl border border-slate-300 bg-white px-5 text-sm font-bold text-slate-700 transition hover:border-blue-300 hover:text-blue-700"
         >
           View website
-        </a>
+        </Link>
       </div>
 
       <section className={`mb-6 rounded-[1.5rem] border p-5 sm:p-6 ${
@@ -211,12 +206,12 @@ export default async function AdminDashboard() {
                 Orders requiring a decision
               </h2>
             </div>
-            <a
+            <Link
               href="/admin/orders"
               className="inline-flex min-h-10 w-fit items-center rounded-xl bg-slate-950 px-4 text-sm font-bold text-white transition hover:bg-blue-700"
             >
               All orders
-            </a>
+            </Link>
           </div>
 
           <div className="p-4 sm:p-6">
@@ -229,8 +224,7 @@ export default async function AdminDashboard() {
                 {operationalOrders.map((order) => {
                   const needsDelivery =
                     order.payment === "Paid" &&
-                    (order.fulfillment !== "Delivered" ||
-                      order.esimStatus !== "ready");
+                    order.fulfillment !== "Delivered";
                   const status = needsDelivery ? "Open delivery" : "Payment failed";
 
                   return (

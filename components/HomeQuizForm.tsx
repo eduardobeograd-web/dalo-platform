@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 const durationOptions = [
   { value: "1-3", label: "1-3" },
@@ -47,31 +48,43 @@ const usageOptions = [
 ];
 
 export default function HomeQuizForm() {
-  const [country, setCountry] = useState("");
+  return <Suspense fallback={<QuizForm initialCountry="" />}><LinkedQuizForm /></Suspense>;
+}
+
+function LinkedQuizForm() {
+  const params = useSearchParams();
+  const initialCountry = params.get("country") || "";
+  return <QuizForm key={initialCountry} initialCountry={initialCountry} />;
+}
+
+function QuizForm({ initialCountry }: { initialCountry: string }) {
+  const [country, setCountry] = useState(initialCountry);
   const [days, setDays] = useState("8-11");
   const [userType, setUserType] = useState("everyday");
   const [destinations, setDestinations] = useState<string[]>([]);
   const [destinationSuggestionsOpen, setDestinationSuggestionsOpen] = useState(false);
-  const destinationsRequested = useRef(false);
+  const [destinationError, setDestinationError] = useState(false);
+  const [destinationAttempt, setDestinationAttempt] = useState(0);
   const durationValues = durationOptions.map((option) => option.value);
 
-  async function loadDestinations() {
-    if (destinationsRequested.current) return;
-    destinationsRequested.current = true;
-
-    try {
-      const response = await fetch("/api/destinations");
-      const data = await response.json();
-      if (Array.isArray(data.destinations)) setDestinations(data.destinations);
-    } catch {
-      destinationsRequested.current = false;
-    }
-  }
-
   useEffect(() => {
-    const selectedCountry = new URLSearchParams(window.location.search).get("country");
-    if (selectedCountry) setCountry(selectedCountry);
-  }, []);
+    const controller = new AbortController();
+    async function load() {
+      try {
+        const response = await fetch("/api/destinations", { signal: controller.signal });
+        if (!response.ok) throw new Error("Destinations unavailable");
+        const data = await response.json();
+        if (!Array.isArray(data.destinations) || !data.destinations.every((value: unknown) => typeof value === "string")) {
+          throw new Error("Invalid destinations");
+        }
+        if (!controller.signal.aborted) setDestinations(data.destinations);
+      } catch {
+        if (!controller.signal.aborted) setDestinationError(true);
+      }
+    }
+    void load();
+    return () => controller.abort();
+  }, [destinationAttempt]);
 
   const normalizedCountry = country.trim().toLocaleLowerCase("en");
   const selectedDestination = destinations.find(
@@ -125,7 +138,6 @@ export default function HomeQuizForm() {
                 }}
                 onFocus={() => {
                   setDestinationSuggestionsOpen(true);
-                  void loadDestinations();
                 }}
                 onBlur={() => {
                   if (selectedDestination) setCountry(selectedDestination);
@@ -134,7 +146,6 @@ export default function HomeQuizForm() {
                 placeholder="Type a country or region"
                 autoComplete="off"
                 aria-autocomplete="list"
-                aria-expanded={destinationSuggestionsOpen}
                 className="w-full bg-transparent text-base font-bold text-slate-900 outline-none placeholder:font-semibold placeholder:italic placeholder:text-slate-500 sm:text-lg"
               />
               <input type="hidden" name="country" value={selectedDestination || ""} />
@@ -161,7 +172,7 @@ export default function HomeQuizForm() {
               </div>
             ) : null}
           </div>
-          {country.trim().length > 0 && !selectedDestinationIsAvailable ? <p className="mt-1.5 text-xs font-semibold text-red-600">Please choose an available destination from the list.</p> : null}
+          {destinationError ? <p role="alert" className="mt-1.5 text-xs text-red-600">Destinations could not be loaded. <button type="button" className="font-bold underline" onClick={() => { setDestinationError(false); setDestinationAttempt((attempt) => attempt + 1); }}>Try again</button></p> : destinations.length === 0 ? <p role="status" className="mt-1.5 text-xs text-slate-500">Loading available destinations…</p> : country.trim().length > 0 && !selectedDestinationIsAvailable ? <p className="mt-1.5 text-xs font-semibold text-red-600">Please choose an available destination from the list.</p> : null}
           {country.trim().length > 0 && selectedDestinationIsAvailable ? <p className="mt-1.5 text-xs text-slate-500">Available destination selected.</p> : null}
         </div>
 
