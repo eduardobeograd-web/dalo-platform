@@ -14,6 +14,7 @@ import { getEsimGoReadiness } from "@/lib/providers/esim-go/config";
 import { fulfillPaidOrderWithEsimGo } from "@/lib/providers/esim-go/fulfillment";
 import { getCheckoutCustomerEmailKind } from "@/lib/checkout-email-routing";
 import { paymentMatchesOrder, automaticPurchaseAllowed } from "@/lib/purchase-safety";
+import { pendingCheckoutWhere } from "@/lib/payment-event-guards";
 
 export const runtime = "nodejs";
 
@@ -130,7 +131,7 @@ async function markOrderPaid(session: Stripe.Checkout.Session) {
   };
 }
 
-async function markCheckoutExpired(session: Stripe.Checkout.Session) {
+async function markCheckoutExpired(session: Stripe.Checkout.Session, payment: "Expired" | "Failed" = "Expired") {
   const orderId = session.metadata?.orderId || null;
 
   const order = orderId
@@ -147,16 +148,16 @@ async function markCheckoutExpired(session: Stripe.Checkout.Session) {
     return { updated: false, reason: "order_not_pending" };
   }
 
-  await prisma.order.update({
-    where: { id: order.id },
+  const result = await prisma.order.updateMany({
+    where: pendingCheckoutWhere(order.id, session.id),
     data: {
-      payment: "Expired",
+      payment,
       fulfillment: "Cancelled",
-      esimStatus: "cancelled",
+      esimStatus: payment === "Failed" ? "failed" : "cancelled",
     },
   });
 
-  return { updated: true, orderId: order.id, orderNumber: order.orderNumber };
+  return { updated: result.count === 1, orderId: order.id, orderNumber: order.orderNumber };
 }
 
 async function markPaymentFailed(paymentIntent: Stripe.PaymentIntent) {
@@ -172,12 +173,22 @@ async function markPaymentFailed(paymentIntent: Stripe.PaymentIntent) {
     return { updated: false, reason: "order_not_found" };
   }
 
-  if (order.payment === "Paid" || order.payment === "Refunded") {
+  if (order.payment !== "Pending") {
     return { updated: false, reason: "order_already_finalized" };
   }
 
-  await prisma.order.update({
-    where: { id: order.id },
+  // Bind a previously unrecorded intent to the stored checkout, never metadata alone.
+  if (!order.stripeSessionId) return { updated: false, reason: "missing_checkout" };
+  const checkout = await stripe.checkout.sessions.retrieve(order.stripeSessionId);
+  const checkoutIntentId = typeof checkout.payment_intent === "string"
+    ? checkout.payment_intent : checkout.payment_intent?.id;
+  if (checkoutIntentId !== paymentIntent.id) return { updated: false, reason: "payment_intent_mismatch" };
+
+  const result = await prisma.order.updateMany({
+    where: {
+      ...pendingCheckoutWhere(order.id, checkout.id),
+      OR: [{ stripePaymentIntentId: null }, { stripePaymentIntentId: paymentIntent.id }],
+    },
     data: {
       payment: "Failed",
       fulfillment: "Cancelled",
@@ -187,7 +198,7 @@ async function markPaymentFailed(paymentIntent: Stripe.PaymentIntent) {
     },
   });
 
-  return { updated: true, orderId: order.id, orderNumber: order.orderNumber };
+  return { updated: result.count === 1, orderId: order.id, orderNumber: order.orderNumber };
 }
 
 async function markOrderRefunded(charge: Stripe.Charge) {
@@ -412,7 +423,7 @@ export async function POST(request: NextRequest) {
     ) {
       if (event.type === "checkout.session.async_payment_failed") {
         const session = event.data.object as Stripe.Checkout.Session;
-        const result = await markCheckoutExpired(session);
+        const result = await markCheckoutExpired(session, "Failed");
 
         return NextResponse.json({
           received: true,
