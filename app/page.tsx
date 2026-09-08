@@ -48,6 +48,8 @@ export default function Home() {
 
   return (
     <main className="dalo-home min-h-screen bg-[#F6F8FF] text-slate-900">
+      {/* Start the public quiz catalogue request before client hydration. */}
+      <link rel="preload" href="/api/destinations" as="fetch" crossOrigin="anonymous" />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceJsonLd) }}
