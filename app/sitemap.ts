@@ -1,12 +1,14 @@
 import type { MetadataRoute } from "next";
+import { connection } from "next/server";
 import { prisma } from "../lib/db";
 import { siteUrl as baseUrl } from "../lib/site-url";
 import { getDestinationSeoIssues } from "../lib/catalog-readiness";
 import { slugifyDestination } from "../lib/destination-pages";
 
-export const revalidate = 86_400;
-
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // Editorial approvals must be reflected without a deploy or a stale route cache.
+  // Keep this before the database reads so the sitemap is built at request time.
+  await connection();
   const [products, managedPages] = await Promise.all([
     prisma.product.findMany({
       where: {
