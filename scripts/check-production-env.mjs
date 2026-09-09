@@ -2,6 +2,7 @@ import "dotenv/config";
 
 const errors = [];
 const warnings = [];
+const launch = process.argv.includes("--launch");
 
 function value(name) {
   return process.env[name]?.trim() || "";
@@ -47,16 +48,15 @@ if (siteUrl) {
 const databaseUrl = value("DATABASE_URL");
 requireValue("DATABASE_URL", "DATABASE_URL is missing.");
 
-if (databaseUrl && !databaseUrl.startsWith("file:")) {
-  warnings.push(
-    "DATABASE_URL is not SQLite. Confirm the production adapter before deployment.",
-  );
-}
-
-if (databaseUrl.startsWith("file:")) {
-  warnings.push(
-    "SQLite requires one persistent server instance and persistent disk storage.",
-  );
+if (databaseUrl) {
+  try {
+    const protocol = new URL(databaseUrl).protocol;
+    if (!["postgres:", "postgresql:"].includes(protocol)) {
+      errors.push("DATABASE_URL must use PostgreSQL for the current PrismaPg adapter.");
+    }
+  } catch {
+    errors.push("DATABASE_URL is not a valid PostgreSQL URL.");
+  }
 }
 
 requireValue(
@@ -167,7 +167,32 @@ if (esimGoLiveEnabled) {
   );
 }
 
-console.log("DALO production readiness");
+if (launch) {
+  if (!stripeKey.startsWith("sk_live_")) {
+    errors.push("Launch requires a live Stripe secret key; test mode is not a sales launch.");
+  }
+  if (!value("STRIPE_WEBHOOK_SECRET").startsWith("whsec_")) {
+    errors.push("Launch requires STRIPE_WEBHOOK_SECRET for verified payment notifications.");
+  }
+  if (enabled("DALO_AUTO_MOCK_FULFILLMENT")) {
+    errors.push("Mock fulfillment must be disabled before a sales launch.");
+  }
+  if (value("ESIM_GO_TEST_ORDER_IDS")) {
+    errors.push("Remove test-order purchase exceptions before a sales launch.");
+  }
+  for (const flag of [
+    "ESIM_GO_READ_ENABLED",
+    "ESIM_GO_VALIDATE_ENABLED",
+    "ESIM_GO_LIVE_FULFILLMENT_ENABLED",
+    "ESIM_GO_AUTOMATIC_FULFILLMENT_ENABLED",
+    "ESIM_GO_WEBHOOK_ENABLED",
+  ]) {
+    if (!enabled(flag)) errors.push(`Automated sales launch requires ${flag}. Do not enable it without approval.`);
+  }
+  warnings.push("Not checked here: deployed environment, Admin purchase switches, callback delivery, mail delivery, provider balance, backups and end-to-end purchase approval.");
+}
+
+console.log(launch ? "DALO sales-launch configuration check" : "DALO configuration preflight (not a launch approval)");
 console.log("-------------------------");
 
 for (const warning of warnings) {
@@ -182,5 +207,5 @@ if (errors.length > 0) {
   console.error(`\nResult: blocked by ${errors.length} configuration issue(s).`);
   process.exitCode = 1;
 } else {
-  console.log("\nResult: required production configuration is present.");
+  console.log("\nResult: checked configuration requirements pass. This does not certify launch readiness.");
 }

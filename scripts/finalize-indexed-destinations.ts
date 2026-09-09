@@ -1,4 +1,5 @@
 import { prisma } from "../lib/db";
+import { requireLegacySeoWriteConsent } from "./legacy-seo-write-guard";
 
 type EditorialPage = {
   seoTitle: string;
@@ -194,6 +195,7 @@ const pages: Record<string, EditorialPage> = {
 };
 
 async function main() {
+  requireLegacySeoWriteConsent(process.argv.slice(2));
   for (const [slug, content] of Object.entries(pages)) {
     await prisma.destinationPage.update({
       where: { slug },

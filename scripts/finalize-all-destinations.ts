@@ -2,9 +2,11 @@ import { writeFile } from "node:fs/promises";
 import { getCatalogDestinationSeoDraft, isAutomaticDestinationSeo } from "../lib/destination-seo-draft";
 import { slugifyDestination } from "../lib/destination-pages";
 import { prisma } from "../lib/db";
+import { requireLegacySeoWriteConsent } from "./legacy-seo-write-guard";
 
 async function main() {
   const apply = process.argv.includes("--apply");
+  if (apply) requireLegacySeoWriteConsent(process.argv.slice(2));
   const [products, pages] = await Promise.all([
     prisma.product.findMany({
       where: { active: true, sellPrice: { gt: 0 }, validityDays: { gt: 0 } },

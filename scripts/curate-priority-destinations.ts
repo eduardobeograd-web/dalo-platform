@@ -1,4 +1,5 @@
 import { prisma } from "../lib/db";
+import { requireLegacySeoWriteConsent } from "./legacy-seo-write-guard";
 
 const prioritySlugs = [
   "europe",
@@ -206,6 +207,7 @@ const curatedPages = [
 ] as const;
 
 async function main() {
+  requireLegacySeoWriteConsent(process.argv.slice(2));
   const curatedUpdates = await Promise.all(
     curatedPages.map((page) =>
       prisma.destinationPage.update({
