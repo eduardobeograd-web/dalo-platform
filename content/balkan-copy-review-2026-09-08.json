@@ -1,0 +1,96 @@
+{
+  "status": "draft-awaiting-admin-login",
+  "scope": "Text updates only. Preserve published, indexable, planFinderEnabled, products and provider settings.",
+  "pages": [
+    {
+      "slug": "serbia",
+      "headline": "Serbia eSIM for Belgrade visits and journeys beyond",
+      "intro": "Find your Belgrade accommodation, arrange a Novi Sad pickup or check the next stop on your Serbian route. Compare data and validity for your stay, including any days you plan to work or share a connection.",
+      "coverageText": "Check the supported networks for your Serbia plan. Mountain routes, national parks and remote villages can have variable reception; keep essential directions accessible offline before longer drives.",
+      "faqReplacements": [
+        {
+          "question": "Can I set up a Serbia eSIM before arrival?",
+          "replacementQuestion": "Does a Serbia eSIM include neighbouring Balkan countries?",
+          "answer": "Check the selected package country list before crossing a border. Do not assume Serbia coverage includes Bosnia and Herzegovina, Montenegro or other neighbours; compare regional options for a multi-country route."
+        }
+      ]
+    },
+    {
+      "slug": "croatia",
+      "seoTitle": "Croatia eSIM | Split Stops and Adriatic Island Trips | DALO",
+      "headline": "Croatia eSIM for Adriatic days and island arrivals",
+      "intro": "Check your Split ferry booking, find a Dubrovnik address or message your island host. Choose a Croatia eSIM for the full holiday, with data for daily navigation, reservations and sharing your trip.",
+      "coverageText": "Review the supported operators for your Croatian route. Ferries, smaller islands, mountain roads and remote beaches can have variable reception; listed coverage does not guarantee service throughout a crossing.",
+      "faqReplacements": [
+        {
+          "question": "Can I install a Croatia eSIM before departure?",
+          "replacementQuestion": "What should I keep offline for Croatian ferry journeys?",
+          "answer": "Save your ticket, departure details and next accommodation address before boarding. Keep them accessible without a connection rather than relying on mobile reception for the whole crossing."
+        }
+      ]
+    },
+    {
+      "slug": "bosnia-and-herzegovina",
+      "headline": "Bosnia and Herzegovina eSIM for Sarajevo and scenic routes",
+      "intro": "Find your Sarajevo stay, confirm a Mostar booking or organise the next stop on a longer drive. Compare Bosnia and Herzegovina eSIM data and validity for your route, with essential directions saved for offline use.",
+      "coverageText": "Check the supported networks for your package. Mountain roads, valleys and sparsely populated areas can have reception gaps; a larger data allowance will not improve a weak signal.",
+      "faqReplacements": [
+        {
+          "question": "Can I install the eSIM before departure?",
+          "replacementQuestion": "What if my trip also includes Croatia or Serbia?",
+          "answer": "Confirm each country in the package coverage before purchase. A Bosnia and Herzegovina plan should not be assumed to include Croatia or Serbia; review regional plans for the complete itinerary."
+        }
+      ]
+    },
+    {
+      "slug": "montenegro",
+      "seoTitle": "Montenegro eSIM | Kotor Stays and Onward Travel | DALO",
+      "seoDescription": "Plan a Kotor stay or a longer Montenegro journey with travel eSIM data for maps, bookings and messages. Compare allowances and validity for your itinerary.",
+      "headline": "Montenegro eSIM for bay stays and inland journeys",
+      "intro": "Find your Kotor accommodation, arrange a Budva pickup or plan an inland stop. Compare Montenegro eSIM allowances for your travel dates, with data for navigation, bookings and keeping in touch along the way.",
+      "coverageText": "Use the listed partner networks as your reference for Montenegro. Reception depends on location, terrain, buildings and your device; keep essential route and booking details available offline for onward travel.",
+      "faqReplacements": [
+        {
+          "question": "What Montenegro eSIM plans does DALO compare?",
+          "replacementQuestion": "How do I choose data for a Montenegro holiday?",
+          "answer": "Compare the current packages above. Maps and messages use less data than streaming, video calls or laptop sharing; choose for your daily habits as well as the length of your stay."
+        },
+        {
+          "question": "How long are Montenegro eSIM plans valid?",
+          "replacementQuestion": "How do I check whether validity covers my Montenegro trip?",
+          "answer": "Read the validity and activation instructions for the selected package. Allow for your full visit, including arrival and departure, rather than assuming every plan starts at the same point."
+        },
+        {
+          "question": "When should I install my Montenegro eSIM?",
+          "replacementQuestion": "Does a Montenegro plan cover an onward Balkan journey?",
+          "answer": "Check every country on your itinerary against the package list. Montenegro coverage alone does not confirm service in Albania, Croatia or Serbia; compare regional options before you buy."
+        }
+      ]
+    },
+    {
+      "slug": "albania",
+      "seoTitle": "Albania eSIM | Tirana Visits and Coastal Journeys | DALO",
+      "seoDescription": "Find an Albania eSIM for a Tirana visit or a coastal itinerary. Compare data and validity for navigation, accommodation messages and transport bookings.",
+      "headline": "Albania eSIM for Tirana arrivals and coastal stops",
+      "intro": "Arrange your Tirana arrival, check a Berat booking or message your host on the coast. Choose an Albania eSIM for your time away, with enough data for directions, transfers and everyday travel messages.",
+      "coverageText": "Review the partner networks listed for your Albania package. Local terrain, buildings and your device affect reception; save onward directions and accommodation details before travelling beyond populated areas.",
+      "faqReplacements": [
+        {
+          "question": "What Albania eSIM plans does DALO compare?",
+          "replacementQuestion": "Which Albania plan suits a city visit or a longer route?",
+          "answer": "Use the current package list to compare data and validity. A short Tirana stay and several weeks of daily navigation have different needs; include uploads and hotspot use in your estimate."
+        },
+        {
+          "question": "How long are Albania eSIM plans valid?",
+          "replacementQuestion": "What should I check about my Albania plan's start date?",
+          "answer": "Read the selected package activation instructions before installing. Check what starts its validity period and whether that period covers your whole visit, including the journey home."
+        },
+        {
+          "question": "When should I install my Albania eSIM?",
+          "replacementQuestion": "Will an Albania eSIM cover my next stop in Montenegro or Greece?",
+          "answer": "Only rely on countries explicitly listed in the package coverage. If your route continues into Montenegro or Greece, compare a regional plan or separate country plans before crossing the border."
+        }
+      ]
+    }
+  ]
+}

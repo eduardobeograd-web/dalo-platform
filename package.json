@@ -8,6 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "production:check": "node scripts/check-production-env.mjs",
+    "launch:check": "node scripts/check-production-env.mjs --launch",
+    "test:safety": "node --import tsx --test scripts/purchase-safety.test.ts scripts/customer-audit-fixes.test.ts scripts/isolated-account-payment.test.cjs scripts/legacy-seo-write-guard.test.ts scripts/check-production-env.test.mjs",
     "db:backup": "node scripts/backup-sqlite.mjs",
     "db:migrate:postgres": "tsx scripts/migrate-sqlite-to-postgres.ts",
     "prices:check-margins": "node scripts/check-product-margins.mjs",

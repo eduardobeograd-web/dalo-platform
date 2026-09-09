@@ -1,6 +1,7 @@
 import { getDestinationSeoDraft } from "../lib/destination-seo-draft";
 import { slugifyDestination } from "../lib/destination-pages";
 import { prisma } from "../lib/db";
+import { requireLegacySeoWriteConsent } from "./legacy-seo-write-guard";
 
 const curatedSlugs = new Set([
   "australia", "bosnia-and-herzegovina", "canada", "croatia", "egypt",
@@ -29,6 +30,7 @@ function looksAutomatic(page: {
 }
 
 async function main() {
+  requireLegacySeoWriteConsent(process.argv.slice(2));
   const [products, existingPages] = await Promise.all([
     prisma.product.findMany({
       where: { active: true, sellPrice: { gt: 0 }, validityDays: { gt: 0 } },

@@ -593,21 +593,21 @@ export default async function EsimLandingPage({ params }: PageProps) {
               </p>
 
               {bestProduct ? (
-                <div className="mt-4 flex items-center justify-between gap-3 rounded-2xl border border-blue-100 bg-blue-50/80 p-3 sm:hidden">
+                <div className="mt-4 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-blue-100 bg-blue-50/80 p-3">
                   <div>
                     <p className="text-[10px] font-bold uppercase tracking-wide text-blue-700">
-                      Recommended plan
+                      Plans from
                     </p>
                     <p className="mt-1 text-xl font-black text-slate-950">
                       ${bestProduct.sellPrice.toFixed(2)}
                     </p>
                   </div>
-                  <Link
-                    href={`/checkout?productId=${bestProduct.id}&providerProductId=${encodeURIComponent(bestProduct.providerProductId)}`}
-                    className="inline-flex min-h-11 items-center justify-center rounded-xl bg-blue-700 px-4 text-sm font-bold text-white"
+                  <a
+                    href="#plans"
+                    className="inline-flex min-h-11 items-center justify-center rounded-xl bg-blue-700 px-4 text-sm font-bold text-white focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-700"
                   >
-                    View best plan →
-                  </Link>
+                    View all plans ↓
+                  </a>
                 </div>
               ) : null}
 
@@ -648,7 +648,15 @@ export default async function EsimLandingPage({ params }: PageProps) {
         ) : null}
 
         {products.length ? (
-          <section id="plans" className="mt-6 grid gap-4 sm:mt-10 sm:gap-6 md:grid-cols-3">
+          <section id="plans" aria-labelledby="destination-plans-title" className="mt-6 grid scroll-mt-24 gap-4 sm:mt-10 sm:gap-6 md:grid-cols-3">
+            <div className="md:col-span-3">
+              <h2 id="destination-plans-title" className="text-2xl font-black text-slate-950">
+                Available {displayName} eSIM plans
+              </h2>
+              <p className="mt-2 text-sm text-slate-600">
+                Compare all {products.length} plans below. No quiz required.
+              </p>
+            </div>
             {products.map((product) => {
               return (
               <article

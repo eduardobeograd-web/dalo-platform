@@ -1,0 +1,91 @@
+{
+  "status": "published-and-live-verified",
+  "appliedOn": "2026-09-07",
+  "applicationMethod": "Existing production admin country-page editor; 18 pages verified live; other form fields and indexing flags preserved.",
+  "sources": [
+    "https://help.esim-go.com/hc/en-gb/articles/10434796290961-Can-I-use-my-eSIM-for-a-personal-hotspot-or-tethering",
+    "https://help.esim-go.com/hc/en-gb/articles/37431649536913-Hotspot-Troubleshooting"
+  ],
+  "pages": [
+    {
+      "slug": "australia",
+      "seoTitle": "Australia eSIM | Plan Data for Your Road Trip | DALO",
+      "seoDescription": "Planning an Australian road trip? Choose eSIM data for navigation, bookings and city stops, and review network coverage before heading into remote areas."
+    },
+    {
+      "slug": "canada",
+      "seoTitle": "Canada eSIM | City Stays and Longer Journeys | DALO"
+    },
+    {
+      "slug": "china",
+      "seoTitle": "China eSIM | Data for Maps and Translation | DALO"
+    },
+    {
+      "slug": "france",
+      "seoTitle": "France eSIM | Paris Breaks and Rail Journeys | DALO",
+      "seoDescription": "From a Paris weekend to a longer French rail journey, choose eSIM data for tickets, maps and reservations. Compare allowances and validity with DALO."
+    },
+    {
+      "slug": "germany",
+      "seoTitle": "Germany eSIM | Stay Connected Between Cities | DALO"
+    },
+    {
+      "slug": "greece",
+      "seoTitle": "Greece eSIM | Choose Data for an Island Trip | DALO"
+    },
+    {
+      "slug": "indonesia",
+      "seoTitle": "Indonesia eSIM | Bali and Your Next Island Stop | DALO"
+    },
+    {
+      "slug": "italy",
+      "seoTitle": "Italy eSIM | Data for Trains, Maps and Bookings | DALO"
+    },
+    {
+      "slug": "japan",
+      "seoTitle": "Japan eSIM | Navigate Stations and City Streets | DALO"
+    },
+    {
+      "slug": "mexico",
+      "seoTitle": "Mexico eSIM | From City Visits to Coastal Stays | DALO",
+      "seoDescription": "Visiting Mexico City or heading to the coast? Find an eSIM for ride apps, maps and reservations, with data and validity matched to your time in Mexico."
+    },
+    {
+      "slug": "portugal",
+      "seoTitle": "Portugal eSIM | Lisbon, Porto and Algarve Travel | DALO",
+      "seoDescription": "Arrange transport in Lisbon, explore Porto or plan an Algarve stay with a Portugal eSIM. Match your data allowance to navigation, bookings and time away."
+    },
+    {
+      "slug": "singapore",
+      "seoTitle": "Singapore eSIM | Data for a Stopover or City Stay | DALO"
+    },
+    {
+      "slug": "spain",
+      "seoTitle": "Spain eSIM | City Breaks, Coasts and Island Plans | DALO"
+    },
+    {
+      "slug": "thailand",
+      "seoTitle": "Thailand eSIM | Find Data for Your Holiday Route | DALO"
+    },
+    {
+      "slug": "turkey",
+      "seoTitle": "Turkey eSIM | Istanbul Visits and Coastal Holidays | DALO"
+    },
+    {
+      "slug": "united-states-of-america",
+      "seoTitle": "USA eSIM | Compare Data for a Multi-State Trip | DALO"
+    },
+    {
+      "slug": "vietnam",
+      "seoTitle": "Vietnam eSIM | Maps and Transfers Along Your Route | DALO"
+    },
+    {
+      "slug": "philippines",
+      "faqReplacement": {
+        "question": "Can I use hotspot with a Philippines eSIM?",
+        "expectedAnswer": "Hotspot availability depends on the chosen plan, local network and device. Check the package details before purchase if tethering is important for your trip.",
+        "answer": "Yes. eSIM Go supports sharing your eSIM data through a personal hotspot on a compatible phone. Select the travel eSIM for mobile data, then enable hotspot in your phone settings. Connected devices use the same data allowance. If hotspot does not work, follow the installation guidance or contact DALO support."
+      }
+    }
+  ]
+}
