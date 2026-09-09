@@ -436,11 +436,16 @@ export default async function EsimLandingPage({ params }: PageProps) {
     networkCoverage?.networks,
   );
 
+  // Reuse the destination artwork shown on this page for every digital plan.
+  const productImageUrl = new URL(destinationImage, `${baseUrl}/`).href;
+  // eSIMs are delivered digitally: do not invent physical shipping details.
+  // The shared, conditional refund policy is described on /refund-policy.
   const productSchema = bestProduct
     ? {
         "@context": "https://schema.org",
         "@type": "Product",
         name: bestProduct.name,
+        image: productImageUrl,
         description: bestProduct.seoDescription || bestProduct.description,
         url: pageUrl,
         sku: String(bestProduct.id),
@@ -506,6 +511,7 @@ export default async function EsimLandingPage({ params }: PageProps) {
       item: {
         "@type": "Product",
         name: product.name,
+        image: productImageUrl,
         description:
           product.seoDescription ||
           product.description ||
@@ -530,7 +536,7 @@ export default async function EsimLandingPage({ params }: PageProps) {
       {productSchema ? (
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema).replace(/</g, "\\u003c") }}
         />
       ) : null}
 
@@ -546,7 +552,7 @@ export default async function EsimLandingPage({ params }: PageProps) {
 
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema).replace(/</g, "\\u003c") }}
       />
 
       <section className="mx-auto max-w-6xl px-4 pb-8 pt-5 sm:px-6 sm:py-12">

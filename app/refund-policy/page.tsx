@@ -77,13 +77,16 @@ const normallyExcludedCases = [
 export default function RefundPolicyPage() {
   const policySchema = {
     "@context": "https://schema.org",
-    "@type": "MerchantReturnPolicy",
-    name: "DALO Refund Policy",
-    url: `${baseUrl}/refund-policy`,
-    dateModified: "2026-07-28",
-    merchantReturnDays: 30,
-    returnMethod: "https://schema.org/ReturnByMail",
-    returnFees: "https://schema.org/FreeReturn",
+    "@type": "Organization",
+    name: "DALO eSIM",
+    legalName: "DALO eSIM Solution LLC",
+    url: baseUrl,
+    // Google's organization-level link option preserves our conditional digital
+    // refund terms; a request deadline is not an unconditional return window.
+    hasMerchantReturnPolicy: {
+      "@type": "MerchantReturnPolicy",
+      merchantReturnLink: `${baseUrl}/refund-policy`,
+    },
   };
 
   return (
