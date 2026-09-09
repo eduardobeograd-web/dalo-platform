@@ -23,7 +23,7 @@ export function HomeWhyDalo() {
               </p>
 
               <div className="mt-6 overflow-hidden rounded-2xl border border-white/10">
-                <div className="grid grid-cols-[1fr_0.85fr_0.85fr] bg-white/[0.06] px-4 py-3 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400 sm:px-5">
+                <div className="hidden grid-cols-[1fr_0.85fr_0.85fr] gap-4 bg-white/[0.06] sm:grid px-4 py-3 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400 sm:px-5">
                   <span>Decision point</span>
                   <span>Typical store</span>
                   <span className="text-white">DALO</span>
@@ -33,12 +33,12 @@ export function HomeWhyDalo() {
                   ["What you compare", "GB and validity", "Travel needs"],
                   ["What you receive", "More options", "One clear match"],
                 ].map(([label, typical, dalo]) => (
-                  <div key={label} className="grid grid-cols-[1fr_0.85fr_0.85fr] border-t border-white/10 px-4 py-3 text-sm sm:px-5">
+                  <div key={label} className="grid gap-3 border-t border-white/10 px-4 py-4 text-sm first:border-t-0 sm:grid-cols-[1fr_0.85fr_0.85fr] sm:gap-4 sm:px-5 sm:py-3">
                     <span className="font-semibold text-white">{label}</span>
-                    <span className="text-slate-400">{typical}</span>
+                    <span className="text-slate-400"><span className="mr-2 text-xs font-bold uppercase tracking-wide sm:hidden">Typical store:</span>{typical}</span>
                     <span className="flex items-center gap-2 font-bold text-white">
                       <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#f2a45f]" />
-                      {dalo}
+                      <span><span className="mr-2 text-xs font-bold uppercase tracking-wide sm:hidden">DALO:</span>{dalo}</span>
                     </span>
                   </div>
                 ))}

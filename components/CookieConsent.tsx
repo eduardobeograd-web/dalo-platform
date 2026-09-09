@@ -56,7 +56,7 @@ export default function CookieConsent() {
       {preferences === null && !settingsOpen ? (
         <section
           aria-label="Cookie choices"
-          className="fixed bottom-3 left-3 right-3 z-[70] mx-auto max-w-5xl rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-[0_28px_90px_rgba(15,35,70,0.28)] sm:bottom-5 sm:p-6"
+          className="fixed bottom-3 left-3 right-3 z-[70] mx-auto max-h-[calc(100dvh-1.5rem)] max-w-5xl overflow-y-auto overscroll-contain rounded-[1.5rem] border border-slate-200 bg-white p-5 shadow-[0_28px_90px_rgba(15,35,70,0.28)] sm:bottom-5 sm:max-h-[calc(100dvh-2.5rem)] sm:p-6"
         >
           <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-center">
             <div>
@@ -121,9 +121,9 @@ export default function CookieConsent() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="cookie-settings-title"
-            className="w-full max-w-2xl overflow-hidden rounded-[1.75rem] border border-white/80 bg-[#f8fbff] shadow-[0_30px_100px_rgba(15,35,70,0.3)]"
+            className="flex max-h-[calc(100dvh-1.5rem)] w-full max-w-2xl flex-col overflow-hidden sm:max-h-[calc(100dvh-3rem)] rounded-[1.75rem] border border-white/80 bg-[#f8fbff] shadow-[0_30px_100px_rgba(15,35,70,0.3)]"
           >
-            <div className="border-b border-blue-100 bg-white px-5 py-5 sm:px-7">
+            <div className="shrink-0 border-b border-blue-100 bg-white px-5 py-5 sm:px-7">
               <p className="text-xs font-black uppercase tracking-[0.16em] text-blue-700">
                 DALO privacy controls
               </p>
@@ -139,7 +139,7 @@ export default function CookieConsent() {
               </p>
             </div>
 
-            <div className="space-y-3 p-5 sm:p-7">
+            <div className="min-h-0 space-y-3 overflow-y-auto overscroll-contain p-5 sm:p-7">
               <div className="flex items-start justify-between gap-5 rounded-2xl border border-slate-200 bg-white p-4">
                 <div>
                   <h3 className="font-extrabold text-slate-950">Necessary</h3>

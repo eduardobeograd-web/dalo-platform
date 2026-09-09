@@ -5,6 +5,7 @@ import CheckoutSessionInput from "../../components/tracking/CheckoutSessionInput
 import CheckoutEmailInput from "../../components/tracking/CheckoutEmailInput";
 import SiteFooter from "../../components/SiteFooter";
 import SiteHeader from "../../components/SiteHeader";
+import DeferredDeviceCompatibilityCheck from "../../components/DeferredDeviceCompatibilityCheck";
 import { getCurrentCustomer } from "../../lib/customer-auth";
 import { getProviderConfigBySlug } from "../../lib/providers/provider-configs";
 import { getEsimGoReadiness } from "../../lib/providers/esim-go/config";
@@ -19,7 +20,7 @@ function CheckoutLegalConsent({ idPrefix }: { idPrefix: string }) {
   const deliveryId = `${idPrefix}-delivery`;
 
   return (
-    <fieldset className="space-y-3 rounded-2xl border border-slate-200 bg-slate-50/80 p-3 sm:p-4">
+    <fieldset className="min-w-0 space-y-3 rounded-2xl border border-slate-200 bg-slate-50/80 p-3 sm:p-4">
       <legend className="px-1 text-sm font-bold text-slate-900">
         Order confirmation
       </legend>
@@ -219,8 +220,8 @@ export default async function CheckoutPage({
     <main className="dalo-page min-h-screen bg-[#F6F8FF] text-slate-900">
       <SiteHeader mode="checkout" />
 
-      <section className="mx-auto grid max-w-7xl gap-6 px-4 py-5 sm:px-6 sm:py-10 lg:grid-cols-[1fr_420px] lg:gap-8">
-        <div className="rounded-[2rem] bg-white p-5 shadow-xl shadow-blue-50 sm:p-8">
+      <section className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-4 py-5 sm:px-6 sm:py-10 lg:grid-cols-[minmax(0,1fr)_420px] lg:gap-8">
+        <div className="min-w-0 rounded-[2rem] bg-white p-5 shadow-xl shadow-blue-50 sm:p-8">
           <p className="text-sm font-bold uppercase tracking-wide text-blue-600">
             Secure Checkout
           </p>
@@ -274,6 +275,10 @@ export default async function CheckoutPage({
               has been started.
             </div>
           ) : null}
+
+          <div className="mt-5">
+            <DeferredDeviceCompatibilityCheck variant="inline" />
+          </div>
 
           <form
             action="/api/stripe/checkout"
@@ -361,7 +366,7 @@ export default async function CheckoutPage({
           )}
         </div>
 
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
           <div className="hidden overflow-hidden rounded-[2rem] bg-white shadow-xl shadow-blue-50 lg:block">
             <img
               src={product.image}

@@ -23,7 +23,11 @@ type IdleWindow = Window & {
   cancelIdleCallback?: (handle: number) => void;
 };
 
-export default function DeferredDeviceCompatibilityCheck() {
+export default function DeferredDeviceCompatibilityCheck({
+  variant = "floating",
+}: {
+  variant?: "floating" | "inline";
+}) {
   const pathname = usePathname();
   const [ready, setReady] = useState(false);
   const isInternalRoute =
@@ -72,5 +76,5 @@ export default function DeferredDeviceCompatibilityCheck() {
     };
   }, [isInternalRoute]);
 
-  return !isInternalRoute && ready ? <DeviceCompatibilityCheck /> : null;
+  return !isInternalRoute && ready ? <DeviceCompatibilityCheck variant={variant} /> : null;
 }
